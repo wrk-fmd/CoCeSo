@@ -1,0 +1,334 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage{fullpage}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+\usepackage{hyperref}
+\usepackage{color}
+\usepackage{listings}
+
+\definecolor{lightgray}{gray}{0.95}
+\definecolor{mediumgray}{gray}{0.6}
+\definecolor{darkblue}{rgb}{0,0,0.9}
+\definecolor{orange}{rgb}{0.8,0.5,0}
+\definecolor{brown}{rgb}{0.4,0.2,0}
+
+\lstset{
+  basicstyle=\ttfamily,
+  backgroundcolor=\color{lightgray},
+  showstringspaces=false,
+  extendedchars=true,
+  tabsize=2,
+  sensitive=false,
+  mathescape=false,
+}
+
+\lstset{
+  language=PHP,
+  keywordstyle=\color{darkblue},
+  commentstyle=\color{mediumgray},
+  stringstyle=\color{orange},
+  identifierstyle=\color{brown},
+  otherkeywords={public,protected,function,return}
+}
+
+\newenvironment{code}[1][]{\smallskip\noindent\textbf{#1}}{}
+\newcommand{\fielddef}[4]{\texttt{\small #1} & \texttt{\small <#2>} & \texttt{\small #3} & \footnotesize{#4} \\}
+\newcommand{\validator}[3][]{\texttt{\small #2} & #1 & \small{#3} \\}
+
+\title{CoCeSo\\Prototyp CakePHP\\Schnittstellendokumentation}
+\author{Daniel Rohr}
+\date{20.\ August 2013}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\pagebreak
+
+
+\section{Allgemeine Beschreibung der CRUD-Schnittstellen}
+
+Die Datenausgabe kann in \emph{HTML} (default) oder \emph{JSON} erfolgen. Zur Erzeugung von JSON wird der Header \texttt{Accept: application/json} gesetzt oder an das Ende der URL \texttt{.json} angefügt.
+Für JSON wird ein Objekt als Root-Element ausgegeben, das als Variablen die einzelnen Datenobjekte enthält. In der Folge wird die Bedienung der Schnittstellen über JSON beschrieben.
+
+\subsection{Create}
+
+Die Erzeugung eines Eintrages erfolgt durch die Methode \emph{add} im jeweiligen Controller, die durch \texttt{/\emph{controller}/add} via \emph{POST} aufzurufen ist. Die Daten werden als POST-Body im Array \texttt{data[\emph{Model}]} übergeben. Dabei darf kein Feld für die ID vorhanden sein, ansonsten wird der \emph{HTTP-Fehler 400 Bad Request} zurückgegeben.
+
+Die Antwort für JSON ist einerseits ein boolscher Wert \texttt{success}. Im Erfolgsfall wird weiters die ID des eingefügten Eintrags im Feld \texttt{id} ausgegeben. Falls Fehler aufgetreten sind wird ein Objekt \texttt{errors} ausgegeben, das für jedes fehlerhafte Datenfeld ein Array der fehlgeschlagenen Validierungen enthält.
+
+\begin{code}[Request]
+\begin{lstlisting}
+POST /controller/add HTTP/1.1
+Accept: application/json
+
+data[Model][column1]=value1
+data[Model][column2]=value2
+...
+\end{lstlisting}
+\end{code}
+\begin{code}[Antwort bei Erfolg]
+\begin{lstlisting}
+{"success":true,"id":"1"}
+\end{lstlisting}
+\end{code}
+\begin{code}[Antwort bei Fehler]
+\begin{lstlisting}
+{"success":false,"errors":{"column1":["error1","error2"],...}}
+\end{lstlisting}
+\end{code}
+
+\subsection{Read}
+
+\subsubsection{Auslesen aller Einträge}
+
+Über die \emph{index}-Methode des Controllers, die neben \texttt{/\emph{controller}/index} auch direkt durch \texttt{/\emph{controller}} erreichbar ist, werden die vorhandenen Einträge aufgelistet.
+Die JSON-Ausgabe unterscheidet sich dabei leicht von der oben beschriebenen. Das Root-Element ist ein Array, das die einzelnen Einträge als Objekte enthält.
+
+Diese Schnittstelle muss noch um Filtermöglichkeiten erweitert werden und sollte in der Ausgabe Informationen zur Seitenschaltung enthalten.
+
+\subsubsection{Auslesen eines bestimmten Eintrags}
+
+Ein bestimmter Eintrag kann durch \texttt{/\emph{controller}/view/\emph{id}} ausgelesen werden.
+Dabei werden auch die dazu in Beziehung stehenden Elemente ausgegeben.
+Die Anforderung eines nicht existierenden Eintrages erzeugt den \emph{HTTP-Fehler 404 Not Found}.
+
+\begin{code}[Request]
+\begin{lstlisting}
+GET /controller/view/1 HTTP/1.1
+Accept: application/json
+\end{lstlisting}
+\end{code}
+\begin{code}[Antwort]
+\begin{lstlisting}
+{"Model":{"id":"1","field1":"value1","field2":"value2",...},
+ "AssociatedModel1":[{"id":"1","fieldx":"valuex",...},{...}]}
+\end{lstlisting}
+\end{code}
+
+\subsection{Update}
+
+Die Änderung eines existierenden Eintrages erfolgt durch Aufruf der \emph{edit}-Methode über POST. Die Daten werden dabei wie beim Hinzufügen eines Eintrages übergeben. Die ID kann wie beim Auslesen durch den Aufruf mittels \texttt{/\emph{controller}/edit/\emph{id}} oder im POST-Body mit den restlichen Daten übergeben werden. Dabei ist zu beachten, dass ein \emph{HTTP-Fehler 400 Bad Request} erzeugt wird, wenn beide Werte gesetzt sind, aber nicht übereinstimmen. Existiert der Eintrag nicht wird wieder der \emph{HTTP-Fehler 404 Not Found} zurückgegeben.
+Die Ausgabe entspricht der \emph{add}-Methode.
+
+\begin{code}[Request: ID via URL]
+\begin{lstlisting}
+POST /controller/edit/1 HTTP/1.1
+Accept: application/json
+
+data[Model][column1]=newvalue1
+...
+\end{lstlisting}
+\end{code}
+\begin{code}[Request: ID via POST]
+\begin{lstlisting}
+POST /controller/edit HTTP/1.1
+Accept: application/json
+
+data[Model][id]=1
+data[Model][column1]=newvalue1
+...
+\end{lstlisting}
+\end{code}
+\begin{code}[Antwort bei Erfolg]
+\begin{lstlisting}
+{"success":true,"id":"1"}
+\end{lstlisting}
+\end{code}
+\begin{code}[Antwort bei Fehler]
+\begin{lstlisting}
+{"success":false,"errors":{"column1":["error1","error2"],...}}
+\end{lstlisting}
+\end{code}
+
+\subsection{Delete}
+
+Im Prototyp ist für keine der Entitäten die Möglichkeit der Löschung eines Eintrags vorgesehen.
+
+\section{Liste aller Schnittstellen}
+
+\begin{tabular}{lll}
+& URL & Methode \\
+\hline
+\ref{incidents.create} & \texttt{/incidents/add}   & \texttt{POST} \\
+\ref{incidents.read}   & \texttt{/incidents/index} & \texttt{GET} \\
+\ref{incidents.read}   & \texttt{/incidents/view}  & \texttt{GET} \\
+\ref{incidents.update} & \texttt{/incidents/edit}  & \texttt{POST} \\
+\hline
+\ref{units.create} & \texttt{/units/add}   & \texttt{POST} \\
+\ref{units.read}   & \texttt{/units/index} & \texttt{GET} \\
+\ref{units.read}   & \texttt{/units/view}  & \texttt{GET} \\
+\ref{units.update} & \texttt{/units/edit}  & \texttt{POST} \\
+\hline
+\ref{incidentsunits.create} & \texttt{/incidents\_units/add}   & \texttt{POST} \\
+\ref{incidentsunits.update} & \texttt{/incidents\_units/edit}  & \texttt{POST} \\
+\end{tabular}
+
+\bigskip In der Folge kennzeichnet \emph{r} lesbare Felder, \emph{rw} les- und schreibbare Felder und \emph{*} Pflichtfelder. Fettgedruckte Werte werden als Standardwert gewählt, wenn keiner angegeben ist.
+
+\section{Entität \emph{Incident}}
+
+\subsection{Felder}
+
+\begin{tabular}{llll}
+\fielddef{id}   {unsigned int} {r}  {Primary Key, beim Einfügen automatisch generiert}
+\fielddef{created}  {datetime} {r}  {Erstellungszeit, automatisch gesetzt}
+\fielddef{modified} {datetime} {r}  {Letzte Änderung, automatisch gesetzt}
+\fielddef{finished} {datetime} {r}  {Abschluss des Vorfalls automatisch mit \texttt{status=4} gesetzt}
+\fielddef{type}     {tinyint}  {rw} {Typ des Vorfalls: 1-Info, 2-Verlegung, 3-Auftrag/Einsatz}
+\fielddef{priority} {boolean}  {rw} {Einsatzmäßige Durchführung/Verwendung der Sondersignale}
+\fielddef{text}     {text}     {rw} {Einsatztext: Freitext}
+\fielddef{comment}  {text}     {rw} {Zusätzlicher Kommentar: Freitext}
+\fielddef{status}   {tinyint}  {rw} {Status: 0-Neu, 1-Offen, 2-Disponiert, 3-in Arbeit, 4-Abgeschlossen}
+\end{tabular}
+
+\subsection{Create}\label{incidents.create}
+
+Die Erstellung erfolgt durch POST an \texttt{/incidents/add}. Zulässige Werte sind:
+
+\smallskip\noindent\begin{tabular}{lcl}
+\validator[*]{type}{1,2,3}
+\validator{priority}{0,1}
+\validator{text}{beliebig}
+\validator{comment}{beliebig}
+\validator{status}{\textbf{0},1,2,3,4}
+\end{tabular}\smallskip
+
+Für die Status \emph{Disponiert} und \emph{in Arbeit} gilt dabei die Einschränkung, dass mindestens eine Einheit (siehe \ref{incidentsunits.fields}) \emph{Zugewiesen}/\emph{ZBO} resp. \emph{BO}/\emph{ZAO}/\emph{AO} sein muss. Setzen des Status \emph{Abgeschlossen} bewirkt, dass sämtliche zugewiesenen Einheiten auf \emph{Nicht zugewiesen} gesetzt werden.
+
+\begin{code}[Request]
+\begin{lstlisting}
+POST /incidents/add HTTP/1.1
+Accept: application/json
+
+data[Incident][type]=2
+data[Incident][text]=Einsatztext
+\end{lstlisting}
+\end{code}
+
+\subsection{Read}\label{incidents.read}
+
+Einzelne Einträge enhalten neben dem \texttt{Incident}-Element noch ein Array \texttt{Unit}, das sämtliche zugeordneten Einheiten enthält. Zu jeder zugeordneten Einheit wird auch der Status der Zuordnung ausgegeben.
+
+\begin{code}[Request]
+\begin{lstlisting}
+GET /incidents/view/1 HTTP/1.1
+Accept: application/json
+\end{lstlisting}
+\end{code}
+\begin{code}[Antwort]
+\begin{lstlisting}
+{
+  "Incident":{
+    "id":"1",
+    "created":"2013-07-26 10:00:00",
+    "modified":"2013-07-26 12:00:00",
+    "finished":null,
+    "type":"2", "priority":false,
+    "text":"Einsatztext", "comment":"", "status":"3"
+  },
+  "Unit":[{
+    "id":"2", "name":"Trupp 2", "short":"TRP2",
+    "type":"Trupp", "status":"2",
+    "IncidentsUnit":{
+      "id":"1", "incident_id":"1", "unit_id":"2",
+      "status":"3", "modified":"2013-07-26 18:00:00"
+    }
+  }]
+}
+\end{lstlisting}
+\end{code}
+
+\subsection{Update}\label{incidents.update}
+
+Die Bearbeitung erfolgt durch POST an \texttt{/incidents/edit}. Für die Werte gelten dabei die selben Regeln wie in \ref{incidents.create}, wobei \texttt{type} nicht verpflichtend angegeben werden muss. Der Status \emph{Neu} kann nicht mehr gesetzt werden, wenn zuvor bereits ein anderer gesetzt war.
+
+\section{Entität \emph{Unit}}
+
+\subsection{Felder}
+
+\begin{tabular}{llll}
+\fielddef{id}     {unsigned int} {r}  {Primary Key, beim Einfügen automatisch generiert}
+\fielddef{name}   {varchar(30)}  {rw} {Funkrufname der Einheit}
+\fielddef{short}  {varchar(30)}  {rw} {Abkürzung der Einheit}
+\fielddef{type}   {enum}         {rw} {Typ der Einheit: 'Trupp', 'KFZ'}
+\fielddef{status} {tinyint}      {rw} {Status: 0-AD, 1-NEB, 2-EB, 3-Bereitschaft}
+\end{tabular}
+
+\subsection{Create}\label{units.create}
+Die Erstellung erfolgt durch POST an \texttt{/units/add}. Zulässige Werte sind:
+
+\smallskip\noindent\begin{tabular}{lcl}
+\validator[*]{name}{eindeutig}
+\validator[*]{short}{eindeutig}
+\validator[*]{type}{'Trupp','KFZ'}
+\validator{status}{\textbf{0},1,2,3}
+\end{tabular}
+
+\subsection{Read}\label{units.read}
+
+Einzelne Einträge enhalten neben dem \texttt{Unit}-Element analog zu \ref{incidents.read} noch ein Array \texttt{Incident}, das sämtliche zugeordneten Einheiten enthält.
+
+\begin{code}[Request]
+\begin{lstlisting}
+GET /units/view/2 HTTP/1.1
+Accept: application/json
+\end{lstlisting}
+\end{code}
+\begin{code}[Antwort]
+\begin{lstlisting}
+{
+  "Unit":{
+    "id":"2", "name":"Trupp 2", "short":"TRP2",
+    "type":"Trupp", "status":"2",
+  },
+  "Incident":[{
+    "id":"1",
+    "created":"2013-07-26 10:00:00",
+    "modified":"2013-07-26 12:00:00",
+    "finished":null,
+    "type":"2", "priority":false,
+    "text":"Einsatztext", "comment":"", "status":"3"
+    "IncidentsUnit":{
+      "id":"1", "incident_id":"1", "unit_id":"2",
+      "status":"3", "modified":"2013-07-26 18:00:00"
+    }
+  }]
+}
+\end{lstlisting}
+\end{code}
+
+\subsection{Update}\label{units.update}
+
+Die Bearbeitung erfolgt durch POST an \texttt{/units/edit}. Für die Werte gelten dabei die selben Regeln wie in \ref{units.create}, wobei es keine Pflichtfelder gibt.
+
+
+\section{Entität \emph{IncidentsUnit}}
+
+Diese Entität verknüpft Vorfälle und Einsätze in einer n:n-Beziehung.
+
+\subsection{Felder}\label{incidentsunits.fields}
+
+\begin{tabular}{llll}
+\fielddef{id}           {unsigned int} {r}  {Primary Key, beim Einfügen automatisch generiert}
+\fielddef{incident\_id} {unsigned int} {rw} {Foreign key zum Vorfall}
+\fielddef{unit\_id}     {unsigned int} {rw} {Foreign key zur Einheit}
+\fielddef{status}       {tinyint}      {rw} {Status: 0-Nicht zug., 1-Zug., 2-ZBO, 3-BO, 4-ZAO, 5-AO}
+\fielddef{modified}     {datetime}     {r}  {Letzte Änderung, automatisch gesetzt}
+\end{tabular}
+
+\subsection{Create}\label{incidentsunits.create}
+
+Die Erstellung erfolgt durch POST an \texttt{/incidents\_units/add}. Die Felder \texttt{incident\_id} und \texttt{unit\_id} müssen auf existierende Vorfälle bzw. Einheiten verweisen. Jedes Paar \texttt{Incident-Unit} darf nur einmal vorkommen. Zulässige Werte für den Status sind 0,\textbf{1},2,3,4,5.
+
+\subsection{Read}\label{incidentsunits.read}
+
+Es gibt keine Read-Methoden.
+
+\subsection{Update}\label{incidentsunits.update}
+
+Die Bearbeitung erfolgt durch POST an \texttt{/incidents\_units/edit}. Nur der Status kann verändert werden, zulässige Werte sind wie in \ref{incidentsunits.create}.
+
+\end{document}

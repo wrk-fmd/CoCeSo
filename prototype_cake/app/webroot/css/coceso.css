@@ -1,0 +1,15 @@
+@charset "utf-8";
+
+ul#navbar li {
+  list-style: none;
+  display: inline;
+}
+
+ul#navbar li a {
+  color: #FFFFFF;
+  text-decoration: none;
+}
+
+ul#navbar li a:hover {
+  text-decoration: underline;
+}
