@@ -11,4 +11,25 @@ public class WelcomeController {
         return "index";
     }
 
+    @RequestMapping("/main")
+    public String showMain() {
+        return "main";
+    }
+
+    @RequestMapping("/welcome")
+    public String showWelcome() {
+        return "welcome";
+    }
+
+    @RequestMapping("/dashboard")
+    public String showDashboard() {
+        return "dashboard";
+    }
+
+    @RequestMapping("/create")
+    public String showCreate() {
+        return "create";
+    }
+
+
 }
