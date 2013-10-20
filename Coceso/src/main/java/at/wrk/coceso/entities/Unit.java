@@ -1,43 +1,31 @@
 package at.wrk.coceso.entities;
 
 
-import javax.persistence.*;
 import java.util.List;
 
-@Entity
-@Table(name = "units")
 public class Unit {
-    @Id
-    @GeneratedValue
-    int id;
 
-    @ManyToOne
-    Case aCase;
+    private int id;
 
-    @Enumerated(EnumType.STRING)
-    UnitState state;
+    private Case aCase;
 
-    @Basic
-    String call;
+    private UnitState state;
 
-    @Basic
-    boolean withDoc;
+    private String call;
 
-    @Basic
-    boolean portable;
+    private String ani; // Radio ID
 
-    @Basic
-    boolean transportVehicle;
+    private boolean withDoc;
 
-    @ManyToMany
-    List<Person> crew;
+    private boolean portable;
 
-    @Basic
-    String info;
+    private boolean transportVehicle;
 
-    @ManyToMany
-    @JoinColumn
-    CocesoPOI position;
+    private List<Person> crew;
 
+    private String info;
 
+    private CocesoPOI position;
+
+    private CocesoPOI home;
 }

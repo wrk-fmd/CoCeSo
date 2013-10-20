@@ -23,11 +23,13 @@ public class WelcomeController {
 
     @RequestMapping("/dashboard")
     public String showDashboard() {
+        // not used in v1.0
         return "dashboard";
     }
 
     @RequestMapping("/create")
     public String showCreate() {
+
         return "create";
     }
 
