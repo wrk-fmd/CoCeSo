@@ -6,7 +6,7 @@ public class Case {
 
     private CocesoPOI place;
 
-    private String organisator;
+    private String organiser;
 
     private int pax;
 }

@@ -12,5 +12,12 @@
         <property name="suffix" value=".jsp"/>
     </bean>
 
+    <!-- TODO set db connection config  -->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.SingleConnectionDataSource">
+        <property name="driverClassName" value="org.postgresql.Driver"/>
+        <property name="url" value="jdbc:postgresql://localhost:1234/"/>
+        <property name="username" value="user"/>
+        <property name="password" value="pw"/>
+    </bean>
 
 </beans>
