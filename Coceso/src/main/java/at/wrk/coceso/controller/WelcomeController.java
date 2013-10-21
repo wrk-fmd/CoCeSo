@@ -4,10 +4,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/coceso")
 public class WelcomeController {
 
-    @RequestMapping("/")
+    @RequestMapping("/index")
     public String showIndex() {
         return "index";
     }
