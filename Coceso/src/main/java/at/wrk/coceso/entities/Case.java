@@ -2,11 +2,11 @@ package at.wrk.coceso.entities;
 
 public class Case {
 
-    private int id;
+    public int id;
 
-    private CocesoPOI place;
+    public CocesoPOI place;
 
-    private String organiser;
+    public String organiser;
 
-    private int pax;
+    public int pax;
 }

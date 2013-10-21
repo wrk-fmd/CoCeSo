@@ -20,7 +20,7 @@ public abstract class CocesoDao<E> {
 
     public abstract E getById(int id);
 
-    public abstract List<E> getAll(Case caze);
+    public abstract List<E> getAll(int case_id);
 
     public abstract boolean update(E e);
 

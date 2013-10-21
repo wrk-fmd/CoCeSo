@@ -5,27 +5,27 @@ import java.util.List;
 
 public class Unit {
 
-    private int id;
+    public int id;
 
-    private Case aCase;
+    public Case aCase;
 
-    private UnitState state;
+    public UnitState state;
 
-    private String call;
+    public String call;
 
-    private String ani; // Radio ID
+    public String ani; // Radio ID
 
-    private boolean withDoc;
+    public boolean withDoc;
 
-    private boolean portable;
+    public boolean portable;
 
-    private boolean transportVehicle;
+    public boolean transportVehicle;
 
-    private List<Person> crew;
+    public List<Person> crew;
 
-    private String info;
+    public String info;
 
-    private CocesoPOI position;
+    public CocesoPOI position;
 
-    private CocesoPOI home;
+    public CocesoPOI home;
 }
