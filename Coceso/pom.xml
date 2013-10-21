@@ -93,7 +93,7 @@
     </dependencies>
 
     <build>
-        <finalName>Coceso</finalName>
+        <finalName>coceso</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
