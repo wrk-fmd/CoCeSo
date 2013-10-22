@@ -1,3 +1,4 @@
+
 package at.wrk.coceso.controller;
 
 import at.wrk.coceso.dao.UnitDao;
@@ -17,25 +18,25 @@ public class UnitController implements IEntityController<Unit> {
     private UnitDao dao;
 
     @RequestMapping(value = "getAll", produces = "application/json")
-    public List<Unit> getAll(@CookieValue("active_case") int case_id) {
+    public @ResponseBody List<Unit> getAll(@CookieValue("active_case") int case_id) {
 
         return dao.getAll(case_id);
     }
 
     @RequestMapping(value = "get", produces = "application/json", method = RequestMethod.POST)
-    public Unit getByPost(@RequestParam(value = "id", required = true) int id) {
+    public @ResponseBody Unit getByPost(@RequestParam(value = "id", required = true) int id) {
 
         return dao.getById(id);
     }
 
     @RequestMapping(value = "get/{id}", produces = "application/json", method = RequestMethod.GET)
-    public Unit getByGet(@PathVariable("id") int id) {
+    public @ResponseBody Unit getByGet(@PathVariable("id") int id) {
 
         return getByPost(id);
     }
 
     @RequestMapping(value = "update", produces = "application/json", method = RequestMethod.POST)
-    public String update(Unit unit, BindingResult result) {
+    public @ResponseBody String update(Unit unit, BindingResult result) {
         if(result.hasErrors()) {
             return "{success: false}";
         }
@@ -47,7 +48,7 @@ public class UnitController implements IEntityController<Unit> {
     }
 
     @RequestMapping(value = "sendHome", produces = "application/json", method = RequestMethod.POST)
-    public Unit sendHome(int unitId) {
+    public @ResponseBody Unit sendHome(int unitId) {
 
         return dao.sendHome(unitId);
     }
