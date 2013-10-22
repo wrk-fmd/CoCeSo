@@ -22,16 +22,16 @@ public class CrewDao {
 
 
     public List<Person> getByUnitId(int unit_id) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
 
     public boolean remove(Unit unit, Person person) {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return false;
     }
 
 
     public boolean add(Unit unit, Person person) {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return false;
     }
 }
