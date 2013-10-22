@@ -1,20 +1,20 @@
 package at.wrk.coceso.entities;
 
 public class Person {
-    private int id;
+    public int id;
 
-    private Case activeCase;
+    public Case activeCase;
 
-    private String given_name;
-    private String sur_name;
+    public String given_name;
+    public String sur_name;
 
-    private int dNr;
+    public int dNr;
 
-    private String contact;
+    public String contact;
 
-    private boolean allowLogin;
+    public boolean allowLogin;
 
-    private String hashedPW;
+    public String hashedPW;
 
 
 }

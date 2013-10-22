@@ -2,14 +2,14 @@ package at.wrk.coceso.entities;
 
 public class CocesoPOI {
 
-    private int id;
+    public int id;
 
-    private String address;
+    public String address;
 
-    private double longitude;
+    public double longitude;
 
-    private double latitude;
+    public double latitude;
 
-    private int minimumUnits;
+    public int minimumUnits;
 
 }

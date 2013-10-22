@@ -47,9 +47,9 @@ public class UnitController implements IEntityController<Unit> {
     }
 
     @RequestMapping(value = "sendHome", produces = "application/json", method = RequestMethod.POST)
-    public String sendHome(int unitId) {
+    public Unit sendHome(int unitId) {
 
-        return "{success: " + dao.sendHome(unitId) + "}";
+        return dao.sendHome(unitId);
     }
 
 }

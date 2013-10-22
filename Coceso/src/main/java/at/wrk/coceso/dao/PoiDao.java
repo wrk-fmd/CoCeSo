@@ -34,4 +34,9 @@ public class PoiDao extends CocesoDao<CocesoPOI> {
     public boolean add(CocesoPOI cocesoPOI) {
         return false;
     }
+
+    @Override
+    public boolean remove(CocesoPOI cocesoPOI) {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 }

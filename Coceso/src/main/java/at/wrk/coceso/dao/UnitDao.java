@@ -2,7 +2,6 @@ package at.wrk.coceso.dao;
 
 
 import at.wrk.coceso.dao.mapper.UnitMapper;
-import at.wrk.coceso.entities.Case;
 import at.wrk.coceso.entities.Unit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -24,10 +23,11 @@ public class UnitDao extends CocesoDao<Unit> {
     public Unit getById(int id) {
         if(id < 1) return null;
 
+        String q = "select * from units where id = ?";
         Unit unit;
 
         try {
-            unit = jdbc.queryForObject("select * from units where id = ?", new Object[] {id}, new UnitMapper());
+            unit = jdbc.queryForObject(q, new Object[] {id}, new UnitMapper());
         } catch(IncorrectResultSizeDataAccessException e) {
             unit = null;
         } catch(DataAccessException dae) {
@@ -39,8 +39,10 @@ public class UnitDao extends CocesoDao<Unit> {
 
     @Override
     public List<Unit> getAll(int case_id) {
+        String q = "select * from units where aCase = " + case_id;
+
         try {
-            return jdbc.query("select * from units where aCase = " + case_id, new UnitMapper());
+            return jdbc.query(q, new UnitMapper());
         } catch(DataAccessException dae) {
                 return null;
         }
@@ -54,11 +56,40 @@ public class UnitDao extends CocesoDao<Unit> {
 
     @Override
     public boolean add(Unit unit) {
+        if(unit.aCase == null) return false;
+
+        try {
+            if(unit.home == null && unit.position == null){
+                String q = "insert into units (aCase, state, call, ani, withDoc, portable, transportVehicle, info) values (?, ?, ?, ?, ?, ?, ?, ?)";
+                jdbc.update(q, unit.aCase.id, unit.state, unit.call, unit.ani, unit.withDoc, unit.portable, unit.transportVehicle, unit.info);
+
+            }
+            else if(unit.home == null) {
+                String q = "insert into units (aCase, state, call, ani, withDoc, portable, transportVehicle, info, position) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                jdbc.update(q, unit.aCase.id, unit.state, unit.call, unit.ani, unit.withDoc, unit.portable, unit.transportVehicle, unit.info, unit.position.id);
+            }
+            else if(unit.position == null) {
+                String q = "insert into units (aCase, state, call, ani, withDoc, portable, transportVehicle, info, home) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                jdbc.update(q, unit.aCase.id, unit.state, unit.call, unit.ani, unit.withDoc, unit.portable, unit.transportVehicle, unit.info, unit.home.id);
+            }
+            else {
+                String q = "insert into units (aCase, state, call, ani, withDoc, portable, transportVehicle, info, position, home) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                jdbc.update(q, unit.aCase.id, unit.state, unit.call, unit.ani, unit.withDoc, unit.portable, unit.transportVehicle, unit.info, unit.position.id, unit.home.id);
+            }
+            return true;
+        } catch (DataAccessException dae) {
+            return false;
+        }
+
+    }
+
+    @Override
+    public boolean remove(Unit unit) {
         return false;
     }
 
-    public boolean sendHome(int id) {
+    public Unit sendHome(int id) {
 
-        return false;
+        return null;
     }
 }

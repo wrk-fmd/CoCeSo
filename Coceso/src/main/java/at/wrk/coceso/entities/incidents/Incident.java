@@ -6,25 +6,25 @@ import at.wrk.coceso.entities.*;
 import java.util.*;
 
 public class Incident {
-    protected int id;
+    public int id;
 
-    protected Case aCase;
+    public Case aCase;
 
-    protected IncidentState state;
+    public IncidentState state;
 
-    protected int priority;
+    public int priority;
 
-    protected boolean blue;
+    public boolean blue;
 
-    protected Map<Unit, TaskState> units;
+    public Map<Unit, TaskState> units;
 
-    protected CocesoPOI bo;
+    public CocesoPOI bo;
 
-    protected CocesoPOI ao;
+    public CocesoPOI ao;
 
-    protected String info;
+    public String info;
 
-    protected String caller;
+    public String caller;
 
 
 }

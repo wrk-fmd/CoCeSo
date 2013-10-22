@@ -34,4 +34,9 @@ public class IncidentDao extends CocesoDao<Incident> {
     public boolean add(Incident incident) {
         return false;
     }
+
+    @Override
+    public boolean remove(Incident incident) {
+        return false;
+    }
 }
