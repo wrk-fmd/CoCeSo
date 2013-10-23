@@ -1,11 +1,16 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
     <context:component-scan base-package="at.wrk.coceso"/>
+    <mvc:annotation-driven />
 
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/pages/"/>
@@ -15,7 +20,7 @@
     <!-- TODO set db connection config  -->
     <bean id="dataSource" class="org.springframework.jdbc.datasource.SingleConnectionDataSource">
         <property name="driverClassName" value="org.postgresql.Driver"/>
-        <property name="url" value="jdbc:postgresql://localhost:1234/"/>
+        <property name="url" value="jdbc:postgresql://localhost:5432/coceso/" />
         <property name="username" value="user"/>
         <property name="password" value="pw"/>
     </bean>

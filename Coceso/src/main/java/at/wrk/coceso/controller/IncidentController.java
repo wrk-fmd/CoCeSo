@@ -19,25 +19,29 @@ public class IncidentController implements IEntityController<Incident> {
 
     @Override
     @RequestMapping(value = "getAll", produces = "application/json")
-    public @ResponseBody List<Incident> getAll(int caseId) {
+    @ResponseBody
+    public List<Incident> getAll(int caseId) {
         return null;
     }
 
     @Override
     @RequestMapping(value = "get", produces = "application/json", method = RequestMethod.POST)
-    public @ResponseBody Incident getByPost(@RequestParam("id") int id) {
+    @ResponseBody
+    public Incident getByPost(@RequestParam("id") int id) {
         return null;
     }
 
     @Override
     @RequestMapping(value = "get/{id}", produces = "application/json", method = RequestMethod.GET)
-    public @ResponseBody Incident getByGet(@PathVariable("id") int id) {
+    @ResponseBody
+    public Incident getByGet(@PathVariable("id") int id) {
         return getByPost(id);
     }
 
     @Override
     @RequestMapping(value = "update", produces = "application/json", method = RequestMethod.POST)
-    public @ResponseBody String update(Incident incident, BindingResult result) {
+    @ResponseBody
+    public String update(Incident incident, BindingResult result) {
         return null;
     }
 

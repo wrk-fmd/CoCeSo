@@ -3,7 +3,10 @@ package at.wrk.coceso.controller;
 
 import at.wrk.coceso.dao.UnitDao;
 import at.wrk.coceso.entities.Unit;
+import at.wrk.coceso.entities.UnitState;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -18,37 +21,42 @@ public class UnitController implements IEntityController<Unit> {
     private UnitDao dao;
 
     @RequestMapping(value = "getAll", produces = "application/json")
-    public @ResponseBody List<Unit> getAll(@CookieValue("active_case") int case_id) {
+    @ResponseBody
+    public List<Unit> getAll(@CookieValue("active_case") int case_id) {
 
         return dao.getAll(case_id);
     }
 
     @RequestMapping(value = "get", produces = "application/json", method = RequestMethod.POST)
-    public @ResponseBody Unit getByPost(@RequestParam(value = "id", required = true) int id) {
+    @ResponseBody
+    public Unit getByPost(@RequestParam(value = "id", required = true) int id) {
 
         return dao.getById(id);
     }
 
     @RequestMapping(value = "get/{id}", produces = "application/json", method = RequestMethod.GET)
-    public @ResponseBody Unit getByGet(@PathVariable("id") int id) {
+    @ResponseBody
+    public Unit getByGet(@PathVariable("id") int id) {
 
         return getByPost(id);
     }
 
     @RequestMapping(value = "update", produces = "application/json", method = RequestMethod.POST)
-    public @ResponseBody String update(Unit unit, BindingResult result) {
+    @ResponseBody
+    public String update(@RequestBody Unit unit, BindingResult result) {
         if(result.hasErrors()) {
-            return "{success: false}";
+            return "{\"success\": false, description: \"Binding Error\"}";
         }
         if(unit.id < 1) {
-            return "{success: " + dao.add(unit) + "}";
+            return "{\"success\": " + dao.add(unit) + ", \"new\": true}";
         }
 
-        return "{success: " + dao.update(unit) + "}";
+        return "{\"success\": " + dao.update(unit) + ", \"new\": false}";
     }
 
     @RequestMapping(value = "sendHome", produces = "application/json", method = RequestMethod.POST)
-    public @ResponseBody Unit sendHome(int unitId) {
+    @ResponseBody
+    public Unit sendHome(int unitId) {
 
         return dao.sendHome(unitId);
     }

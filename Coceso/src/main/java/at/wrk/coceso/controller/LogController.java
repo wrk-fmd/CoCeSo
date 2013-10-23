@@ -10,13 +10,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class LogController {
 
     @RequestMapping("get")
-    public @ResponseBody String getLog() { //TODO optional Parameters Unit, Incident
+    @ResponseBody
+    public String getLog() { //TODO optional Parameters Unit, Incident
 
         return "";
     }
 
     @RequestMapping("add")
-    public @ResponseBody String addEntry() {
+    @ResponseBody
+    public String addEntry() {
 
         return "";
     }
