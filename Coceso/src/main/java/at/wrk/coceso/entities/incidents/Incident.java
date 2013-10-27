@@ -22,6 +22,8 @@ public class Incident {
 
     public CocesoPOI ao;
 
+    public String casusNumber;  //TODO
+
     public String info;
 
     public String caller;
