@@ -72,8 +72,8 @@ public class UnitDao extends CocesoDao<Unit> {
     /**
      * Update Unit. Only Values state, info, position, home are changeable. All others are LOCKED!
      * To change these, use updateOnCreate(Unit).
-     * @param unit
-     * @return
+     * @param unit Unit to write to DB
+     * @return Success of Operation
      */
     @Override
     public boolean update(Unit unit) {
@@ -117,7 +117,7 @@ public class UnitDao extends CocesoDao<Unit> {
                 q += ",";
             }
             q += " home = " + unit.home.id;
-            first = false;
+            // first = false;
         }
         q += suf_q;
         try {
@@ -135,7 +135,7 @@ public class UnitDao extends CocesoDao<Unit> {
         return true;
     }
 
-    public boolean updateOnCreate(Unit unit) {
+    public boolean updateFull(Unit unit) {
          return false;
     }
 

@@ -11,4 +11,9 @@ public class Case {
     public String organiser;
 
     public int pax;
+
+    public void prepareNotNull() {
+        if(name == null) name = "";
+        if(organiser == null) organiser = "";
+    }
 }

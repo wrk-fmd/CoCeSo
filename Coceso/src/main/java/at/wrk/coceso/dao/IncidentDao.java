@@ -15,6 +15,9 @@ import java.util.List;
 public class IncidentDao extends CocesoDao<Incident> {
 
     @Autowired
+    private IncidentMapper incidentMapper;
+
+    @Autowired
     public IncidentDao(DataSource dataSource) {
         super(dataSource);
     }
@@ -30,7 +33,7 @@ public class IncidentDao extends CocesoDao<Incident> {
         Incident incident;
 
         try {
-            incident = jdbc.queryForObject(q, new Object[] {id}, new IncidentMapper());
+            incident = jdbc.queryForObject(q, new Object[] {id}, incidentMapper);
         }
         catch(IncorrectResultSizeDataAccessException e) {
             Logger.error("IncidentDao.getById(int): requested id: " + id + "; "+e.getMessage());
@@ -51,6 +54,11 @@ public class IncidentDao extends CocesoDao<Incident> {
 
     @Override
     public boolean update(Incident incident) {
+        return false;
+    }
+
+    @Override
+    public boolean updateFull(Incident incident) {
         return false;
     }
 

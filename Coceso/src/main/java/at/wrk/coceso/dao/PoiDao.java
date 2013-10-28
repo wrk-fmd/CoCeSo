@@ -31,6 +31,11 @@ public class PoiDao extends CocesoDao<CocesoPOI> {
     }
 
     @Override
+    public boolean updateFull(CocesoPOI cocesoPOI) {
+        return false;
+    }
+
+    @Override
     public boolean add(CocesoPOI cocesoPOI) {
         return false;
     }

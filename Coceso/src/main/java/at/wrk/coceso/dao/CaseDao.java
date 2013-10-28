@@ -31,6 +31,11 @@ public class CaseDao extends CocesoDao<Case> {
     }
 
     @Override
+    public boolean updateFull(Case aCase) {
+        return false;
+    }
+
+    @Override
     public boolean add(Case aCase) {
         return false;
     }
