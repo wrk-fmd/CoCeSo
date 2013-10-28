@@ -55,7 +55,7 @@ public class UnitController implements IEntityController<Unit> {
     @ResponseBody
     public Unit sendHome(int unitId) {
 
-        return dao.sendHome(unitId);
+        return null;
     }
 
 }
