@@ -17,6 +17,7 @@ CREATE TABLE cocesopois (
 CREATE TABLE cases (
   id INTEGER NOT NULL DEFAULT nextval('cases_id_seq'),
   place INTEGER,
+  name VARCHAR(64) NOT NULL,
   organiser VARCHAR (64) NOT NULL,
   pax INTEGER,
   PRIMARY KEY (id),
@@ -72,6 +73,7 @@ CREATE TABLE incidents (
   ao INTEGER,
   info VARCHAR (64),
   caller VARCHAR (32),
+  casusNr VARCHAR (20),
   PRIMARY KEY (id),
   FOREIGN KEY (aCase) REFERENCES cases ON DELETE CASCADE,
   FOREIGN KEY (bo) REFERENCES cocesopois ON DELETE SET NULL,

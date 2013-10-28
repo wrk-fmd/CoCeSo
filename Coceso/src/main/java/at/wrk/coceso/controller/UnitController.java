@@ -3,10 +3,7 @@ package at.wrk.coceso.controller;
 
 import at.wrk.coceso.dao.UnitDao;
 import at.wrk.coceso.entities.Unit;
-import at.wrk.coceso.entities.UnitState;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
