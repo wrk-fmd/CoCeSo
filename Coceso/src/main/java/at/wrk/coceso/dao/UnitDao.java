@@ -51,19 +51,89 @@ public class UnitDao extends CocesoDao<Unit> {
 
     @Override
     public List<Unit> getAll(int case_id) {
+        if(case_id < 1) {
+            Logger.warning("UnitDao.getAll: invalid case_id: "+case_id);
+            return null;
+        }
         String q = "select * from units where aCase = '" + case_id + "'";
 
         try {
             return jdbc.query(q, new UnitMapper());
         }
         catch(DataAccessException dae) {
-                return null;
+            Logger.error("UnitDao.getAll: DataAccessException: "+dae.getMessage());
+            return null;
         }
     }
 
+    /**
+     * Update Unit. Only Values state, info, position, home are changeable. All others are LOCKED!
+     * To change these, use updateOnCreate(Unit).
+     * @param unit
+     * @return
+     */
     @Override
     public boolean update(Unit unit) {
-        return false;
+        if(unit == null) {
+            Logger.error("UnitDao.update(Unit): unit is NULL");
+            return false;
+        }
+        if(unit.id <= 0) {
+            Logger.error("UnitDao.update(Unit): Invalid id: " + unit.id + ", call: "+unit.call);
+            return false;
+        }
+
+        final String pre_q = "update units set";
+        final String suf_q = " where id = " + unit.id;
+
+        boolean first = true;
+        boolean info_given = false;
+
+        String q = pre_q;
+        if(unit.state != null) {
+            q += " state = '" + unit.state.name() + "'";
+            first = false;
+        }
+        if(unit.info != null) {
+            if(!first) {
+                q += ",";
+            }
+            q += " info = '?'";
+            info_given = true;
+            first = false;
+        }
+        if(unit.position != null && unit.position.id > 0) {
+            if(!first) {
+                q += ",";
+            }
+            q += " position = " + unit.position.id;
+            first = false;
+        }
+        if(unit.home != null && unit.home.id  > 0) {
+            if(!first) {
+                q += ",";
+            }
+            q += " home = " + unit.home.id;
+            first = false;
+        }
+        q += suf_q;
+        try {
+            if(info_given) {
+                jdbc.update(q, unit.info);
+            }
+            else {
+                jdbc.update(q);
+            }
+        }
+        catch(DataAccessException dae) {
+            Logger.error("UnitDao.update(Unit): DataAccessException: " + dae.getMessage());
+            return false;
+        }
+        return true;
+    }
+
+    public boolean updateOnCreate(Unit unit) {
+         return false;
     }
 
     @Override
@@ -114,11 +184,23 @@ public class UnitDao extends CocesoDao<Unit> {
 
     @Override
     public boolean remove(Unit unit) {
-        return false;
-    }
+        if(unit == null) {
+            Logger.error("UnitDao.remove(Unit): unit is NULL");
+            return false;
+        }
+        if(unit.id <= 0) {
+            Logger.error("UnitDao.remove(Unit): invalid id: " + unit.id + ", call: " + unit.call);
+            return false;
+        }
+        String q = "delete from units where id = "+unit.id;
+        try {
+            jdbc.update(q);
+        }
+        catch (DataAccessException dae) {
+            Logger.error("UnitDao.remove(Unit): id: "+unit.id+"; DataAccessException: "+dae.getMessage());
+            return false;
+        }
 
-    public Unit sendHome(int id) {
-
-        return null;
+        return true;
     }
 }
