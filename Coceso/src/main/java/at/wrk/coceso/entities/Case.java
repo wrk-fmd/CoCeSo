@@ -16,4 +16,20 @@ public class Case {
         if(name == null) name = "";
         if(organiser == null) organiser = "";
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getOrganiser() {
+        return organiser;
+    }
+
+    public int getPax() {
+        return pax;
+    }
 }

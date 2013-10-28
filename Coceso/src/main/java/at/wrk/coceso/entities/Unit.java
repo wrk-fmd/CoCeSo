@@ -38,4 +38,32 @@ public class Unit {
         if(ani == null) ani = "";
         if(info == null) info = "";
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getCall() {
+        return call;
+    }
+
+    public String getAni() {
+        return ani;
+    }
+
+    public boolean isWithDoc() {
+        return withDoc;
+    }
+
+    public boolean isPortable() {
+        return portable;
+    }
+
+    public boolean isTransportVehicle() {
+        return transportVehicle;
+    }
+
+    public String getInfo() {
+        return info;
+    }
 }
