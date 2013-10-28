@@ -1,7 +1,5 @@
 package at.wrk.coceso.entities;
 
-import at.wrk.coceso.entities.incidents.Incident;
-
 import java.sql.Timestamp;
 
 public class LogEntry {

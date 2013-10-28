@@ -34,7 +34,7 @@ public class CrewDao {
 
 
     public List<Person> getByUnitId(int unit_id) {
-        List<Integer> keys = jdbc.query("SELECT * FROM crews WHERE units_id = "+unit_id, crewPersonMapper);
+        List<Integer> keys = jdbc.query("SELECT * FROM crews WHERE units_id = ?", new Object[] {unit_id}, crewPersonMapper);
         List<Person> persons = new ArrayList<Person>();
 
         for(Integer k : keys) {
@@ -46,11 +46,23 @@ public class CrewDao {
 
 
     public boolean remove(Unit unit, Person person) {
-        return false;
+        if(unit == null || person == null || unit.id <= 0 || person.id <= 0) return false;
+
+        String q = "DELETE FROM crews WHERE units_id = ? AND persons_id = ?";
+
+        jdbc.update(q, unit.id, person.id);
+
+        return true;
     }
 
 
     public boolean add(Unit unit, Person person) {
-        return false;
+        if(unit == null || person == null || unit.id <= 0 || person.id <= 0) return false;
+
+        String q = "INSERT INTO crews (units_id, persons_id) VALUES (?,?)";
+
+        jdbc.update(q, unit.id, person.id);
+
+        return true;
     }
 }

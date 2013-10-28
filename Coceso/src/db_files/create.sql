@@ -67,6 +67,7 @@ CREATE TABLE incidents (
   id INTEGER NOT NULL DEFAULT nextval('incidents_id_seq'),
   aCase INTEGER NOT NULL,
   state VARCHAR (16) NOT NULL,
+  type VARCHAR (16) NOT NULL,
   priority INTEGER NOT NULL,
   blue BOOLEAN NOT NULL,
   bo INTEGER,

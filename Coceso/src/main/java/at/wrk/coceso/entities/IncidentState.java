@@ -1,4 +1,4 @@
-package at.wrk.coceso.entities.incidents;
+package at.wrk.coceso.entities;
 
 /**
  * New

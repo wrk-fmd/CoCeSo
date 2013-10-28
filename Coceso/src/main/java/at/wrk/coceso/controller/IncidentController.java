@@ -2,7 +2,7 @@
 package at.wrk.coceso.controller;
 
 import at.wrk.coceso.dao.IncidentDao;
-import at.wrk.coceso.entities.incidents.Incident;
+import at.wrk.coceso.entities.Incident;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;

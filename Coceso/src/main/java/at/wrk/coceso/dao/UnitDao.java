@@ -147,12 +147,12 @@ public class UnitDao extends CocesoDao<Unit> {
         }
 
         String q = "UPDATE units SET state = ?, call = ?, ani = ?, withdoc = ?, " +
-                "portable = ?, transportvehicle = ?, info = ?, position = ?, home = ? WHERE id = " + unit.id;
+                "portable = ?, transportvehicle = ?, info = ?, position = ?, home = ? WHERE id = ?";
 
         try {
             jdbc.update(q, unit.state.name(), unit.call, unit.ani, unit.withDoc, unit.portable, unit.transportVehicle,
                     unit.info, unit.position == null ? null : unit.position.id,
-                    unit.home == null ? null : unit.home.id);
+                    unit.home == null ? null : unit.home.id, unit.id);
         }
         catch(DataAccessException dae) {
             Logger.error("UnitDao.updateFull(Unit): DataAccessException: " + dae.getMessage());
@@ -207,9 +207,9 @@ public class UnitDao extends CocesoDao<Unit> {
             Logger.error("UnitDao.remove(Unit): invalid id: " + unit.id + ", call: " + unit.call);
             return false;
         }
-        String q = "delete from units where id = "+unit.id;
+        String q = "delete from units where id = ?";
         try {
-            jdbc.update(q);
+            jdbc.update(q, unit.id);
         }
         catch (DataAccessException dae) {
             Logger.error("UnitDao.remove(Unit): id: "+unit.id+"; DataAccessException: "+dae.getMessage());

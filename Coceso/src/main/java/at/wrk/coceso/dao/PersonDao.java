@@ -25,9 +25,9 @@ public class PersonDao extends CocesoDao<Person> {
     public Person getById(int id) {
         if(id <= 0) return null;
 
-        String q = "SELECT * FROM persons WHERE id = "+id;
+        String q = "SELECT * FROM persons WHERE id = ?";
 
-        return jdbc.queryForObject(q, personMapper);
+        return jdbc.queryForObject(q, new Object[] {id}, personMapper);
     }
 
     public List<Person> searchByName(String name) {

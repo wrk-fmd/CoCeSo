@@ -1,4 +1,4 @@
-package at.wrk.coceso.entities.incidents;
+package at.wrk.coceso.entities;
 
 
 import at.wrk.coceso.entities.*;
@@ -16,7 +16,7 @@ public class Incident {
 
     public boolean blue;
 
-    public Map<Unit, TaskState> units;
+    public Map<Integer, TaskState> units;
 
     public CocesoPOI bo;
 
@@ -28,5 +28,5 @@ public class Incident {
 
     public String caller;
 
-
+    public IncidentType type;
 }
