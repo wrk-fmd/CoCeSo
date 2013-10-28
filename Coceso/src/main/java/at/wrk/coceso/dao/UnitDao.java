@@ -61,7 +61,7 @@ public class UnitDao extends CocesoDao<Unit> {
         String q = "select * from units where aCase = '" + case_id + "'";
 
         try {
-            return jdbc.query(q, new UnitMapper());
+            return jdbc.query(q, unitMapper);
         }
         catch(DataAccessException dae) {
             Logger.error("UnitDao.getAll: DataAccessException: "+dae.getMessage());
@@ -72,6 +72,7 @@ public class UnitDao extends CocesoDao<Unit> {
     /**
      * Update Unit. Only Values state, info, position, home are changeable. All others are LOCKED!
      * To change these, use updateFull(Unit).
+     *
      * @param unit Unit to write to DB
      * @return Success of Operation
      */

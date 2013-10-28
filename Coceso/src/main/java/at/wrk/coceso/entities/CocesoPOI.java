@@ -12,4 +12,7 @@ public class CocesoPOI {
 
     public int minimumUnits;
 
+    public void prepareNotNull() {
+        if(address == null) address = "";
+    }
 }

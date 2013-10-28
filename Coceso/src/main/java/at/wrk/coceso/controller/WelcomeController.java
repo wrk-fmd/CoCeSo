@@ -1,9 +1,10 @@
 package at.wrk.coceso.controller;
 
-import at.wrk.coceso.utils.Logger;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 
 @Controller
 public class WelcomeController {
@@ -14,7 +15,10 @@ public class WelcomeController {
     }
 
     @RequestMapping("/main")
-    public String showMain() {
+    public String showMain(ModelMap model, HttpServletResponse response) {
+        // TODO Read User and Set active Case
+        response.addCookie(new Cookie("active_case", "1"));
+
         return "main";
     }
 

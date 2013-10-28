@@ -1,9 +1,9 @@
 
 <html>
 <head>
-    <title></title>
+    <title>Main</title>
 </head>
 <body>
-
+Cookie set.
 </body>
 </html>

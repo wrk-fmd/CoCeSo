@@ -1,6 +1,8 @@
 package at.wrk.coceso.dao;
 
 
+import at.wrk.coceso.dao.mapper.CrewPersonMapper;
+import at.wrk.coceso.dao.mapper.CrewUnitMapper;
 import at.wrk.coceso.entities.Person;
 import at.wrk.coceso.entities.Unit;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,10 +10,20 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
 public class CrewDao {
+
+    @Autowired
+    CrewPersonMapper crewPersonMapper;
+
+    @Autowired
+    CrewUnitMapper crewUnitMapper;
+
+    @Autowired
+    PersonDao personDao;
 
     private JdbcTemplate jdbc;
 
@@ -22,7 +34,14 @@ public class CrewDao {
 
 
     public List<Person> getByUnitId(int unit_id) {
-        return null;
+        List<Integer> keys = jdbc.query("SELECT * FROM crews WHERE units_id = "+unit_id, crewPersonMapper);
+        List<Person> persons = new ArrayList<Person>();
+
+        for(Integer k : keys) {
+            persons.add(personDao.getById(k));
+        }
+
+        return persons;
     }
 
 

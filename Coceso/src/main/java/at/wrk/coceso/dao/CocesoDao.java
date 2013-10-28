@@ -1,6 +1,5 @@
 package at.wrk.coceso.dao;
 
-import at.wrk.coceso.entities.Case;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -25,6 +24,7 @@ public abstract class CocesoDao<E> {
     /**
      * Update in running progress. Persistent Information LOCKED
      * Only values != NULL will be written
+     *
      * @param e Entity
      * @return Success
      */
