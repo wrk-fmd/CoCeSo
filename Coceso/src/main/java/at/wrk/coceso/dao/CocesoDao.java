@@ -24,6 +24,7 @@ public abstract class CocesoDao<E> {
 
     /**
      * Update in running progress. Persistent Information LOCKED
+     * Only values != NULL will be written
      * @param e Entity
      * @return Success
      */
@@ -31,6 +32,7 @@ public abstract class CocesoDao<E> {
 
     /**
      * Update on Creation or explicit change of persistent Information
+     * All Values will be written to Database
      * @param e Entity
      * @return Success
      */

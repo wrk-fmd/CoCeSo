@@ -71,7 +71,7 @@ public class UnitDao extends CocesoDao<Unit> {
 
     /**
      * Update Unit. Only Values state, info, position, home are changeable. All others are LOCKED!
-     * To change these, use updateOnCreate(Unit).
+     * To change these, use updateFull(Unit).
      * @param unit Unit to write to DB
      * @return Success of Operation
      */
@@ -136,7 +136,28 @@ public class UnitDao extends CocesoDao<Unit> {
     }
 
     public boolean updateFull(Unit unit) {
-         return false;
+        if(unit == null) {
+            Logger.error("UnitDao.updateFull(Unit): unit is NULL");
+            return false;
+        }
+        if(unit.id <= 0) {
+            Logger.error("UnitDao.updateFull(Unit): Invalid id: " + unit.id + ", call: "+unit.call);
+            return false;
+        }
+
+        String q = "UPDATE units SET state = ?, call = ?, ani = ?, withdoc = ?, " +
+                "portable = ?, transportvehicle = ?, info = ?, position = ?, home = ? WHERE id = " + unit.id;
+
+        try {
+            jdbc.update(q, unit.state.name(), unit.call, unit.ani, unit.withDoc, unit.portable, unit.transportVehicle,
+                    unit.info, unit.position == null ? null : unit.position.id,
+                    unit.home == null ? null : unit.home.id);
+        }
+        catch(DataAccessException dae) {
+            Logger.error("UnitDao.updateFull(Unit): DataAccessException: " + dae.getMessage());
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -153,31 +174,14 @@ public class UnitDao extends CocesoDao<Unit> {
         unit.prepareNotNull();
 
         try {
-            if(unit.home == null && unit.position == null){
-                String q = "insert into units (aCase, state, call, ani, " +
-                        "withDoc, portable, transportVehicle, info) values (?, ?, ?, ?, ?, ?, ?, ?)";
-                jdbc.update(q, unit.aCase.id, unit.state, unit.call, unit.ani,
-                        unit.withDoc, unit.portable, unit.transportVehicle, unit.info);
+            String q = "insert into units (aCase, state, call, ani, withDoc," +
+                    " portable, transportVehicle, info, position, home) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-            }
-            else if(unit.home == null) {
-                String q = "insert into units (aCase, state, call, ani," +
-                        " withDoc, portable, transportVehicle, info, position) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                jdbc.update(q, unit.aCase.id, unit.state, unit.call, unit.ani,
-                        unit.withDoc, unit.portable, unit.transportVehicle, unit.info, unit.position.id);
-            }
-            else if(unit.position == null) {
-                String q = "insert into units (aCase, state, call, ani," +
-                        " withDoc, portable, transportVehicle, info, home) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                jdbc.update(q, unit.aCase.id, unit.state, unit.call, unit.ani,
-                        unit.withDoc, unit.portable, unit.transportVehicle, unit.info, unit.home.id);
-            }
-            else {
-                String q = "insert into units (aCase, state, call, ani, withDoc," +
-                        " portable, transportVehicle, info, position, home) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                jdbc.update(q, unit.aCase.id, unit.state, unit.call, unit.ani, unit.withDoc,
-                        unit.portable, unit.transportVehicle, unit.info, unit.position.id, unit.home.id);
-            }
+            jdbc.update(q, unit.aCase.id, unit.state, unit.call, unit.ani, unit.withDoc,
+                    unit.portable, unit.transportVehicle, unit.info,
+                    unit.position == null ? null : unit.position.id,
+                    unit.home == null ? null : unit.home.id);
+
             if(unit.crew != null) {
                 for(Person p : unit.crew) {
                     crewDao.add(unit, p);
