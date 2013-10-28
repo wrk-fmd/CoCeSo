@@ -20,7 +20,7 @@ public class IncidentController implements IEntityController<Incident> {
     @Override
     @RequestMapping(value = "getAll", produces = "application/json")
     @ResponseBody
-    public List<Incident> getAll(int caseId) {
+    public List<Incident> getAll(@CookieValue(value = "active_case", defaultValue = "0") String case_id) {
         return null;
     }
 
@@ -41,7 +41,7 @@ public class IncidentController implements IEntityController<Incident> {
     @Override
     @RequestMapping(value = "update", produces = "application/json", method = RequestMethod.POST)
     @ResponseBody
-    public String update(Incident incident, BindingResult result) {
+    public String update(Incident incident, BindingResult result,@CookieValue(value = "active_case", defaultValue = "0") String case_id) {
         return null;
     }
 

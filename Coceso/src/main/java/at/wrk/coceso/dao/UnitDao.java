@@ -2,6 +2,7 @@ package at.wrk.coceso.dao;
 
 
 import at.wrk.coceso.dao.mapper.UnitMapper;
+import at.wrk.coceso.entities.Person;
 import at.wrk.coceso.entities.Unit;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,8 @@ public class UnitDao extends CocesoDao<Unit> {
     @Autowired
     UnitMapper unitMapper;
 
+    @Autowired CrewDao crewDao;
+
     @Autowired
     public UnitDao(DataSource dataSource) {
         super(dataSource);
@@ -26,7 +29,7 @@ public class UnitDao extends CocesoDao<Unit> {
     @Override
     public Unit getById(int id) {
         if(id < 1) {
-            Logger.error("UnitDao.getById(int): Invalid ID: "+id);
+            Logger.error("UnitDao.getById(int): Invalid ID: " + id);
             return null;
         }
 
@@ -147,6 +150,8 @@ public class UnitDao extends CocesoDao<Unit> {
             return false;
         }
 
+        unit.prepareNotNull();
+
         try {
             if(unit.home == null && unit.position == null){
                 String q = "insert into units (aCase, state, call, ani, " +
@@ -172,6 +177,11 @@ public class UnitDao extends CocesoDao<Unit> {
                         " portable, transportVehicle, info, position, home) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 jdbc.update(q, unit.aCase.id, unit.state, unit.call, unit.ani, unit.withDoc,
                         unit.portable, unit.transportVehicle, unit.info, unit.position.id, unit.home.id);
+            }
+            if(unit.crew != null) {
+                for(Person p : unit.crew) {
+                    crewDao.add(unit, p);
+                }
             }
             return true;
         }

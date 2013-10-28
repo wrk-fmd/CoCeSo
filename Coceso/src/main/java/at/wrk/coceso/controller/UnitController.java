@@ -2,6 +2,7 @@
 package at.wrk.coceso.controller;
 
 import at.wrk.coceso.dao.UnitDao;
+import at.wrk.coceso.entities.Case;
 import at.wrk.coceso.entities.Unit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,9 +20,9 @@ public class UnitController implements IEntityController<Unit> {
 
     @RequestMapping(value = "getAll", produces = "application/json")
     @ResponseBody
-    public List<Unit> getAll(@CookieValue("active_case") int case_id) {
+    public List<Unit> getAll(@CookieValue(value = "active_case", defaultValue = "0") String case_id) {
 
-        return dao.getAll(case_id);
+        return dao.getAll(Integer.parseInt(case_id));
     }
 
     @RequestMapping(value = "get", produces = "application/json", method = RequestMethod.POST)
@@ -40,10 +41,14 @@ public class UnitController implements IEntityController<Unit> {
 
     @RequestMapping(value = "update", produces = "application/json", method = RequestMethod.POST)
     @ResponseBody
-    public String update(@RequestBody Unit unit, BindingResult result) {
+    public String update(@RequestBody Unit unit, BindingResult result, @CookieValue(value = "active_case", defaultValue = "0") String case_id) {
         if(result.hasErrors()) {
             return "{\"success\": false, description: \"Binding Error\"}";
         }
+
+        unit.aCase = new Case();
+        unit.aCase.id = Integer.parseInt(case_id);
+
         if(unit.id < 1) {
             return "{\"success\": " + dao.add(unit) + ", \"new\": true}";
         }

@@ -6,11 +6,11 @@ import java.util.List;
 
 public interface IEntityController<E> {
 
-    public List<E> getAll(int caseId);
+    public List<E> getAll(String caseId);
 
     public E getByPost(int id);
 
     public E getByGet(int id);
 
-    public String update(E e, BindingResult result);
+    public String update(E e, BindingResult result, String case_id);
 }

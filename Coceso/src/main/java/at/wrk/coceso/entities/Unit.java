@@ -28,4 +28,14 @@ public class Unit {
     public CocesoPOI position;
 
     public CocesoPOI home;
+
+    /**
+     * Default Values for Insert in Database
+     */
+    public void prepareNotNull(){
+        if(state == null) state = UnitState.AD;
+        if(call == null) call = "";
+        if(ani == null) ani = "";
+        if(info == null) info = "";
+    }
 }
