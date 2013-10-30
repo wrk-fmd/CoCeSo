@@ -12,6 +12,8 @@
     <context:component-scan base-package="at.wrk.coceso"/>
     <mvc:annotation-driven />
 
+    <mvc:resources mapping="/static/**" location="/static/" />
+
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/pages/"/>
         <property name="suffix" value=".jsp"/>
