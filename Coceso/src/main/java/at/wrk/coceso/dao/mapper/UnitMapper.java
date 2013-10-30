@@ -47,7 +47,7 @@ public class UnitMapper implements RowMapper<Unit> {
         }
 
         // References
-        Logger.debug("id: "+unit.id+", aCase: "+rs.getInt("aCase")+", caseDao: "+caseDao);
+        Logger.debug("UnitMapper: id: "+unit.id+", call: "+unit.call+", aCase: "+rs.getInt("aCase")+", caseDao: "+caseDao);
         unit.aCase = caseDao.getById(rs.getInt("aCase"));
         unit.home = poiDao.getById(rs.getInt("home"));
         unit.position = poiDao.getById(rs.getInt("position"));

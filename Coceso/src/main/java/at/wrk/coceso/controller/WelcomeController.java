@@ -33,12 +33,12 @@ public class WelcomeController {
         return "main";
     }
 
-    @RequestMapping("/main/{id}")
+    /*@RequestMapping("/main/{id}")
     public String showMainWithID(@PathVariable("id") int id, ModelMap model, HttpServletResponse response) {
-        response.addCookie(new Cookie("active_case", id+""));
+
 
         return "main";
-    }
+    } */
 
     @RequestMapping(value = "/welcome", method = RequestMethod.GET)
     public String showWelcome(ModelMap map) {
@@ -52,11 +52,13 @@ public class WelcomeController {
     }
 
     @RequestMapping(value = "/welcome", method = RequestMethod.POST)
-    public String welcomeRedirect(HttpServletRequest request) {
+    public String welcomeRedirect(HttpServletRequest request, HttpServletResponse response) {
         int case_id = Integer.parseInt(request.getParameter("case_id"));
 
+        response.addCookie(new Cookie("active_case", case_id+""));
+
         if(request.getParameter("start") != null)
-            return "redirect:/main/"+case_id;
+            return "redirect:/main";
         if(request.getParameter("edit") != null)
             return "redirect:/edit/"+case_id;
 

@@ -4,6 +4,7 @@ package at.wrk.coceso.dao;
 import at.wrk.coceso.dao.mapper.UnitMapper;
 import at.wrk.coceso.entities.Person;
 import at.wrk.coceso.entities.Unit;
+import at.wrk.coceso.entities.UnitState;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -150,7 +151,7 @@ public class UnitDao extends CocesoDao<Unit> {
                 "portable = ?, transportvehicle = ?, info = ?, position = ?, home = ? WHERE id = ?";
 
         try {
-            jdbc.update(q, unit.state.name(), unit.call, unit.ani, unit.withDoc, unit.portable, unit.transportVehicle,
+            jdbc.update(q, unit.state == null ? UnitState.AD.name() : unit.state.name(), unit.call, unit.ani, unit.withDoc, unit.portable, unit.transportVehicle,
                     unit.info, unit.position == null ? null : unit.position.id,
                     unit.home == null ? null : unit.home.id, unit.id);
         }
@@ -178,7 +179,8 @@ public class UnitDao extends CocesoDao<Unit> {
             String q = "insert into units (aCase, state, call, ani, withDoc," +
                     " portable, transportVehicle, info, position, home) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-            jdbc.update(q, unit.aCase.id, unit.state, unit.call, unit.ani, unit.withDoc,
+            jdbc.update(q, unit.aCase.id, unit.state == null ? UnitState.AD.name() : unit.state.name(),
+                    unit.call, unit.ani, unit.withDoc,
                     unit.portable, unit.transportVehicle, unit.info,
                     unit.position == null ? null : unit.position.id,
                     unit.home == null ? null : unit.home.id);
