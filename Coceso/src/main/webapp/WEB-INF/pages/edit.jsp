@@ -5,13 +5,23 @@
     <title>Edit Case - ${caze.name}</title>
 </head>
 <body>
+<c:set var="transportVehicle" value="Transport Vehicle" />
+<c:set var="withDoc" value="Doctor" />
+<c:set var="call" value="Call" />
+<c:set var="ani" value="ANI" />
+<c:set var="portable" value="Portable" />
+<c:set var="info" value="Info" />
+
+<c:url var="welcomeScreen" value="/welcome" />
+<a href="${welcomeScreen}">Back</a><br>
+
 <h3>Edit Case</h3>
 <c:url value="/update" var="update" />
 <form action="${update}" method="post">
     <input type="hidden" name="id" value="${caze.id}">
-    Name: <input type="text" name="name" value="${caze.name}" maxlength="64"><br>
-    Organiser: <input type="text" name="organiser" value="${caze.organiser}" maxlength="64"><br>
-    Persons: <input type="number" name="pax" value="${caze.pax}"><br>
+    <label>Name: <input type="text" name="name" value="${caze.name}" maxlength="64"></label><br>
+    <label>Organiser: <input type="text" name="organiser" value="${caze.organiser}" maxlength="64"></label><br>
+    <label>Persons: <input type="number" name="pax" value="${caze.pax}"></label><br>
     <input type="submit" name="submit" value="Update">
 </form>
 
@@ -21,12 +31,12 @@
 <table>
     <tr>
         <th style="display: none;">ID</th>
-        <th>Call</th>
-        <th>ANI</th>
-        <th>Doctor</th>
-        <th>(Transport)Vehicle</th>
-        <th>Portable</th>
-        <th>Info</th>
+        <th>${call}</th>
+        <th>${ani}</th>
+        <th>${withDoc}</th>
+        <th>${transportVehicle}</th>
+        <th>${portable}</th>
+        <th>${info}</th>
         <th></th>
     </tr>
     <c:url value="/updateUnit" var="updateUnit" />
@@ -61,7 +71,10 @@
                 </c:otherwise>
             </c:choose>
             <td><input type="text" name="info" value="${unit.info}" maxlength="128"></td>
-            <td><input type="submit" value="Update"></td>
+            <td>
+                <input type="submit" name="update" value="Update">&nbsp;
+                <input type="submit" name="remove" value="Remove">
+            </td>
         </tr>
         </form>
     </c:forEach>
@@ -80,5 +93,20 @@
         </tr>
     </form>
 </table>
+
+<h3>Create Units as Batch Job</h3>
+<c:url value="/createUnitBatch" var="createUnitBatch" />
+<form action="${createUnitBatch}" method="post">
+
+    <label>${call} Prefix: <input type="text" name="call_pre" maxlength="50"></label><br>
+    Number Range
+        <label>from <input type="number" name="from" value="1"></label>&nbsp;
+        <label>to <input type="number" name="to" value="5"></label><br>
+    <label><input type="checkbox" name="withDoc" >${withDoc}</label><br>
+    <label><input type="checkbox" name="transportVehicle">${transportVehicle}</label><br>
+    <label><input type="checkbox" name="portable" >${portable}</label><br>
+    <input type="submit" value="Create">
+
+</form>
 </body>
 </html>

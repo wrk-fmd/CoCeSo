@@ -59,10 +59,10 @@ public class UnitDao extends CocesoDao<Unit> {
             Logger.warning("UnitDao.getAll: invalid case_id: "+case_id);
             return null;
         }
-        String q = "select * from units where aCase = '" + case_id + "'";
+        String q = "SELECT * FROM units WHERE aCase = ? ORDER BY id ASC";
 
         try {
-            return jdbc.query(q, unitMapper);
+            return jdbc.query(q, new Object[] {case_id}, unitMapper);
         }
         catch(DataAccessException dae) {
             Logger.error("UnitDao.getAll: DataAccessException: "+dae.getMessage());

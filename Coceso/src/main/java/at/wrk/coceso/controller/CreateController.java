@@ -22,10 +22,16 @@ public class CreateController {
     @Autowired
     UnitDao unitDao;
 
-    @RequestMapping("/create")
-    public String create(int id) {
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    public String create(HttpServletRequest request) {
 
-        return "redirect:/edit/"+id;
+        Case caze = new Case();
+        caze.name = request.getParameter("name");
+        caze.organiser = request.getParameter("organiser");
+
+        caseDao.add(caze);
+
+        return "redirect:/welcome";
     }
 
     @RequestMapping("/edit/{id}")
@@ -41,7 +47,7 @@ public class CreateController {
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public String update(@RequestParam("id") int id, @RequestParam("name") String name,
+    public String updateCase(@RequestParam("id") int id, @RequestParam("name") String name,
                          @RequestParam("organiser") String organiser,
                          @RequestParam("pax") int pax) {
 
@@ -70,7 +76,15 @@ public class CreateController {
         unit.withDoc = request.getParameter("withDoc") != null;
         unit.transportVehicle = request.getParameter("transportVehicle") != null;
 
-        unitDao.updateFull(unit);
+        if(request.getParameter("update") != null) {
+            unitDao.updateFull(unit);
+        }
+        else if(request.getParameter("remove") != null) {
+            unitDao.remove(unit);
+        }
+        else {
+            Logger.error("CreateController:updateUnit wrong submit button");
+        }
 
         return "redirect:/edit/"+case_id;
     }
@@ -94,6 +108,30 @@ public class CreateController {
         unitDao.add(unit);
 
         Logger.debug("createUnit: Unit: "+unit.id+", "+unit.call);
+
+        return "redirect:/edit/"+case_id;
+    }
+
+    @RequestMapping(value = "/createUnitBatch", method = RequestMethod.POST)
+    public String createUnitBatch(HttpServletRequest request,
+                             @CookieValue("active_case") int case_id) {
+
+        Unit unit = new Unit();
+        unit.aCase = new Case();
+        unit.aCase.id = case_id;
+
+        unit.id = -1;
+        unit.portable = request.getParameter("portable") != null;
+        unit.withDoc = request.getParameter("withDoc") != null;
+        unit.transportVehicle = request.getParameter("transportVehicle") != null;
+
+        int from = Integer.parseInt(request.getParameter("from"));
+        int to = Integer.parseInt(request.getParameter("to"));
+
+        for(int i = from; i <= to; i++){
+            unit.call = request.getParameter("call_pre")+i;
+            unitDao.add(unit);
+        }
 
         return "redirect:/edit/"+case_id;
     }
