@@ -20,7 +20,7 @@
 <form action="${update}" method="post">
     <input type="hidden" name="id" value="${caze.id}">
     <label>Name: <input type="text" name="name" value="${caze.name}" maxlength="64"></label><br>
-    <label>Organiser: <input type="text" name="organiser" value="${caze.organiser}" maxlength="64"></label><br>
+    <label>Organiser: <textarea name="organiser" maxlength="128">${caze.organiser}</textarea></label><br>
     <label>Persons: <input type="number" name="pax" value="${caze.pax}"></label><br>
     <input type="submit" name="submit" value="Update">
 </form>

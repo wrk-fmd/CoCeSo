@@ -29,7 +29,7 @@
 </h4>
 <form action="${pageContext.request.contextPath}/create" method="post">
     Name: <input type="text" name="name" maxlength="64" /><br>
-    Info of Organiser: <input type="text" name="organiser" maxlength="64" /><br>
+    <!--Info of Organiser: <input type="text" name="organiser" maxlength="64" /><br>-->
     <input type="submit" value="Create" />
 </form>
 </body>

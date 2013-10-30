@@ -18,7 +18,7 @@ CREATE TABLE cases (
   id INTEGER NOT NULL DEFAULT nextval('cases_id_seq'),
   place INTEGER,
   name VARCHAR(64) NOT NULL,
-  organiser VARCHAR (64) NOT NULL,
+  organiser VARCHAR (128) NOT NULL,
   pax INTEGER,
   PRIMARY KEY (id),
   FOREIGN KEY (place) REFERENCES cocesopois ON DELETE SET NULL

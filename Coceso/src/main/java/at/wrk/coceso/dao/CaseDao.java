@@ -73,10 +73,10 @@ public class CaseDao extends CocesoDao<Case> {
     public boolean update(Case caze) {
         if(caze == null) return false;
 
-        String q = "UPDATE cases SET name = ?, place = ?, organiser = ?, pax = ?";
+        String q = "UPDATE cases SET name = ?, place = ?, organiser = ?, pax = ? WHERE id = ?";
 
         try {
-            jdbc.update(q, caze.name, caze.place == null ? null : caze.place.id, caze.organiser, caze.pax);
+            jdbc.update(q, caze.name, caze.place == null ? null : caze.place.id, caze.organiser, caze.pax, caze.id);
             return true;
         }
         catch (DataAccessException dae) {
