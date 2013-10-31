@@ -2,12 +2,18 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:security="http://www.springframework.org/schema/security"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/mvc
-        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/security
+        http://www.springframework.org/schema/security/spring-security.xsd">
+
+    <bean id='bCryptPasswordEncoder' class='org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder'/>
+
 
     <context:component-scan base-package="at.wrk.coceso"/>
     <mvc:annotation-driven />
@@ -26,5 +32,18 @@
         <property name="username" value="user"/>
         <property name="password" value="pw"/>
     </bean>
+
+    <security:http auto-config="true" use-expressions="true">
+        <security:intercept-url pattern="/" access="permitAll"/>
+        <security:intercept-url pattern="/static/**" filters="none" />
+        <security:intercept-url pattern="/**" access="permitAll" /> <!--TODO CHANGE TO 'isAuthenticated()' -->
+        <security:logout logout-url="/logout" />
+    </security:http>
+
+    <security:authentication-manager alias="authenticationManager">
+        <security:authentication-provider ref="cocesoAuthenticationProvider">
+            <security:password-encoder ref="bCryptPasswordEncoder" />
+        </security:authentication-provider>
+    </security:authentication-manager>
 
 </beans>

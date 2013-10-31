@@ -26,6 +26,7 @@ public class PersonMapper implements RowMapper<Person> {
         p.contact = rs.getString("contact");
         p.given_name = rs.getString("given_name");
         p.sur_name = rs.getString("sur_name");
+        p.username = rs.getString("username");
         p.hashedPW = rs.getString("hashedPW");
 
         // References

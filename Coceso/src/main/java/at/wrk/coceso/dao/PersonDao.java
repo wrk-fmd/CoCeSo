@@ -30,6 +30,14 @@ public class PersonDao extends CocesoDao<Person> {
         return jdbc.queryForObject(q, new Object[] {id}, personMapper);
     }
 
+    public Person getByUsername(String username) {
+        if(username == null) return null;
+
+        String q = "SELECT * FROM persons WHERE username = ?";
+
+        return jdbc.queryForObject(q, new Object[] {username}, personMapper);
+    }
+
     public List<Person> searchByName(String name) {
         String q = "SELECT * FROM persons WHERE given_name = ? OR sur_name = ?";
 
@@ -59,10 +67,11 @@ public class PersonDao extends CocesoDao<Person> {
     public boolean add(Person p) {
         if(p == null) return false;
 
-        String q = "INSERT INTO persons (allowlogin, dnr, contact, given_name, sur_name, hashedpw, activecase) " +
+        String q = "INSERT INTO persons (allowlogin, dnr, contact, given_name, " +
+                "sur_name, username, hashedpw, activecase) " +
                 "VALUES (?,?,?,?,?,?,?)";
 
-        jdbc.update(q, p.allowLogin, p.dNr, p.contact, p.given_name, p.sur_name, p.hashedPW,
+        jdbc.update(q, p.allowLogin, p.dNr, p.contact, p.given_name, p.sur_name, p.username, p.hashedPW,
                 p.activeCase == null ? null : p.activeCase.id);
 
         return true;
