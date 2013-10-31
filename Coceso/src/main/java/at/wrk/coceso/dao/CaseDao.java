@@ -84,10 +84,6 @@ public class CaseDao extends CocesoDao<Case> {
         }
     }
 
-    @Override
-    public boolean updateFull(Case caze) {
-        return update(caze);
-    }
 
     @Override
     public boolean add(Case caze) {

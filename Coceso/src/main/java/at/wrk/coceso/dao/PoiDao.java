@@ -94,11 +94,6 @@ public class PoiDao extends CocesoDao<CocesoPOI> {
     }
 
     @Override
-    public boolean updateFull(CocesoPOI cocesoPOI) {
-        return update(cocesoPOI);
-    }
-
-    @Override
     public boolean add(CocesoPOI poi) {
         if(poi == null) {
             Logger.error("PoiDao.add(): poi is NULL");

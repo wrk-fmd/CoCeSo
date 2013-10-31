@@ -56,11 +56,6 @@ public class PersonDao extends CocesoDao<Person> {
     }
 
     @Override
-    public boolean updateFull(Person person) {
-        return update(person);
-    }
-
-    @Override
     public boolean add(Person p) {
         if(p == null) return false;
 

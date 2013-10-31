@@ -21,22 +21,7 @@ public abstract class CocesoDao<E> {
 
     public abstract List<E> getAll(int case_id);
 
-    /**
-     * Update in running progress. Persistent Information LOCKED
-     * Only values != NULL will be written
-     *
-     * @param e Entity
-     * @return Success
-     */
     public abstract boolean update(E e);
-
-    /**
-     * Update on Creation or explicit change of persistent Information
-     * All Values will be written to Database
-     * @param e Entity
-     * @return Success
-     */
-    public abstract boolean updateFull(E e);
 
     public abstract boolean add(E e);
 
