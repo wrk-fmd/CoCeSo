@@ -33,17 +33,4 @@
         <property name="password" value="pw"/>
     </bean>
 
-    <security:http auto-config="true" use-expressions="true">
-        <security:intercept-url pattern="/" access="permitAll"/>
-        <security:intercept-url pattern="/static/**" filters="none" />
-        <security:intercept-url pattern="/**" access="permitAll" /> <!--TODO CHANGE TO 'isAuthenticated()' -->
-        <security:logout logout-url="/logout" />
-    </security:http>
-
-    <security:authentication-manager alias="authenticationManager">
-        <security:authentication-provider ref="cocesoAuthenticationProvider">
-            <security:password-encoder ref="bCryptPasswordEncoder" />
-        </security:authentication-provider>
-    </security:authentication-manager>
-
 </beans>

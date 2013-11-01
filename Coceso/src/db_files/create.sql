@@ -50,7 +50,7 @@ CREATE TABLE persons (
   dnr INTEGER NOT NULL,
   contact VARCHAR (32) NOT NULL,
   allowLogin BOOLEAN NOT NULL,
-  username VARCHAR (32) UNIQUE NOT NULL,
+  username VARCHAR (32) NOT NULL,
   hashedPW VARCHAR (64),
   PRIMARY KEY (id),
   FOREIGN KEY (activeCase) REFERENCES cases ON DELETE SET NULL
