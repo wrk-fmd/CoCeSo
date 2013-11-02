@@ -10,7 +10,7 @@
 
     <http use-expressions="true">
         <intercept-url pattern="/" access="permitAll" />
-        <intercept-url pattern="/**" access="permitAll" /> <!-- TODO Change to isAuthenticated() -->
+        <intercept-url pattern="/**" access="isAuthenticated()" /> <!-- TODO Change to isAuthenticated() -->
         <http-basic />
     </http>
 

@@ -4,6 +4,7 @@ package at.wrk.coceso.dao;
 import at.wrk.coceso.dao.mapper.PersonMapper;
 import at.wrk.coceso.entities.Person;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -27,15 +28,22 @@ public class PersonDao extends CocesoDao<Person> {
 
         String q = "SELECT * FROM persons WHERE id = ?";
 
-        return jdbc.queryForObject(q, new Object[] {id}, personMapper);
+        try {
+            return jdbc.queryForObject(q, new Object[]{id}, personMapper);
+        } catch(DataAccessException e) {
+            return null;
+        }
     }
 
     public Person getByUsername(String username) {
         if(username == null) return null;
 
         String q = "SELECT * FROM persons WHERE username = ?";
-
-        return jdbc.queryForObject(q, new Object[] {username}, personMapper);
+        try {
+            return jdbc.queryForObject(q, new Object[] {username}, personMapper);
+        } catch(DataAccessException e) {
+            return null;
+        }
     }
 
     public List<Person> searchByName(String name) {
@@ -58,7 +66,7 @@ public class PersonDao extends CocesoDao<Person> {
                 "sur_name = ?, hashedpw = ?, activecase = ? WHERE id = ?";
 
         jdbc.update(q, p.allowLogin, p.dNr, p.contact, p.given_name, p.sur_name, p.hashedPW,
-                p.activeCase == null ? null : p.activeCase.id);
+                p.activeCase == null ? null : p.activeCase.id, p.id);
 
         return true;
     }

@@ -3,6 +3,7 @@ package at.wrk.coceso.dao;
 import at.wrk.coceso.dao.mapper.LogMapper;
 import at.wrk.coceso.entities.LogEntry;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -28,7 +29,11 @@ public class LogDao extends CocesoDao<LogEntry> {
 
         String q = "SELECT * FROM log l LEFT OUTER JOIN persons p ON l.uzer = p.id WHERE l.id = ?";
 
-        return jdbc.queryForObject(q, new Object[] {id}, logMapper);
+        try {
+            return jdbc.queryForObject(q, new Object[] {id}, logMapper);
+        } catch(DataAccessException e) {
+            return null;
+        }
     }
 
     public List<LogEntry> getByUnitId(int id) {

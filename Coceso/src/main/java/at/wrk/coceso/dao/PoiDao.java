@@ -36,11 +36,6 @@ public class PoiDao extends CocesoDao<CocesoPOI> {
         try {
             poi = jdbc.queryForObject(q, new Integer[] {id}, poiMapper);
         }
-        catch(IncorrectResultSizeDataAccessException e) {
-            Logger.error("PoiDao.getById(int): requested id: "+id
-                    +"; IncorrectResultSizeDataAccessException: "+e.getMessage());
-            return null;
-        }
         catch(DataAccessException dae) {
             Logger.error("PoiDao.getById(int): requested id: "+id+"; DataAccessException: "+dae.getMessage());
             return null;

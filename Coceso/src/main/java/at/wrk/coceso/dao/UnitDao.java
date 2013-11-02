@@ -40,11 +40,6 @@ public class UnitDao extends CocesoDao<Unit> {
         try {
             unit = jdbc.queryForObject(q, new Integer[] {id}, unitMapper);
         }
-        catch(IncorrectResultSizeDataAccessException e) {
-            Logger.error("UnitDao.getById(int): requested id: "+id
-                    +"; IncorrectResultSizeDataAccessException: "+e.getMessage());
-            return null;
-        }
         catch(DataAccessException dae) {
             Logger.error("UnitDao.getById(int): requested id: "+id+"; DataAccessException: "+dae.getMessage());
             return null;

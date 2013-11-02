@@ -72,6 +72,7 @@ public class Person implements UserDetails {
     }
 
     public boolean validatePassword(String pw) {
+        if(hashedPW == null || hashedPW.isEmpty()) return false;
         PasswordEncoder enc = new BCryptPasswordEncoder();
         return enc.matches(pw, hashedPW);
     }
