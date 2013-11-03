@@ -3,6 +3,7 @@ package at.wrk.coceso.dao;
 
 import at.wrk.coceso.dao.mapper.PersonMapper;
 import at.wrk.coceso.entities.Person;
+import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
@@ -42,6 +43,7 @@ public class PersonDao extends CocesoDao<Person> {
         try {
             return jdbc.queryForObject(q, new Object[] {username}, personMapper);
         } catch(DataAccessException e) {
+            Logger.debug("PersonDAO.getByUsername "+e.getMessage());
             return null;
         }
     }
