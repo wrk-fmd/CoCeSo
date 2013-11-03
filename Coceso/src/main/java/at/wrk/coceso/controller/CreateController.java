@@ -1,9 +1,11 @@
 package at.wrk.coceso.controller;
 
 import at.wrk.coceso.dao.CaseDao;
+import at.wrk.coceso.dao.LogDao;
 import at.wrk.coceso.dao.UnitDao;
 import at.wrk.coceso.entities.Case;
 import at.wrk.coceso.entities.Unit;
+import at.wrk.coceso.service.LogService;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,6 +13,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -18,6 +21,9 @@ public class CreateController {
 
     @Autowired
     CaseDao caseDao;
+
+    @Autowired
+    LogService logService;
 
     @Autowired
     UnitDao unitDao;
@@ -34,8 +40,8 @@ public class CreateController {
         return "redirect:/welcome";
     }
 
-    @RequestMapping("/edit/{id}")
-    public String edit(@PathVariable("id") int id, ModelMap map) {
+    @RequestMapping("/edit")
+    public String edit(@CookieValue("active_case") int id, ModelMap map) {
 
         Case caze = caseDao.getById(id);
         List<Unit> unit_list = unitDao.getAll(id);
@@ -59,7 +65,7 @@ public class CreateController {
 
         caseDao.update(caze);
 
-        return "redirect:/edit/"+id;
+        return "redirect:/edit";
     }
 
 
@@ -86,7 +92,7 @@ public class CreateController {
             Logger.error("CreateController:updateUnit wrong submit button");
         }
 
-        return "redirect:/edit/"+case_id;
+        return "redirect:/edit";
     }
 
     @RequestMapping(value = "/createUnit", method = RequestMethod.POST)
@@ -109,7 +115,7 @@ public class CreateController {
 
         Logger.debug("createUnit: Unit: "+unit.id+", "+unit.call);
 
-        return "redirect:/edit/"+case_id;
+        return "redirect:/edit";
     }
 
     @RequestMapping(value = "/createUnitBatch", method = RequestMethod.POST)
@@ -133,6 +139,6 @@ public class CreateController {
             unitDao.add(unit);
         }
 
-        return "redirect:/edit/"+case_id;
+        return "redirect:/edit";
     }
 }

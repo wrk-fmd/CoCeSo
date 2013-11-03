@@ -91,7 +91,7 @@ public class CocesoAuthenticationProvider implements AuthenticationProvider {
                 Logger.debug("User "+username+": PW written to DB");
             }
             Logger.debug("User "+username+" authenticated online");
-            return new UsernamePasswordAuthenticationToken(username,password, auth);
+            return new UsernamePasswordAuthenticationToken(user,password, auth);
         }
         if(returnCode == ERROR) { // Online Auth not reachable
             if(!user.validatePassword(password)) { // Offline Auth failed
@@ -99,7 +99,7 @@ public class CocesoAuthenticationProvider implements AuthenticationProvider {
                 throw new BadCredentialsException("Wrong Username/Password");
             }
             Logger.debug("User "+username+" authenticated offline");
-            return new UsernamePasswordAuthenticationToken(username,password, auth); // Offline Auth succeeded
+            return new UsernamePasswordAuthenticationToken(user, password, auth); // Offline Auth succeeded
         }
         else { // Wrong Status Code Definition?
             throw new BadCredentialsException("Internal Error");
