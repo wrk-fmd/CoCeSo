@@ -1,5 +1,6 @@
 package at.wrk.coceso.entities;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,10 +22,13 @@ public class Person implements UserDetails {
 
     public String contact;
 
+    @JsonIgnore
     public boolean allowLogin;
 
+    @JsonIgnore
     public String hashedPW;
 
+    @JsonIgnore
     public String username;
 
     @Override
@@ -42,31 +46,37 @@ public class Person implements UserDetails {
     }
 
     @Override
+    @JsonIgnore
     public String getPassword() {
         return hashedPW;
     }
 
     @Override
+    @JsonIgnore
     public String getUsername() {
         return username;
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonExpired() {
         return allowLogin;
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonLocked() {
         return allowLogin;
     }
 
     @Override
+    @JsonIgnore
     public boolean isCredentialsNonExpired() {
         return allowLogin;
     }
 
     @Override
+    @JsonIgnore
     public boolean isEnabled() {
         return allowLogin;
     }
