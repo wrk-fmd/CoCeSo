@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@RequestMapping("/data/units/")
+@RequestMapping("/data/units")
 public class UnitController implements IEntityController<Unit> {
 
     @Autowired

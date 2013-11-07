@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@RequestMapping("/data/log/")
+@RequestMapping("/data/log")
 public class LogController {
 
     @Autowired

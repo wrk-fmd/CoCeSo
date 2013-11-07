@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@RequestMapping("/data/incidents/")
+@RequestMapping("/data/incidents")
 public class IncidentController implements IEntityController<Incident> {
 
     @Autowired
