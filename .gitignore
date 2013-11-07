@@ -6,16 +6,19 @@
 *.swp
 *.out
 
-#IDE files to ignore (Netbeans, Eclipse)
+# IDE files to ignore (Netbeans, Eclipse)
 nbproject
 .classpath
 .project
 .settings
 
-#ignore generated .class files
+# ignore generated .class files
 *.class
 
-#except this file
+# ignore compilation output
+target
+
+# except this file
 !.gitignore
 
 # ignore real conf files

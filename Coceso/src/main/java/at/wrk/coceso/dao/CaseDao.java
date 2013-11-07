@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.stereotype.Repository;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+//import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -53,7 +53,8 @@ public class CaseDao extends CocesoDao<Case> {
     @Deprecated
     @Override
     public List<Case> getAll(int case_id) {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
 
