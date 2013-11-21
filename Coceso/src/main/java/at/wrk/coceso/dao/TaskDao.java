@@ -1,7 +1,9 @@
 package at.wrk.coceso.dao;
 
 import at.wrk.coceso.entities.TaskState;
+import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
@@ -33,15 +35,47 @@ public class TaskDao {
         return ret;
     }
 
-    public void add(int incident_id, int unit_id, TaskState state) {
+    public boolean add(int incident_id, int unit_id, TaskState state) {
         String q = "INSERT INTO tasks (incident_id, unit_id, state) VALUES (?,?,?)";
 
-        jdbc.update(q, incident_id, unit_id, state.name());
+        try {
+            jdbc.update(q, incident_id, unit_id, state.name());
+        } catch(DataAccessException e) {
+            Logger.debug("TaskDao add: "+e);
+            return false;
+        }
+        return true;
     }
 
-    public void update(int incident_id, int unit_id, TaskState state) {
+    public boolean update(int incident_id, int unit_id, TaskState state) {
         String q = "UPDATE tasks SET state = ? WHERE incident_id = ? AND unit_id = ?";
 
-        jdbc.update(q, state.name(), incident_id, unit_id);
+        try {
+            jdbc.update(q, state.name(), incident_id, unit_id);
+        } catch(DataAccessException e) {
+            Logger.debug("TaskDao update: "+e);
+            return false;
+        }
+        return true;
+    }
+
+    public void remove(int incident_id, int unit_id) {
+        String q = "DELETE FROM tasks WHERE incident_id = ? AND unit_id = ?";
+
+        try {
+            jdbc.update(q, incident_id, unit_id);
+        } catch(DataAccessException e) {
+            Logger.debug("TaskDao remove: "+e);
+        }
+    }
+
+    public void removeAll(int unit_id) {
+        String q = "DELETE FROM tasks WHERE unit_id = ?";
+
+        try {
+            jdbc.update(q, unit_id);
+        } catch(DataAccessException e) {
+            Logger.debug("TaskDao removeAll: "+e);
+        }
     }
 }

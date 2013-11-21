@@ -2,6 +2,7 @@ package at.wrk.coceso.controller;
 
 import org.springframework.validation.BindingResult;
 
+import java.security.Principal;
 import java.util.List;
 
 public interface IEntityController<E> {
@@ -12,5 +13,5 @@ public interface IEntityController<E> {
 
     public E getByGet(int id);
 
-    public String update(E e, BindingResult result, String case_id);
+    public String update(E e, BindingResult result, String case_id, Principal user);
 }
