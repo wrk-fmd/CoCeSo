@@ -32,4 +32,11 @@ public class Case {
     public int getPax() {
         return pax;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == null || !(obj instanceof Case))
+            return false;
+        return this.id == ((Case) obj).id;
+    }
 }
