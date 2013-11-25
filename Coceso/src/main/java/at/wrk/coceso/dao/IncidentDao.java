@@ -151,8 +151,8 @@ public class IncidentDao extends CocesoDao<Incident> {
                 "VALUES (?,?,?,?,?,?,?,?,?,?)";
 
         jdbc.update(q, incident.aCase.id,
-                incident.state == null ? IncidentState.New : incident.state.name(),
-                incident.type == null ? IncidentType.Task : incident.type.name(),
+                incident.state == null ? IncidentState.New.name() : incident.state.name(),
+                incident.type == null ? IncidentType.Task.name() : incident.type.name(),
                 incident.priority, incident.blue, incident.bo, incident.ao, incident.info, incident.caller,
                 incident.casusNr);
 
