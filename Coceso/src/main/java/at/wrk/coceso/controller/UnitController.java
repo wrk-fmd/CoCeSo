@@ -8,6 +8,7 @@ import at.wrk.coceso.entities.Unit;
 import at.wrk.coceso.service.LogService;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -54,8 +55,11 @@ public class UnitController implements IEntityController<Unit> {
     @RequestMapping(value = "update", produces = "application/json", method = RequestMethod.POST)
     @ResponseBody
     public String update(@RequestBody Unit unit, BindingResult result,
-                         @CookieValue(value = "active_case", defaultValue = "0") String case_id, Principal user)
+                         @CookieValue(value = "active_case", defaultValue = "0") String case_id, Principal principal)
     {
+        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
+        Person user = (Person) token.getPrincipal();
+
         if(result.hasErrors()) {
             return "{\"success\": false, description: \"Binding Error\"}";
         }
@@ -65,11 +69,11 @@ public class UnitController implements IEntityController<Unit> {
 
         if(unit.id < 1) {
             unit.id = 0;
-            log.log((Person)user, "Unit created", Integer.parseInt(case_id), unit, null, true);
+            log.log(user, "Unit created", Integer.parseInt(case_id), unit, null, true);
             return "{\"success\": " + dao.add(unit) + ", \"new\": true}";
         }
 
-        log.log((Person)user, "Unit updated", Integer.parseInt(case_id), unit, null, true);
+        log.log(user, "Unit updated", Integer.parseInt(case_id), unit, null, true);
         return "{\"success\": " + dao.update(unit) + ", \"new\": false}";
     }
 

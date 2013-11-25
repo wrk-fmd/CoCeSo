@@ -8,6 +8,7 @@ import at.wrk.coceso.entities.Person;
 import at.wrk.coceso.service.LogService;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -58,8 +59,11 @@ public class IncidentController implements IEntityController<Incident> {
     @ResponseBody
     public String update(Incident incident, BindingResult result,
                          @CookieValue(value = "active_case", defaultValue = "0") String case_id,
-                         Principal user)
+                         Principal principal)
     {
+        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
+        Person user = (Person) token.getPrincipal();
+
         if(result.hasErrors()) {
             return "{\"success\": false, description: \"Binding Error\"}";
         }
@@ -69,11 +73,11 @@ public class IncidentController implements IEntityController<Incident> {
 
         if(incident.id < 1) {
             incident.id = 0;
-            log.log((Person)user, "Incident created", Integer.parseInt(case_id), null, incident, true);
+            log.log(user, "Incident created", Integer.parseInt(case_id), null, incident, true);
             return "{\"success\": " + dao.add(incident) + ", \"new\": true}";
         }
 
-        log.log((Person)user, "Incident updated", Integer.parseInt(case_id), null, incident, true);
+        log.log(user, "Incident updated", Integer.parseInt(case_id), null, incident, true);
         return "{\"success\": " + dao.update(incident) + ", \"new\": false}";
     }
 
