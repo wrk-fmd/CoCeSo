@@ -3,6 +3,7 @@ package at.wrk.coceso.dao;
 import at.wrk.coceso.dao.mapper.IncidentMapper;
 import at.wrk.coceso.entities.Incident;
 import at.wrk.coceso.entities.IncidentState;
+import at.wrk.coceso.entities.IncidentType;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -141,6 +142,7 @@ public class IncidentDao extends CocesoDao<Incident> {
         return true;
     }
 
+    //TODO Default IncidentType is now TASK
     @Override
     public boolean add(Incident incident) {
         if (incident == null || incident.aCase == null) return false;
@@ -149,8 +151,8 @@ public class IncidentDao extends CocesoDao<Incident> {
                 "VALUES (?,?,?,?,?,?,?,?,?,?)";
 
         jdbc.update(q, incident.aCase.id,
-                incident.state == null ? null : incident.state.name(),
-                incident.type == null ? null : incident.type.name(),
+                incident.state == null ? IncidentState.New : incident.state.name(),
+                incident.type == null ? IncidentType.Task : incident.type.name(),
                 incident.priority, incident.blue, incident.bo, incident.ao, incident.info, incident.caller,
                 incident.casusNr);
 
