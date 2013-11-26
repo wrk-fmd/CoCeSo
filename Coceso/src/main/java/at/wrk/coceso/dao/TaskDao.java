@@ -1,5 +1,7 @@
 package at.wrk.coceso.dao;
 
+import at.wrk.coceso.entities.Incident;
+import at.wrk.coceso.entities.IncidentType;
 import at.wrk.coceso.entities.TaskState;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,8 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 @Repository
@@ -30,6 +34,39 @@ public class TaskDao {
 
         while(rs.next()) {
             ret.put(rs.getInt("unit_id"), TaskState.valueOf(rs.getString("state")));
+        }
+
+        return ret;
+    }
+
+    public Map<Integer, TaskState> getAllByUnitId(int id) {
+        String q = "SELECT * FROM tasks WHERE unit_id = ?";
+
+        SqlRowSet rs = jdbc.queryForRowSet(q, id);
+
+        Map<Integer, TaskState> ret = new HashMap<Integer, TaskState>();
+
+        while(rs.next()) {
+            ret.put(rs.getInt("incident_id"), TaskState.valueOf(rs.getString("state")));
+        }
+
+        return ret;
+    }
+
+    public List<Incident> getAllByUnitIdWithType(int id) {
+        String q = "SELECT i.id, i.type FROM tasks t LEFT OUTER JOIN incidents i ON t.incident_id = i.id " +
+                "WHERE t.unit_id = ?";
+
+        SqlRowSet rs = jdbc.queryForRowSet(q, id);
+
+        List<Incident> ret = new LinkedList<Incident>();
+
+        while(rs.next()) {
+            Incident tmp = new Incident();
+            tmp.id = rs.getInt("id");
+            tmp.type = IncidentType.valueOf(rs.getString("type"));
+
+            ret.add(tmp);
         }
 
         return ret;

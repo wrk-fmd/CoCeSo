@@ -3,10 +3,7 @@ package at.wrk.coceso.service;
 import at.wrk.coceso.dao.IncidentDao;
 import at.wrk.coceso.dao.TaskDao;
 import at.wrk.coceso.dao.UnitDao;
-import at.wrk.coceso.entities.Incident;
-import at.wrk.coceso.entities.Person;
-import at.wrk.coceso.entities.TaskState;
-import at.wrk.coceso.entities.Unit;
+import at.wrk.coceso.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +25,7 @@ public class TaskService {
         Incident i = incidentDao.getById(incident_id);
         Unit u = unitDao.getById(unit_id);
 
-        if(!i.aCase.equals(u.aCase)) {
+        if(!i.aCase.equals(u.aCase) || i.type == IncidentType.HoldPosition || i.type == IncidentType.Standby) {
             return false;
         }
 
@@ -79,5 +76,4 @@ public class TaskService {
 
     }
 
-    //TODO sendHome, setToHome
 }

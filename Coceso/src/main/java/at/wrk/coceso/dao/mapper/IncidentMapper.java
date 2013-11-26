@@ -41,14 +41,14 @@ public class IncidentMapper implements RowMapper<Incident> {
         try {
             inc.state = IncidentState.valueOf(rs.getString("state"));
         }
-        catch(IllegalArgumentException e) {
+        catch(NullPointerException e) {
             Logger.error("IncidentMapper: incident_id:"+inc.id+", Cant read IncidentState, Reset To NULL");
             inc.state = null;
         }
         try {
             inc.type = IncidentType.valueOf(rs.getString("type"));
         }
-        catch(IllegalArgumentException e) {
+        catch(NullPointerException e) {
             Logger.error("IncidentMapper: incident_id:"+inc.id+", Cant read IncidentType, Reset To NULL");
             inc.type = null;
         }
