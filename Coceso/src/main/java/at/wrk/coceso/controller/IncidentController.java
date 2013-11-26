@@ -64,6 +64,7 @@ public class IncidentController implements IEntityController<Incident> {
         UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
         Person user = (Person) token.getPrincipal();
 
+
         if(result.hasErrors()) {
             return "{\"success\": false, description: \"Binding Error\"}";
         }
@@ -77,8 +78,10 @@ public class IncidentController implements IEntityController<Incident> {
 
         if(incident.id < 1) {
             incident.id = 0;
+
+            incident.id = dao.add(incident);
             log.logFull(user, "Incident created", Integer.parseInt(case_id), null, incident, true);
-            return "{\"success\": " + dao.add(incident) + ", \"new\": true}";
+            return "{\"success\": " + (incident.id != -1) + ", \"new\": true}";
         }
 
         log.logFull(user, "Incident updated", Integer.parseInt(case_id), null, incident, true);

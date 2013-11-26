@@ -4,13 +4,21 @@ import at.wrk.coceso.dao.mapper.IncidentMapper;
 import at.wrk.coceso.entities.Incident;
 import at.wrk.coceso.entities.IncidentState;
 import at.wrk.coceso.entities.IncidentType;
+import at.wrk.coceso.entities.UnitState;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -143,20 +151,47 @@ public class IncidentDao extends CocesoDao<Incident> {
     }
 
     //TODO Default IncidentType is now TASK
-    @Override
-    public boolean add(Incident incident) {
-        if (incident == null || incident.aCase == null) return false;
+    public int add(final Incident incident) {
+        if (incident == null || incident.aCase == null) return -1;
 
-        String q = "INSERT INTO incidents (acase, state, type, priority, blue, bo, ao, info, caller, casusnr) " +
+        final String q = "INSERT INTO incidents (acase, state, type, priority, blue, bo, ao, info, caller, casusnr) " +
                 "VALUES (?,?,?,?,?,?,?,?,?,?)";
 
-        jdbc.update(q, incident.aCase.id,
-                incident.state == null ? IncidentState.New.name() : incident.state.name(),
-                incident.type == null ? IncidentType.Task.name() : incident.type.name(),
-                incident.priority, incident.blue, incident.bo, incident.ao, incident.info, incident.caller,
-                incident.casusNr);
+        KeyHolder holder = new GeneratedKeyHolder();
 
-        return true;
+        jdbc.update(new PreparedStatementCreator() {
+
+            @Override
+            public PreparedStatement createPreparedStatement(Connection connection)
+                    throws SQLException {
+                PreparedStatement ps = connection.prepareStatement(q, Statement.RETURN_GENERATED_KEYS);
+
+                ps.setInt(1, incident.aCase.id);
+                ps.setString(2, incident.state == null ? IncidentState.New.name() : incident.state.name());
+                ps.setString(3, incident.type == null ? IncidentType.Task.name() : incident.type.name());
+                ps.setInt(4, incident.priority);
+                ps.setBoolean(5, incident.blue);
+
+                if(incident.bo != null)
+                    ps.setInt(6, incident.bo.id);
+                else
+                    ps.setObject(6, null);
+
+                if(incident.ao != null)
+                    ps.setInt(7, incident.ao.id);
+                else
+                    ps.setObject(7, null);
+
+                ps.setString(8, incident.info);
+                ps.setString(9, incident.caller);
+                ps.setString(10, incident.casusNr);
+                return ps;
+            }
+        }, holder);
+
+
+
+        return (Integer) holder.getKeys().get("id");
     }
 
     @Override

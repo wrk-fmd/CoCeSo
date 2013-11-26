@@ -77,8 +77,11 @@ public class UnitController implements IEntityController<Unit> {
 
         if(unit.id < 1) {
             unit.id = 0;
+
+            unit.id = dao.add(unit);
+
             log.logFull(user, "Unit created", Integer.parseInt(case_id), unit, null, true);
-            return "{\"success\": " + dao.add(unit) + ", \"new\": true}";
+            return "{\"success\": " + (unit.id != -1) + ", \"new\": true}";
         }
 
         log.logFull(user, "Unit updated", Integer.parseInt(case_id), unit, null, true);

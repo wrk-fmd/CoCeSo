@@ -23,7 +23,7 @@ public abstract class CocesoDao<E> {
 
     public abstract boolean update(E e);
 
-    public abstract boolean add(E e);
+    public abstract int add(E e);
 
     public abstract boolean remove(E e);
 }
