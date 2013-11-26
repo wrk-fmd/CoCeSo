@@ -4,12 +4,16 @@ package at.wrk.coceso.controller;
 import at.wrk.coceso.dao.LogDao;
 import at.wrk.coceso.entities.Incident;
 import at.wrk.coceso.entities.LogEntry;
+import at.wrk.coceso.entities.Person;
 import at.wrk.coceso.entities.Unit;
+import at.wrk.coceso.service.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -18,6 +22,9 @@ public class LogController {
 
     @Autowired
     LogDao dao;
+
+    @Autowired
+    LogService log;
 
     @RequestMapping(value = "getAll", produces = "application/json")
     @ResponseBody
@@ -50,7 +57,8 @@ public class LogController {
 
     @RequestMapping(value = "add", produces = "application/json", method = RequestMethod.POST)
     @ResponseBody
-    public Object addEntry(@RequestBody LogEntry log, BindingResult bindingResult) {
+    public Object addEntry(@RequestBody LogEntry logEntry, BindingResult bindingResult,
+                           @CookieValue(value = "active_case", defaultValue = "0") String case_id, Principal principal) {
         if(bindingResult.hasErrors()) {
             return new Object() {
                 boolean success = false;
@@ -58,8 +66,14 @@ public class LogController {
             };
         }
 
-        //TODO Read User ID
-        return "{\"success\":"+dao.add(log)+"}";
+        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
+        Person user = (Person) token.getPrincipal();
+
+
+        log.logFull(user, logEntry.text, Integer.parseInt(case_id),
+                logEntry.unit, logEntry.incident, false);
+
+        return "{\"success\":true}";
     }
 }
 

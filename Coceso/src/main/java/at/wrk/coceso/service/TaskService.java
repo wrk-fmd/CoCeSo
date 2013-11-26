@@ -40,12 +40,43 @@ public class TaskService {
 
     }
 
-    public void detachUnit(int incident_id, int unit_id) {
+    public void detachUnit(int incident_id, int unit_id, Person user) {
+        Incident i = incidentDao.getById(incident_id);
+        Unit u = unitDao.getById(unit_id);
+
+        if(!i.aCase.equals(u.aCase)) {
+            return;
+        }
+
+        if(user != null) {
+            log.logFull(user, "Unit detached by User", i.aCase.id, u, i, true);
+        }
+
         taskDao.remove(incident_id, unit_id);
     }
 
-    public void changeState(int incident_id, int unit_id, TaskState state) {
-        //TODO
+    public void changeState(int incident_id, int unit_id, TaskState state, Person user) {
+        Incident i = incidentDao.getById(incident_id);
+        Unit u = unitDao.getById(unit_id);
+
+        TaskState tmp = i != null && i.units != null && u != null ?
+                i.units.get(u.id) : null;
+
+        if(tmp == null)
+            return;
+
+        i.units.put(unit_id, state);
+
+        if(!i.aCase.equals(u.aCase)) {
+            return;
+        }
+
+        if(user != null) {
+            log.logFull(user, "TaskState changed", i.aCase.id, u, i, true);
+        }
+
+        taskDao.update(incident_id, unit_id, state);
+
     }
 
     //TODO sendHome, setToHome
