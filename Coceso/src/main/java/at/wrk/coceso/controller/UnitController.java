@@ -26,6 +26,7 @@ public class UnitController implements IEntityController<Unit> {
     @Autowired
     private LogService log;
 
+    @Override
     @RequestMapping(value = "getAll", produces = "application/json")
     @ResponseBody
     public List<Unit> getAll(@CookieValue(value = "active_case", defaultValue = "0") String case_id) {
@@ -38,6 +39,7 @@ public class UnitController implements IEntityController<Unit> {
         }
     }
 
+    @Override
     @RequestMapping(value = "get", produces = "application/json", method = RequestMethod.POST)
     @ResponseBody
     public Unit getByPost(@RequestParam(value = "id", required = true) int id) {
@@ -45,6 +47,7 @@ public class UnitController implements IEntityController<Unit> {
         return dao.getById(id);
     }
 
+    @Override
     @RequestMapping(value = "get/{id}", produces = "application/json", method = RequestMethod.GET)
     @ResponseBody
     public Unit getByGet(@PathVariable("id") int id) {
@@ -52,6 +55,7 @@ public class UnitController implements IEntityController<Unit> {
         return getByPost(id);
     }
 
+    @Override
     @RequestMapping(value = "update", produces = "application/json", method = RequestMethod.POST)
     @ResponseBody
     public String update(@RequestBody Unit unit, BindingResult result,
