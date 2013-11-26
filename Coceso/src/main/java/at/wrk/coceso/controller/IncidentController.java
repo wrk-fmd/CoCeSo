@@ -71,6 +71,10 @@ public class IncidentController implements IEntityController<Incident> {
         incident.aCase = new Case();
         incident.aCase.id = Integer.parseInt(case_id);
 
+        if(incident.aCase.id <= 0) {
+            return "{\"success\": false, \"info\":\"No active Case. Cookies enabled?\"}";
+        }
+
         if(incident.id < 1) {
             incident.id = 0;
             log.logFull(user, "Incident created", Integer.parseInt(case_id), null, incident, true);

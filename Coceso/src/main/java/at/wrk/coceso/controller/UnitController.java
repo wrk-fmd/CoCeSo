@@ -71,6 +71,10 @@ public class UnitController implements IEntityController<Unit> {
         unit.aCase = new Case();
         unit.aCase.id = Integer.parseInt(case_id);
 
+        if(unit.aCase.id <= 0) {
+            return "{\"success\": false, \"info\":\"No active Case. Cookies enabled?\"}";
+        }
+
         if(unit.id < 1) {
             unit.id = 0;
             log.logFull(user, "Unit created", Integer.parseInt(case_id), unit, null, true);
