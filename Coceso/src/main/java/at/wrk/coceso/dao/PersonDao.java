@@ -74,8 +74,8 @@ public class PersonDao extends CocesoDao<Person> {
     }
 
     @Override
-    public boolean add(Person p) {
-        if(p == null) return false;
+    public int add(Person p) {
+        if(p == null) return -1;
 
         String q = "INSERT INTO persons (allowlogin, dnr, contact, given_name, " +
                 "sur_name, username, hashedpw, activecase) " +
@@ -84,7 +84,7 @@ public class PersonDao extends CocesoDao<Person> {
         jdbc.update(q, p.allowLogin, p.dNr, p.contact, p.given_name, p.sur_name, p.username, p.hashedPW,
                 p.activeCase == null ? null : p.activeCase.id);
 
-        return true;
+        return 0;
     }
 
     @Override

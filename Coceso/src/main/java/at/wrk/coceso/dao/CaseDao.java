@@ -87,8 +87,8 @@ public class CaseDao extends CocesoDao<Case> {
 
 
     @Override
-    public boolean add(Case caze) {
-        if(caze == null) return false;
+    public int add(Case caze) {
+        if(caze == null) return -1;
 
         caze.prepareNotNull();
 
@@ -96,10 +96,10 @@ public class CaseDao extends CocesoDao<Case> {
 
         try {
             jdbc.update(q, caze.name, caze.place == null ? null : caze.place.id, caze.organiser, caze.pax);
-            return true;
+            return 0;
         }
         catch (DataAccessException dae) {
-            return false;
+            return -1;
         }
 
     }

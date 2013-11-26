@@ -5,7 +5,6 @@ import at.wrk.coceso.entities.CocesoPOI;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.stereotype.Repository;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -89,10 +88,10 @@ public class PoiDao extends CocesoDao<CocesoPOI> {
     }
 
     @Override
-    public boolean add(CocesoPOI poi) {
+    public int add(CocesoPOI poi) {
         if(poi == null) {
             Logger.error("PoiDao.add(): poi is NULL");
-            return false;
+            return -1;
         }
 
         poi.prepareNotNull();
@@ -105,9 +104,9 @@ public class PoiDao extends CocesoDao<CocesoPOI> {
         }
         catch(DataAccessException dae) {
             Logger.error("PoiDao.add(): DataAccessException: " + dae.getMessage());
-            return false;
+            return -1;
         }
-        return true;
+        return 0;
     }
 
     @Override
