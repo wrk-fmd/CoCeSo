@@ -41,5 +41,7 @@ public class LogService {
             e.printStackTrace();
         }
 
+        logDao.add(logEntry);
+
     }
 }

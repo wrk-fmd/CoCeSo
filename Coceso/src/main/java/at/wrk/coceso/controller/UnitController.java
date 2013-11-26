@@ -17,7 +17,7 @@ import java.security.Principal;
 import java.util.List;
 
 @Controller
-@RequestMapping("/data/units")
+@RequestMapping("/data/unit")
 public class UnitController implements IEntityController<Unit> {
 
     @Autowired

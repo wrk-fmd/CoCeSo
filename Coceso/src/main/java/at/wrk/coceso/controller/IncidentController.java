@@ -17,7 +17,7 @@ import java.security.Principal;
 import java.util.List;
 
 @Controller
-@RequestMapping("/data/incidents")
+@RequestMapping("/data/incident")
 public class IncidentController implements IEntityController<Incident> {
 
     @Autowired
@@ -57,7 +57,7 @@ public class IncidentController implements IEntityController<Incident> {
     @Override
     @RequestMapping(value = "update", produces = "application/json", method = RequestMethod.POST)
     @ResponseBody
-    public String update(Incident incident, BindingResult result,
+    public String update(@RequestBody Incident incident, BindingResult result,
                          @CookieValue(value = "active_case", defaultValue = "0") String case_id,
                          Principal principal)
     {
