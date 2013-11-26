@@ -73,11 +73,11 @@ public class IncidentController implements IEntityController<Incident> {
 
         if(incident.id < 1) {
             incident.id = 0;
-            log.log(user, "Incident created", Integer.parseInt(case_id), null, incident, true);
+            log.logFull(user, "Incident created", Integer.parseInt(case_id), null, incident, true);
             return "{\"success\": " + dao.add(incident) + ", \"new\": true}";
         }
 
-        log.log(user, "Incident updated", Integer.parseInt(case_id), null, incident, true);
+        log.logFull(user, "Incident updated", Integer.parseInt(case_id), null, incident, true);
         return "{\"success\": " + dao.update(incident) + ", \"new\": false}";
     }
 

@@ -4,6 +4,7 @@ import at.wrk.coceso.dao.IncidentDao;
 import at.wrk.coceso.dao.TaskDao;
 import at.wrk.coceso.dao.UnitDao;
 import at.wrk.coceso.entities.Incident;
+import at.wrk.coceso.entities.Person;
 import at.wrk.coceso.entities.TaskState;
 import at.wrk.coceso.entities.Unit;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +21,19 @@ public class TaskService {
     @Autowired
     TaskDao taskDao;
 
-    public boolean assignUnit(int incident_id, int unit_id) {
+    @Autowired
+    LogService log;
+
+    public boolean assignUnit(int incident_id, int unit_id, Person user) {
         Incident i = incidentDao.getById(incident_id);
         Unit u = unitDao.getById(unit_id);
 
         if(!i.aCase.equals(u.aCase)) {
             return false;
+        }
+
+        if(user != null) {
+            log.logFull(user, "Unit assigned by User", u.aCase.id, u, i, true);
         }
 
         return taskDao.add(incident_id, unit_id, TaskState.Assigned);
