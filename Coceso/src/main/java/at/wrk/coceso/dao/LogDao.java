@@ -28,7 +28,8 @@ public class LogDao extends CocesoDao<LogEntry> {
     public LogEntry getById(int id) {
         if(id <= 0) return null;
 
-        String q = "SELECT * FROM log l LEFT OUTER JOIN persons p ON l.uzer = p.id WHERE l.id = ?";
+        String q = "SELECT l.*, p.id AS pid, p.sur_name, p.given_name, p.dnr, p.contact " +
+                "FROM log l LEFT OUTER JOIN persons p ON l.uzer = p.id WHERE l.id = ?";
 
         try {
             return jdbc.queryForObject(q, new Object[] {id}, logMapper);
