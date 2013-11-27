@@ -75,12 +75,21 @@ public class UnitController implements IEntityController<Unit> {
         UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
         Person user = (Person) token.getPrincipal();
 
+        int caseId = Integer.parseInt(case_id);
+
         if(result.hasErrors()) {
             return "{\"success\": false, description: \"Binding Error\"}";
         }
 
+        if(unit.id > 0) {
+            Unit u = unitDao.getById(unit.id);
+            if(u.aCase.id != caseId)
+                return "{\"success\": false, \"info\":\"Active Case not valid\"}";
+        }
+
+
         unit.aCase = new Case();
-        unit.aCase.id = Integer.parseInt(case_id);
+        unit.aCase.id = caseId;
 
         if(unit.aCase.id <= 0) {
             return "{\"success\": false, \"info\":\"No active Case. Cookies enabled?\"}";
@@ -91,11 +100,11 @@ public class UnitController implements IEntityController<Unit> {
 
             unit.id = unitDao.add(unit);
 
-            log.logFull(user, "Unit created", Integer.parseInt(case_id), unit, null, true);
+            log.logFull(user, "Unit created", caseId, unit, null, true);
             return "{\"success\": " + (unit.id != -1) + ", \"new\": true}";
         }
 
-        log.logFull(user, "Unit updated", Integer.parseInt(case_id), unit, null, true);
+        log.logFull(user, "Unit updated", caseId, unit, null, true);
         return "{\"success\": " + unitDao.update(unit) + ", \"new\": false}";
     }
 

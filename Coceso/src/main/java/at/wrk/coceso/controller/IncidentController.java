@@ -39,6 +39,18 @@ public class IncidentController implements IEntityController<Incident> {
         }
     }
 
+    @RequestMapping(value = "getAllActive", produces = "application/json")
+    @ResponseBody
+    public List<Incident> getAllActive(@CookieValue(value = "active_case", defaultValue = "0") String case_id) {
+
+        try {
+            return dao.getAllActive(Integer.parseInt(case_id));
+        } catch(NumberFormatException e) {
+            Logger.warning("IncidentController: getAll: " + e);
+            return null;
+        }
+    }
+
     @Override
     @RequestMapping(value = "get", produces = "application/json", method = RequestMethod.POST)
     @ResponseBody
@@ -64,13 +76,20 @@ public class IncidentController implements IEntityController<Incident> {
         UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
         Person user = (Person) token.getPrincipal();
 
+        int caseId = Integer.parseInt(case_id);
 
         if(result.hasErrors()) {
             return "{\"success\": false, description: \"Binding Error\"}";
         }
 
+        if(incident.id > 0) {
+            Incident i = dao.getById(incident.id);
+            if(i.aCase.id != caseId)
+                return "{\"success\": false, \"info\":\"Active Case not valid\"}";
+        }
+
         incident.aCase = new Case();
-        incident.aCase.id = Integer.parseInt(case_id);
+        incident.aCase.id = caseId;
 
         if(incident.aCase.id <= 0) {
             return "{\"success\": false, \"info\":\"No active Case. Cookies enabled?\"}";
@@ -80,11 +99,11 @@ public class IncidentController implements IEntityController<Incident> {
             incident.id = 0;
 
             incident.id = dao.add(incident);
-            log.logFull(user, "Incident created", Integer.parseInt(case_id), null, incident, true);
+            log.logFull(user, "Incident created", caseId, null, incident, true);
             return "{\"success\": " + (incident.id != -1) + ", \"new\": true}";
         }
 
-        log.logFull(user, "Incident updated", Integer.parseInt(case_id), null, incident, true);
+        log.logFull(user, "Incident updated", caseId, null, incident, true);
         return "{\"success\": " + dao.update(incident) + ", \"new\": false}";
     }
 
