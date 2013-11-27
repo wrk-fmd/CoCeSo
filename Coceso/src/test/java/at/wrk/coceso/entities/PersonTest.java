@@ -6,27 +6,28 @@ import org.junit.Test;
 
 public class PersonTest {
 
-    private Person p;
+    private Person t;
 
     @Before
     public void setUp() {
-        p = new Person();
-    }
-
-    @Test
-    public void simpleTest() {
-        Assert.assertEquals(1, 1);
+        this.t = new Person();
     }
 
     @Test
     public void validatePasswordTest() {
-        p.setPassword("12345");
-        Assert.assertEquals(true, p.validatePassword("12345"));
+        this.t.setPassword("12345");
+        Assert.assertEquals(true, this.t.validatePassword("12345"));
     }
 
     @Test
     public void validateWrongPasswordTest() {
-        p.setPassword("-%43456");
-        Assert.assertEquals(false, p.validatePassword("ä24ß12345"));
+        this.t.setPassword("-%43456");
+        Assert.assertEquals(false, this.t.validatePassword("ä24ß12345"));
+    }
+
+    @Test
+    public void validateEmptyPasswordTest() {
+        this.t.setPassword("lsdfjao234_sf");
+        Assert.assertEquals(false, this.t.validatePassword(""));
     }
 }
