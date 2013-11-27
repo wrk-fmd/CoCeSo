@@ -7,7 +7,6 @@ import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -57,7 +56,7 @@ public class PersonDao extends CocesoDao<Person> {
     @Override
     @Deprecated
     public List<Person> getAll(int case_id) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
