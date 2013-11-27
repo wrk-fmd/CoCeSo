@@ -100,7 +100,7 @@ public class IncidentController implements IEntityController<Incident> {
 
             incident.id = dao.add(incident);
             log.logFull(user, "Incident created", caseId, null, incident, true);
-            return "{\"success\": " + (incident.id != -1) + ", \"new\": true}";
+            return "{\"success\": " + (incident.id != -1) + ", \"new\": true, \"incident_id\":"+incident.id+"}";
         }
 
         log.logFull(user, "Incident updated", caseId, null, incident, true);
