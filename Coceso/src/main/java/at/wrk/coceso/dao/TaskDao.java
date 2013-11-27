@@ -1,6 +1,7 @@
 package at.wrk.coceso.dao;
 
 import at.wrk.coceso.entities.Incident;
+import at.wrk.coceso.entities.IncidentState;
 import at.wrk.coceso.entities.IncidentType;
 import at.wrk.coceso.entities.TaskState;
 import at.wrk.coceso.utils.Logger;
@@ -54,7 +55,7 @@ public class TaskDao {
     }
 
     public List<Incident> getAllByUnitIdWithType(int id) {
-        String q = "SELECT i.id, i.type FROM tasks t LEFT OUTER JOIN incidents i ON t.incident_id = i.id " +
+        String q = "SELECT i.id, i.type, i.state FROM tasks t LEFT OUTER JOIN incidents i ON t.incident_id = i.id " +
                 "WHERE t.unit_id = ?";
 
         SqlRowSet rs = jdbc.queryForRowSet(q, id);
@@ -62,9 +63,14 @@ public class TaskDao {
         List<Incident> ret = new LinkedList<Incident>();
 
         while(rs.next()) {
+
             Incident tmp = new Incident();
             tmp.id = rs.getInt("id");
-            tmp.type = IncidentType.valueOf(rs.getString("type"));
+
+            String x = rs.getString("type");
+            tmp.type = (x == null ? null : IncidentType.valueOf(x));
+            x = rs.getString("state");
+            tmp.state = (x == null ? null : IncidentState.valueOf(x));
 
             ret.add(tmp);
         }
@@ -106,13 +112,23 @@ public class TaskDao {
         }
     }
 
-    public void removeAll(int unit_id) {
+    public void removeAllByUnit(int unit_id) {
         String q = "DELETE FROM tasks WHERE unit_id = ?";
 
         try {
             jdbc.update(q, unit_id);
         } catch(DataAccessException e) {
-            Logger.debug("TaskDao removeAll: "+e);
+            Logger.debug("TaskDao removeAllByUnit: "+e);
+        }
+    }
+
+    public void removeAllByIncident(int incident_id) {
+        String q = "DELETE FROM tasks WHERE incident_id = ?";
+
+        try {
+            jdbc.update(q, incident_id);
+        } catch(DataAccessException e) {
+            Logger.debug("TaskDao removeAllByIncident: "+e);
         }
     }
 }

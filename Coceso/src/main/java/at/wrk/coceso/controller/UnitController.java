@@ -1,11 +1,13 @@
 
 package at.wrk.coceso.controller;
 
+import at.wrk.coceso.dao.IncidentDao;
 import at.wrk.coceso.dao.TaskDao;
 import at.wrk.coceso.dao.UnitDao;
 import at.wrk.coceso.entities.*;
 import at.wrk.coceso.service.LogService;
 import at.wrk.coceso.service.TaskService;
+import at.wrk.coceso.utils.LogText;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,14 +17,16 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/data/unit")
 public class UnitController implements IEntityController<Unit> {
 
     @Autowired
-    private UnitDao dao;
+    private UnitDao unitDao;
+
+    @Autowired
+    private IncidentDao incidentDao;
 
     @Autowired
     private TaskDao taskDao;
@@ -39,7 +43,7 @@ public class UnitController implements IEntityController<Unit> {
     public List<Unit> getAll(@CookieValue(value = "active_case", defaultValue = "0") String case_id) {
 
         try {
-            return dao.getAll(Integer.parseInt(case_id));
+            return unitDao.getAll(Integer.parseInt(case_id));
         } catch(NumberFormatException e) {
             Logger.warning("UnitController: getAll: "+e);
             return null;
@@ -51,7 +55,7 @@ public class UnitController implements IEntityController<Unit> {
     @ResponseBody
     public Unit getByPost(@RequestParam(value = "id", required = true) int id) {
 
-        return dao.getById(id);
+        return unitDao.getById(id);
     }
 
     @Override
@@ -85,14 +89,14 @@ public class UnitController implements IEntityController<Unit> {
         if(unit.id < 1) {
             unit.id = 0;
 
-            unit.id = dao.add(unit);
+            unit.id = unitDao.add(unit);
 
             log.logFull(user, "Unit created", Integer.parseInt(case_id), unit, null, true);
             return "{\"success\": " + (unit.id != -1) + ", \"new\": true}";
         }
 
         log.logFull(user, "Unit updated", Integer.parseInt(case_id), unit, null, true);
-        return "{\"success\": " + dao.update(unit) + ", \"new\": false}";
+        return "{\"success\": " + unitDao.update(unit) + ", \"new\": false}";
     }
 
     @RequestMapping(value = "sendHome/{id}", produces = "application/json", method = RequestMethod.GET)
@@ -102,15 +106,40 @@ public class UnitController implements IEntityController<Unit> {
         UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
         Person user = (Person) token.getPrincipal();
 
+        int activeCase = Integer.parseInt(case_id);
+
         List<Incident> list = taskDao.getAllByUnitIdWithType(unitId);
 
+        // If active Task != Standby or HoldPosition is present, don't send home
         for(Incident i : list) {
             if(i.type != IncidentType.HoldPosition && i.type != IncidentType.Standby)
                 return null;
         }
 
-        //TODO SendHome Feature
-        return null;
+        Unit unit = unitDao.getById(unitId);
+
+        // Detach from all HoldPosition and Standby Incidents
+        for(Incident i : list) {
+            i.state = IncidentState.Done;
+            log.logWithIDs(user.id, LogText.SEND_HOME_AUTO_DETACH, activeCase, unitId, i.id, true);
+            incidentDao.update(i);
+            taskDao.remove(i.id, unitId);
+        }
+
+        Incident toHome = new Incident();
+        toHome.state = IncidentState.Dispo;
+        toHome.aCase = new Case();
+        toHome.aCase.id = activeCase;
+        toHome.ao = unit.home;
+        toHome.bo = unit.position; // TODO useful?
+        toHome.type = IncidentType.Relocation;
+        toHome.caller = user.getUsername(); // TODO useful?
+
+        toHome.id = incidentDao.add(toHome);
+        log.logFull(user, LogText.SEND_HOME_ASSIGN, activeCase, unit, toHome, true);
+        taskService.assignUnit(toHome.id, unitId, user);
+
+        return unit;
     }
 
 }

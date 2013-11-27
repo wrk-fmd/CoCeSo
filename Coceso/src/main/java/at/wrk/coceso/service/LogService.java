@@ -45,6 +45,12 @@ public class LogService {
 
     }
 
+    public void logWithIDs(int user_id, String text, int activeCase, int unit_id, int incident_id, boolean auto) {
+        if(user_id < 1)
+            return;
+        logDao.add(activeCase, unit_id, incident_id, auto, user_id, text);
+    }
+
     public void logByUser(Person user, String text, int activeCase) {
         logFull(user, text, activeCase, null, null, false);
     }

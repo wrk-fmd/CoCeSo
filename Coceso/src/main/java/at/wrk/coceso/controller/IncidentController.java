@@ -88,4 +88,33 @@ public class IncidentController implements IEntityController<Incident> {
         return "{\"success\": " + dao.update(incident) + ", \"new\": false}";
     }
 
+    @RequestMapping(value = "nextState/{incident_id}/{unit_id}", produces = "application/json", method = RequestMethod.GET)
+    @ResponseBody
+    public Incident nextState(@PathVariable("incident_id") int incident_id,
+                              @PathVariable("unit_id") int unit_id,
+                              @CookieValue(value = "active_case", defaultValue = "0") String case_id,
+                              Principal principal)
+    {
+        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
+        Person user = (Person) token.getPrincipal();
+
+        //TODO
+        return null;
+    }
+
+    @RequestMapping(value = "setToState/{incident_id}/{unit_id}/{state}",
+            produces = "application/json", method = RequestMethod.GET)
+    @ResponseBody
+    public Incident setToState(@PathVariable("incident_id") int incident_id,
+                               @PathVariable("unit_id") int unit_id,
+                               @PathVariable("state") String s_state,
+                               @CookieValue(value = "active_case", defaultValue = "0") String case_id,
+                               Principal principal)
+    {
+        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
+        Person user = (Person) token.getPrincipal();
+
+        //TODO
+        return null;
+    }
 }
