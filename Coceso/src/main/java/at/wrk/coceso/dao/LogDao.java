@@ -6,7 +6,6 @@ import at.wrk.coceso.entities.TaskState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.sql.DataSource;
 import java.sql.Timestamp;
@@ -66,7 +65,7 @@ public class LogDao extends CocesoDao<LogEntry> {
 
     @Override
     public boolean update(LogEntry logEntry) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -98,6 +97,6 @@ public class LogDao extends CocesoDao<LogEntry> {
 
     @Override
     public boolean remove(LogEntry logEntry) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 }
