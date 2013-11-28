@@ -28,7 +28,7 @@ public class LogMapper implements RowMapper<LogEntry> {
 
 
         l.user = new Person();
-        l.user.id = rs.getInt("id");
+        l.user.id = rs.getInt("pid");
         l.user.sur_name = rs.getString("sur_name");
         l.user.given_name = rs.getString("given_name");
         l.user.dNr = rs.getInt("dNr");

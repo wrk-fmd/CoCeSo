@@ -1,9 +1,10 @@
 package at.wrk.coceso.entities;
 
 
-import at.wrk.coceso.entities.*;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Incident {
 
@@ -54,20 +55,20 @@ public class Incident {
 
     public IncidentType type;
 
-    public TaskState nextState(Unit unit) {
-        if(state == null || type == null || unit == null || !units.containsKey(unit.id))
+    public TaskState nextState(int unit_id) {
+        if(state == null || type == null || !units.containsKey(unit_id))
             return null;
 
         List<TaskState> l = possibleStates.get(type);
         if(l == null)
             return null;
-        int index = l.indexOf(units.get(unit.id));
+        int index = l.indexOf(units.get(unit_id));
         if(index < 0 || index > l.size() - 2)
             return null;
 
         TaskState ret = l.get(index+1);
 
-        units.put(unit.id, ret);
+        units.put(unit_id, ret);
 
         if(type == IncidentType.HoldPosition || type == IncidentType.Standby) {
             if(ret == TaskState.Detached)
@@ -76,9 +77,18 @@ public class Incident {
                 state = IncidentState.Working;
         } else {
             if(ret == TaskState.Detached)
-                units.remove(unit.id);
+                units.remove(unit_id);
         }
 
+
+        return ret;
+    }
+
+    public Incident slimCopy() {
+        Incident ret = new Incident();
+        ret.id = this.id;
+        ret.aCase = this.aCase;
+        ret.type = this.type;
 
         return ret;
     }

@@ -66,4 +66,11 @@ public class Unit {
     public String getInfo() {
         return info;
     }
+
+    public Unit slimCopy() {
+        Unit ret = new Unit();
+        ret.id = this.id;
+        ret.aCase = this.aCase;
+        return ret;
+    }
 }

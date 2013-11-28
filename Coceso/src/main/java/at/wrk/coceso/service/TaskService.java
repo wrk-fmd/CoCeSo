@@ -26,6 +26,7 @@ public class TaskService {
         Incident i = incidentDao.getById(incident_id);
         Unit u = unitDao.getById(unit_id);
 
+        // Not in same Case; HoldPosition and Standby can't be assigned to multiple Units
         if(!i.aCase.equals(u.aCase) || i.type == IncidentType.HoldPosition || i.type == IncidentType.Standby) {
             return false;
         }
@@ -42,7 +43,7 @@ public class TaskService {
         Incident i = incidentDao.getById(incident_id);
         Unit u = unitDao.getById(unit_id);
 
-        if(!i.aCase.equals(u.aCase)) {
+        if(!i.aCase.equals(u.aCase)) {  // Not in same Case
             return;
         }
 
@@ -60,12 +61,12 @@ public class TaskService {
         TaskState tmp = i != null && i.units != null && u != null ?
                 i.units.get(u.id) : null;
 
-        if(tmp == null)
+        if(tmp == null)  // Not Assigned
             return;
 
         i.units.put(unit_id, state);
 
-        if(!i.aCase.equals(u.aCase)) {
+        if(!i.aCase.equals(u.aCase)) {    // Not in same Case
             return;
         }
 
@@ -75,6 +76,24 @@ public class TaskService {
 
         taskDao.update(incident_id, unit_id, state);
 
+        switch (state) {
+            case ABO:
+                Unit writeUnit = u.slimCopy();
+                writeUnit.position = i.bo;
+                unitDao.update(writeUnit);
+                break;
+            case AAO:
+                Unit writeUnit2 = u.slimCopy();
+                writeUnit2.position = i.ao;
+                unitDao.update(writeUnit2);
+                break;
+            default:
+                break;
+        }
+
+        if(user != null) {
+            checkStates(incident_id, user);
+        }
     }
 
     public void checkStates(int incident_id, Person user) {
@@ -84,12 +103,12 @@ public class TaskService {
         for(Integer unitId : i.units.keySet()) {
             if(i.state == IncidentState.Done) {
                 log.logWithIDs(user.id, LogText.UNIT_AUTO_DETACH, i.aCase.id, unitId, i.id, true);
-                taskDao.remove(i.id, unitId);
+                detachUnit(i.id, unitId, null);
             } else {
                 TaskState state = i.units.get(unitId);
                 if(state == TaskState.Detached) {
                     log.logWithIDs(user.id, LogText.UNIT_AUTO_DETACH, i.aCase.id, unitId, i.id, true);
-                    taskDao.remove(i.id, unitId);
+                    detachUnit(i.id, unitId, null);
                 }
             }
         }

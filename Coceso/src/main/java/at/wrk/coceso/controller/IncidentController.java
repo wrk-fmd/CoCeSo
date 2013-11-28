@@ -2,10 +2,9 @@
 package at.wrk.coceso.controller;
 
 import at.wrk.coceso.dao.IncidentDao;
-import at.wrk.coceso.entities.Case;
-import at.wrk.coceso.entities.Incident;
-import at.wrk.coceso.entities.Person;
+import at.wrk.coceso.entities.*;
 import at.wrk.coceso.service.LogService;
+import at.wrk.coceso.service.TaskService;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,6 +24,9 @@ public class IncidentController implements IEntityController<Incident> {
 
     @Autowired
     LogService log;
+
+    @Autowired
+    TaskService taskService;
 
     @Override
     @RequestMapping(value = "getAll", produces = "application/json")
@@ -104,21 +106,32 @@ public class IncidentController implements IEntityController<Incident> {
         }
 
         log.logFull(user, "Incident updated", caseId, null, incident, true);
-        return "{\"success\": " + dao.update(incident) + ", \"new\": false}";
+        boolean ret = dao.update(incident);
+
+        if(ret && incident.state == IncidentState.Done)
+            taskService.checkStates(incident.id, user);
+
+        return "{\"success\": " + ret + ", \"new\": false}";
     }
 
     @RequestMapping(value = "nextState/{incident_id}/{unit_id}", produces = "application/json", method = RequestMethod.GET)
     @ResponseBody
     public Incident nextState(@PathVariable("incident_id") int incident_id,
                               @PathVariable("unit_id") int unit_id,
-                              @CookieValue(value = "active_case", defaultValue = "0") String case_id,
                               Principal principal)
     {
         UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
         Person user = (Person) token.getPrincipal();
 
-        //TODO
-        return null;
+        Incident incident = dao.getById(incident_id);
+        TaskState newState = incident.nextState(unit_id);
+
+        if(newState == null)
+            return null;
+
+        taskService.changeState(incident_id, unit_id, newState, user);
+
+        return dao.getById(incident_id);
     }
 
     @RequestMapping(value = "setToState/{incident_id}/{unit_id}/{state}",
@@ -127,13 +140,21 @@ public class IncidentController implements IEntityController<Incident> {
     public Incident setToState(@PathVariable("incident_id") int incident_id,
                                @PathVariable("unit_id") int unit_id,
                                @PathVariable("state") String s_state,
-                               @CookieValue(value = "active_case", defaultValue = "0") String case_id,
                                Principal principal)
     {
         UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
         Person user = (Person) token.getPrincipal();
 
-        //TODO
-        return null;
+        TaskState state;
+
+        try {
+            state = TaskState.valueOf(s_state);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+
+        taskService.changeState(incident_id, unit_id, state, user);
+
+        return dao.getById(incident_id);
     }
 }
