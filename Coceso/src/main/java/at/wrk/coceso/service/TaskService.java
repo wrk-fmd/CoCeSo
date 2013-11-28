@@ -77,15 +77,39 @@ public class TaskService {
         taskDao.update(incident_id, unit_id, state);
 
         switch (state) {
+            case Assigned:
+                if(i.state == IncidentState.New) {
+                    Incident wIncident = i.slimCopy();
+                    wIncident.state = IncidentState.Dispo;
+                    log.logFull(user, LogText.INCIDENT_AUTO_STATE, i.aCase.id, u, wIncident, true);
+                    incidentDao.update(wIncident);
+                }
+                break;
             case ABO:
                 Unit writeUnit = u.slimCopy();
                 writeUnit.position = i.bo;
+                log.logFull(user, LogText.UNIT_AUTOSET_POSITION, i.aCase.id, writeUnit, i, true);
                 unitDao.update(writeUnit);
+                break;
+            case ZAO:
+                if(i.type == IncidentType.Relocation) {
+                    Incident writeIncident = i.slimCopy();
+                    writeIncident.state = IncidentState.Working;
+                    log.logFull(user, LogText.INCIDENT_AUTO_STATE, i.aCase.id, u, writeIncident, true);
+                    incidentDao.update(writeIncident);
+                }
                 break;
             case AAO:
                 Unit writeUnit2 = u.slimCopy();
                 writeUnit2.position = i.ao;
+                log.logFull(user, LogText.UNIT_AUTOSET_POSITION, i.aCase.id, writeUnit2, i, true);
                 unitDao.update(writeUnit2);
+
+                break;
+            case Detached:
+                if(i.type == IncidentType.Standby || i.type == IncidentType.HoldPosition) {
+                    //TODO Set Incident to Done
+                }
                 break;
             default:
                 break;
@@ -99,6 +123,12 @@ public class TaskService {
     public void checkStates(int incident_id, Person user) {
         Incident i = incidentDao.getById(incident_id);
 
+        if(i.units.isEmpty() && i.state != IncidentState.Done) {
+            Incident write = i.slimCopy();
+            write.state = IncidentState.Done;
+            log.logFull(user, LogText.INCIDENT_NO_UNIT_ATTACHED, i.aCase.id, null, write, true);
+            incidentDao.update(write);
+        }
 
         for(Integer unitId : i.units.keySet()) {
             if(i.state == IncidentState.Done) {
