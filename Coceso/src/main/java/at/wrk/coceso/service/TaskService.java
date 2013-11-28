@@ -126,24 +126,32 @@ public class TaskService {
     public void checkStates(int incident_id, Person user) {
         Incident i = incidentDao.getById(incident_id);
 
-        if(i.units.isEmpty() && i.state != IncidentState.Done) {
-            Incident write = i.slimCopy();
-            write.state = IncidentState.Done;
-            log.logFull(user, LogText.INCIDENT_NO_UNIT_ATTACHED, i.aCase.id, null, write, true);
-            incidentDao.update(write);
-        }
+        checkEmpty(i, user);
 
         for(Integer unitId : i.units.keySet()) {
             if(i.state == IncidentState.Done) {
                 log.logWithIDs(user.id, LogText.UNIT_AUTO_DETACH, i.aCase.id, unitId, i.id, true);
                 detachUnit(i.id, unitId, null);
+                i.units.remove(unitId);
             } else {
                 TaskState state = i.units.get(unitId);
                 if(state == TaskState.Detached) {
                     log.logWithIDs(user.id, LogText.UNIT_AUTO_DETACH, i.aCase.id, unitId, i.id, true);
                     detachUnit(i.id, unitId, null);
+                    i.units.remove(unitId);
                 }
             }
+        }
+
+        checkEmpty(i, user);
+    }
+
+    private void checkEmpty(Incident i, Person user) {
+        if(i.units.isEmpty() && i.state != IncidentState.Done) {
+            Incident write = i.slimCopy();
+            write.state = IncidentState.Done;
+            log.logFull(user, LogText.INCIDENT_NO_UNIT_ATTACHED, i.aCase.id, null, write, true);
+            incidentDao.update(write);
         }
     }
 }
