@@ -108,7 +108,10 @@ public class TaskService {
                 break;
             case Detached:
                 if(i.type == IncidentType.Standby || i.type == IncidentType.HoldPosition) {
-                    //TODO Set Incident to Done
+                    Incident wInc = i.slimCopy();
+                    wInc.state = IncidentState.Done;
+                    log.logFull(user, LogText.INCIDENT_AUTO_STATE, i.aCase.id, u, wInc, true);
+                    incidentDao.update(wInc);
                 }
                 break;
             default:
