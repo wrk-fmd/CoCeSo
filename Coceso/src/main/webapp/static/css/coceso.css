@@ -1,0 +1,117 @@
+/*
+    Document   : coceso
+    Created on : 21.10.2013, 12:37:04
+    Author     : daniel
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+body {
+  padding: 0px;
+  margin: 0px;
+}
+
+#taskbar {
+  position: fixed;
+  bottom: 2px;
+  left: 2px;
+  right: 2px;
+}
+
+.ui-widget {
+  font-size: 1em;
+}
+
+.ui-dialog .ui-dialog-content {
+  padding: 0.5em 0;
+}
+
+.ui-accordion .ui-accordion-header {
+  padding: 0.2em 0.6em 0.2em 1.8em;
+}
+
+.ui-accordion .ui-accordion-content {
+  padding: 0 0.5em;
+}
+
+p {
+  margin: 0.5em 0;
+}
+
+.ui-dialog p span {
+  white-space: pre-wrap;
+}
+
+.cl {
+  clear: both;
+}
+
+input {
+  border: 1px solid;
+  padding: 2px;
+}
+
+.units_list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.units_list li {
+  display: inline-block;
+  margin: 5px;
+}
+
+.unit_state {
+  padding: 5px;
+  display: block;
+  color: #555;
+  border-radius: 3px;
+}
+
+.unit_state_eb {
+  background-color: #00ff00;
+}
+
+.unit_state_neb {
+  background-color: #cd0a0a;
+}
+
+.unit_state_ad {
+  background-color: #cccccc;
+}
+
+/**
+ * Incidents list
+ */
+
+span.incidents_priority {
+  margin-left: 1em;
+  float: right;
+}
+
+span.incidents_blue {
+  color: #0000ff;
+  font-weight: bold;
+}
+
+/**
+ * Incidents form
+ */
+
+div.halfwidth {
+  padding: 2px;
+  float: left;
+}
+
+div.halfwidth textarea, div.halfwidth input {
+  width: 192px;
+}
+
+div.fullwidth {
+  padding: 2px;
+}
+
+div.fullwidth textarea, div.fullwidth input {
+  width: 394px;
+}

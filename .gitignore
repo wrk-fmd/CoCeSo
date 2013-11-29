@@ -11,6 +11,7 @@ nbproject
 .classpath
 .project
 .settings
+build.xml
 
 # ignore generated .class files
 *.class
@@ -23,3 +24,6 @@ target
 
 # ignore real conf files
 conf/configuration.php
+
+# ignore caches
+prototype_cake/app/tmp

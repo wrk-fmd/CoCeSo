@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Incident / Add</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  </head>
+  <body>
+    <div class="ajax_content">
+      <form class="incident_form">
+        <table>
+          <tr>
+            <td colspan="2">
+              <label><input type="radio" name="type" value="task" data-bind="checked: type" /> Task</label>
+              <label><input type="radio" name="type" value="relocation" data-bind="checked: type" /> Relocation</label>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <label>Priority</label>
+              <input type="number" name="priority" min="1" max="100" data-bind="value: priority" />
+            </td>
+            <td>
+              <label>Blue light</label>
+              <input type="checkbox" name="blue" data-bind="checked: blue" />
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <label>BO</label><br/>
+              <textarea name="bo" rows="4" data-bind="disable: type() == 'relocation', value: bo"></textarea>
+            </td>
+            <td>
+              <label>AO</label><br/>
+              <textarea name="ao" rows="4" data-bind="value: ao"></textarea>
+            </td>
+          </tr>
+
+          <tr>
+            <td colspan="2">
+              <label>Info</label><br/>
+              <textarea name="info" rows="3" data-bind="value: info"></textarea>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <label>Caller</label><br/>
+              <input type="text" name="caller" data-bind="value: caller" />
+            </td>
+            <td>
+              <label>Casus</label><br/>
+              <input type="text" name="casusNr" data-bind="value: casusNr" />
+            </td>
+          </tr>
+        </table>
+        <input type="button" data-bind="visible: changed" value="Save" />
+      </form>
+    </div>
+  </body>
+</html>

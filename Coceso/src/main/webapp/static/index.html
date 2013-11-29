@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>CoCeSo</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <link rel="stylesheet" href="css/smoothness/jquery-ui-1.10.3.custom.css" type="text/css" />
+    <link rel="stylesheet" href="css/jquery.ui.menubar.css" type="text/css" />
+    <link rel="stylesheet" href="css/jquery.ui.winman.css" type="text/css" />
+    <link rel="stylesheet" href="css/coceso.css" type="text/css" />
+
+    <script src="js/jquery-1.10.2.js" type="text/javascript"></script>
+    <script src="js/jquery-ui-1.10.3.custom.js" type="text/javascript"></script>
+    <script src="js/jquery.ui.menubar.js" type="text/javascript"></script>
+    <script src="js/jquery.ui.winman.js" type="text/javascript"></script>
+    <script src="js/knockout-2.3.0.js" type="text/javascript"></script>
+    <script src="js/knockout.mapping-latest.js" type="text/javascript"></script>
+    <script src="js/bindings.js" type="text/javascript"></script>
+    <script src="js/coceso.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      $(document).ready(function() {
+        Coceso.startup();
+      });
+    </script>
+  </head>
+  <body>
+    <header>
+      <ul id="menubar" role="menubar">
+        <li>
+          <a href="#">Units</a>
+          <ul>
+            <li><a href="#" title="Units" onclick="Coceso.UI.openUnits(this.title, 'units.html'); return false;">Overview</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="#">Incidents</a>
+          <ul>
+            <li><a href="#" title="Add Incident" onclick="Coceso.UI.openIncident(this.title, 'incident_form.html'); return false;">Add</a></li>
+            <li><a href="#" title="Incidents" onclick="Coceso.UI.openIncidents(this.title, 'incidents.html'); return false;">Show Incidents</a></li>
+          </ul>
+        </li>
+      </ul>
+    </header>
+
+    <footer>
+      <ul id="taskbar"></ul>
+    </footer>
+  </body>
+</html>

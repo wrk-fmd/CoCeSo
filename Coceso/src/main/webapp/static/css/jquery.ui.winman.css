@@ -1,0 +1,49 @@
+/**
+ * CoCeSo
+ * jQuery UI Window Manager Extension
+ * Copyright (c) WRK\Daniel Rohr
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) 2013 Daniel Rohr
+ * @link          https://sourceforge.net/projects/coceso/
+ * @package       coceso.client.winman
+ * @since         Rev. 1
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ *
+ * Dependencies:
+ *	jquery.ui.smoothness
+ */
+
+.ui-taskbar {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.ui-taskbar-item {
+  display: inline-block;
+  padding: 5px 10px;
+  font-size: 0.75em;
+  cursor: pointer;
+  margin: 1px;
+}
+
+.ui-state-open, .ui-widget-content .ui-state-open, .ui-widget-header .ui-state-open {
+  background: url("http://code.jquery.com/ui/1.10.3/themes/smoothness/images/ui-bg_glass_75_dadada_1x400.png") 50% 50% repeat-x #DADADA;
+  border: 1px solid #D3D3D3;
+  color: #212121;
+  font-weight: 400;
+}
+
+.ui-dialog .ui-dialog-titlebar-minimize {
+  height: 20px;
+  margin: -10px 0px 0px;
+  padding: 1px;
+  position: absolute;
+  right: 28px;
+  top: 50%;
+  width: 21px;
+}

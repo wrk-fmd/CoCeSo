@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Units / Overview</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  </head>
+  <body>
+    <div class="ajax_content">
+      <ul class="units_list" data-bind="foreach: units">
+        <li><span class="unit_state" data-bind="text: call, css: stateCss, draggable: dragOptions, attr: {'data-unitid': id}"></span></li>
+      </ul>
+    </div>
+  </body>
+</html>
