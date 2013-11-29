@@ -3,7 +3,7 @@ package at.wrk.coceso.dao.mapper;
 import at.wrk.coceso.dao.CaseDao;
 import at.wrk.coceso.dao.CrewDao;
 import at.wrk.coceso.dao.PoiDao;
-import at.wrk.coceso.entities.Case;
+import at.wrk.coceso.dao.TaskDao;
 import at.wrk.coceso.entities.Unit;
 import at.wrk.coceso.entities.UnitState;
 import at.wrk.coceso.utils.Logger;
@@ -26,6 +26,9 @@ public class UnitMapper implements RowMapper<Unit> {
     @Autowired
     private PoiDao poiDao;
 
+    @Autowired
+    private TaskDao taskDao;
+
     @Override
     public Unit mapRow(ResultSet rs, int i) throws SQLException {
         Unit unit = new Unit();
@@ -47,13 +50,14 @@ public class UnitMapper implements RowMapper<Unit> {
         }
 
         // References
-        Logger.debug("UnitMapper: id: "+unit.id+", call: "+unit.call+", aCase: "+rs.getInt("aCase")+", caseDao: "+caseDao);
         unit.aCase = caseDao.getById(rs.getInt("aCase"));
         unit.home = poiDao.getById(rs.getInt("home"));
         unit.position = poiDao.getById(rs.getInt("position"));
 
         // Extra Table
         unit.crew = crewDao.getByUnitId(unit.id);
+
+        unit.incidents = taskDao.getAllByUnitId(unit.id);
 
         return unit;
     }

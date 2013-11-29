@@ -4,7 +4,6 @@ import at.wrk.coceso.dao.mapper.IncidentMapper;
 import at.wrk.coceso.entities.Incident;
 import at.wrk.coceso.entities.IncidentState;
 import at.wrk.coceso.entities.IncidentType;
-import at.wrk.coceso.entities.UnitState;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;

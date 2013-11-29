@@ -2,6 +2,7 @@ package at.wrk.coceso.entities;
 
 
 import java.util.List;
+import java.util.Map;
 
 public class Unit {
 
@@ -28,6 +29,8 @@ public class Unit {
     public CocesoPOI position;
 
     public CocesoPOI home;
+
+    public Map<Integer, TaskState> incidents;
 
     /**
      * Default Values for Insert in Database
