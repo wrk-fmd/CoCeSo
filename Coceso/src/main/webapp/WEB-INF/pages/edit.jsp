@@ -29,8 +29,10 @@
 
 <!-- #################### Start of Page ############## -->
 <div class="container">
-    <c:url var="welcomeScreen" value="/welcome" />
-    <a href="${welcomeScreen}" class="">Back</a><br>
+    <div>
+        <c:url var="welcomeScreen" value="/welcome" />
+        <a href="${welcomeScreen}" class="active btn btn-warning">Back</a>
+    </div>
 
     <h3 class="h3">Edit Case</h3>
     <c:url value="/update" var="update" />
@@ -46,7 +48,7 @@
         </div>
         <div class="form-group">
             <label for="case_pax">Persons</label>
-            <input type="number" id="case_pax" name="pax" value="${caze.pax}" class="form-control">
+            <input type="number" id="case_pax" name="pax" value="${caze.pax}" class="form-control input-sm">
         </div>
         <input class="btn btn-success" type="submit" name="submit" value="Update">
     </form>
@@ -152,10 +154,10 @@
         <div class="form-group">
             <p class="form-control-static">Number Range</p>
             <label for="batch_from">from</label>
-            <input type="number" id="batch_from" name="from" value="1" class="form-control form-inline">&nbsp;
+            <input type="number" id="batch_from" name="from" value="1" class="form-control input-sm">&nbsp;
 
             <label for="batch_to">to</label>
-            <input type="number" id="batch_to" name="to" value="5" class="form-control form-inline">
+            <input type="number" id="batch_to" name="to" value="5" class="form-control input-sm">
 
         </div>
         <div class="form-group">
@@ -172,8 +174,8 @@
                 <input type="checkbox" id="batch_portable" name="portable" class="checkbox-inline">
                 ${portable}
             </label>
-            <input type="submit" value="Create" class="btn btn-success">
         </div>
+        <input type="submit" value="Create" class="btn btn-success">
     </form>
 </div>
 
