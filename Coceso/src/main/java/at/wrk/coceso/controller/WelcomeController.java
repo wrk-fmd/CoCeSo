@@ -3,8 +3,10 @@ package at.wrk.coceso.controller;
 import at.wrk.coceso.dao.CaseDao;
 import at.wrk.coceso.dao.PersonDao;
 import at.wrk.coceso.entities.Case;
+import at.wrk.coceso.entities.Person;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -36,8 +38,24 @@ public class WelcomeController {
         return "main";
     }
 
+    @RequestMapping("/login")
+    public String login(ModelMap model) {
+
+        return "login";
+    }
+
+    @RequestMapping("/loginfailed")
+    public String loginFailed(ModelMap model) {
+        model.addAttribute("error", "true");
+        return "login";
+    }
     @RequestMapping(value = "/welcome", method = RequestMethod.GET)
-    public String showWelcome(ModelMap map) {
+    public String showWelcome(ModelMap map, Principal principal) {
+
+        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
+        Person user = (Person) token.getPrincipal();
+
+        map.addAttribute("user", user);
 
         List<Case> case_list = caseDao.getAll();
         map.addAttribute("case_list", case_list);

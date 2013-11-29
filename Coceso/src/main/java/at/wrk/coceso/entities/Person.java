@@ -18,6 +18,14 @@ public class Person implements UserDetails {
     public String given_name;
     public String sur_name;
 
+    public String getGiven_name() {
+        return given_name;
+    }
+
+    public String getSur_name() {
+        return sur_name;
+    }
+
     public int dNr;
 
     public String contact;

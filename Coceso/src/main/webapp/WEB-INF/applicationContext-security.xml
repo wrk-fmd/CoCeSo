@@ -10,9 +10,11 @@
 
     <http use-expressions="true">
         <intercept-url pattern="/" access="permitAll" />
+        <intercept-url pattern="/login" access="permitAll" />
         <intercept-url pattern="/**" access="isAuthenticated()" />
+
         <logout delete-cookies="true" invalidate-session="true" logout-url="/logout" logout-success-url="/" />
-        <http-basic />
+        <form-login login-page="/login" default-target-url="/welcome" authentication-failure-url="/loginfailed" />
     </http>
 
     <authentication-manager>
