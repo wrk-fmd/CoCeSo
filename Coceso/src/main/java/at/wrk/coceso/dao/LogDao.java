@@ -23,12 +23,17 @@ public class LogDao extends CocesoDao<LogEntry> {
         super(dataSource);
     }
 
+    private static final String getPrefix = "SELECT u.id as uid, u.call, l.*, p.id AS pid, p.sur_name, " +
+            "p.given_name, p.dnr, p.contact, p.username FROM " +
+            "log l " +
+            "LEFT OUTER JOIN persons p ON l.uzer = p.id " +
+            "LEFT OUTER JOIN units u ON l.unit = u.id ";
+
     @Override
     public LogEntry getById(int id) {
         if(id <= 0) return null;
 
-        String q = "SELECT l.*, p.id AS pid, p.sur_name, p.given_name, p.dnr, p.contact, p.username " +
-                "FROM log l LEFT OUTER JOIN persons p ON l.uzer = p.id WHERE l.id = ?";
+        String q =  getPrefix + "WHERE l.id = ?";
 
         try {
             return jdbc.queryForObject(q, new Object[] {id}, logMapper);
@@ -40,8 +45,7 @@ public class LogDao extends CocesoDao<LogEntry> {
     public List<LogEntry> getByUnitId(int id) {
         if(id <= 0) return null;
 
-        String q = "SELECT l.*, p.id as pid, p.sur_name, p.given_name, p.dnr, p.contact, p.username " +
-                "FROM log l LEFT OUTER JOIN persons p ON l.uzer = p.id WHERE l.unit = ?";
+        String q = getPrefix + "WHERE l.unit = ?";
 
         return jdbc.query(q, new Object[]{id}, logMapper);
     }
@@ -49,8 +53,7 @@ public class LogDao extends CocesoDao<LogEntry> {
     public List<LogEntry> getByIncidentId(int id) {
         if(id <= 0) return null;
 
-        String q = "SELECT l.*, p.id as pid, p.sur_name, p.given_name, p.dnr, p.contact, p.username " +
-                "FROM log l LEFT OUTER JOIN persons p ON l.uzer = p.id WHERE l.incident = ?";
+        String q = getPrefix + "WHERE l.incident = ?";
 
         return jdbc.query(q, new Object[] {id}, logMapper);
     }
@@ -60,8 +63,7 @@ public class LogDao extends CocesoDao<LogEntry> {
     public List<LogEntry> getAll(int id) {
         if(id <= 0) return null;
 
-        String q = "SELECT l.*, p.id as pid, p.sur_name, p.given_name, p.dnr, p.contact, p.username " +
-                "FROM log l LEFT OUTER JOIN persons p ON l.uzer = p.id WHERE l.acase = ?";
+        String q = getPrefix + "WHERE l.acase = ?";
 
         return jdbc.query(q, new Object[] {id}, logMapper);
     }
