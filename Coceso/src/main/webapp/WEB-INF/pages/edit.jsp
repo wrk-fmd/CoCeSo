@@ -112,11 +112,12 @@
                 <td style="display: none;"></td>
                 <td>
                     <label class="sr-only" for="new_call">${call}</label>
-                    <input type="text" id="new_call" name="call" maxlength="64" class="form-control">
+                    <input type="text" id="new_call" name="call" maxlength="64" class="form-control"
+                           placeholder="${call}">
                 </td>
                 <td>
                     <label class="sr-only" for="new_ani">${ani}</label>
-                    <input type="text" id="new_ani" name="ani" maxlength="16">
+                    <input type="text" id="new_ani" name="ani" maxlength="16" class="form-control" placeholder="${ani}">
                 </td>
                 <td>
                     <input type="checkbox" name="withDoc" >
@@ -129,7 +130,8 @@
                 </td>
                 <td>
                     <label class="sr-only" for="new_info">${info}</label>
-                    <input type="text" id="new_info" name="info" maxlength="128">
+                    <input type="text" id="new_info" name="info" maxlength="128" class="form-control"
+                           placeholder="${info}">
                 </td>
                 <td>
                     <input type="submit" value="Create" class="btn btn-success">
@@ -144,20 +146,34 @@
 
         <div class="form-group">
             <label class="sr-only" for="batch_call">${call} Prefix</label>
-            <input type="text" id="batch_call" name="call_pre" maxlength="50" class="form-control">
+            <input type="text" id="batch_call" name="call_pre" maxlength="50" class="form-control"
+                   placeholder="${call} Prefix">
         </div>
-        Number Range
-        <label for="batch_from">from</label>
-        <input type="number" id="batch_from" name="from" value="1" class="form-control">&nbsp;
+        <div class="form-group">
+            <p class="form-control-static">Number Range</p>
+            <label for="batch_from">from</label>
+            <input type="number" id="batch_from" name="from" value="1" class="form-control form-inline">&nbsp;
 
-        <label for="batch_to">to</label>
-        <input type="number" id="batch_to" name="to" value="5" class="form-control"><br>
+            <label for="batch_to">to</label>
+            <input type="number" id="batch_to" name="to" value="5" class="form-control form-inline">
 
-        <label for="batch_doc">${withDoc}</label><input type="checkbox" id="batch_doc" name="withDoc" ><br>
-        <label for="batch_vhcl">${transportVehicle}</label><input type="checkbox" id="batch_vhcl" name="transportVehicle"><br>
-        <label for="batch_portable">${portable}</label><input type="checkbox" id="batch_portable" name="portable" ><br>
-        <input type="submit" value="Create" class="btn btn-success">
+        </div>
+        <div class="form-group">
 
+            <label>
+                <input type="checkbox" id="batch_doc" name="withDoc" class="checkbox-inline">
+                ${withDoc}
+            </label>
+            <label>
+                <input type="checkbox" id="batch_vhcl" name="transportVehicle" class="checkbox-inline">
+                ${transportVehicle}
+            </label>
+            <label>
+                <input type="checkbox" id="batch_portable" name="portable" class="checkbox-inline">
+                ${portable}
+            </label>
+            <input type="submit" value="Create" class="btn btn-success">
+        </div>
     </form>
 </div>
 
