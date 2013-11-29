@@ -3,8 +3,21 @@
 <html>
 <head>
     <title>Edit Case - ${caze.name}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <c:url var="bootstrap" value="/static/bootstrap.css" />
+    <link href="${bootstrap}" rel="stylesheet">
 </head>
 <body>
+<h1>Hello, world!</h1>
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<c:url var="jquery" value="/static/jquery.js" />
+<script src="${jquery}"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<c:url var="bootstrap_js" value="/static/bootstrap.js" />
+<script src="${bootstrap_js}"></script>
+
 <c:set var="transportVehicle" value="Transport Vehicle" />
 <c:set var="withDoc" value="Doctor" />
 <c:set var="call" value="Call" />
@@ -28,7 +41,7 @@
 <br><br>
 
 <h3>Edit Units of Case</h3>
-<table>
+<table class="table table-striped">
     <tr>
         <th style="display: none;">ID</th>
         <th>${call}</th>
