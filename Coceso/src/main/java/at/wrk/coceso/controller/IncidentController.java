@@ -53,6 +53,21 @@ public class IncidentController implements IEntityController<Incident> {
         }
     }
 
+    @RequestMapping(value = "getAllByState/{state}", produces = "application/json")
+    @ResponseBody
+    public List<Incident> getAllByState(@CookieValue(value = "active_case", defaultValue = "0") String case_id,
+                                        @PathVariable("state") String s_state) {
+
+        try {
+            return dao.getAllByState(Integer.parseInt(case_id), IncidentState.valueOf(s_state));
+        } catch(NumberFormatException e) {
+            Logger.warning("IncidentController: getAll: " + e);
+            return null;
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+
     @Override
     @RequestMapping(value = "get", produces = "application/json", method = RequestMethod.POST)
     @ResponseBody

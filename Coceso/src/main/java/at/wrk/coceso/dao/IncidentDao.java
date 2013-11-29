@@ -78,6 +78,17 @@ public class IncidentDao extends CocesoDao<Incident> {
         return jdbc.query(q, new Object[] {case_id}, incidentMapper);
     }
 
+    public List<Incident> getAllByState(int case_id, IncidentState state) {
+        if(case_id <= 0 || state == null) {
+            return null;
+        }
+
+        String q = "SELECT * FROM incidents WHERE acase = ? AND state = ? ORDER BY id ASC";
+
+        return jdbc.query(q, new Object[] {case_id, state.name()}, incidentMapper);
+    }
+
+
     /**
      * Incident.priority and .blue are written on every method-call! All other vars only if != NULL
      * @param incident Incident to update in DB
