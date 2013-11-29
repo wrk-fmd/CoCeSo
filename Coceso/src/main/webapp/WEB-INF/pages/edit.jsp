@@ -29,163 +29,172 @@
 
 <!-- #################### Start of Page ############## -->
 <div class="container">
-    <div>
+    <div class="">
         <c:url var="welcomeScreen" value="/welcome" />
         <a href="${welcomeScreen}" class="active btn btn-warning">Back</a>
     </div>
 
-    <h3 class="h3">Edit Case</h3>
-    <c:url value="/update" var="update" />
-    <form action="${update}" method="post" role="form">
-        <input type="hidden" name="id" value="${caze.id}">
-        <div class="form-group">
-            <label for="case_name">Name</label>
-            <input type="text" id="case_name" name="name" value="${caze.name}" maxlength="64" class="form-control">
-        </div>
-        <div class="form-group">
-            <label for="case_organiser">Organiser</label>
-            <textarea id="case_organiser" name="organiser" maxlength="128" class="form-control">${caze.organiser}</textarea>
-        </div>
-        <div class="row">
-            <div class="col-lg-3">
-                <label for="case_pax">Persons</label>
-                <input type="number" id="case_pax" name="pax" value="${caze.pax}" class="form-control input-sm">
+    <div>
+        <h3 class="h3">Edit Case</h3>
+        <c:url value="/update" var="update" />
+        <form action="${update}" method="post" role="form">
+            <input type="hidden" name="id" value="${caze.id}">
+            <div class="form-group">
+                <label for="case_name">Name</label>
+                <input type="text" id="case_name" name="name" value="${caze.name}" maxlength="64" class="form-control">
             </div>
-        </div>
-        <input class="btn btn-success" type="submit" name="submit" value="Update">
-    </form>
+            <div class="form-group">
+                <label for="case_organiser">Organiser</label>
+                <textarea id="case_organiser" name="organiser" maxlength="128" class="form-control">${caze.organiser}</textarea>
+            </div>
+            <div class="row">
+                <div class="col-lg-3">
+                    <label for="case_pax">Persons</label>
+                    <input type="number" id="case_pax" name="pax" value="${caze.pax}" class="form-control input-sm">
+                </div>
+            </div>
+            <input class="btn btn-success" type="submit" name="submit" value="Update">
+        </form>
+    </div>
 
-    <br><br>
 
     <!--##### TABLE -->
-    <h3 class="h3">Edit Units of Case</h3>
-    <table class="table table-striped">
-        <tr>
-            <th style="display: none;">ID</th>
-            <th>${call}</th>
-            <th>${ani}</th>
-            <th>${withDoc}</th>
-            <th>${transportVehicle}</th>
-            <th>${portable}</th>
-            <th>${info}</th>
-            <th></th>
-        </tr>
-        <c:url value="/updateUnit" var="updateUnit" />
-        <c:forEach items="${unit_list}" var="unit">
-            <form action="${updateUnit}" method="post" class="form-inline" role="form">
+    <div>
+        <h3 class="h3">Edit Units of Case</h3>
+        <table class="table table-striped">
             <tr>
-                <td style="display: none;"><input type="hidden" name="id" value="${unit.id}"></td>
-                <td><input type="text" name="call" value="${unit.call}" maxlength="64" class="form-control"></td>
-                <td><input type="text" name="ani" value="${unit.ani}" maxlength="16" class="form-control"></td>
-                <c:choose>
-                    <c:when test="${unit.withDoc}">
-                        <td><input type="checkbox" name="withDoc" checked></td>
-                    </c:when>
-                    <c:otherwise>
-                        <td><input type="checkbox" name="withDoc"></td>
-                    </c:otherwise>
-                </c:choose>
-                <c:choose>
-                    <c:when test="${unit.transportVehicle}">
-                        <td><input type="checkbox" name="transportVehicle" checked></td>
-                    </c:when>
-                    <c:otherwise>
-                        <td><input type="checkbox" name="transportVehicle"></td>
-                    </c:otherwise>
-                </c:choose>
-                <c:choose>
-                    <c:when test="${unit.portable}">
-                        <td><input type="checkbox" name="portable" checked></td>
-                    </c:when>
-                    <c:otherwise>
-                        <td><input type="checkbox" name="portable"></td>
-                    </c:otherwise>
-                </c:choose>
-                <td><input type="text" name="info" value="${unit.info}" maxlength="128" class="form-control"></td>
-                <td>
-                    <input type="submit" name="update" value="Update" class="btn btn-success">&nbsp;
-                    <input type="submit" name="remove" value="Remove" class="btn btn-danger">
-                </td>
+                <th style="display: none;">ID</th>
+                <th>${call}</th>
+                <th>${ani}</th>
+                <th>${withDoc}</th>
+                <th>${transportVehicle}</th>
+                <th>${portable}</th>
+                <th>${info}</th>
+                <th></th>
             </tr>
+            <c:url value="/updateUnit" var="updateUnit" />
+            <c:forEach items="${unit_list}" var="unit">
+                <form action="${updateUnit}" method="post" class="form-inline" role="form">
+                    <tr>
+                        <td style="display: none;"><input type="hidden" name="id" value="${unit.id}"></td>
+                        <td><input type="text" name="call" value="${unit.call}" maxlength="64" class="form-control"></td>
+                        <td><input type="text" name="ani" value="${unit.ani}" maxlength="16" class="form-control"></td>
+                        <c:choose>
+                            <c:when test="${unit.withDoc}">
+                                <td><input type="checkbox" name="withDoc" checked></td>
+                            </c:when>
+                            <c:otherwise>
+                                <td><input type="checkbox" name="withDoc"></td>
+                            </c:otherwise>
+                        </c:choose>
+                        <c:choose>
+                            <c:when test="${unit.transportVehicle}">
+                                <td><input type="checkbox" name="transportVehicle" checked></td>
+                            </c:when>
+                            <c:otherwise>
+                                <td><input type="checkbox" name="transportVehicle"></td>
+                            </c:otherwise>
+                        </c:choose>
+                        <c:choose>
+                            <c:when test="${unit.portable}">
+                                <td><input type="checkbox" name="portable" checked></td>
+                            </c:when>
+                            <c:otherwise>
+                                <td><input type="checkbox" name="portable"></td>
+                            </c:otherwise>
+                        </c:choose>
+                        <td><input type="text" name="info" value="${unit.info}" maxlength="128" class="form-control"></td>
+                        <td>
+                            <input type="submit" name="update" value="Update" class="btn btn-success">&nbsp;
+                            <input type="submit" name="remove" value="Remove" class="btn btn-danger">
+                        </td>
+                    </tr>
+                </form>
+            </c:forEach>
+
+            <c:url value="/createUnit" var="createUnit" />
+            <form action="${createUnit}" method="post" class="form-inline" role="form">
+                <tr>
+                    <td style="display: none;"></td>
+                    <td>
+                        <label class="sr-only" for="new_call">${call}</label>
+                        <input type="text" id="new_call" name="call" maxlength="64" class="form-control"
+                               placeholder="${call}">
+                    </td>
+                    <td>
+                        <label class="sr-only" for="new_ani">${ani}</label>
+                        <input type="text" id="new_ani" name="ani" maxlength="16" class="form-control" placeholder="${ani}">
+                    </td>
+                    <td>
+                        <input type="checkbox" name="withDoc" >
+                    </td>
+                    <td>
+                        <input type="checkbox" name="transportVehicle" >
+                    </td>
+                    <td>
+                        <input type="checkbox" name="portable" >
+                    </td>
+                    <td>
+                        <label class="sr-only" for="new_info">${info}</label>
+                        <input type="text" id="new_info" name="info" maxlength="128" class="form-control"
+                               placeholder="${info}">
+                    </td>
+                    <td>
+                        <input type="submit" value="Create" class="btn btn-success">
+                    </td>
+                </tr>
             </form>
-        </c:forEach>
+        </table>
+    </div>
 
-        <c:url value="/createUnit" var="createUnit" />
-        <form action="${createUnit}" method="post" class="form-inline" role="form">
-            <tr>
-                <td style="display: none;"></td>
-                <td>
-                    <label class="sr-only" for="new_call">${call}</label>
-                    <input type="text" id="new_call" name="call" maxlength="64" class="form-control"
-                           placeholder="${call}">
-                </td>
-                <td>
-                    <label class="sr-only" for="new_ani">${ani}</label>
-                    <input type="text" id="new_ani" name="ani" maxlength="16" class="form-control" placeholder="${ani}">
-                </td>
-                <td>
-                    <input type="checkbox" name="withDoc" >
-                </td>
-                <td>
-                    <input type="checkbox" name="transportVehicle" >
-                </td>
-                <td>
-                    <input type="checkbox" name="portable" >
-                </td>
-                <td>
-                    <label class="sr-only" for="new_info">${info}</label>
-                    <input type="text" id="new_info" name="info" maxlength="128" class="form-control"
-                           placeholder="${info}">
-                </td>
-                <td>
-                    <input type="submit" value="Create" class="btn btn-success">
-                </td>
-            </tr>
+    <div>
+        <h3 class="h3">Create Units as Batch Job</h3>
+        <c:url value="/createUnitBatch" var="createUnitBatch" />
+        <form action="${createUnitBatch}" method="post" role="form">
+
+            <div class="form-group">
+                <label class="sr-only" for="batch_call">${call} Prefix</label>
+                <input type="text" id="batch_call" name="call_pre" maxlength="50" class="form-control"
+                       placeholder="${call} Prefix">
+            </div>
+            <div class=" form-group row">
+                <div class="form-control-static col-lg-5 text-center">
+                    <h5 class="h5">Number Range</h5>
+                </div>
+                <div class="col-lg-3">
+                    <label for="batch_from">from</label>
+                    <input type="number" id="batch_from" name="from" value="1" class="form-control">
+                </div>
+
+                <div class="col-lg-3">
+                    <label for="batch_to">to</label>
+                    <input type="number" id="batch_to" name="to" value="5" class="form-control">
+                </div>
+
+
+            </div>
+            <div class="form-group">
+
+                <label>
+                    <input type="checkbox" id="batch_doc" name="withDoc" class="checkbox-inline">
+                    ${withDoc}
+                </label>
+                <label>
+                    <input type="checkbox" id="batch_vhcl" name="transportVehicle" class="checkbox-inline">
+                    ${transportVehicle}
+                </label>
+                <label>
+                    <input type="checkbox" id="batch_portable" name="portable" class="checkbox-inline">
+                    ${portable}
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-success">
+            </div>
+
         </form>
-    </table>
+    </div>
 
-    <h3 class="h3">Create Units as Batch Job</h3>
-    <c:url value="/createUnitBatch" var="createUnitBatch" />
-    <form action="${createUnitBatch}" method="post" role="form">
-
-        <div class="form-group">
-            <label class="sr-only" for="batch_call">${call} Prefix</label>
-            <input type="text" id="batch_call" name="call_pre" maxlength="50" class="form-control"
-                   placeholder="${call} Prefix">
-        </div>
-        <div class="row">
-            <div class="form-control-static col-lg-5">
-                Number Range
-            </div>
-            <div class="col-lg-3">
-                <label for="batch_from">from</label>
-                <input type="number" id="batch_from" name="from" value="1" class="form-control">
-            </div>
-
-            <div class="col-lg-3">
-                <label for="batch_to">to</label>
-                <input type="number" id="batch_to" name="to" value="5" class="form-control">
-            </div>
-
-
-        </div>
-        <div class="form-group">
-
-            <label>
-                <input type="checkbox" id="batch_doc" name="withDoc" class="checkbox-inline">
-                ${withDoc}
-            </label>
-            <label>
-                <input type="checkbox" id="batch_vhcl" name="transportVehicle" class="checkbox-inline">
-                ${transportVehicle}
-            </label>
-            <label>
-                <input type="checkbox" id="batch_portable" name="portable" class="checkbox-inline">
-                ${portable}
-            </label>
-        </div>
-        <input type="submit" value="Create" class="btn btn-success">
-    </form>
 </div>
 
 </body>
