@@ -136,7 +136,7 @@ public class CreateController {
 
         for(int i = from; i <= to; i++){
             unit.call = request.getParameter("call_pre")+i;
-            unitDao.add(unit);
+            int dump = unitDao.add(unit);
         }
 
         return "redirect:/edit";
