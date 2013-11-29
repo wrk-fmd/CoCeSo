@@ -46,9 +46,11 @@
             <label for="case_organiser">Organiser</label>
             <textarea id="case_organiser" name="organiser" maxlength="128" class="form-control">${caze.organiser}</textarea>
         </div>
-        <div class="form-group">
-            <label for="case_pax">Persons</label>
-            <input type="number" id="case_pax" name="pax" value="${caze.pax}" class="form-control input-sm">
+        <div class="row">
+            <div class="col-lg-3">
+                <label for="case_pax">Persons</label>
+                <input type="number" id="case_pax" name="pax" value="${caze.pax}" class="form-control input-sm">
+            </div>
         </div>
         <input class="btn btn-success" type="submit" name="submit" value="Update">
     </form>
@@ -151,13 +153,20 @@
             <input type="text" id="batch_call" name="call_pre" maxlength="50" class="form-control"
                    placeholder="${call} Prefix">
         </div>
-        <div class="form-group">
-            <p class="form-control-static">Number Range</p>
-            <label for="batch_from">from</label>
-            <input type="number" id="batch_from" name="from" value="1" class="form-control input-sm">&nbsp;
+        <div class="row">
+            <div class="form-control-static col-lg-5">
+                Number Range
+            </div>
+            <div class="col-lg-3">
+                <label for="batch_from">from</label>
+                <input type="number" id="batch_from" name="from" value="1" class="form-control">
+            </div>
 
-            <label for="batch_to">to</label>
-            <input type="number" id="batch_to" name="to" value="5" class="form-control input-sm">
+            <div class="col-lg-3">
+                <label for="batch_to">to</label>
+                <input type="number" id="batch_to" name="to" value="5" class="form-control">
+            </div>
+
 
         </div>
         <div class="form-group">
