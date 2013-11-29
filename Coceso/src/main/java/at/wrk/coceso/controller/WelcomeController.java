@@ -1,6 +1,7 @@
 package at.wrk.coceso.controller;
 
 import at.wrk.coceso.dao.CaseDao;
+import at.wrk.coceso.dao.LogDao;
 import at.wrk.coceso.dao.PersonDao;
 import at.wrk.coceso.entities.Case;
 import at.wrk.coceso.entities.Person;
@@ -9,10 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +23,9 @@ public class WelcomeController {
 
     @Autowired
     CaseDao caseDao;
+
+    @Autowired
+    LogDao logDao;
 
     @RequestMapping("/")
     public String showIndex() {
@@ -84,9 +85,28 @@ public class WelcomeController {
         return "redirect:/welcome";
     }
 
+
     @RequestMapping("/dashboard")
-    public String showDashboard() {
-        // not used in v1.0
+    public String showDashboard(@RequestParam(value = "sub", defaultValue = "Log") String s_sub, ModelMap map,
+                                @CookieValue(value = "active_case", defaultValue = "0") String caze)
+    {
+        int actCase = Integer.parseInt(caze);
+
+        if(s_sub.equals("Unit")) {
+            map.addAttribute("unit", "active");
+
+
+        } else if(s_sub.equals("Incident")) {
+            map.addAttribute("incident", "active");
+
+
+        } else {
+            map.addAttribute("log", "active");
+            map.addAttribute("logs", logDao.getAll(actCase));
+
+        }
+
+
         return "dashboard";
     }
 

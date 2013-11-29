@@ -92,4 +92,48 @@ public class Incident {
 
         return ret;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public IncidentState getState() {
+        return state;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public boolean isBlue() {
+        return blue;
+    }
+
+    public Map<Integer, TaskState> getUnits() {
+        return units;
+    }
+
+    public CocesoPOI getBo() {
+        return bo;
+    }
+
+    public CocesoPOI getAo() {
+        return ao;
+    }
+
+    public String getCasusNr() {
+        return casusNr;
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
+    public String getCaller() {
+        return caller;
+    }
+
+    public IncidentType getType() {
+        return type;
+    }
 }

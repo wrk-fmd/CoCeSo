@@ -77,6 +77,7 @@
     </div>
     <div>
         <table class="table table-striped">
+            <thead>
             <tr>
                 <th style="display: none;">ID</th>
                 <th>${call}</th>
@@ -87,78 +88,81 @@
                 <th>${info}</th>
                 <th></th>
             </tr>
-            <c:url value="/updateUnit" var="updateUnit" />
-            <c:forEach items="${unit_list}" var="unit">
-                <form action="${updateUnit}" method="post" class="form-inline" role="form">
+            </thead>
+            <tbody>
+                <c:url value="/updateUnit" var="updateUnit" />
+                <c:forEach items="${unit_list}" var="unit">
+                    <form action="${updateUnit}" method="post" class="form-inline" role="form">
+                        <tr>
+                            <td style="display: none;"><input type="hidden" name="id" value="${unit.id}"></td>
+                            <td><input type="text" name="call" value="${unit.call}" maxlength="64" class="form-control"></td>
+                            <td><input type="text" name="ani" value="${unit.ani}" maxlength="16" class="form-control"></td>
+                            <c:choose>
+                                <c:when test="${unit.withDoc}">
+                                    <td><input type="checkbox" name="withDoc" checked></td>
+                                </c:when>
+                                <c:otherwise>
+                                    <td><input type="checkbox" name="withDoc"></td>
+                                </c:otherwise>
+                            </c:choose>
+                            <c:choose>
+                                <c:when test="${unit.transportVehicle}">
+                                    <td><input type="checkbox" name="transportVehicle" checked></td>
+                                </c:when>
+                                <c:otherwise>
+                                    <td><input type="checkbox" name="transportVehicle"></td>
+                                </c:otherwise>
+                            </c:choose>
+                            <c:choose>
+                                <c:when test="${unit.portable}">
+                                    <td><input type="checkbox" name="portable" checked></td>
+                                </c:when>
+                                <c:otherwise>
+                                    <td><input type="checkbox" name="portable"></td>
+                                </c:otherwise>
+                            </c:choose>
+                            <td><input type="text" name="info" value="${unit.info}" maxlength="128" class="form-control"></td>
+                            <td>
+                                <input type="submit" name="update" value="Update" class="btn btn-success">&nbsp;
+                                <input type="submit" name="remove" value="Remove" class="btn btn-danger">
+                            </td>
+                        </tr>
+                    </form>
+                </c:forEach>
+
+                <c:url value="/createUnit" var="createUnit" />
+                <form action="${createUnit}" method="post" class="form-inline" role="form">
                     <tr>
-                        <td style="display: none;"><input type="hidden" name="id" value="${unit.id}"></td>
-                        <td><input type="text" name="call" value="${unit.call}" maxlength="64" class="form-control"></td>
-                        <td><input type="text" name="ani" value="${unit.ani}" maxlength="16" class="form-control"></td>
-                        <c:choose>
-                            <c:when test="${unit.withDoc}">
-                                <td><input type="checkbox" name="withDoc" checked></td>
-                            </c:when>
-                            <c:otherwise>
-                                <td><input type="checkbox" name="withDoc"></td>
-                            </c:otherwise>
-                        </c:choose>
-                        <c:choose>
-                            <c:when test="${unit.transportVehicle}">
-                                <td><input type="checkbox" name="transportVehicle" checked></td>
-                            </c:when>
-                            <c:otherwise>
-                                <td><input type="checkbox" name="transportVehicle"></td>
-                            </c:otherwise>
-                        </c:choose>
-                        <c:choose>
-                            <c:when test="${unit.portable}">
-                                <td><input type="checkbox" name="portable" checked></td>
-                            </c:when>
-                            <c:otherwise>
-                                <td><input type="checkbox" name="portable"></td>
-                            </c:otherwise>
-                        </c:choose>
-                        <td><input type="text" name="info" value="${unit.info}" maxlength="128" class="form-control"></td>
+                        <td style="display: none;"></td>
                         <td>
-                            <input type="submit" name="update" value="Update" class="btn btn-success">&nbsp;
-                            <input type="submit" name="remove" value="Remove" class="btn btn-danger">
+                            <label class="sr-only" for="new_call">${call}</label>
+                            <input type="text" id="new_call" name="call" maxlength="64" class="form-control"
+                                   placeholder="${call}">
+                        </td>
+                        <td>
+                            <label class="sr-only" for="new_ani">${ani}</label>
+                            <input type="text" id="new_ani" name="ani" maxlength="16" class="form-control" placeholder="${ani}">
+                        </td>
+                        <td>
+                            <input type="checkbox" name="withDoc" >
+                        </td>
+                        <td>
+                            <input type="checkbox" name="transportVehicle" >
+                        </td>
+                        <td>
+                            <input type="checkbox" name="portable" >
+                        </td>
+                        <td>
+                            <label class="sr-only" for="new_info">${info}</label>
+                            <input type="text" id="new_info" name="info" maxlength="128" class="form-control"
+                                   placeholder="${info}">
+                        </td>
+                        <td>
+                            <input type="submit" value="Create" class="btn btn-success">
                         </td>
                     </tr>
                 </form>
-            </c:forEach>
-
-            <c:url value="/createUnit" var="createUnit" />
-            <form action="${createUnit}" method="post" class="form-inline" role="form">
-                <tr>
-                    <td style="display: none;"></td>
-                    <td>
-                        <label class="sr-only" for="new_call">${call}</label>
-                        <input type="text" id="new_call" name="call" maxlength="64" class="form-control"
-                               placeholder="${call}">
-                    </td>
-                    <td>
-                        <label class="sr-only" for="new_ani">${ani}</label>
-                        <input type="text" id="new_ani" name="ani" maxlength="16" class="form-control" placeholder="${ani}">
-                    </td>
-                    <td>
-                        <input type="checkbox" name="withDoc" >
-                    </td>
-                    <td>
-                        <input type="checkbox" name="transportVehicle" >
-                    </td>
-                    <td>
-                        <input type="checkbox" name="portable" >
-                    </td>
-                    <td>
-                        <label class="sr-only" for="new_info">${info}</label>
-                        <input type="text" id="new_info" name="info" maxlength="128" class="form-control"
-                               placeholder="${info}">
-                    </td>
-                    <td>
-                        <input type="submit" value="Create" class="btn btn-success">
-                    </td>
-                </tr>
-            </form>
+            </tbody>
         </table>
     </div>
 
