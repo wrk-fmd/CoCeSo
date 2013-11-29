@@ -1,6 +1,9 @@
 package at.wrk.coceso.dao.mapper;
 
+import at.wrk.coceso.dao.IncidentDao;
+import at.wrk.coceso.dao.UnitDao;
 import at.wrk.coceso.entities.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
@@ -9,6 +12,13 @@ import java.sql.SQLException;
 
 @Repository
 public class LogMapper implements RowMapper<LogEntry> {
+
+    @Autowired
+    IncidentDao incidentDao;
+
+    @Autowired
+    UnitDao unitDao;
+
     @Override
     public LogEntry mapRow(ResultSet rs, int i) throws SQLException {
         LogEntry l = new LogEntry();
@@ -33,8 +43,9 @@ public class LogMapper implements RowMapper<LogEntry> {
         l.user.given_name = rs.getString("given_name");
         l.user.dNr = rs.getInt("dNr");
         l.user.contact = rs.getString("contact");
+        l.user.username = rs.getString("username");
 
-        // References NOT RESOLVED
+        /* References NOT RESOLVED
         int incidentID = rs.getInt("incident");
         if(incidentID > 0) {
             l.incident = new Incident();
@@ -45,7 +56,10 @@ public class LogMapper implements RowMapper<LogEntry> {
         if(unitID > 0) {
             l.unit = new Unit();
             l.unit.id = unitID;
-        }
+        }*/
+
+        l.incident = incidentDao.getById(rs.getInt("incident"));
+        l.unit = unitDao.getById(rs.getInt("unit"));
 
         l.aCase = null; // Entries are 'final', aCase is only in DB relevant TODO Change if used internally
 

@@ -27,7 +27,7 @@ public class LogDao extends CocesoDao<LogEntry> {
     public LogEntry getById(int id) {
         if(id <= 0) return null;
 
-        String q = "SELECT l.*, p.id AS pid, p.sur_name, p.given_name, p.dnr, p.contact " +
+        String q = "SELECT l.*, p.id AS pid, p.sur_name, p.given_name, p.dnr, p.contact, p.username " +
                 "FROM log l LEFT OUTER JOIN persons p ON l.uzer = p.id WHERE l.id = ?";
 
         try {
@@ -40,7 +40,7 @@ public class LogDao extends CocesoDao<LogEntry> {
     public List<LogEntry> getByUnitId(int id) {
         if(id <= 0) return null;
 
-        String q = "SELECT l.*, p.id as pid, p.sur_name, p.given_name, p.dnr, p.contact " +
+        String q = "SELECT l.*, p.id as pid, p.sur_name, p.given_name, p.dnr, p.contact, p.username " +
                 "FROM log l LEFT OUTER JOIN persons p ON l.uzer = p.id WHERE l.unit = ?";
 
         return jdbc.query(q, new Object[]{id}, logMapper);
@@ -49,7 +49,7 @@ public class LogDao extends CocesoDao<LogEntry> {
     public List<LogEntry> getByIncidentId(int id) {
         if(id <= 0) return null;
 
-        String q = "SELECT l.*, p.id as pid, p.sur_name, p.given_name, p.dnr, p.contact " +
+        String q = "SELECT l.*, p.id as pid, p.sur_name, p.given_name, p.dnr, p.contact, p.username " +
                 "FROM log l LEFT OUTER JOIN persons p ON l.uzer = p.id WHERE l.incident = ?";
 
         return jdbc.query(q, new Object[] {id}, logMapper);
@@ -60,7 +60,7 @@ public class LogDao extends CocesoDao<LogEntry> {
     public List<LogEntry> getAll(int id) {
         if(id <= 0) return null;
 
-        String q = "SELECT l.*, p.id as pid, p.sur_name, p.given_name, p.dnr, p.contact " +
+        String q = "SELECT l.*, p.id as pid, p.sur_name, p.given_name, p.dnr, p.contact, p.username " +
                 "FROM log l LEFT OUTER JOIN persons p ON l.uzer = p.id WHERE l.acase = ?";
 
         return jdbc.query(q, new Object[] {id}, logMapper);
