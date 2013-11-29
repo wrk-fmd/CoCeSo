@@ -1,8 +1,6 @@
 package at.wrk.coceso.controller;
 
-import at.wrk.coceso.dao.CaseDao;
-import at.wrk.coceso.dao.LogDao;
-import at.wrk.coceso.dao.PersonDao;
+import at.wrk.coceso.dao.*;
 import at.wrk.coceso.entities.Case;
 import at.wrk.coceso.entities.Person;
 import at.wrk.coceso.utils.Logger;
@@ -26,6 +24,12 @@ public class WelcomeController {
 
     @Autowired
     LogDao logDao;
+
+    @Autowired
+    IncidentDao incidentDao;
+
+    @Autowired
+    UnitDao unitDao;
 
     @RequestMapping("/")
     public String showIndex() {
@@ -94,16 +98,15 @@ public class WelcomeController {
 
         if(s_sub.equals("Unit")) {
             map.addAttribute("unit", "active");
-
+            map.addAttribute("units", unitDao.getAll(actCase));
 
         } else if(s_sub.equals("Incident")) {
             map.addAttribute("incident", "active");
-
+            map.addAttribute("incidents", incidentDao.getAll(actCase));
 
         } else {
             map.addAttribute("log", "active");
             map.addAttribute("logs", logDao.getAll(actCase));
-
         }
 
 
