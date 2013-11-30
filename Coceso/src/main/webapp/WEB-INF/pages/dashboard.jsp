@@ -1,3 +1,4 @@
+<%@ page import="at.wrk.coceso.entities.Unit" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <html>
@@ -34,21 +35,40 @@
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li><a href="#">Dashboard</a></li>
-                <li class="${log}"><a href="?sub=Log">Log</a></li>
-                <li class="${unit}"><a href="?sub=Unit">Unit</a></li>
-                <li class="${incident}"><a href="?sub=Incident">Incident</a></li>
-                <!--li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+                <li><a href="#"></a></li>
+                <li class="dropdown ${log}">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Log <b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#">Action</a></li>
-                        <li><a href="#">Another action</a></li>
-                        <li><a href="#">Something else here</a></li>
+                        <li><a href="?sub=Log">Full Log</a></li>
                         <li class="divider"></li>
-                        <li class="dropdown-header">Nav header</li>
-                        <li><a href="#">Separated link</a></li>
-                        <li><a href="#">One more separated link</a></li>
+                        <li><a href="?sub=Log&uid=0">Log by Unit</a></li>
+                        <li><a href="?sub=Log&iid=0">Log by Incident</a></li>
                     </ul>
-                </li-->
+                </li>
+                <li class="dropdown ${task}">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Task <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="?sub=Task&uid=0">Tasks by Unit</a></li>
+                        <li><a href="?sub=Task&iid=0">Tasks by Incident</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown ${unit}">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Unit <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="?sub=Unit">Unit List</a></li>
+                        <li class="divider"></li>
+                        <li><a href="?sub=Unit&uid=0">Unit by Id</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown ${incident}">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Incident <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="?sub=Incident">Incident List</a></li>
+                        <li><a href="?sub=Incident&uid=-1">Active Incidents</a></li>
+                        <li class="divider"></li>
+                        <li><a href="?sub=Incident&iid=0">Incident by Id</a></li>
+                    </ul>
+                </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="${back_link}">Back</a></li>
@@ -57,11 +77,60 @@
         </div><!--/.nav-collapse -->
     </div>
 
-    <c:url var="get_inc" value="/data/incident/get" />
-    <c:url var="get_unit" value="/data/unit/get" />
+    <c:if test="${not empty error}">
+        <div class="alert alert-danger">
+            <strong>An Error occured: </strong>${error}
+        </div>
+    </c:if>
+
+
+    <c:url var="get_inc" value="/dashboard?sub=Incident&iid=" />
+    <c:url var="get_unit" value="/dashboard?sub=Unit&uid=" />
+
+    <c:if test="${not empty unit && not empty uid}">
+        <div>
+            <form class="form-inline" action="?">
+                <div class="row">
+                    <div class="col-lg-2">
+                        <input type="hidden" name="sub" value="Unit" />
+                    </div>
+                    <div class="col-lg-2">
+                        <input type="number" placeholder="Unit ID" name="uid" class="form-control" value="${uid}"/>
+                    </div>
+                    <div class="col-lg-2">
+                        <input type="submit" class="btn btn-success">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </c:if>
+
+    <c:if test="${not empty u_unit}">
+        <div class="alert alert-success">
+            <strong>${u_unit.call}: </strong> ${u_unit.info}<!-- TODO -->
+        </div>
+        <div class="page-header">
+            <h3>
+                Assigned Incidents:
+            </h3>
+        </div>
+        <c:forEach var="incs" items="${u_unit.incidents}">
+            <div class="alert alert-info">
+                ID: <a href="${get_inc}${incs.key}" class="btn btn-primary">${incs.key}</a> : ${incs.value}
+            </div>
+        </c:forEach>
+    </c:if>
+
+    <c:if test="${not empty u_unit_failed}">
+        <div class="alert alert-danger">
+            <strong>Error: </strong> ${u_unit_failed}
+        </div>
+    </c:if>
+
+    <c:if test="${not empty logs || not empty units || not empty incidents || not empty tasks}">
     <table class="table table-striped">
         <thead>
-            <c:if test="${not empty log}">
+            <c:if test="${not empty logs}">
                 <tr>
                     <th>
                         Time
@@ -83,9 +152,63 @@
                     </th>
                 </tr>
             </c:if>
+            <c:if test="${not empty units}">
+                <tr>
+                    <th>
+                        Call
+                    </th>
+                    <th>
+                        State
+                    </th>
+                    <th>
+                          ANI
+                    </th>
+                    <th>
+                        Info
+                    </th>
+                    <th>
+                        TaskState **
+                    </th>
+                </tr>
+            </c:if>
+            <c:if test="${not empty incidents}">
+                <tr>
+                    <th>
+                        ID
+                    </th>
+                    <th>
+                        Type
+                    </th>
+                    <th>
+                        BO
+                    </th>
+                    <th>
+                        AO
+                    </th>
+                    <th>
+                        Info
+                    </th>
+                    <th>
+                        Casus
+                    </th>
+                    <th>
+                        State
+                    </th>
+                </tr>
+            </c:if>
+            <c:if test="${not empty tasks}">
+                <tr>
+                    <th>
+                        ID
+                    </th>
+                    <th>
+                        State
+                    </th>
+                </tr>
+            </c:if>
         </thead>
         <tbody>
-            <c:if test="${not empty log}">
+            <c:if test="${not empty logs}">
                 <c:forEach items="${logs}" var="logEntry">
                     <tr>
                         <td>
@@ -98,10 +221,10 @@
                             ${logEntry.text}
                         </td>
                         <td>
-                            <a href="${get_unit}/${logEntry.unit.id}">${logEntry.unit.call}</a>
+                            <a href="${get_unit}${logEntry.unit.id}">${logEntry.unit.call}</a>
                         </td>
                         <td>
-                            <a href="${get_inc}/${logEntry.incident.id}">${logEntry.incident.id}</a>
+                            <a href="${get_inc}${logEntry.incident.id}">${logEntry.incident.id}</a>
                         </td>
                         <td>
                             ${logEntry.state}
@@ -109,9 +232,62 @@
                     </tr>
                 </c:forEach>
             </c:if>
+            <c:if test="${not empty units}">
+                <c:forEach items="${units}" var="eUnit">
+                    <tr>
+                        <td>
+                            ${eUnit.call}
+                        </td>
+                        <td>
+                            ${eUnit.state}
+                        </td>
+                        <td>
+                            ${eUnit.ani}
+                        </td>
+                        <td>
+                            ${eUnit.info}
+                        </td>
+                        <td>
+                            <%
+                                Unit u = (Unit) pageContext.getAttribute("eUnit");
+                                if(u.incidents.size() == 1) {
+                                    out.print(u.incidents.get(u.incidents.keySet().iterator().next()).name());
+                                }
+                            %>
+                        </td>
+                    </tr>
+                </c:forEach>
+            </c:if>
+            <c:if test="${not empty incidents}">
+                <c:forEach items="${incidents}" var="eIncident">
+                    <tr>
+                        <td>
+                                ${eIncident.id}
+                        </td>
+                        <td>
+                                ${eIncident.type}
+                        </td>
+                        <td>
+                                ## BO ##
+                        </td>
+                        <td>
+                                ## AO ##
+                        </td>
+                        <td>
+                            ${eIncident.info}
+                        </td>
+                        <td>
+                            ${eIncident.casusNr}
+                        </td>
+                        <td>
+                            ${eIncident.state}
+                        </td>
+                    </tr>
+                </c:forEach>
+            </c:if>
         </tbody>
     </table>
-
+    </c:if>
 </div>
 
 

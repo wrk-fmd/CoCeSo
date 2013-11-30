@@ -25,7 +25,7 @@ public class DataController {
     LogService log;
 
     @ResponseBody
-    @RequestMapping(value="assignUnit/{incidentid}/{unitid}", method = RequestMethod.GET)
+    @RequestMapping(value="assignUnit/{incidentid}/{unitid}", method = RequestMethod.GET, produces = "application/json")
     public String assignUnit(@PathVariable("incidentid") int incident_id, @PathVariable("unitid") int unit_id,
                              Principal principal)
     {

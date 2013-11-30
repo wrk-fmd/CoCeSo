@@ -76,4 +76,16 @@ public class Unit {
         ret.aCase = this.aCase;
         return ret;
     }
+
+    public UnitState getState() {
+        return state;
+    }
+
+    public CocesoPOI getPosition() {
+        return position;
+    }
+
+    public Map<Integer, TaskState> getIncidents() {
+        return incidents;
+    }
 }

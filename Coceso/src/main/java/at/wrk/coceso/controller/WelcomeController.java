@@ -3,6 +3,7 @@ package at.wrk.coceso.controller;
 import at.wrk.coceso.dao.*;
 import at.wrk.coceso.entities.Case;
 import at.wrk.coceso.entities.Person;
+import at.wrk.coceso.entities.Unit;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,6 +31,9 @@ public class WelcomeController {
 
     @Autowired
     UnitDao unitDao;
+
+    @Autowired
+    TaskDao taskDao;
 
     @RequestMapping("/")
     public String showIndex() {
@@ -91,22 +95,74 @@ public class WelcomeController {
 
 
     @RequestMapping("/dashboard")
-    public String showDashboard(@RequestParam(value = "sub", defaultValue = "Log") String s_sub, ModelMap map,
+    public String showDashboard(@RequestParam(value = "sub", defaultValue = "Log") String s_sub,
+                                @RequestParam(value = "uid", required = false) Integer uid,
+                                @RequestParam(value = "iid", required = false) Integer iid,
+                                ModelMap map,
                                 @CookieValue(value = "active_case", defaultValue = "0") String caze)
     {
         int actCase = Integer.parseInt(caze);
 
+        if(uid != null)
+            map.addAttribute("uid", uid);
+        if(iid != null)
+            map.addAttribute("iid", iid);
+        map.addAttribute("sub", s_sub);
+
         if(s_sub.equals("Unit")) {
             map.addAttribute("unit", "active");
-            map.addAttribute("units", unitDao.getAll(actCase));
+
+            if(uid != null && uid > 0) {
+                Unit ret = unitDao.getById(uid);
+                if(ret == null) {
+                    map.addAttribute("u_unit_failed", "No Unit found");
+                }
+                else {
+                    map.addAttribute("u_unit", ret);
+                }
+            }
+            else if(uid != null) {
+                // Start of subpage Unit
+            }
+            else {
+                map.addAttribute("units", unitDao.getAll(actCase));
+            }
 
         } else if(s_sub.equals("Incident")) {
             map.addAttribute("incident", "active");
-            map.addAttribute("incidents", incidentDao.getAll(actCase));
+
+            if(uid != null && uid == -1) {
+                map.addAttribute("incidents", incidentDao.getAllActive(actCase));
+            } else if(iid != null) {
+                map.addAttribute("i_incident", incidentDao.getById(iid));
+            } else {
+                map.addAttribute("incidents", incidentDao.getAll(actCase));
+            }
+
+
+        } else if(s_sub.equals("Task")) {
+            map.addAttribute("task", "active");
+            if((uid == null && iid == null) || (uid != null && iid != null)) {
+                map.addAttribute("error", "No ID specified");
+            }
+            else if(uid != null) {
+                map.addAttribute("tasks", taskDao.getAllByUnitId(uid));
+            }
+            else {
+                map.addAttribute("tasks", taskDao.getAllByIncidentId(iid));
+            }
 
         } else {
             map.addAttribute("log", "active");
-            map.addAttribute("logs", logDao.getAll(actCase));
+            if((uid == null && iid == null) || (uid != null && iid != null)) {
+                map.addAttribute("logs", logDao.getAll(actCase));
+            }
+            else if(uid != null) {
+                map.addAttribute("logs", logDao.getByUnitId(uid));
+            }
+            else {
+                map.addAttribute("logs", logDao.getByIncidentId(iid));
+            }
         }
 
 
