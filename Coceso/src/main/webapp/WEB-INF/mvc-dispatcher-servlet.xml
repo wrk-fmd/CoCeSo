@@ -23,7 +23,7 @@
     </bean>
 
 
-    <context:property-placeholder location="/WEB-INF/classes/jdbc.properties" />
+    <context:property-placeholder location="/WEB-INF/classes/coceso.properties" />
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.SingleConnectionDataSource">
         <property name="driverClassName" value="${jdbc.driverClassName}"/>
@@ -32,4 +32,7 @@
         <property name="password" value="${jdbc.password}"/>
     </bean>
 
+    <bean id="thirdPartyAuthenticationURL" class="java.lang.String">
+        <constructor-arg value="${backend.thirdPartyAuthenticationURL}" />
+    </bean>
 </beans>

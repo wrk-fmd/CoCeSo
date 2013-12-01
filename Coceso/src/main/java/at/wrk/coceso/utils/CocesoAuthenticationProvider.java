@@ -23,7 +23,6 @@ import java.util.Collection;
 @Service
 public class CocesoAuthenticationProvider implements AuthenticationProvider {
     // ###BEGIN### Third Party Authentication Config ###
-    private final String thirdPartyAuthenticationURL = "https://niu.wrk.at/";
     private final int SUCCESS = 302;
     private final int NOT_AUTHORIZED = 401;
     private final int ERROR = -1;
@@ -31,6 +30,12 @@ public class CocesoAuthenticationProvider implements AuthenticationProvider {
 
     @Autowired
     private PersonDao personDao;
+    private String thirdPartyAuthenticationURL;
+
+    @Autowired
+    public CocesoAuthenticationProvider (String thirdPartyAuthenticationURL) {
+        this.thirdPartyAuthenticationURL = new String(thirdPartyAuthenticationURL);
+    }
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
