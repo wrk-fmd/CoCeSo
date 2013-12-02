@@ -21,7 +21,7 @@
 
 //Modify behaviour of JQueryUI Dialog widget
 var _init = $.ui.dialog.prototype._init;
-var _destroy = $.ui.dialog.prototype._destroy;
+var destroy = $.ui.dialog.prototype.destroy;
 
 $.ui.dialog.prototype._init = function() {
   //Run the original initialization code
@@ -41,13 +41,13 @@ $.ui.dialog.prototype._init = function() {
   });
 
   //Minimize button
-  this.uiDialogTitlebarMinimize = $("<button type='button'></button>").button({
+  this.uiDialogTitlebarMinimize = $("<button></button>").button({
     label: this.options.minimizeText,
     icons: {
       primary: "ui-icon-minusthick"
     },
     text: false
-  }).addClass("ui-dialog-titlebar-minimize").appendTo(this.uiDialogTitlebar);
+  }).addClass("ui-dialog-titlebar-close ui-dialog-titlebar-minimize").insertBefore(this.uiDialogTitlebarClose);
   this._on(this.uiDialogTitlebarMinimize, {
     click: function(event) {
       event.preventDefault();
@@ -65,12 +65,26 @@ $.ui.dialog.prototype._init = function() {
   });
 };
 
-$.ui.dialog.prototype._destroy = function() {
+$.ui.dialog.prototype.destroy = function() {
   //Run the original destruction code
-  _destroy.apply(this, arguments);
+  destroy.apply(this, arguments);
 
   //Trigger an event
   this._trigger('destroy');
+};
+
+/**
+ * Method to prepend an attribute
+ *
+ * @param {String} attrName
+ * @param {String} prefix
+ * @returns {$.fn}
+ */
+$.fn.prependAttr = function(attrName, prefix) {
+  this.attr(attrName, function(i, val) {
+    return (typeof val === "undefined") ? undefined : prefix + val;
+  });
+  return this;
 };
 
 $.widget("ui.winman", {
@@ -93,6 +107,10 @@ $.widget("ui.winman", {
     var id = 'ui-id-' + this.uuid + '-' + (++this.index);
     var el = $('<div class="dialog_window" id="' + id + '" title="' + title + '"></div>');
     el.load(src + ' .ajax_content', function(response, status, request) {
+      el.find("*").each(function(i, child) {
+        $(child).prependAttr("id", id + "-");
+        $(child).prependAttr("for", id + "-");
+      });
       callback(el.get(0));
     });
 

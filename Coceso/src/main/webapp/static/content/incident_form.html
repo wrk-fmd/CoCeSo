@@ -10,9 +10,19 @@
       <form class="incident_form">
         <table>
           <tr>
-            <td colspan="2">
-              <label><input type="radio" name="type" value="task" data-bind="checked: type" /> Task</label>
-              <label><input type="radio" name="type" value="relocation" data-bind="checked: type" /> Relocation</label>
+            <td colspan="2" data-bind="buttonset: {}">
+              <input id="type_task" type="radio" name="type" value="Task" data-bind="checked: type" /> <label for="type_task">Task</label>
+              <input id="type_relocation" type="radio" name="type" value="Relocation" data-bind="checked: type" /> <label for="type_relocation">Relocation</label>
+            </td>
+          </tr>
+
+          <tr>
+            <td colspan="2" data-bind="buttonset: {}">
+              <input id="state_new" type="radio" name="state" value="New" data-bind="checked: state, enable: orig().state == 'New'" /> <label for="state_new">New</label>
+              <input id="state_open" type="radio" name="state" value="Open" data-bind="checked: state" /> <label for="state_open">Open</label>
+              <input id="state_dispo" type="radio" name="state" value="Dispo" data-bind="checked: state, enable: orig().state == 'Dispo'" /> <label for="state_dispo">Dispo</label>
+              <input id="state_working" type="radio" name="state" value="Working" data-bind="checked: state, enable: orig().state == 'Working'" /> <label for="state_working">Working</label>
+              <input id="state_done" type="radio" name="state" value="Done" data-bind="checked: state" /> <label for="state_done">Done</label>
             </td>
           </tr>
 
@@ -22,15 +32,14 @@
               <input type="number" name="priority" min="1" max="100" data-bind="value: priority" />
             </td>
             <td>
-              <label>Blue light</label>
-              <input type="checkbox" name="blue" data-bind="checked: blue" />
+              <input id="blue" type="checkbox" name="blue" data-bind="checked: blue, button: {}" /> <label for="blue">Blue light</label>
             </td>
           </tr>
 
           <tr>
             <td>
               <label>BO</label><br/>
-              <textarea name="bo" rows="4" data-bind="disable: type() == 'relocation', value: bo"></textarea>
+              <textarea name="bo" rows="4" data-bind="disable: type() === 'Relocation', value: bo"></textarea>
             </td>
             <td>
               <label>AO</label><br/>
@@ -56,7 +65,7 @@
             </td>
           </tr>
         </table>
-        <input type="button" data-bind="visible: changed" value="Save" />
+        <input type="button" class="btn btn-success" data-bind="visible: changed" value="Save" />
       </form>
     </div>
   </body>

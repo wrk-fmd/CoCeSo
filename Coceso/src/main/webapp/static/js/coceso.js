@@ -34,7 +34,7 @@ var Coceso = {
   /**
    * Initialize the application
    *
-   * @returns {void}
+   * @return {void}
    */
   startup: function() {
     //Initialize the menubar and window management
@@ -76,7 +76,7 @@ var Coceso = {
        * Renew the units
        *
        * @param {Object} data An object containing the units
-       * @returns {void}
+       * @return {void}
        */
       this.setData = function(data) {
         ko.mapping.fromJS(data, self);
@@ -97,7 +97,7 @@ var Coceso = {
        * CSS class based on the unit's state
        *
        * @type ko.computed
-       * @returns {string} The CSS class
+       * @return {string} The CSS class
        */
       this.stateCss = ko.computed(function() {
         return "unit_state_" + this.state().toLowerCase();
@@ -112,7 +112,7 @@ var Coceso = {
         helper: "clone",
         appendTo: "body",
         cursor: "move",
-        zIndex: 200
+        zIndex: 1500
       };
     },
     /**
@@ -136,11 +136,65 @@ var Coceso = {
         }
       }, this);
 
+
+
+      this.tabs = [
+        {
+          title: "Emergency",
+          filter: {
+            type: "Task",
+            blue: true
+          }
+        },
+        {
+          title: "Task",
+          filter: {
+            type: "Task",
+            blue: false
+          }
+        },
+        {
+          title: "Relocation",
+          filter: {
+            type: "Relocation"
+          }
+        }
+      ];
+
+      this.selectedTab = ko.observable();
+
+      this.tabOptions = {
+        create: function(event, ui) {
+          self.selectedTab($(ui.tab).data("tabindex"));
+        },
+        beforeActivate: function(event, ui) {
+          self.selectedTab($(ui.newTab).data("tabindex"));
+        }
+      };
+
+      this.filtered = ko.computed(function() {
+        var filters = self.tabs[self.selectedTab()] ? self.tabs[self.selectedTab()].filter : {};
+        incidents = this.incidents();
+        return ko.utils.arrayFilter(incidents, function(incident) {
+          for (i in filters) {
+            if (incident[i] && incident[i]() !== filters[i]) {
+              return false;
+            }
+          }
+          return true;
+        });
+      }, this);
+
+      this.accordionOptions = ko.computed(function() {
+        console.log("bla");
+        return {active: false, collapsible: true, subscribe: this.filtered()};
+      }, this);
+
       /**
        * Renew the incidents
        *
        * @param {Object} data An object containing the incidents
-       * @returns {void}
+       * @return {void}
        */
       this.setData = function(data) {
         ko.mapping.fromJS(data, self);
@@ -178,7 +232,7 @@ var Coceso = {
        * Return if data has been changed by the user
        *
        * @type ko.computed
-       * @returns {boolean}
+       * @return {boolean}
        */
       this.changed = ko.computed(function() {
         if (!this.options.writeable) {
@@ -197,7 +251,7 @@ var Coceso = {
        * Generate the incident's title
        *
        * @type ko.computed
-       * @returns {String}
+       * @return {String}
        */
       this.title = ko.computed(function() {
         return this.type() + " " + this.bo();
@@ -208,7 +262,7 @@ var Coceso = {
        *
        * @param {Event} event The jQuery Event (unused)
        * @param {Object} ui jQuery UI properties
-       * @returns {void}
+       * @return {void}
        */
       this.drop = function(event, ui) {
         if ($(ui.draggable.context).data("unitid")) {
@@ -229,17 +283,17 @@ var Coceso = {
       /**
        * Open in a form
        *
-       * @returns {void}
+       * @return {void}
        */
       this.openForm = function() {
-        Coceso.UI.openIncident("Edit Incident", "incident_form.html", {id: self.id()})
+        Coceso.UI.openIncident("Edit Incident", "incident_form.html", {id: self.id()});
       };
 
       /**
        * Load the incident data
        *
        * @param {int} interval The interval to reload. 0 or false for no autoload.
-       * @returns {void}
+       * @return {void}
        */
       this.load = function(interval) {
         id = ko.utils.unwrapObservable(self.id);
@@ -251,7 +305,7 @@ var Coceso = {
       /**
        * Save the modified incident data
        *
-       * @returns {void}
+       * @return {void}
        */
       this.save = function() {
         //TODO
@@ -280,7 +334,7 @@ var Coceso = {
      * @param {String} title The title of the window
      * @param {String} src The source to load the HTML from
      * @param {ViewModel} viewmodel The viewmodel to bind with
-     * @returns {void}
+     * @return {void}
      */
     openWindow: function(title, src, viewmodel) {
       id = $("#taskbar").winman("addWindow", title, src, function(el) {
@@ -293,7 +347,7 @@ var Coceso = {
      *
      * @param {String} title
      * @param {String} src
-     * @returns {void}
+     * @return {void}
      */
     openUnits: function(title, src) {
       viewmodel = new Coceso.ViewModels.Units(Coceso.Ajax.data.units);
@@ -305,7 +359,7 @@ var Coceso = {
      *
      * @param {String} title
      * @param {String} src
-     * @returns {void}
+     * @return {void}
      */
     openIncidents: function(title, src) {
       viewmodel = new Coceso.ViewModels.Incidents(Coceso.Ajax.data.incidents);
@@ -318,7 +372,7 @@ var Coceso = {
      * @param {String} title
      * @param {String} src
      * @param {Object} data Additional incident data
-     * @returns {void}
+     * @return {void}
      */
     openIncident: function(title, src, data) {
       data = $.extend(true, {
@@ -368,7 +422,7 @@ var Coceso = {
      * @param {String} type The data type
      * @param {String} url The URL to load from
      * @param {int} interval The interval to reload. 0 or false for no autoload.
-     * @returns {void}
+     * @return {void}
      */
     getAll: function(type, url, interval) {
       $.ajax({
@@ -397,7 +451,7 @@ var Coceso = {
      *
      * @param {String} type The data type
      * @param {Function} func The callback function
-     * @returns {void}
+     * @return {void}
      */
     subscribe: function(type, func) {
       if (this.subscriptions[type]) {
@@ -410,7 +464,7 @@ var Coceso = {
      * @param {ViewModel} viewmodel
      * @param {String} url The URL to load from
      * @param {int} interval The interval to reload. 0 or false for no autoload.
-     * @returns {void}
+     * @return {void}
      */
     get: function(viewmodel, url, interval) {
       $.ajax({

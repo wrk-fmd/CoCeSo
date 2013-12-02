@@ -18,8 +18,26 @@ body {
   right: 2px;
 }
 
+/**
+ * Overwrite some UI defaults
+ */
+
 .ui-widget {
   font-size: 1em;
+}
+
+.ui-dialog .ui-dialog-titlebar {
+  font-size: 14px;
+  padding: 3px 60px 5px 5px;
+}
+
+.ui-dialog .ui-dialog-title {
+  margin: 0;
+  padding: 0;
+}
+
+.ui-dialog .ui-dialog-titlebar-close {
+  margin-top: -12px;
 }
 
 .ui-dialog .ui-dialog-content {
@@ -34,16 +52,35 @@ body {
   padding: 0 0.5em;
 }
 
+.ui-button.ui-state-active {
+  color: #ffffff;
+  background-color: #0064cd;
+  background-repeat: repeat-x;
+  background-image: -khtml-gradient(linear, left top, left bottom, from(#049cdb), to(#0064cd));
+  background-image: -moz-linear-gradient(top, #049cdb, #0064cd);
+  background-image: -ms-linear-gradient(top, #049cdb, #0064cd);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #049cdb), color-stop(100%, #0064cd));
+  background-image: -webkit-linear-gradient(top, #049cdb, #0064cd);
+  background-image: -o-linear-gradient(top, #049cdb, #0064cd);
+  background-image: linear-gradient(top, #049cdb, #0064cd);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#049cdb', endColorstr='#0064cd', GradientType=0);
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  border-color: #0064cd #0064cd #003f81;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+}
+
+.ui-tabs .ui-tabs-nav {
+  border-radius: 0;
+}
+
+
+
 p {
   margin: 0.5em 0;
 }
 
 .ui-dialog p span {
   white-space: pre-wrap;
-}
-
-.cl {
-  clear: both;
 }
 
 input {

@@ -20,73 +20,74 @@
  */
 
 /**
+ * Generate the binding to a jQuery UI widget
+ *
+ * @param {String} widget The jQuery UI widget constructor
+ * @return {BindingHandler}
+ */
+function uiBindingHandler(widget) {
+  return {
+    init: function(element, valueAccessor) {
+      var options = ko.utils.unwrapObservable(valueAccessor()) || {};
+      setTimeout(function() {
+        $(element)[widget](options);
+      }, 0);
+
+      ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
+        if ($(element).data("ui-" + widget)) {
+          $(element)[widget]("destroy");
+        }
+      });
+    },
+    update: function(element, valueAccessor) {
+      var options = ko.utils.unwrapObservable(valueAccessor()) || {};
+      setTimeout(function() {
+        $(element)[widget]("destroy")[widget](options);
+      }, 0);
+    }
+  };
+}
+
+
+/**
  * Generate Accordion from loop
  *
  * @type {BindingHandler}
  */
-ko.bindingHandlers.accordion = {
-  init: function(element, valueAccessor) {
-    var options = valueAccessor() || {};
-    setTimeout(function() {
-      $(element).accordion(options);
-    }, 0);
-
-    ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
-      $(element).accordion("destroy");
-    });
-  },
-  update: function(element, valueAccessor) {
-    var options = valueAccessor() || {};
-    setTimeout(function() {
-      $(element).accordion("destroy").accordion(options);
-    }, 0);
-  }
-};
+ko.bindingHandlers.accordion = uiBindingHandler("accordion");
 
 /**
  * Generate Draggable from element
  *
  * @type {BindingHandler}
  */
-ko.bindingHandlers.draggable = {
-  init: function(element, valueAccessor) {
-    var options = valueAccessor() || {};
-    setTimeout(function() {
-      $(element).draggable(options);
-    }, 0);
-
-    ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
-      $(element).draggable("destroy");
-    });
-  },
-  update: function(element, valueAccessor) {
-    var options = valueAccessor() || {};
-    setTimeout(function() {
-      $(element).draggable("destroy").draggable(options);
-    }, 0);
-  }
-};
+ko.bindingHandlers.draggable = uiBindingHandler("draggable");
 
 /**
  * Generate Droppable from element
  *
  * @type {BindingHandler}
  */
-ko.bindingHandlers.droppable = {
-  init: function(element, valueAccessor) {
-    var options = valueAccessor() || {};
-    setTimeout(function() {
-      $(element).droppable(options);
-    }, 0);
+ko.bindingHandlers.droppable = uiBindingHandler("droppable");
 
-    ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
-      $(element).droppable("destroy");
-    });
-  },
-  update: function(element, valueAccessor) {
-    var options = valueAccessor() || {};
-    setTimeout(function() {
-      $(element).droppable("destroy").droppable(options);
-    }, 0);
-  }
-};
+/**
+ * Generate Tabs from element
+ *
+ * @type {BindingHandler}
+ */
+ko.bindingHandlers.tabber = uiBindingHandler("tabber");
+
+/**
+ * Generate Tabs from element
+ *
+ * @type {BindingHandler}
+ */
+ko.bindingHandlers.buttonset = uiBindingHandler("buttonset");
+
+/**
+ * Generate Tabs from element
+ *
+ * @type {BindingHandler}
+ */
+ko.bindingHandlers.button = uiBindingHandler("button");
+

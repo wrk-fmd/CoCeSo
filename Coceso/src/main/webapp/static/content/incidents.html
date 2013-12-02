@@ -7,30 +7,36 @@
   </head>
   <body>
     <div class="ajax_content">
-      <ul data-bind="foreach: incidents, accordion: {active: false, collapsible: true}">
-        <li data-bind="droppable: dropOptions">
-          <h3>
-            <span data-bind="text: title"></span>
-            <span class="incidents_priority" data-bind="text: priority, css: {incidents_blue: blue}, style: {fontSize: (priority() / 300 + 0.5) + 'em'}"></span>
-          </h3>
-          <div>
-            <p data-bind="visible: bo">
-              <b>BO:</b>
-              <span data-bind="text: bo"></span>
-            </p>
-            <p data-bind="visible: ao">
-              <b>AO:</b>
-              <span data-bind="text: ao"></span>
-            </p>
-            <p data-bind="visible: info">
-              <b>Info:</b>
-              <span data-bind="text: info"></span>
-            </p>
+      <div data-bind="tabber: tabOptions">
+        <ul data-bind="foreach: tabs">
+          <li data-bind="attr: {'data-tabindex': $index}"><a href="#" data-bind="text: title"></a></li>
+        </ul>
 
-            <p><a href="#" data-bind="click: openForm">Edit</a></p>
-          </div>
-        </li>
-      </ul>
+        <ul data-bind="foreach: filtered, accordion: accordionOptions">
+          <li data-bind="droppable: dropOptions">
+            <h3>
+              <span data-bind="text: title"></span>
+              <span class="incidents_priority" data-bind="text: priority, css: {incidents_blue: blue}, style: {fontSize: (priority() / 300 + 0.5) + 'em'}"></span>
+            </h3>
+            <div>
+              <p data-bind="visible: bo">
+                <b>BO:</b>
+                <span data-bind="text: bo"></span>
+              </p>
+              <p data-bind="visible: ao">
+                <b>AO:</b>
+                <span data-bind="text: ao"></span>
+              </p>
+              <p data-bind="visible: info">
+                <b>Info:</b>
+                <span data-bind="text: info"></span>
+              </p>
+
+              <p><a href="#" data-bind="click: openForm">Edit</a></p>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
   </body>
 </html>
