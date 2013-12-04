@@ -37,8 +37,7 @@ var Coceso = {
    * @return {void}
    */
   startup: function() {
-    //Initialize the menubar and window management
-    $("#menubar").menubar();
+    //Initialize window management
     $("#taskbar").winman();
 
     //Preload incidents and units
@@ -46,276 +45,55 @@ var Coceso = {
     Coceso.Ajax.getAll("units", "unit/getAll.json", Coceso.Conf.interval);
   },
   /**
-   * Contains all the viewmodels
+   * Contains all the models
    *
    * @type Object
    */
-  ViewModels: {
+  Models: {
     /**
-     * List of units
+     * Incident Dummy
      *
-     * @constructor
-     * @param {Object} data An object containing the units
+     * @type Coceso.Models.Incident
      */
-    Units: function(data) {
-      var self = this;
-
-      //Create and populate observables
-      ko.mapping.fromJS(data, {
-        units: {
-          key: function(data) {
-            return ko.utils.unwrapObservable(data.id);
-          },
-          create: function(options) {
-            return new Coceso.ViewModels.Unit(options.data);
-          }
-        }
-      }, this);
-
-      /**
-       * Renew the units
-       *
-       * @param {Object} data An object containing the units
-       * @return {void}
-       */
-      this.setData = function(data) {
-        ko.mapping.fromJS(data, self);
-      };
+    Incident: {
+      id: null,
+      state: "New",
+      priority: 0,
+      blue: false,
+      units: {},
+      bo: "",
+      ao: "",
+      casusNr: "",
+      info: "",
+      caller: "",
+      type: null
     },
     /**
-     * A single unit
+     * Unit dummy
      *
-     * @constructor
-     * @param {Object} data An object containing the unit's properties
-     * @param {boolean} writeable
+     * @type Coceso.Models.Unit
      */
-    Unit: function(data, writeable) {
-      //Create and populate observables
-      ko.mapping.fromJS(data, {}, this);
-
-      /**
-       * CSS class based on the unit's state
-       *
-       * @type ko.computed
-       * @return {string} The CSS class
-       */
-      this.stateCss = ko.computed(function() {
-        return "unit_state_" + this.state().toLowerCase();
-      }, this);
-
-      /**
-       * Options for dragging
-       *
-       * @type Object
-       */
-      this.dragOptions = {
-        helper: "clone",
-        appendTo: "body",
-        cursor: "move",
-        zIndex: 1500
-      };
-    },
-    /**
-     * List of incidents
-     *
-     * @constructor
-     * @param {Object} data An object containing the incidents
-     */
-    Incidents: function(data) {
-      var self = this;
-
-      //Create and populate observables
-      ko.mapping.fromJS(data, {
-        incidents: {
-          key: function(data) {
-            return ko.utils.unwrapObservable(data.id);
-          },
-          create: function(options) {
-            return new Coceso.ViewModels.Incident(options.data);
-          }
-        }
-      }, this);
-
-
-
-      this.tabs = [
-        {
-          title: "Emergency",
-          filter: {
-            type: "Task",
-            blue: true
-          }
-        },
-        {
-          title: "Task",
-          filter: {
-            type: "Task",
-            blue: false
-          }
-        },
-        {
-          title: "Relocation",
-          filter: {
-            type: "Relocation"
-          }
-        }
-      ];
-
-      this.selectedTab = ko.observable();
-
-      this.tabOptions = {
-        create: function(event, ui) {
-          self.selectedTab($(ui.tab).data("tabindex"));
-        },
-        beforeActivate: function(event, ui) {
-          self.selectedTab($(ui.newTab).data("tabindex"));
-        }
-      };
-
-      this.filtered = ko.computed(function() {
-        var filters = self.tabs[self.selectedTab()] ? self.tabs[self.selectedTab()].filter : {};
-        incidents = this.incidents();
-        return ko.utils.arrayFilter(incidents, function(incident) {
-          for (i in filters) {
-            if (incident[i] && incident[i]() !== filters[i]) {
-              return false;
-            }
-          }
-          return true;
-        });
-      }, this);
-
-      this.accordionOptions = ko.computed(function() {
-        console.log("bla");
-        return {active: false, collapsible: true, subscribe: this.filtered()};
-      }, this);
-
-      /**
-       * Renew the incidents
-       *
-       * @param {Object} data An object containing the incidents
-       * @return {void}
-       */
-      this.setData = function(data) {
-        ko.mapping.fromJS(data, self);
-      };
-    },
-    /**
-     * A single incident
-     *
-     * @constructor
-     * @param {Object} data An object containing the incident's properties
-     * @param {Object} options Additional options
-     */
-    Incident: function(data, options) {
-      var self = this;
-      this.options = options || {};
-
-      //Create and populate observables
-      ko.mapping.fromJS(data, {}, this);
-
-      /**
-       * Original data to recognize local changes
-       *
-       * @type ko.observable (of Object)
-       */
-      this.orig = ko.observable(data);
-
-      /**
-       * Conflicting remote changes
-       *
-       * @type ko.observable (of Object)
-       */
-      this.remoteChanges = ko.observable({});
-
-      /**
-       * Return if data has been changed by the user
-       *
-       * @type ko.computed
-       * @return {boolean}
-       */
-      this.changed = ko.computed(function() {
-        if (!this.options.writeable) {
-          return false;
-        }
-        orig = ko.utils.unwrapObservable(this.orig);
-        for (i in orig) {
-          if (orig[i] !== ko.utils.unwrapObservable(this[i])) {
-            return true;
-          }
-        }
-        return false;
-      }, this);
-
-      /**
-       * Generate the incident's title
-       *
-       * @type ko.computed
-       * @return {String}
-       */
-      this.title = ko.computed(function() {
-        return this.type() + " " + this.bo();
-      }, this);
-
-      /**
-       * The droppable handler
-       *
-       * @param {Event} event The jQuery Event (unused)
-       * @param {Object} ui jQuery UI properties
-       * @return {void}
-       */
-      this.drop = function(event, ui) {
-        if ($(ui.draggable.context).data("unitid")) {
-          //TODO
-          alert("Assign Unit " + $(ui.draggable.context).data("unitid") + " to Incident " + self.id());
-        }
-      };
-
-      /**
-       * The droppable options
-       *
-       * @type Object
-       */
-      this.dropOptions = {
-        drop: self.drop
-      };
-
-      /**
-       * Open in a form
-       *
-       * @return {void}
-       */
-      this.openForm = function() {
-        Coceso.UI.openIncident("Edit Incident", "incident_form.html", {id: self.id()});
-      };
-
-      /**
-       * Load the incident data
-       *
-       * @param {int} interval The interval to reload. 0 or false for no autoload.
-       * @return {void}
-       */
-      this.load = function(interval) {
-        id = ko.utils.unwrapObservable(self.id);
-        if (id !== null) {
-          Coceso.Ajax.get(self, "incident/get/" + id + ".json", interval);
-        }
-      };
-
-      /**
-       * Save the modified incident data
-       *
-       * @return {void}
-       */
-      this.save = function() {
-        //TODO
-      };
-
-      if (this.options.autoload) {
-        this.load(this.options.autoload);
-      }
+    Unit: {
+      id: null,
+      state: "AD",
+      call: null,
+      ani: null,
+      withDoc: false,
+      portable: false,
+      transportVehicle: false,
+      crew: [],
+      info: null,
+      position: null,
+      home: null,
+      incidents: {}
     }
   },
+  /**
+   * Contains all ViewModels (including baseclasses)
+   *
+   * @type Object
+   */
+  ViewModels: {},
   /**
    * Contains UI related functions and data
    *
@@ -337,7 +115,7 @@ var Coceso = {
      * @return {void}
      */
     openWindow: function(title, src, viewmodel) {
-      id = $("#taskbar").winman("addWindow", title, src, function(el) {
+      var id = $("#taskbar").winman("addWindow", title, src, function(el) {
         ko.applyBindings(viewmodel, el);
       });
       this.windows[id] = viewmodel;
@@ -350,8 +128,7 @@ var Coceso = {
      * @return {void}
      */
     openUnits: function(title, src) {
-      viewmodel = new Coceso.ViewModels.Units(Coceso.Ajax.data.units);
-      Coceso.Ajax.subscribe("units", viewmodel.setData);
+      viewmodel = new Coceso.ViewModels.Units();
       this.openWindow(title, Coceso.Conf.contentBase + src, viewmodel);
     },
     /**
@@ -362,8 +139,7 @@ var Coceso = {
      * @return {void}
      */
     openIncidents: function(title, src) {
-      viewmodel = new Coceso.ViewModels.Incidents(Coceso.Ajax.data.incidents);
-      Coceso.Ajax.subscribe("incidents", viewmodel.setData);
+      viewmodel = new Coceso.ViewModels.Incidents();
       this.openWindow(title, Coceso.Conf.contentBase + src, viewmodel);
     },
     /**
@@ -375,20 +151,7 @@ var Coceso = {
      * @return {void}
      */
     openIncident: function(title, src, data) {
-      data = $.extend(true, {
-        id: null,
-        state: "New",
-        priority: 10,
-        blue: false,
-        units: {},
-        bo: null,
-        ao: null,
-        casusNr: null,
-        info: null,
-        caller: null,
-        type: null
-      }, data || {});
-      viewmodel = new Coceso.ViewModels.Incident(data, {writeable: true, autoload: Coceso.Conf.interval});
+      viewmodel = new Coceso.ViewModels.Incident(data || {});
       this.openWindow(title, Coceso.Conf.contentBase + src, viewmodel);
     }
   },
@@ -404,8 +167,8 @@ var Coceso = {
      * @type Object
      */
     data: {
-      incidents: {},
-      units: {}
+      incidents: {incidents: []},
+      units: {units: []}
     },
     /**
      * Subscriptions to data loading
@@ -458,6 +221,22 @@ var Coceso = {
         this.subscriptions[type].push(func);
       }
     },
+    save: function(data, url, callback) {
+      $.ajax({
+        type: "POST",
+        url: Coceso.Conf.jsonBase + url,
+        dataType: "json",
+        contentType: "application/json",
+        data: data,
+        processData: false,
+        success: function(data, status) {
+          alert("success");
+        },
+        error: function() {
+          alert("error");
+        }
+      });
+    },
     /**
      * Load a single item into a viewmodel
      *
@@ -473,27 +252,7 @@ var Coceso = {
         ifModified: true,
         success: function(data, status) {
           if (status !== "notmodified") {
-            remoteChanges = {};
-            newData = $.extend(true, {}, data);
-            newOrig = $.extend(true, {}, data);
-            if (viewmodel.changed()) {
-              //Some data was locally edited
-              orig = ko.utils.unwrapObservable(viewmodel.orig);
-              for (var i in data) {
-                viewItem = ko.utils.unwrapObservable(viewmodel[i]);
-                if ((typeof orig[i] !== "undefined") && (viewItem !== orig[i]) && (viewItem !== data[i])) {
-                  newData[i] = viewItem;
-                  if (data[i] !== orig[i]) {
-                    newOrig[i] = orig[i];
-                    remoteChanges[i] = data[i];
-                  }
-                }
-              }
-            }
-
-            ko.mapping.fromJS(newData, {}, viewmodel);
-            viewmodel.orig(newOrig);
-            viewmodel.remoteChanges(remoteChanges);
+            //Not used
           }
         },
         complete: function() {
@@ -507,3 +266,526 @@ var Coceso = {
     }
   }
 };
+
+
+/**
+ * Base class for all ViewModels
+ *
+ * @constructor
+ * @param {Object} data
+ * @param {Object} options
+ */
+Coceso.ViewModels.ViewModel = function(data, options) {
+  //Set options
+  this.options = options || {};
+
+  //Create and populate observables
+  ko.mapping.fromJS(data, this.mappingOptions, this);
+
+  //Subscribe to updates
+  if (this.options.reload && this.dataType && (typeof this.setData === "function")) {
+    Coceso.Ajax.subscribe(this.dataType, this.setData);
+  }
+};
+
+Coceso.ViewModels.ViewModel.prototype = Object.create({}, {
+  dataType: {value: null},
+  mappingOptions: {value: {}},
+  objEqual: {
+    value: function(a, b) {
+      a = ko.utils.unwrapObservable(a);
+      b = ko.utils.unwrapObservable(b);
+
+      if ((a instanceof Object) && (b instanceof Object)) {
+        var key;
+        for (key in a) {
+          if (a.hasOwnProperty(key) !== b.hasOwnProperty(key)) {
+            return false;
+          }
+        }
+        for (key in b) {
+          if (a.hasOwnProperty(key) !== b.hasOwnProperty(key)) {
+            return false;
+          }
+          if (!this.objEqual.call(this, a[key], b[key])) {
+            return false;
+          }
+        }
+
+        return true;
+      }
+
+      return (a === b);
+    }
+  }
+});
+
+/**
+ * Base class for all list style ViewModels
+ *
+ * @constructor
+ * @extends Coceso.ViewModel
+ * @param {Object} data
+ * @param {Object} options
+ */
+Coceso.ViewModels.ViewModelList = function(data, options) {
+  var self = this;
+
+  //Set default options: Autoload list, don't load children
+  options = $.extend({
+    initial: true,
+    reload: true,
+    children: {
+      initial: false,
+      reload: false,
+      writeable: false
+    }
+  }, options);
+
+  /**
+   * Method to set refreshed data
+   *
+   * @param {Object} data The refreshed data object
+   * @return {void}
+   */
+  this.setData = function(data) {
+    ko.mapping.fromJS(data, self);
+  };
+
+  if (options.initial && this.dataType) {
+    //Inital loading: take preloaded ajax data
+    data = $.extend({}, Coceso.Ajax.data[this.dataType], data);
+  }
+
+  //Call super constructor
+  Coceso.ViewModels.ViewModel.call(this, data, options);
+};
+
+Coceso.ViewModels.ViewModelList.prototype = Object.create(Coceso.ViewModels.ViewModel.prototype, {});
+
+/**
+ * Base class for all single element ViewModels
+ *
+ * @constructor
+ * @extends Coceso.ViewModel
+ * @param {Object} data
+ * @param {Object} options
+ */
+Coceso.ViewModels.ViewModelSingle = function(data, options) {
+  var self = this,
+    orig = {};
+
+  options = $.extend({
+    initial: true,
+    reload: true,
+    writeable: true,
+    assigned: true,
+    children: {
+      //Don't autoload list of children
+      initial: false,
+      reload: false,
+      children: {
+        initial: true,
+        reload: true,
+        writeable: false,
+        assigned: false
+      }
+    }
+  }, options);
+
+  if (options.initial && this.dataType && data.id) {
+    orig = ko.utils.arrayFirst(Coceso.Ajax.data[this.dataType][this.dataType], function(item) {
+      return (item.id === data.id);
+    }) || {};
+  }
+
+  orig = $.extend({}, this.model, orig);
+  data = $.extend({}, orig, data);
+
+  this.setData = function(data) {
+    data = ko.utils.arrayFirst(data[self.dataType], function(item) {
+      return (item.id === self.id());
+    });
+
+    if (data) {
+      var remoteChanges = {},
+        newData = $.extend(true, {}, data),
+        newOrig = $.extend(true, {}, data);
+
+      if (self.changed()) {
+        //Some data was locally edited
+        orig = ko.utils.unwrapObservable(self.orig);
+        for (var i in data) {
+          var viewItem = ko.utils.unwrapObservable(self[i]);
+          if ((typeof orig[i] !== "undefined") && (viewItem !== orig[i]) && (viewItem !== data[i])) {
+            newData[i] = viewItem;
+            if (data[i] !== orig[i]) {
+              newOrig[i] = orig[i];
+              remoteChanges[i] = data[i];
+            }
+          }
+        }
+      }
+
+      ko.mapping.fromJS(newData, {}, viewmodel);
+      self.orig(newOrig);
+      self.remoteChanges(remoteChanges);
+    }
+  };
+
+  Coceso.ViewModels.ViewModel.call(this, data, options);
+
+  /**
+   * Original data to recognize local changes
+   *
+   * @type ko.observable (of Object)
+   */
+  this.orig = ko.observable(orig);
+
+  /**
+   * Conflicting remote changes
+   *
+   * @type ko.observable (of Object)
+   */
+  this.remoteChanges = ko.observable({});
+
+  /**
+   * Return if data has been changed by the user
+   *
+   * @type ko.computed
+   * @return {boolean}
+   */
+  this.changed = ko.computed(function() {
+    if (!this.options.writeable) {
+      return false;
+    }
+    orig = ko.utils.unwrapObservable(this.orig);
+    for (i in orig) {
+      if (!this.objEqual(orig[i], ko.utils.unwrapObservable(this[i]))) {
+        if (typeof this.compare[i] === "function") {
+          if (this.compare[i].call(this, orig[i], ko.utils.unwrapObservable(this[i]))) {
+            return true;
+          }
+        } else {
+          return true;
+        }
+      }
+    }
+    return false;
+  }, this);
+};
+
+Coceso.ViewModels.ViewModelSingle.prototype = Object.create(Coceso.ViewModels.ViewModel.prototype, {
+  model: {value: null},
+  save: {
+    value: function() {
+      if (!this.options.writeable || !this.saveUrl) {
+        return false;
+      }
+
+      var data = ko.mapping.toJS(this);
+      data.units = undefined;
+      data.aCase = undefined;
+      data = ko.toJSON(data);
+      Coceso.Ajax.save(data, this.saveUrl);
+
+      return true;
+    }
+  },
+  compare: {value: {}}
+});
+
+/**
+ * List of incidents
+ *
+ * @constructor
+ * @extends Coceso.ViewModelList
+ * @param {Object} data
+ * @param {Object} options
+ */
+Coceso.ViewModels.Incidents = function(data, options) {
+  //Call super constructor
+  Coceso.ViewModels.ViewModelList.call(this, data, options);
+
+  var self = this;
+
+  /**
+   * Available filters
+   *
+   * @type Object
+   */
+  var filters = {
+    tabs: [
+      {
+        filter: {
+          type: "Task",
+          blue: true
+        }
+      },
+      {
+        filter: {
+          type: "Task",
+          blue: false
+        }
+      },
+      {
+        filter: {
+          type: "Relocation"
+        }
+      }
+    ]
+  };
+
+  /**
+   * The selected tab in the incidents list (corresponds to a key in filters.tabs)
+   *
+   * @type ko.observable
+   */
+  this.selectedTab = ko.observable();
+
+  /**
+   * Generate a list of active filters
+   *
+   * @type ko.computed
+   * @return {Object}
+   */
+  this.activeFilters = ko.computed(function() {
+    return {
+      filter: [
+        filters.tabs[this.selectedTab()]
+      ]
+    };
+  }, this);
+
+  //Filtered view of the incidents array
+  this.filtered = this.incidents.extend({filtered: this.activeFilters});
+
+  /**
+   * The options for tabbing
+   *
+   * @type Object
+   */
+  this.tabOptions = {
+    create: function(event, ui) {
+      self.selectedTab($(ui.tab).data("tabindex"));
+    },
+    beforeActivate: function(event, ui) {
+      self.selectedTab($(ui.newTab).data("tabindex"));
+    }
+  };
+
+  /**
+   * The accordion view options
+   * Has to depend on the used data array for the accordion to update correctly
+   *
+   * @type ko.computed
+   * @returns {Object}
+   */
+  this.accordionOptions = ko.computed(function() {
+    return {active: false, collapsible: true, subscribe: this.filtered()};
+  }, this);
+};
+
+Coceso.ViewModels.Incidents.prototype = Object.create(Coceso.ViewModels.ViewModelList.prototype, {
+  dataType: {value: "incidents"},
+  mappingOptions: {
+    value: {
+      incidents: {
+        key: function(data) {
+          return ko.utils.unwrapObservable(data.id);
+        },
+        create: function(options) {
+          return new Coceso.ViewModels.Incident(options.data, options.parent.options.children ? options.parent.options.children : {});
+        }
+      }
+    }
+  }
+});
+
+
+/**
+ * Single incident
+ *
+ * @constructor
+ * @extends Coceso.ViewModelSingle
+ * @param {Object} data
+ * @param {Object} options
+ */
+Coceso.ViewModels.Incident = function(data, options) {
+  Coceso.ViewModels.ViewModelSingle.call(this, data, options);
+
+  var self = this;
+
+  this.priority = this.priority.extend({integer: true});
+
+  /**
+   * Generate the incident's title
+   *
+   * @type ko.computed
+   * @return {String}
+   */
+  this.title = ko.computed(function() {
+    return this.type() + " " + this.bo();
+  }, this);
+
+  /**
+   * The droppable handler
+   *
+   * @param {Event} event The jQuery Event (unused)
+   * @param {Object} ui jQuery UI properties
+   * @return {void}
+   */
+  this.drop = function(event, ui) {
+    if ($(ui.draggable.context).data("unitid")) {
+      //TODO
+      alert("Assign Unit " + $(ui.draggable.context).data("unitid") + " to Incident " + self.id());
+    }
+  };
+
+  /**
+   * The droppable options
+   *
+   * @type Object
+   */
+  this.dropOptions = {
+    drop: self.drop
+  };
+
+  /**
+   * Open in a form
+   *
+   * @return {void}
+   */
+  this.openForm = function() {
+    Coceso.UI.openIncident("Edit Incident", "incident_form.html", {id: self.id()});
+  };
+};
+
+Coceso.ViewModels.Incident.prototype = Object.create(Coceso.ViewModels.ViewModelSingle.prototype, {
+  dataType: {value: "incidents"},
+  model: {value: Coceso.Models.Incident},
+  saveUrl: {value: "incident/update"},
+  mappingOptions: {
+    value: {
+      units: {
+        create: function(options) {
+          if (!options.parent.options.assigned) {
+            return options.data;
+          }
+          var units = [], i;
+          for (i in options.data) {
+            units.push({id: parseInt(i), taskState: options.data[i]});
+          }
+          return new Coceso.ViewModels.Units({units: units}, options.parent.options.children
+            ? options.parent.options.children
+            : {children: {assigned: false}}
+          );
+        }
+      }
+    }
+  },
+  compare: {
+    value: {
+      units: function(a, b) {
+        var i, units = {};
+        if (!(b instanceof Coceso.ViewModels.Units)) {
+          return false;
+        }
+        for (i in b.units()) {
+          units[b.units()[i].id()] = b.units()[i].taskState();
+        }
+        return !this.objEqual(a, units);
+      }
+    }
+  }
+});
+$.extend(Coceso.ViewModels.Incident.prototype, {
+  dragOptions: {
+    helper: "clone",
+    appendTo: "body",
+    cursor: "move",
+    zIndex: 1500
+  }
+});
+
+/**
+ * List of units
+ *
+ * @constructor
+ * @extends Coceso.ViewModelList
+ * @param {Object} data
+ * @param {Object} options
+ */
+Coceso.ViewModels.Units = function(data, options) {
+  Coceso.ViewModels.ViewModelList.call(this, data, options);
+};
+
+Coceso.ViewModels.Units.prototype = Object.create(Coceso.ViewModels.ViewModelList.prototype, {
+  dataType: {value: "units"},
+  mappingOptions: {
+    value: {
+      units: {
+        key: function(data) {
+          return ko.utils.unwrapObservable(data.id);
+        },
+        create: function(options) {
+          return new Coceso.ViewModels.Unit(options.data, options.parent.options.children ? options.parent.options.children : {});
+        }
+      }
+    }
+  }
+});
+
+/**
+ * Single unit
+ *
+ * @constructor
+ * @extends Coceso.ViewModelSingle
+ * @param {Object} data
+ * @param {Object} options
+ */
+Coceso.ViewModels.Unit = function(data, options) {
+  Coceso.ViewModels.ViewModelSingle.call(this, data, options);
+
+  /**
+   * CSS class based on the unit's state
+   *
+   * @type ko.computed
+   * @return {string} The CSS class
+   */
+  this.stateCss = ko.computed(function() {
+    return "unit_state_" + this.state().toLowerCase();
+  }, this);
+};
+
+Coceso.ViewModels.Unit.prototype = Object.create(Coceso.ViewModels.ViewModelSingle.prototype, {
+  dataType: {value: "units"},
+  model: {value: Coceso.Models.Unit},
+  mappingOptions: {
+    value: {
+      incidents: {
+        create: function(options) {
+          if (!options.parent.options.assigned) {
+            return options.data;
+          }
+          var incidents = [], i;
+          for (i in options.data) {
+            incidents.push({id: parseInt(i), taskState: options.data[i]});
+          }
+          return new Coceso.ViewModels.Incidents({incidents: incidents}, options.parent.options.children
+            ? options.parent.options.children
+            : {children: {assigned: false}});
+        }
+      }
+    }
+  },
+  compare: {value: {}}
+});
+$.extend(Coceso.ViewModels.Unit.prototype, {
+  dragOptions: {
+    helper: "clone",
+    appendTo: "body",
+    cursor: "move",
+    zIndex: 1500
+  }
+});

@@ -7,65 +7,87 @@
   </head>
   <body>
     <div class="ajax_content">
-      <form class="incident_form">
-        <table>
-          <tr>
-            <td colspan="2" data-bind="buttonset: {}">
-              <input id="type_task" type="radio" name="type" value="Task" data-bind="checked: type" /> <label for="type_task">Task</label>
-              <input id="type_relocation" type="radio" name="type" value="Relocation" data-bind="checked: type" /> <label for="type_relocation">Relocation</label>
-            </td>
-          </tr>
+      <form class="incidents_form">
+        <div class="form-group col-md-12">
+          <label class="sr-only">Type:</label>
+          <div data-bind="buttonset: {}">
+            <input id="type_task" type="radio" name="type" value="Task" data-bind="checked: type, disable: id() && type() !== 'Task'" /> <label for="type_task">Task</label>
+            <input id="type_relocation" type="radio" name="type" value="Relocation" data-bind="checked: type, disable: id() && type() !== 'Relocation'" /> <label for="type_relocation">Relocation</label>
+          </div>
+        </div>
 
-          <tr>
-            <td colspan="2" data-bind="buttonset: {}">
-              <input id="state_new" type="radio" name="state" value="New" data-bind="checked: state, enable: orig().state == 'New'" /> <label for="state_new">New</label>
-              <input id="state_open" type="radio" name="state" value="Open" data-bind="checked: state" /> <label for="state_open">Open</label>
-              <input id="state_dispo" type="radio" name="state" value="Dispo" data-bind="checked: state, enable: orig().state == 'Dispo'" /> <label for="state_dispo">Dispo</label>
-              <input id="state_working" type="radio" name="state" value="Working" data-bind="checked: state, enable: orig().state == 'Working'" /> <label for="state_working">Working</label>
-              <input id="state_done" type="radio" name="state" value="Done" data-bind="checked: state" /> <label for="state_done">Done</label>
-            </td>
-          </tr>
+        <div class="clearfix">
+          <div class="form-group col-md-6">
+            <label for="priority">Priority:</label>
+            <input type="number" id="priority" name="priority" min="0" max="100" data-bind="value: priority" />
+          </div>
 
-          <tr>
-            <td>
-              <label>Priority</label>
-              <input type="number" name="priority" min="1" max="100" data-bind="value: priority" />
-            </td>
-            <td>
-              <input id="blue" type="checkbox" name="blue" data-bind="checked: blue, button: {}" /> <label for="blue">Blue light</label>
-            </td>
-          </tr>
+          <div class="form-group col-md-6">
+            <input type="checkbox" id="blue" name="blue" data-bind="checked: blue, button: {}" /> <label for="blue">Blue light</label>
+          </div>
 
-          <tr>
-            <td>
-              <label>BO</label><br/>
-              <textarea name="bo" rows="4" data-bind="disable: type() === 'Relocation', value: bo"></textarea>
-            </td>
-            <td>
-              <label>AO</label><br/>
-              <textarea name="ao" rows="4" data-bind="value: ao"></textarea>
-            </td>
-          </tr>
+          <div class="form-group col-md-6">
+            <label for="bo" class="sr-only">BO:</label>
+            <textarea id="bo" name="bo" rows="3" class="form-control" placeholder="BO" data-bind="disable: type() === 'Relocation', value: bo"></textarea>
+          </div>
 
-          <tr>
-            <td colspan="2">
-              <label>Info</label><br/>
-              <textarea name="info" rows="3" data-bind="value: info"></textarea>
-            </td>
-          </tr>
+          <div class="form-group col-md-6">
+            <label for="ao" class="sr-only">AO:</label>
+            <textarea id="ao" name="ao" rows="3" class="form-control" placeholder="AO" data-bind="value: ao"></textarea>
+          </div>
+        </div>
 
-          <tr>
-            <td>
-              <label>Caller</label><br/>
-              <input type="text" name="caller" data-bind="value: caller" />
-            </td>
-            <td>
-              <label>Casus</label><br/>
-              <input type="text" name="casusNr" data-bind="value: casusNr" />
-            </td>
-          </tr>
-        </table>
-        <input type="button" class="btn btn-success" data-bind="visible: changed" value="Save" />
+        <div class="form-group col-md-12">
+          <label for="info" class="sr-only">Info:</label>
+          <textarea id="info" name="info" rows="3" class="form-control" placeholder="Info" data-bind="value: info"></textarea>
+        </div>
+
+        <div class="clearfix">
+          <div class="form-group col-md-6">
+            <label for="caller" class="sr-only">Caller:</label>
+            <input type="text" id="caller" name="caller" class="form-control" placeholder="Caller" data-bind="value: caller" />
+          </div>
+          <div class="form-group col-md-6">
+            <label for="casus" class="sr-only">Casus:</label>
+            <input type="text" id="casus" name="casus" class="form-control" placeholder="Casus" data-bind="value: casusNr" />
+          </div>
+        </div>
+
+        <div class="form-group col-md-offset-2 col-md-10 clearfix">
+          <label class="sr-only">State:</label>
+          <div data-bind="buttonset: {}">
+            <input id="state_new" type="radio" name="state" value="New" data-bind="checked: state, enable: orig().state == 'New'" /> <label for="state_new">New</label>
+            <input id="state_open" type="radio" name="state" value="Open" data-bind="checked: state" /> <label for="state_open">Open</label>
+            <input id="state_dispo" type="radio" name="state" value="Dispo" data-bind="checked: state, enable: orig().state == 'Dispo'" /> <label for="state_dispo">Dispo</label>
+            <input id="state_working" type="radio" name="state" value="Working" data-bind="checked: state, enable: orig().state == 'Working'" /> <label for="state_working">Working</label>
+            <input id="state_done" type="radio" name="state" value="Done" data-bind="checked: state" /> <label for="state_done">Done</label>
+          </div>
+        </div>
+
+        <div class="assigned" data-bind="foreach: units.units">
+          <div class="form-group clearfix">
+            <label class="col-md-2 control-label" data-bind="text: call"></label>
+            <div class="col-md-10 clearfix" data-bind="buttonset: {}">
+              <input type="radio" value="Assigned" data-bind="checked: taskState, attr: {id: 'taskState_assigned_' + $index(), name: 'taskState_' + $index()}" />
+              <label data-bind="attr: {for: 'taskState_assigned_' + $index()}">Assign</label>
+              <input type="radio" value="ZBO" data-bind="checked: taskState, attr: {id: 'taskState_zbo_' + $index(), name: 'taskState_' + $index(), enable: $parent.type() == 'Task'}" />
+              <label data-bind="attr: {for: 'taskState_zbo_' + $index()}">ZBO</label>
+              <input type="radio" value="ABO" data-bind="checked: taskState, attr: {id: 'taskState_abo_' + $index(), name: 'taskState_' + $index(), enable: $parent.type() == 'Task'}" />
+              <label data-bind="attr: {for: 'taskState_abo_' + $index()}">ABO</label>
+              <input type="radio" value="ZAO" data-bind="checked: taskState, attr: {id: 'taskState_zao_' + $index(), name: 'taskState_' + $index()}" />
+              <label data-bind="attr: {for: 'taskState_zao_' + $index()}">ZAO</label>
+              <input type="radio" value="AAO" data-bind="checked: taskState, attr: {id: 'taskState_aao_' + $index(), name: 'taskState_' + $index()}" />
+              <label data-bind="attr: {for: 'taskState_aao_' + $index()}">AAO</label>
+              <input type="radio" value="Detached" data-bind="checked: taskState, attr: {id: 'taskState_det_' + $index(), name: 'taskState_' + $index()}" />
+              <label data-bind="attr: {for: 'taskState_det_' + $index()}">Det</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-offset-2 col-md-10 clearfix" data-bind="visible: changed">
+          <input type="button" class="btn btn-success" value="Save" data-bind="click: save" />
+          <input type="button" class="btn btn-warning" value="Reset" />
+        </div>
       </form>
     </div>
   </body>

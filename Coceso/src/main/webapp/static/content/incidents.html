@@ -8,8 +8,10 @@
   <body>
     <div class="ajax_content">
       <div data-bind="tabber: tabOptions">
-        <ul data-bind="foreach: tabs">
-          <li data-bind="attr: {'data-tabindex': $index}"><a href="#" data-bind="text: title"></a></li>
+        <ul>
+          <li data-tabindex="0"><a href="#">Emergency</a></li>
+          <li data-tabindex="1"><a href="#">Tasks</a></li>
+          <li data-tabindex="2"><a href="#">Relocations</a></li>
         </ul>
 
         <ul data-bind="foreach: filtered, accordion: accordionOptions">

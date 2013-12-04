@@ -52,6 +52,10 @@ body {
   padding: 0 0.5em;
 }
 
+label.ui-button {
+  font-weight: normal;
+}
+
 .ui-button.ui-state-active {
   color: #ffffff;
   background-color: #0064cd;
@@ -73,7 +77,31 @@ body {
   border-radius: 0;
 }
 
+input[type="number"] {
+  display: inline-block;
+  padding: 4px;
+  font-size: 13px;
+  line-height: 18px;
+  color: #808080;
+  border: 1px solid #ccc;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
 
+input.form-control, textarea.form-control {
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+.col-md-2, .col-md-6, .col-md-10, .col-md-12 {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.ui-buttonset.col-md-10 {
+  margin-right: 0;
+}
 
 p {
   margin: 0.5em 0;
@@ -83,10 +111,6 @@ p {
   white-space: pre-wrap;
 }
 
-input {
-  border: 1px solid;
-  padding: 2px;
-}
 
 .units_list {
   padding: 0;
@@ -136,19 +160,15 @@ span.incidents_blue {
  * Incidents form
  */
 
-div.halfwidth {
-  padding: 2px;
-  float: left;
+.incidents_form {
+  width: 480px;
 }
 
-div.halfwidth textarea, div.halfwidth input {
-  width: 192px;
+.incidents_form textarea {
+  resize: vertical;
 }
 
-div.fullwidth {
-  padding: 2px;
-}
-
-div.fullwidth textarea, div.fullwidth input {
-  width: 394px;
+.incidents_form .assigned label.control-label {
+  padding-top: 4px;
+  text-align: right;
 }
