@@ -95,7 +95,12 @@
                         <input type="hidden" name="sub" value="Unit" />
                     </div>
                     <div class="col-lg-2">
-                        <input type="number" placeholder="Unit ID" name="uid" class="form-control" value="${uid}"/>
+                        <!--input type="number" placeholder="Unit ID" name="uid" class="form-control" value="${uid}"/-->
+                        <select name="uid" size="1" class="form-control">
+                            <c:forEach var="sel_unit" items="${sel_units}">
+                                <option value="${sel_unit.id}">${sel_unit.call}</option>
+                            </c:forEach>
+                        </select>
                     </div>
                     <div class="col-lg-2">
                         <input type="submit" class="btn btn-success">
@@ -121,9 +126,9 @@
         </c:forEach>
     </c:if>
 
-    <c:if test="${not empty u_unit_failed}">
+    <c:if test="${not empty failed}">
         <div class="alert alert-danger">
-            <strong>Error: </strong> ${u_unit_failed}
+            <strong>Error: </strong> ${failed}
         </div>
     </c:if>
 

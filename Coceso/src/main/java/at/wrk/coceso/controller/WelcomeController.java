@@ -111,14 +111,16 @@ public class WelcomeController {
 
         if(s_sub.equals("Unit")) {
             map.addAttribute("unit", "active");
+            map.addAttribute("sel_units", unitDao.getAll(actCase));
 
             if(uid != null && uid > 0) {
                 Unit ret = unitDao.getById(uid);
                 if(ret == null) {
-                    map.addAttribute("u_unit_failed", "No Unit found");
+                    map.addAttribute("failed", "No Unit found");
                 }
                 else {
                     map.addAttribute("u_unit", ret);
+
                 }
             }
             else if(uid != null) {
