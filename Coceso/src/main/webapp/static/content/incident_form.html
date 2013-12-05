@@ -1,11 +1,35 @@
 <!DOCTYPE html>
+<!--
+/**
+ * CoCeSo
+ * Client HTML Incident form content
+ * Copyright (c) WRK\Daniel Rohr
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) 2013 Daniel Rohr
+ * @link          https://sourceforge.net/projects/coceso/
+ * @package       coceso.client.html
+ * @since         Rev. 1
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ *
+ * Dependencies:
+ *	coceso.client.css
+ */
+-->
 <html lang="en">
   <head>
-    <title>Incident / Add</title>
+    <title>Incident / Form</title>
     <meta charset="utf-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <link rel="stylesheet" href="../css/coceso.css" type="text/css" />
   </head>
   <body>
+    <div class="alert alert-danger"><strong>No direct access</strong><br/>Use the main interface.</div>
+
     <div class="ajax_content">
       <form class="incidents_form">
         <div class="form-group col-md-12">
@@ -25,7 +49,9 @@
           <div class="form-group col-md-6">
             <input type="checkbox" id="blue" name="blue" data-bind="checked: blue, button: {}" /> <label for="blue">Blue light</label>
           </div>
+        </div>
 
+        <div class="clearfix">
           <div class="form-group col-md-6">
             <label for="bo" class="sr-only">BO:</label>
             <textarea id="bo" name="bo" rows="3" class="form-control" placeholder="BO" data-bind="disable: type() === 'Relocation', value: bo"></textarea>
@@ -53,14 +79,16 @@
           </div>
         </div>
 
-        <div class="form-group col-md-offset-2 col-md-10 clearfix">
-          <label class="sr-only">State:</label>
-          <div data-bind="buttonset: {}">
-            <input id="state_new" type="radio" name="state" value="New" data-bind="checked: state, enable: orig().state == 'New'" /> <label for="state_new">New</label>
-            <input id="state_open" type="radio" name="state" value="Open" data-bind="checked: state" /> <label for="state_open">Open</label>
-            <input id="state_dispo" type="radio" name="state" value="Dispo" data-bind="checked: state, enable: orig().state == 'Dispo'" /> <label for="state_dispo">Dispo</label>
-            <input id="state_working" type="radio" name="state" value="Working" data-bind="checked: state, enable: orig().state == 'Working'" /> <label for="state_working">Working</label>
-            <input id="state_done" type="radio" name="state" value="Done" data-bind="checked: state" /> <label for="state_done">Done</label>
+        <div class="clearfix">
+          <div class="form-group col-md-offset-2 col-md-10">
+            <label class="sr-only">State:</label>
+            <div data-bind="buttonset: {}">
+              <input id="state_new" type="radio" name="state" value="New" data-bind="checked: state, enable: orig().state == 'New'" /> <label for="state_new">New</label>
+              <input id="state_open" type="radio" name="state" value="Open" data-bind="checked: state" /> <label for="state_open">Open</label>
+              <input id="state_dispo" type="radio" name="state" value="Dispo" data-bind="checked: state, enable: orig().state == 'Dispo'" /> <label for="state_dispo">Dispo</label>
+              <input id="state_working" type="radio" name="state" value="Working" data-bind="checked: state, enable: orig().state == 'Working'" /> <label for="state_working">Working</label>
+              <input id="state_done" type="radio" name="state" value="Done" data-bind="checked: state" /> <label for="state_done">Done</label>
+            </div>
           </div>
         </div>
 
@@ -84,9 +112,11 @@
           </div>
         </div>
 
-        <div class="form-group col-md-offset-2 col-md-10 clearfix" data-bind="visible: changed">
-          <input type="button" class="btn btn-success" value="Save" data-bind="click: save" />
-          <input type="button" class="btn btn-warning" value="Reset" />
+        <div class="clearfix">
+          <div class="form-group col-md-offset-2 col-md-10" data-bind="visible: changed">
+            <input type="button" class="btn btn-success" value="Save" data-bind="click: save" />
+            <input type="button" class="btn btn-warning" value="Reset" />
+          </div>
         </div>
       </form>
     </div>

@@ -1,44 +1,66 @@
 <!DOCTYPE html>
+<!--
+/**
+ * CoCeSo
+ * Client HTML Incident list content
+ * Copyright (c) WRK\Daniel Rohr
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) 2013 Daniel Rohr
+ * @link          https://sourceforge.net/projects/coceso/
+ * @package       coceso.client.html
+ * @since         Rev. 1
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ *
+ * Dependencies:
+ *	coceso.client.css
+ */
+-->
 <html lang="en">
   <head>
-    <title>Incident / Add</title>
+    <title>Incidents / List</title>
     <meta charset="utf-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <link rel="stylesheet" href="../css/coceso.css" type="text/css" />
   </head>
   <body>
+    <div class="alert alert-danger"><strong>No direct access</strong><br/>Use the main interface.</div>
+
     <div class="ajax_content">
-      <div data-bind="tabber: tabOptions">
-        <ul>
-          <li data-tabindex="0"><a href="#">Emergency</a></li>
-          <li data-tabindex="1"><a href="#">Tasks</a></li>
-          <li data-tabindex="2"><a href="#">Relocations</a></li>
-        </ul>
-
-        <ul data-bind="foreach: filtered, accordion: accordionOptions">
-          <li data-bind="droppable: dropOptions">
-            <h3>
-              <span data-bind="text: title"></span>
-              <span class="incidents_priority" data-bind="text: priority, css: {incidents_blue: blue}, style: {fontSize: (priority() / 300 + 0.5) + 'em'}"></span>
-            </h3>
-            <div>
-              <p data-bind="visible: bo">
-                <b>BO:</b>
-                <span data-bind="text: bo"></span>
-              </p>
-              <p data-bind="visible: ao">
-                <b>AO:</b>
-                <span data-bind="text: ao"></span>
-              </p>
-              <p data-bind="visible: info">
-                <b>Info:</b>
-                <span data-bind="text: info"></span>
-              </p>
-
-              <p><a href="#" data-bind="click: openForm">Edit</a></p>
-            </div>
-          </li>
-        </ul>
+      <div class="ui-tabs" data-bind="buttonset: {}">
+        <input id="tab_emergency" type="radio" name="tab" value="0" data-bind="checked: selectedTab" /> <label for="tab_emergency">Emergency</label>
+        <input id="tab_tasks" type="radio" name="tab" value="1" data-bind="checked: selectedTab" /> <label for="tab_tasks">Tasks</label>
+        <input id="tab_relocations" type="radio" name="tab" value="2" data-bind="checked: selectedTab" /> <label for="tab_relocations">Relocation</label>
       </div>
+
+      <ul data-bind="foreach: filtered, accordion: accordionOptions">
+        <li data-bind="droppable: dropOptions">
+          <h3>
+            <span data-bind="text: title"></span>
+            <span class="incidents_priority" data-bind="text: priority, css: {incidents_blue: blue}, style: {fontSize: (priority() / 300 + 0.5) + 'em'}"></span>
+          </h3>
+          <div>
+            <p data-bind="visible: bo">
+              <b>BO:</b>
+              <span data-bind="text: bo"></span>
+            </p>
+            <p data-bind="visible: ao">
+              <b>AO:</b>
+              <span data-bind="text: ao"></span>
+            </p>
+            <p data-bind="visible: info">
+              <b>Info:</b>
+              <span data-bind="text: info"></span>
+            </p>
+
+            <p><a href="#" data-bind="click: openForm">Edit</a></p>
+          </div>
+        </li>
+      </ul>
     </div>
   </body>
 </html>

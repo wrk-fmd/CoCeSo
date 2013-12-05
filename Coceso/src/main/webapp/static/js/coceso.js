@@ -15,9 +15,9 @@
  *
  * Dependencies:
  *	jquery.js
- *	jquery.ui.menubar.js
- *	jquery.ui.winman.js
- *	knockout-2.3.0.js
+ *	knockout.js
+ *	knockout.mapping.js
+ *	coceso.client.winman
  */
 
 var Coceso = {
@@ -153,6 +153,16 @@ var Coceso = {
     openIncident: function(title, src, data) {
       viewmodel = new Coceso.ViewModels.Incident(data || {});
       this.openWindow(title, Coceso.Conf.contentBase + src, viewmodel);
+    },
+    /**
+     * Open static content
+     *
+     * @param {String} title
+     * @param {String} src
+     * @return {void}
+     */
+    openStatic: function(title, src) {
+      this.openWindow(title, Coceso.Conf.contentBase + src, {});
     }
   },
   /**
@@ -487,6 +497,7 @@ Coceso.ViewModels.ViewModelSingle.prototype = Object.create(Coceso.ViewModels.Vi
       data.units = undefined;
       data.aCase = undefined;
       data = ko.toJSON(data);
+      console.log(data);
       Coceso.Ajax.save(data, this.saveUrl);
 
       return true;
@@ -541,7 +552,7 @@ Coceso.ViewModels.Incidents = function(data, options) {
    *
    * @type ko.observable
    */
-  this.selectedTab = ko.observable();
+  this.selectedTab = ko.observable((typeof this.options.selectedTab !== "undefined") ? options.selectedTab : "0");
 
   /**
    * Generate a list of active filters
@@ -559,20 +570,6 @@ Coceso.ViewModels.Incidents = function(data, options) {
 
   //Filtered view of the incidents array
   this.filtered = this.incidents.extend({filtered: this.activeFilters});
-
-  /**
-   * The options for tabbing
-   *
-   * @type Object
-   */
-  this.tabOptions = {
-    create: function(event, ui) {
-      self.selectedTab($(ui.tab).data("tabindex"));
-    },
-    beforeActivate: function(event, ui) {
-      self.selectedTab($(ui.newTab).data("tabindex"));
-    }
-  };
 
   /**
    * The accordion view options

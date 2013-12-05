@@ -1,14 +1,39 @@
-/*
-    Document   : coceso
-    Created on : 21.10.2013, 12:37:04
-    Author     : daniel
-    Description:
-        Purpose of the stylesheet follows.
-*/
+/**
+ * CoCeSo
+ * Client CSS
+ * Copyright (c) WRK\Daniel Rohr
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) 2013 Daniel Rohr
+ * @link          https://sourceforge.net/projects/coceso/
+ * @package       coceso.client.css
+ * @since         Rev. 1
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ *
+ * Dependencies:
+ *	bootstrap.css
+ *  jquery.ui.bootstrap.css
+ *  coceso.client.winman
+ */
+
+/**
+ * Import other stylesheets
+ */
+
+@import "bootstrap.css";
+@import "ui-bootstrap/jquery-ui-1.10.0.custom.css";
+@import "jquery.ui.winman.css";
+
+/**
+ * Global settings
+ */
 
 body {
-  padding: 0px;
-  margin: 0px;
+  padding: 60px 10px 40px 10px;
+  margin: 0;
 }
 
 #taskbar {
@@ -18,12 +43,20 @@ body {
   right: 2px;
 }
 
+body > .ajax_content {
+  display: none;
+}
+
 /**
- * Overwrite some UI defaults
+ * Overwrite/extend some UI defaults
  */
 
 .ui-widget {
   font-size: 1em;
+}
+
+.ui-dialog, .ui-dialog-content {
+  box-sizing: content-box;
 }
 
 .ui-dialog .ui-dialog-titlebar {
@@ -41,7 +74,7 @@ body {
 }
 
 .ui-dialog .ui-dialog-content {
-  padding: 0.5em 0;
+  padding: 0.5em 0.3em;
 }
 
 .ui-accordion .ui-accordion-header {
@@ -73,8 +106,67 @@ label.ui-button {
   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
 }
 
-.ui-tabs .ui-tabs-nav {
-  border-radius: 0;
+.ui-buttonset.ui-tabs {
+  background: none;
+  padding: .2em .2em 0;
+  margin: 0 0 0.5em;
+  border-bottom: 1px solid #DDD;
+}
+
+.ui-buttonset.ui-tabs .ui-button {
+  background: none;
+  margin: 0;
+  padding: 0;
+  text-shadow: none;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  -webkit-border-radius: 4px 4px 0 0;
+  -moz-border-radius: 4px 4px 0 0;
+  border-radius: 4px 4px 0 0;
+}
+
+.ui-buttonset.ui-tabs .ui-button:hover {
+  background: whiteSmoke;
+}
+
+.ui-buttonset.ui-tabs .ui-button .ui-button-text {
+  color: #0069D6;
+  cursor: pointer;
+  padding: 0 15px;
+  line-height: 34px;
+}
+
+.ui-buttonset.ui-tabs .ui-button.ui-state-active {
+  background-color: #ffffff;
+  border-color: #ddd;
+  border-bottom-color: transparent;
+}
+
+.ui-buttonset.ui-tabs .ui-button.ui-state-active:hover {
+  background: none;
+}
+
+.ui-buttonset.ui-tabs .ui-button.ui-state-active .ui-button-text {
+  cursor: default;
+}
+
+/**
+ * Overwrite/extend some Bootstrap defaults
+ */
+
+.col-md-2, .col-md-6, .col-md-10, .col-md-12 {
+  /* TODO: Set this directly in bootstrap.css as default value with LESS */
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.ui-buttonset.col-md-10 {
+  margin-right: 0;
+}
+
+input.form-control, textarea.form-control {
+  padding-left: 6px;
+  padding-right: 6px;
 }
 
 input[type="number"] {
@@ -89,28 +181,44 @@ input[type="number"] {
   border-radius: 3px;
 }
 
-input.form-control, textarea.form-control {
-  padding-left: 6px;
-  padding-right: 6px;
-}
-
-.col-md-2, .col-md-6, .col-md-10, .col-md-12 {
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-.ui-buttonset.col-md-10 {
-  margin-right: 0;
-}
-
-p {
-  margin: 0.5em 0;
+textarea.form-control {
+  resize: vertical;
 }
 
 .ui-dialog p span {
   white-space: pre-wrap;
 }
 
+/**
+ * Incidents list view
+ */
+
+span.incidents_priority {
+  margin-left: 1em;
+  float: right;
+}
+
+span.incidents_blue {
+  color: #0000ff;
+  font-weight: bold;
+}
+
+/**
+ * Incidents form
+ */
+
+.incidents_form {
+  width: 480px;
+}
+
+.incidents_form .assigned label.control-label {
+  padding-top: 4px;
+  text-align: right;
+}
+
+/**
+ * Units list view
+ */
 
 .units_list {
   padding: 0;
@@ -143,32 +251,14 @@ p {
 }
 
 /**
- * Incidents list
+ * License
  */
 
-span.incidents_priority {
-  margin-left: 1em;
-  float: right;
-}
-
-span.incidents_blue {
-  color: #0000ff;
-  font-weight: bold;
-}
-
-/**
- * Incidents form
- */
-
-.incidents_form {
-  width: 480px;
-}
-
-.incidents_form textarea {
-  resize: vertical;
-}
-
-.incidents_form .assigned label.control-label {
-  padding-top: 4px;
+td.license_icon {
   text-align: right;
+}
+
+.license_icon img {
+  max-height: 16px;
+  max-width: 16px;
 }

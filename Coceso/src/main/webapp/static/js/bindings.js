@@ -14,9 +14,12 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  *
  * Dependencies:
- *	knockout-2.3.0.js
- *	jquery.js
- *	jquery.ui.js
+ *	knockout.js
+ *	jquery.ui.accordion.js
+ *	jquery.ui.button.js
+ *	jquery.ui.buttonset.js
+ *	jquery.ui.draggable.js
+ *	jquery.ui.dropable.js
  */
 
 /**
@@ -57,6 +60,20 @@ function uiBindingHandler(widget) {
 ko.bindingHandlers.accordion = uiBindingHandler("accordion");
 
 /**
+ * Generate Tabs from element
+ *
+ * @type {BindingHandler}
+ */
+ko.bindingHandlers.button = uiBindingHandler("button");
+
+/**
+ * Generate Tabs from element
+ *
+ * @type {BindingHandler}
+ */
+ko.bindingHandlers.buttonset = uiBindingHandler("buttonset");
+
+/**
  * Generate Draggable from element
  *
  * @type {BindingHandler}
@@ -69,27 +86,6 @@ ko.bindingHandlers.draggable = uiBindingHandler("draggable");
  * @type {BindingHandler}
  */
 ko.bindingHandlers.droppable = uiBindingHandler("droppable");
-
-/**
- * Generate Tabs from element
- *
- * @type {BindingHandler}
- */
-ko.bindingHandlers.tabber = uiBindingHandler("tabber");
-
-/**
- * Generate Tabs from element
- *
- * @type {BindingHandler}
- */
-ko.bindingHandlers.buttonset = uiBindingHandler("buttonset");
-
-/**
- * Generate Tabs from element
- *
- * @type {BindingHandler}
- */
-ko.bindingHandlers.button = uiBindingHandler("button");
 
 /**
  * Force value to be an integer
