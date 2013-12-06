@@ -18,8 +18,9 @@ CREATE TABLE caze (
   id INTEGER NOT NULL DEFAULT nextval('caze_id_seq'),
   point INTEGER,
   name VARCHAR(64) NOT NULL,
-  organiser VARCHAR (128) NOT NULL,
-  pax INTEGER,
+  info TEXT NOT NULL DEFAULT(''),
+  pax INTEGER NOT NULL DEFAULT(0),
+  closed BOOLEAN NOT NULL DEFAULT(FALSE),
   PRIMARY KEY (id),
   FOREIGN KEY (point) REFERENCES point ON DELETE SET NULL
 );
