@@ -45,28 +45,36 @@
             <input type="hidden" name="id" value="${caze.id}">
 
             <div class="row">
-                <div class="col-lg-4">
+                <div class="col-lg-1">
+                    &nbsp;
+                </div>
+                <div class="col-lg-3">
                     <div class="form-group">
                         <label for="case_name">Name</label>
                         <input type="text" id="case_name" name="name" value="${caze.name}"
                                maxlength="64" class="form-control">
                     </div>
+                </div>
+
+                <div class="col-lg-3">
                     <div class="form-group">
                         <label for="case_pax">Persons</label>
                         <input type="number" id="case_pax" name="pax" value="${caze.pax}"
                                class="form-control input-sm">
                     </div>
-                    <div class="form-group">
-                        <input class="btn btn-success" type="submit" name="submit" value="Update">
-                    </div>
                 </div>
-
+            </div>
+            <div class="row">
                 <div class="form-group col-lg-8">
                     <label for="case_organiser">Organiser</label>
                     <textarea id="case_organiser" name="organiser" maxlength="128" class="form-control" rows="5">${caze.organiser}</textarea>
                 </div>
-
             </div>
+
+            <div class="form-group">
+                <input class="btn btn-success" type="submit" name="submit" value="Update">
+            </div>
+
         </form>
     </div>
 
@@ -86,6 +94,7 @@
                 <th>${transportVehicle}</th>
                 <th>${portable}</th>
                 <th>${info}</th>
+                <th></th>
                 <th></th>
             </tr>
             </thead>
@@ -124,6 +133,8 @@
                             <td><input type="text" name="info" value="${unit.info}" maxlength="128" class="form-control"></td>
                             <td>
                                 <input type="submit" name="update" value="Update" class="btn btn-success">&nbsp;
+                            </td>
+                            <td>
                                 <input type="submit" name="remove" value="Remove" class="btn btn-danger">
                             </td>
                         </tr>
@@ -159,6 +170,9 @@
                         </td>
                         <td>
                             <input type="submit" value="Create" class="btn btn-success">
+                        </td>
+                        <td>
+
                         </td>
                     </tr>
                 </form>
