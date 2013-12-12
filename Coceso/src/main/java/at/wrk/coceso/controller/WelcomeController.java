@@ -2,6 +2,7 @@ package at.wrk.coceso.controller;
 
 import at.wrk.coceso.dao.*;
 import at.wrk.coceso.entities.Case;
+import at.wrk.coceso.entities.Incident;
 import at.wrk.coceso.entities.Person;
 import at.wrk.coceso.entities.Unit;
 import at.wrk.coceso.utils.Logger;
@@ -113,18 +114,15 @@ public class WelcomeController {
             map.addAttribute("unit", "active");
             map.addAttribute("sel_units", unitDao.getAll(actCase));
 
-            if(uid != null && uid > 0) {
+            if(uid != null) {
                 Unit ret = unitDao.getById(uid);
                 if(ret == null) {
-                    map.addAttribute("failed", "No Unit found");
+                    map.addAttribute("error", "No Unit found");
                 }
                 else {
                     map.addAttribute("u_unit", ret);
 
                 }
-            }
-            else if(uid != null) {
-                // Start of subpage Unit
             }
             else {
                 map.addAttribute("units", unitDao.getAll(actCase));
@@ -136,7 +134,13 @@ public class WelcomeController {
             if(uid != null && uid == -1) {
                 map.addAttribute("incidents", incidentDao.getAllActive(actCase));
             } else if(iid != null) {
-                map.addAttribute("i_incident", incidentDao.getById(iid));
+                Incident ret = incidentDao.getById(iid);
+                if(ret == null) {
+                    map.addAttribute("error", "No Incident Found");
+                }
+                else {
+                    map.addAttribute("i_incident", ret);
+                }
             } else {
                 map.addAttribute("incidents", incidentDao.getAll(actCase));
             }

@@ -109,7 +109,6 @@
             </form>
         </div>
     </c:if>
-
     <c:if test="${not empty u_unit}">
         <div class="alert alert-success">
             <strong>${u_unit.call}: </strong> ${u_unit.info}<!-- TODO -->
@@ -126,10 +125,45 @@
         </c:forEach>
     </c:if>
 
-    <c:if test="${not empty failed}">
-        <div class="alert alert-danger">
-            <strong>Error: </strong> ${failed}
+    <!-- ################ -->
+
+    <%--
+    <c:if test="${not empty incident && not empty iid && iid != -1}">
+        <div>
+            <form class="form-inline" action="?">
+                <div class="row">
+                    <div class="col-lg-2">
+                        <input type="hidden" name="sub" value="Incident" />
+                    </div>
+                    <div class="col-lg-2">
+                        <select name="id" size="1" class="form-control">
+                            <c:forEach var="sel_inc" items="${sel_incs}">
+                                <option value="${sel_inc.id}">${sel_unit.call}</option>
+                            </c:forEach>
+                        </select>
+                    </div>
+                    <div class="col-lg-2">
+                        <input type="submit" class="btn btn-success">
+                    </div>
+                </div>
+            </form>
         </div>
+    </c:if>
+    --%>
+    <c:if test="${not empty i_incident}">
+        <div class="alert alert-success">
+            <strong>${i_incident.id}: </strong> ${i_incident.caller}<!-- TODO -->
+        </div>
+        <div class="page-header">
+            <h3>
+                Assigned Units:
+            </h3>
+        </div>
+        <c:forEach var="unts" items="${i_incident.units}">
+            <div class="alert alert-info">
+                ID: <a href="${get_inc}${unts.key}" class="btn btn-primary">${unts.key}</a> : ${unts.value}
+            </div>
+        </c:forEach>
     </c:if>
 
     <c:if test="${not empty logs || not empty units || not empty incidents || not empty tasks}">
@@ -286,6 +320,18 @@
                         </td>
                         <td>
                             ${eIncident.state}
+                        </td>
+                    </tr>
+                </c:forEach>
+            </c:if>
+            <c:if test="${not empty tasks}">
+                <c:forEach items="${tasks}" var="etask">
+                    <tr>
+                        <td>
+                            ${etask.key}
+                        </td>
+                        <td>
+                            ${etask.value}
                         </td>
                     </tr>
                 </c:forEach>
