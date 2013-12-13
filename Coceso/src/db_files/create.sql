@@ -74,7 +74,8 @@ CREATE TABLE userrole (
   uzer INTEGER NOT NULL,
   role INTEGER NOT NULL,
   PRIMARY KEY (uzer, role),
-  FOREIGN KEY (uzer) REFERENCES uzer
+  FOREIGN KEY (uzer) REFERENCES uzer,
+  FOREIGN KEY (role) REFERENCES role
 );
 
 
