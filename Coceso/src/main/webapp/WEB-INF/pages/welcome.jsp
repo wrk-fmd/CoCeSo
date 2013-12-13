@@ -29,6 +29,7 @@
                 <strong>Current User:</strong> ${user.given_name} ${user.sur_name} (${user.username})
             </div>
             <div class="col-lg-4 text-right">
+                <a href="${pageContext.request.contextPath}/dashboard" class="btn btn-primary">Dashboard</a>
                 <a href="${logout_link}" class="btn btn-danger">Logout</a>
             </div>
         </div>

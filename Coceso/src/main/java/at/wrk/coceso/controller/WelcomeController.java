@@ -1,10 +1,7 @@
 package at.wrk.coceso.controller;
 
 import at.wrk.coceso.dao.*;
-import at.wrk.coceso.entities.Case;
-import at.wrk.coceso.entities.Incident;
-import at.wrk.coceso.entities.Person;
-import at.wrk.coceso.entities.Unit;
+import at.wrk.coceso.entities.*;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,7 +13,9 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class WelcomeController {
@@ -114,7 +113,7 @@ public class WelcomeController {
             map.addAttribute("unit", "active");
             map.addAttribute("sel_units", unitDao.getAll(actCase));
 
-            if(uid != null) {
+            if(uid != null && uid > 0) {
                 Unit ret = unitDao.getById(uid);
                 if(ret == null) {
                     map.addAttribute("error", "No Unit found");
@@ -135,10 +134,18 @@ public class WelcomeController {
                 map.addAttribute("incidents", incidentDao.getAllActive(actCase));
             } else if(iid != null) {
                 Incident ret = incidentDao.getById(iid);
+
                 if(ret == null) {
                     map.addAttribute("error", "No Incident Found");
                 }
                 else {
+                    Map<Integer, String> i_map = new HashMap<Integer, String>();
+                    for(Map.Entry<Integer, TaskState> entry : ret.units.entrySet()) {
+                        Unit u = unitDao.getById(entry.getKey());
+                        i_map.put(u.getId(), u.getCall());
+                    }
+                    map.addAttribute("i_map", i_map);
+
                     map.addAttribute("i_incident", ret);
                 }
             } else {

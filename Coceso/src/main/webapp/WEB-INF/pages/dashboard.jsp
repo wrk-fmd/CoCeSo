@@ -1,4 +1,5 @@
 <%@ page import="at.wrk.coceso.entities.Unit" %>
+<%@ page import="java.util.Map" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <html>
@@ -161,7 +162,8 @@
         </div>
         <c:forEach var="unts" items="${i_incident.units}">
             <div class="alert alert-info">
-                ID: <a href="${get_inc}${unts.key}" class="btn btn-primary">${unts.key}</a> : ${unts.value}
+                ID:
+                <a href="${get_unit}${unts.key}" class="btn btn-primary">${i_map[unts.key]}</a> : ${unts.value}
             </div>
         </c:forEach>
     </c:if>
