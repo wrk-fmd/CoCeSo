@@ -4,6 +4,7 @@ CREATE SEQUENCE log_id_seq;
 CREATE SEQUENCE incident_id_seq;
 CREATE SEQUENCE point_id_seq;
 CREATE SEQUENCE caze_id_seq;
+CREATE SEQUENCE role_id_seq;
 
 
 CREATE TABLE point (
@@ -61,6 +62,12 @@ CREATE TABLE uzer (
   PRIMARY KEY (id),
   FOREIGN KEY (id) REFERENCES person ON DELETE CASCADE,
   FOREIGN KEY (caze) REFERENCES caze ON DELETE SET NULL
+);
+
+CREATE TABLE role (
+  id INTEGER NOT NULL DEFAULT nextval('role_id_seq'),
+  descr TEXT,
+  PRIMARY KEY (id)
 );
 
 CREATE TABLE userrole (
