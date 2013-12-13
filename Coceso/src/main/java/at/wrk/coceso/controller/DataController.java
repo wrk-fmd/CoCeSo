@@ -1,6 +1,6 @@
 package at.wrk.coceso.controller;
 
-import at.wrk.coceso.entities.Person;
+import at.wrk.coceso.entities.Operator;
 import at.wrk.coceso.service.LogService;
 import at.wrk.coceso.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class DataController {
                              Principal principal)
     {
         UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
-        Person user = (Person) token.getPrincipal();
+        Operator user = (Operator) token.getPrincipal();
 
         return "{\"success\": " + taskService.assignUnit(incident_id, unit_id, user) + "}";
     }

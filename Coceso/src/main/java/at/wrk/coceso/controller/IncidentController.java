@@ -3,6 +3,7 @@ package at.wrk.coceso.controller;
 
 import at.wrk.coceso.dao.IncidentDao;
 import at.wrk.coceso.entities.*;
+import at.wrk.coceso.service.IncidentService;
 import at.wrk.coceso.service.LogService;
 import at.wrk.coceso.service.TaskService;
 import at.wrk.coceso.utils.Logger;
@@ -20,10 +21,10 @@ import java.util.List;
 public class IncidentController implements IEntityController<Incident> {
 
     @Autowired
-    IncidentDao dao;
+    IncidentService incidentService;
 
-    @Autowired
-    LogService log;
+    //@Autowired
+    //LogService log;
 
     @Autowired
     TaskService taskService;
@@ -34,7 +35,7 @@ public class IncidentController implements IEntityController<Incident> {
     public List<Incident> getAll(@CookieValue(value = "active_case", defaultValue = "0") String case_id) {
 
         try {
-            return dao.getAll(Integer.parseInt(case_id));
+            return incidentService.getAll(Integer.parseInt(case_id));
         } catch(NumberFormatException e) {
             Logger.warning("IncidentController: getAll: " + e);
             return null;
@@ -46,7 +47,7 @@ public class IncidentController implements IEntityController<Incident> {
     public List<Incident> getAllActive(@CookieValue(value = "active_case", defaultValue = "0") String case_id) {
 
         try {
-            return dao.getAllActive(Integer.parseInt(case_id));
+            return incidentService.getAllActive(Integer.parseInt(case_id));
         } catch(NumberFormatException e) {
             Logger.warning("IncidentController: getAll: " + e);
             return null;
@@ -59,7 +60,7 @@ public class IncidentController implements IEntityController<Incident> {
                                         @PathVariable("state") String s_state) {
 
         try {
-            return dao.getAllByState(Integer.parseInt(case_id), IncidentState.valueOf(s_state));
+            return incidentService.getAllByState(Integer.parseInt(case_id), IncidentState.valueOf(s_state));
         } catch(NumberFormatException e) {
             Logger.warning("IncidentController: getAll: " + e);
             return null;
@@ -73,7 +74,7 @@ public class IncidentController implements IEntityController<Incident> {
     @ResponseBody
     public Incident getByPost(@RequestParam("id") int id) {
 
-        return dao.getById(id);
+        return incidentService.getById(id);
     }
 
     @Override
@@ -91,7 +92,7 @@ public class IncidentController implements IEntityController<Incident> {
                          Principal principal)
     {
         UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
-        Person user = (Person) token.getPrincipal();
+        Operator user = (Operator) token.getPrincipal();
 
         int caseId = Integer.parseInt(case_id);
 
@@ -100,28 +101,29 @@ public class IncidentController implements IEntityController<Incident> {
         }
 
         if(incident.id > 0) {
-            Incident i = dao.getById(incident.id);
-            if(i.aCase.id != caseId)
-                return "{\"success\": false, \"info\":\"Active Case not valid\"}";
+            Incident i = incidentService.getById(incident.id);
+            if(i.concern.id != caseId)
+                return "{\"success\": false, \"info\":\"Active Concern not valid\"}";
         }
 
-        incident.aCase = new Case();
-        incident.aCase.id = caseId;
+        if(incident.concern == null)
+            incident.concern = new Concern();
+        incident.concern.id = caseId;
 
-        if(incident.aCase.id <= 0) {
-            return "{\"success\": false, \"info\":\"No active Case. Cookies enabled?\"}";
+        if(incident.concern.id <= 0) {
+            return "{\"success\": false, \"info\":\"No active Concern. Cookies enabled?\"}";
         }
 
         if(incident.id < 1) {
             incident.id = 0;
 
-            incident.id = dao.add(incident);
-            log.logFull(user, "Incident created", caseId, null, incident, true);
+            incident.id = incidentService.add(incident);
+            //log.logFull(user, "Incident created", caseId, null, incident, true);
             return "{\"success\": " + (incident.id != -1) + ", \"new\": true, \"incident_id\":"+incident.id+"}";
         }
 
-        log.logFull(user, "Incident updated", caseId, null, incident, true);
-        boolean ret = dao.update(incident);
+        //log.logFull(user, "Incident updated", caseId, null, incident, true);
+        boolean ret = incidentService.update(incident, user);
 
         if(ret && incident.state == IncidentState.Done)
             taskService.checkStates(incident.id, user);
@@ -136,9 +138,9 @@ public class IncidentController implements IEntityController<Incident> {
                               Principal principal)
     {
         UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
-        Person user = (Person) token.getPrincipal();
+        Operator user = (Operator) token.getPrincipal();
 
-        Incident incident = dao.getById(incident_id);
+        Incident incident = incidentService.getById(incident_id);
         TaskState newState = incident.nextState(unit_id);
 
         if(newState == null)
@@ -146,7 +148,7 @@ public class IncidentController implements IEntityController<Incident> {
 
         taskService.changeState(incident_id, unit_id, newState, user);
 
-        return dao.getById(incident_id);
+        return incidentService.getById(incident_id);
     }
 
     @RequestMapping(value = "setToState/{incident_id}/{unit_id}/{state}",
@@ -158,7 +160,7 @@ public class IncidentController implements IEntityController<Incident> {
                                Principal principal)
     {
         UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
-        Person user = (Person) token.getPrincipal();
+        Operator user = (Operator) token.getPrincipal();
 
         TaskState state;
 
@@ -170,6 +172,6 @@ public class IncidentController implements IEntityController<Incident> {
 
         taskService.changeState(incident_id, unit_id, state, user);
 
-        return dao.getById(incident_id);
+        return incidentService.getById(incident_id);
     }
 }

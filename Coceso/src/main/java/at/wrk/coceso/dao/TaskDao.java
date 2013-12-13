@@ -27,36 +27,36 @@ public class TaskDao {
     }
 
     public Map<Integer, TaskState> getAllByIncidentId(int id) {
-        String q = "SELECT * FROM tasks WHERE incident_id = ?";
+        String q = "SELECT * FROM task WHERE incident_fk = ?";
 
         SqlRowSet rs = jdbc.queryForRowSet(q, id);
 
         Map<Integer, TaskState> ret = new HashMap<Integer, TaskState>();
 
         while(rs.next()) {
-            ret.put(rs.getInt("unit_id"), TaskState.valueOf(rs.getString("state")));
+            ret.put(rs.getInt("unit_fk"), TaskState.valueOf(rs.getString("state")));
         }
 
         return ret;
     }
 
     public Map<Integer, TaskState> getAllByUnitId(int id) {
-        String q = "SELECT * FROM tasks WHERE unit_id = ?";
+        String q = "SELECT * FROM task WHERE unit_fk = ?";
 
         SqlRowSet rs = jdbc.queryForRowSet(q, id);
 
         Map<Integer, TaskState> ret = new HashMap<Integer, TaskState>();
 
         while(rs.next()) {
-            ret.put(rs.getInt("incident_id"), TaskState.valueOf(rs.getString("state")));
+            ret.put(rs.getInt("incident_fk"), TaskState.valueOf(rs.getString("state")));
         }
 
         return ret;
     }
 
     public List<Incident> getAllByUnitIdWithType(int id) {
-        String q = "SELECT i.id, i.type, i.state FROM tasks t LEFT OUTER JOIN incidents i ON t.incident_id = i.id " +
-                "WHERE t.unit_id = ?";
+        String q = "SELECT i.id, i.type, i.state FROM task t LEFT OUTER JOIN incident i ON t.incident_fk = i.id " +
+                "WHERE t.unit_fk = ?";
 
         SqlRowSet rs = jdbc.queryForRowSet(q, id);
 
@@ -79,7 +79,7 @@ public class TaskDao {
     }
 
     public boolean add(int incident_id, int unit_id, TaskState state) {
-        String q = "INSERT INTO tasks (incident_id, unit_id, state) VALUES (?,?,?)";
+        String q = "INSERT INTO task (incident_fk, unit_fk, state) VALUES (?,?,?)";
 
         try {
             jdbc.update(q, incident_id, unit_id, state.name());
@@ -91,7 +91,7 @@ public class TaskDao {
     }
 
     public boolean update(int incident_id, int unit_id, TaskState state) {
-        String q = "UPDATE tasks SET state = ? WHERE incident_id = ? AND unit_id = ?";
+        String q = "UPDATE task SET state = ? WHERE incident_fk = ? AND unit_fk = ?";
 
         try {
             jdbc.update(q, state.name(), incident_id, unit_id);
@@ -103,7 +103,7 @@ public class TaskDao {
     }
 
     public void remove(int incident_id, int unit_id) {
-        String q = "DELETE FROM tasks WHERE incident_id = ? AND unit_id = ?";
+        String q = "DELETE FROM task WHERE incident_fk = ? AND unit_fk = ?";
 
         try {
             jdbc.update(q, incident_id, unit_id);
@@ -113,7 +113,7 @@ public class TaskDao {
     }
 
     public void removeAllByUnit(int unit_id) {
-        String q = "DELETE FROM tasks WHERE unit_id = ?";
+        String q = "DELETE FROM task WHERE unit_fk = ?";
 
         try {
             jdbc.update(q, unit_id);
@@ -123,7 +123,7 @@ public class TaskDao {
     }
 
     public void removeAllByIncident(int incident_id) {
-        String q = "DELETE FROM tasks WHERE incident_id = ?";
+        String q = "DELETE FROM task WHERE incident_fk = ?";
 
         try {
             jdbc.update(q, incident_id);

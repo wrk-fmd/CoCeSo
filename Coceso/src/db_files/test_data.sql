@@ -1,15 +1,15 @@
-INSERT INTO cocesopois (address) VALUES
+INSERT INTO point (info) VALUES
 ('Mt. Scary'),
 ('Unknown Road 1'),
 ('Batman Cave'),
 ('Mordor');
 
-INSERT INTO cases (organiser, name, pax, place) VALUES
+INSERT INTO concern (info, name, pax, point_fk) VALUES
 ('Dr. Acula', 'Halloween', 1500, 1),
 ('Walter White', 'Birthday Party', 2, 2);
 
-INSERT INTO units
-  (aCase, state, call, ani,   withDoc, portable, transportVehicle, info, home) VALUES
+INSERT INTO unit
+  (concern_fk, state, call, ani,   withDoc, portable, transportVehicle, info, home_point_fk) VALUES
   (1, 'AD', 'TRP-1', '',      false,  true,     false, 'INFO: n9othing', 3),
   (1, 'AD', 'TRP-2', '',      false,  true,     false, 'INFO: noth3ing', 1),
   (2, 'AD', 'TRP-3', '',      false,  true,     false, 'INFO: n6othing', 3),

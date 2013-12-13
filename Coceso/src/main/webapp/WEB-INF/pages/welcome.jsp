@@ -47,7 +47,7 @@
                 </div>
                 <div class="col-lg-5">
                     <select name="case_id" size="10" class="form-control">
-                        <c:forEach var="caze" items="${case_list}">
+                        <c:forEach var="caze" items="${concern_list}">
                             <option value="${caze.id}">${caze.name}</option>
                         </c:forEach>
                     </select>
@@ -85,7 +85,7 @@
                     <input type="text" id="new_name" name="name" maxlength="64" class="form-control" placeholder="Name"/>
                 </div>
                 <!--div>
-                    <Info of Organiser: <input type="text" name="organiser" maxlength="64" /><br>>
+                    <Info of Organiser: <input type="text" name="info" maxlength="64" /><br>>
                 </div-->
                 <div class="col-lg-3">
                     <input type="submit" value="Create" class="btn btn-success"/>

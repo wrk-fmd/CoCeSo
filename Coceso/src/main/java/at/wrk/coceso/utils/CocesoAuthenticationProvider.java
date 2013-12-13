@@ -1,8 +1,8 @@
 package at.wrk.coceso.utils;
 
 
-import at.wrk.coceso.dao.PersonDao;
-import at.wrk.coceso.entities.Person;
+import at.wrk.coceso.dao.OperatorDao;
+import at.wrk.coceso.entities.Operator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -29,12 +29,14 @@ public class CocesoAuthenticationProvider implements AuthenticationProvider {
     // ###END### Third Party Authentication Config ###
 
     @Autowired
-    private PersonDao personDao;
+    private OperatorDao operatorDao;
+
+
     private String thirdPartyAuthenticationURL;
 
     @Autowired
     public CocesoAuthenticationProvider (String thirdPartyAuthenticationURL) {
-        this.thirdPartyAuthenticationURL = new String(thirdPartyAuthenticationURL);
+        this.thirdPartyAuthenticationURL = thirdPartyAuthenticationURL;
     }
 
     @Override
@@ -42,7 +44,7 @@ public class CocesoAuthenticationProvider implements AuthenticationProvider {
         String username = authentication.getName();
         String password = (String) authentication.getCredentials();
 
-        Person user = personDao.getByUsername(username);
+        Operator user = operatorDao.getByUsername(username);
 
         if(user == null) {
             Logger.debug("User "+username+" not found");
@@ -92,7 +94,7 @@ public class CocesoAuthenticationProvider implements AuthenticationProvider {
         if(returnCode == SUCCESS) { // Online Authentication succeeded
             if(!user.validatePassword(password)) { // Offline Auth failed -> set new Password in DB
                 user.setPassword(password);
-                personDao.update(user);
+                operatorDao.update(user);
                 Logger.debug("User "+username+": PW written to DB");
             }
             Logger.debug("User "+username+" authenticated online");

@@ -1,18 +1,16 @@
 package at.wrk.coceso.entities;
 
-public class CocesoPOI {
+public class Point {
 
     public int id;
 
-    public String address;
+    public String info;
 
     public double longitude;
 
     public double latitude;
 
-    public int minimumUnits;
-
     public void prepareNotNull() {
-        if(address == null) address = "";
+        if(info == null) info = "";
     }
 }

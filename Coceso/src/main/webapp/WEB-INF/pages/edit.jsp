@@ -66,8 +66,8 @@
             </div>
             <div class="row">
                 <div class="form-group col-lg-8">
-                    <label for="case_organiser">Organiser</label>
-                    <textarea id="case_organiser" name="organiser" maxlength="128" class="form-control" rows="5">${caze.organiser}</textarea>
+                    <label for="case_organiser">Info</label>
+                    <textarea id="case_organiser" name="info" maxlength="128" class="form-control" rows="5">${caze.info}</textarea>
                 </div>
             </div>
 

@@ -1,13 +1,13 @@
 package at.wrk.coceso.controller;
 
-import at.wrk.coceso.dao.CaseDao;
-import at.wrk.coceso.dao.LogDao;
-import at.wrk.coceso.dao.UnitDao;
-import at.wrk.coceso.entities.Case;
+import at.wrk.coceso.dao.ConcernDao;
+import at.wrk.coceso.entities.Concern;
+import at.wrk.coceso.entities.Operator;
 import at.wrk.coceso.entities.Unit;
-import at.wrk.coceso.service.LogService;
+import at.wrk.coceso.service.UnitService;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -20,22 +20,22 @@ import java.util.List;
 public class CreateController {
 
     @Autowired
-    CaseDao caseDao;
+    ConcernDao concernDao;
+
+    //@Autowired
+    //LogService logService;
 
     @Autowired
-    LogService logService;
-
-    @Autowired
-    UnitDao unitDao;
+    UnitService unitService;
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(HttpServletRequest request) {
 
-        Case caze = new Case();
+        Concern caze = new Concern();
         caze.name = request.getParameter("name");
-        caze.organiser = request.getParameter("organiser");
+        caze.info = request.getParameter("info");
 
-        caseDao.add(caze);
+        concernDao.add(caze);
 
         return "redirect:/welcome";
     }
@@ -43,8 +43,10 @@ public class CreateController {
     @RequestMapping("/edit")
     public String edit(@CookieValue("active_case") int id, ModelMap map) {
 
-        Case caze = caseDao.getById(id);
-        List<Unit> unit_list = unitDao.getAll(id);
+        Concern caze = concernDao.getById(id);
+        List<Unit> unit_list = unitService.getAll(id);
+
+        Logger.debug("unit_list.size(): "+unit_list.size());
 
         map.addAttribute("caze", caze);
         map.addAttribute("unit_list", unit_list);
@@ -54,16 +56,16 @@ public class CreateController {
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String updateCase(@RequestParam("id") int id, @RequestParam("name") String name,
-                         @RequestParam("organiser") String organiser,
+                         @RequestParam("info") String info,
                          @RequestParam("pax") int pax) {
 
-        Case caze = new Case();
+        Concern caze = new Concern();
         caze.id = id;
         caze.name = name;
         caze.pax = pax;
-        caze.organiser = organiser;
+        caze.info = info;
 
-        caseDao.update(caze);
+        concernDao.update(caze);
 
         return "redirect:/edit";
     }
@@ -71,7 +73,10 @@ public class CreateController {
 
     @RequestMapping(value = "/updateUnit", method = RequestMethod.POST)
     public String updateUnit(HttpServletRequest request,
-                         @CookieValue("active_case") int case_id) {
+                         @CookieValue("active_case") int case_id, Principal principal)
+    {
+        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
+        Operator user = (Operator) token.getPrincipal();
 
         Unit unit = new Unit();
         unit.id = Integer.parseInt(request.getParameter("id"));
@@ -83,10 +88,10 @@ public class CreateController {
         unit.transportVehicle = request.getParameter("transportVehicle") != null;
 
         if(request.getParameter("update") != null) {
-            unitDao.updateFull(unit);
+            unitService.updateFull(unit, user);
         }
         else if(request.getParameter("remove") != null) {
-            unitDao.remove(unit);
+            unitService.remove(unit, user);
         }
         else {
             Logger.error("CreateController:updateUnit wrong submit button");
@@ -97,11 +102,14 @@ public class CreateController {
 
     @RequestMapping(value = "/createUnit", method = RequestMethod.POST)
     public String createUnit(HttpServletRequest request,
-                             @CookieValue("active_case") int case_id) {
+                             @CookieValue("active_case") int case_id, Principal principal)
+    {
+        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
+        Operator user = (Operator) token.getPrincipal();
 
         Unit unit = new Unit();
-        unit.aCase = new Case();
-        unit.aCase.id = case_id;
+        unit.concern = new Concern();
+        unit.concern.id = case_id;
 
         unit.id = -1;
         unit.call = request.getParameter("call");
@@ -111,7 +119,7 @@ public class CreateController {
         unit.withDoc = request.getParameter("withDoc") != null;
         unit.transportVehicle = request.getParameter("transportVehicle") != null;
 
-        unitDao.add(unit);
+        unitService.add(unit, user);
 
         Logger.debug("createUnit: Unit: "+unit.id+", "+unit.call);
 
@@ -120,11 +128,15 @@ public class CreateController {
 
     @RequestMapping(value = "/createUnitBatch", method = RequestMethod.POST)
     public String createUnitBatch(HttpServletRequest request,
-                             @CookieValue("active_case") int case_id) {
+                             @CookieValue("active_case") int case_id,
+                             Principal principal)
+    {
+        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
+        Operator user = (Operator) token.getPrincipal();
 
         Unit unit = new Unit();
-        unit.aCase = new Case();
-        unit.aCase.id = case_id;
+        unit.concern = new Concern();
+        unit.concern.id = case_id;
 
         unit.id = -1;
         unit.portable = request.getParameter("portable") != null;
@@ -136,7 +148,7 @@ public class CreateController {
 
         for(int i = from; i <= to; i++){
             unit.call = request.getParameter("call_pre")+i;
-            unitDao.add(unit);
+            unitService.add(unit, user);
         }
 
         return "redirect:/edit";

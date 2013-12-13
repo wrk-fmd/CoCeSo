@@ -13,6 +13,8 @@ import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO CHECK!!
+
 @Repository
 public class CrewDao {
 
@@ -34,7 +36,7 @@ public class CrewDao {
 
 
     public List<Person> getByUnitId(int unit_id) {
-        List<Integer> keys = jdbc.query("SELECT * FROM crews WHERE units_id = ?", new Object[] {unit_id}, crewPersonMapper);
+        List<Integer> keys = jdbc.query("SELECT * FROM crew WHERE unit_fk = ?", new Object[] {unit_id}, crewPersonMapper);
         List<Person> persons = new ArrayList<Person>();
 
         for(Integer k : keys) {
@@ -48,7 +50,7 @@ public class CrewDao {
     public boolean remove(Unit unit, Person person) {
         if(unit == null || person == null || unit.id <= 0 || person.id <= 0) return false;
 
-        String q = "DELETE FROM crews WHERE units_id = ? AND persons_id = ?";
+        String q = "DELETE FROM crew WHERE unit_fk = ? AND person_fk = ?";
 
         jdbc.update(q, unit.id, person.id);
 
@@ -59,7 +61,7 @@ public class CrewDao {
     public boolean add(Unit unit, Person person) {
         if(unit == null || person == null || unit.id <= 0 || person.id <= 0) return false;
 
-        String q = "INSERT INTO crews (units_id, persons_id) VALUES (?,?)";
+        String q = "INSERT INTO crew (unit_fk, person_fk) VALUES (?,?)";
 
         jdbc.update(q, unit.id, person.id);
 

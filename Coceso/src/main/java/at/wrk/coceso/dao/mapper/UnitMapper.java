@@ -1,8 +1,8 @@
 package at.wrk.coceso.dao.mapper;
 
-import at.wrk.coceso.dao.CaseDao;
+import at.wrk.coceso.dao.ConcernDao;
 import at.wrk.coceso.dao.CrewDao;
-import at.wrk.coceso.dao.PoiDao;
+import at.wrk.coceso.dao.PointDao;
 import at.wrk.coceso.dao.TaskDao;
 import at.wrk.coceso.entities.Unit;
 import at.wrk.coceso.entities.UnitState;
@@ -18,13 +18,13 @@ import java.sql.SQLException;
 public class UnitMapper implements RowMapper<Unit> {
 
     @Autowired
-    private CaseDao caseDao;
+    private ConcernDao concernDao;
 
     @Autowired
     private CrewDao crewDao;
 
     @Autowired
-    private PoiDao poiDao;
+    private PointDao pointDao;
 
     @Autowired
     private TaskDao taskDao;
@@ -50,9 +50,9 @@ public class UnitMapper implements RowMapper<Unit> {
         }
 
         // References
-        unit.aCase = caseDao.getById(rs.getInt("aCase"));
-        unit.home = poiDao.getById(rs.getInt("home"));
-        unit.position = poiDao.getById(rs.getInt("position"));
+        unit.concern = concernDao.getById(rs.getInt("concern_fk"));
+        unit.home = pointDao.getById(rs.getInt("home_point_fk"));
+        unit.position = pointDao.getById(rs.getInt("position_point_fk"));
 
         // Extra Table
         unit.crew = crewDao.getByUnitId(unit.id);

@@ -1,12 +1,12 @@
 
 package at.wrk.coceso.controller;
 
-import at.wrk.coceso.dao.IncidentDao;
 import at.wrk.coceso.dao.TaskDao;
-import at.wrk.coceso.dao.UnitDao;
 import at.wrk.coceso.entities.*;
+import at.wrk.coceso.service.IncidentService;
 import at.wrk.coceso.service.LogService;
 import at.wrk.coceso.service.TaskService;
+import at.wrk.coceso.service.UnitService;
 import at.wrk.coceso.utils.LogText;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +23,10 @@ import java.util.List;
 public class UnitController implements IEntityController<Unit> {
 
     @Autowired
-    private UnitDao unitDao;
+    private UnitService unitService;
 
     @Autowired
-    private IncidentDao incidentDao;
+    private IncidentService incidentService;
 
     @Autowired
     private TaskDao taskDao;
@@ -34,8 +34,8 @@ public class UnitController implements IEntityController<Unit> {
     @Autowired
     private TaskService taskService;
 
-    @Autowired
-    private LogService log;
+    //@Autowired
+    //private LogService log;
 
     @Override
     @RequestMapping(value = "getAll", produces = "application/json")
@@ -43,7 +43,7 @@ public class UnitController implements IEntityController<Unit> {
     public List<Unit> getAll(@CookieValue(value = "active_case", defaultValue = "0") String case_id) {
 
         try {
-            return unitDao.getAll(Integer.parseInt(case_id));
+            return unitService.getAll(Integer.parseInt(case_id));
         } catch(NumberFormatException e) {
             Logger.warning("UnitController: getAll: "+e);
             return null;
@@ -55,7 +55,7 @@ public class UnitController implements IEntityController<Unit> {
     @ResponseBody
     public Unit getByPost(@RequestParam(value = "id", required = true) int id) {
 
-        return unitDao.getById(id);
+        return unitService.getById(id);
     }
 
     @Override
@@ -73,7 +73,7 @@ public class UnitController implements IEntityController<Unit> {
                          @CookieValue(value = "active_case", defaultValue = "0") String case_id, Principal principal)
     {
         UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
-        Person user = (Person) token.getPrincipal();
+        Operator user = (Operator) token.getPrincipal();
 
         int caseId = Integer.parseInt(case_id);
 
@@ -82,30 +82,30 @@ public class UnitController implements IEntityController<Unit> {
         }
 
         if(unit.id > 0) {
-            Unit u = unitDao.getById(unit.id);
-            if(u.aCase.id != caseId)
-                return "{\"success\": false, \"info\":\"Active Case not valid\"}";
+            Unit u = unitService.getById(unit.id);
+            if(u.concern.id != caseId)
+                return "{\"success\": false, \"info\":\"Active Concern not valid\"}";
         }
 
 
-        unit.aCase = new Case();
-        unit.aCase.id = caseId;
+        unit.concern = new Concern();
+        unit.concern.id = caseId;
 
-        if(unit.aCase.id <= 0) {
-            return "{\"success\": false, \"info\":\"No active Case. Cookies enabled?\"}";
+        if(unit.concern.id <= 0) {
+            return "{\"success\": false, \"info\":\"No active Concern. Cookies enabled?\"}";
         }
 
         if(unit.id < 1) {
             unit.id = 0;
 
-            unit.id = unitDao.add(unit);
+            unit.id = unitService.add(unit, user);
 
-            log.logFull(user, "Unit created", caseId, unit, null, true);
+            //log.logFull(user, "Unit created", caseId, unit, null, true);
             return "{\"success\": " + (unit.id != -1) + ", \"new\": true, \"unit_id\":"+unit.id+"}";
         }
 
-        log.logFull(user, "Unit updated", caseId, unit, null, true);
-        return "{\"success\": " + unitDao.update(unit) + ", \"new\": false}";
+        //log.logFull(user, "Unit updated", caseId, unit, null, true);
+        return "{\"success\": " + unitService.update(unit, user) + ", \"new\": false}";
     }
 
     @RequestMapping(value = "sendHome/{id}", produces = "application/json", method = RequestMethod.GET)
@@ -113,7 +113,7 @@ public class UnitController implements IEntityController<Unit> {
     public Unit sendHome(@CookieValue(value="active_case", defaultValue = "0") String case_id,
                          @PathVariable("id") int unitId, Principal principal) {
         UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
-        Person user = (Person) token.getPrincipal();
+        Operator user = (Operator) token.getPrincipal();
 
         int activeCase = Integer.parseInt(case_id);
 
@@ -125,27 +125,27 @@ public class UnitController implements IEntityController<Unit> {
                 return null;
         }
 
-        Unit unit = unitDao.getById(unitId);
+        Unit unit = unitService.getById(unitId);
 
         // Detach from all HoldPosition and Standby Incidents
         for(Incident i : list) {
             i.state = IncidentState.Done;
-            log.logWithIDs(user.id, LogText.SEND_HOME_AUTO_DETACH, activeCase, unitId, i.id, true);
-            incidentDao.update(i);
+            //log.logWithIDs(user.id, LogText.SEND_HOME_AUTO_DETACH, activeCase, unitId, i.id, true);
+            incidentService.update(i, user);
             taskDao.remove(i.id, unitId);
         }
 
         Incident toHome = new Incident();
         toHome.state = IncidentState.Dispo;
-        toHome.aCase = new Case();
-        toHome.aCase.id = activeCase;
+        toHome.concern = new Concern();
+        toHome.concern.id = activeCase;
         toHome.ao = unit.home;
         toHome.bo = unit.position; // TODO useful?
         toHome.type = IncidentType.Relocation;
         toHome.caller = user.getUsername(); // TODO useful?
 
-        toHome.id = incidentDao.add(toHome);
-        log.logFull(user, LogText.SEND_HOME_ASSIGN, activeCase, unit, toHome, true);
+        toHome.id = incidentService.add(toHome, user);
+        //log.logFull(user, LogText.SEND_HOME_ASSIGN, activeCase, unit, toHome, true);
         taskService.assignUnit(toHome.id, unitId, user);
 
         return unit;

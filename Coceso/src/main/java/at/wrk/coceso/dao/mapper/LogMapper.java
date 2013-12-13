@@ -37,7 +37,7 @@ public class LogMapper implements RowMapper<LogEntry> {
         }
 
 
-        l.user = new Person();
+        l.user = new Operator();
         l.user.id = rs.getInt("pid");
         l.user.sur_name = rs.getString("sur_name");
         l.user.given_name = rs.getString("given_name");
@@ -46,13 +46,13 @@ public class LogMapper implements RowMapper<LogEntry> {
         l.user.username = rs.getString("username");
 
         // References NOT RESOLVED
-        int incidentID = rs.getInt("incident");
+        int incidentID = rs.getInt("incident_fk");
         if(incidentID > 0) {
             l.incident = new Incident();
             l.incident.id = incidentID;
         }
 
-        int unitID = rs.getInt("unit");
+        int unitID = rs.getInt("unit_fk");
         if(unitID > 0) {
             l.unit = new Unit();
             l.unit.id = unitID;
@@ -62,7 +62,7 @@ public class LogMapper implements RowMapper<LogEntry> {
         //l.incident = incidentDao.getById(rs.getInt("incident"));
         //l.unit = unitDao.getById(rs.getInt("unit"));
 
-        l.aCase = null; // Entries are 'final', aCase is only in DB relevant TODO Change if used internally
+        l.concern = null; // Entries are 'final', concern is only in DB relevant TODO Change if used internally
 
         return l;
     }

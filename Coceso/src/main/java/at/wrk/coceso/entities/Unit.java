@@ -8,7 +8,7 @@ public class Unit {
 
     public int id;
 
-    public Case aCase;
+    public Concern concern;
 
     public UnitState state;
 
@@ -26,9 +26,9 @@ public class Unit {
 
     public String info;
 
-    public CocesoPOI position;
+    public Point position;
 
-    public CocesoPOI home;
+    public Point home;
 
     public Map<Integer, TaskState> incidents;
 
@@ -73,7 +73,7 @@ public class Unit {
     public Unit slimCopy() {
         Unit ret = new Unit();
         ret.id = this.id;
-        ret.aCase = this.aCase;
+        ret.concern = this.concern;
         return ret;
     }
 
@@ -81,7 +81,7 @@ public class Unit {
         return state;
     }
 
-    public CocesoPOI getPosition() {
+    public Point getPosition() {
         return position;
     }
 

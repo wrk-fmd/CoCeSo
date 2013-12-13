@@ -3,12 +3,12 @@ package at.wrk.coceso.dao;
 
 import at.wrk.coceso.dao.mapper.UnitMapper;
 import at.wrk.coceso.entities.Person;
+import at.wrk.coceso.entities.Point;
 import at.wrk.coceso.entities.Unit;
 import at.wrk.coceso.entities.UnitState;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -27,7 +27,11 @@ public class UnitDao extends CocesoDao<Unit> {
     @Autowired
     UnitMapper unitMapper;
 
-    @Autowired CrewDao crewDao;
+    @Autowired
+    CrewDao crewDao;
+
+    @Autowired
+    PointDao pointDao;
 
     @Autowired
     public UnitDao(DataSource dataSource) {
@@ -41,7 +45,7 @@ public class UnitDao extends CocesoDao<Unit> {
             return null;
         }
 
-        String q = "select * from units where id = ?";
+        String q = "select * from unit where id = ?";
         Unit unit;
 
         try {
@@ -56,19 +60,35 @@ public class UnitDao extends CocesoDao<Unit> {
     }
 
     @Override
-    public List<Unit> getAll(int case_id) {
-        if(case_id < 1) {
-            Logger.warning("UnitDao.getAll: invalid case_id: "+case_id);
+    public List<Unit> getAll(int concern_id) {
+        if(concern_id < 1) {
+            Logger.warning("UnitDao.getAll: invalid concern_id: "+concern_id);
             return null;
         }
-        String q = "SELECT * FROM units WHERE aCase = ? ORDER BY id ASC";
+        String q = "SELECT * FROM unit WHERE concern_fk = ? ORDER BY id ASC";
 
         try {
-            return jdbc.query(q, new Object[] {case_id}, unitMapper);
+            return jdbc.query(q, new Object[] {concern_id}, unitMapper);
         }
         catch(DataAccessException dae) {
             Logger.error("UnitDao.getAll: DataAccessException: "+dae.getMessage());
             return null;
+        }
+    }
+
+    Point createPointIfNotExist(Point dummy) {
+        if(dummy == null)
+            return null;
+        if(dummy.id <= 0) {
+            Point point = pointDao.getByInfo(dummy.info);
+            if(point == null && dummy.info != null) {
+                dummy.id = pointDao.add(dummy);
+                return dummy;
+            }
+            else return point;
+        }
+        else {
+            return pointDao.getById(dummy.id);
         }
     }
 
@@ -90,7 +110,10 @@ public class UnitDao extends CocesoDao<Unit> {
             return false;
         }
 
-        final String pre_q = "update units set";
+        unit.home = createPointIfNotExist(unit.home);
+        unit.position = createPointIfNotExist(unit.position);
+
+        final String pre_q = "update unit set";
         final String suf_q = " where id = " + unit.id;
 
         boolean first = true;
@@ -149,8 +172,12 @@ public class UnitDao extends CocesoDao<Unit> {
             return false;
         }
 
-        String q = "UPDATE units SET state = ?, call = ?, ani = ?, withdoc = ?, " +
-                "portable = ?, transportvehicle = ?, info = ?, position = ?, home = ? WHERE id = ?";
+        unit.home = createPointIfNotExist(unit.home);
+        unit.position = createPointIfNotExist(unit.position);
+
+
+        String q = "UPDATE unit SET state = ?, call = ?, ani = ?, withdoc = ?, " +
+                "portable = ?, transportvehicle = ?, info = ?, position_point_fk = ?, home_point_fk = ? WHERE id = ?";
 
         try {
             jdbc.update(q, unit.state == null ? UnitState.AD.name() : unit.state.name(), unit.call, unit.ani, unit.withDoc, unit.portable, unit.transportVehicle,
@@ -170,18 +197,23 @@ public class UnitDao extends CocesoDao<Unit> {
             Logger.error("UnitDao.add(Unit): unit is NULL");
             return -1;
         }
-        if(uunit.aCase == null || uunit.aCase.id <= 0) {
-            Logger.error("UnitDao.add(Unit): No aCase given. call: " + uunit.call);
+        if(uunit.concern == null || uunit.concern.id <= 0) {
+            Logger.error("UnitDao.add(Unit): No concern given. call: " + uunit.call);
             return -1;
         }
 
         uunit.prepareNotNull();
 
+        uunit.home = createPointIfNotExist(uunit.home);
+        uunit.position = createPointIfNotExist(uunit.position);
+
+
         final Unit unit = uunit;
 
         try {
-            final String q = "insert into units (aCase, state, call, ani, withDoc," +
-                    " portable, transportVehicle, info, position, home) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            final String q = "INSERT INTO unit (concern_fk, state, call, ani, withDoc," +
+                    " portable, transportVehicle, info, position_point_fk, home_point_fk) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             KeyHolder holder = new GeneratedKeyHolder();
 
@@ -192,7 +224,7 @@ public class UnitDao extends CocesoDao<Unit> {
                         throws SQLException {
                     PreparedStatement ps = connection.prepareStatement(q, Statement.RETURN_GENERATED_KEYS);
 
-                    ps.setInt(1, unit.aCase.id);
+                    ps.setInt(1, unit.concern.id);
                     ps.setString(2, unit.state == null ? UnitState.AD.name() : unit.state.name());
                     ps.setString(3, unit.call);
                     ps.setString(4, unit.ani);
@@ -237,7 +269,7 @@ public class UnitDao extends CocesoDao<Unit> {
             Logger.error("UnitDao.remove(Unit): invalid id: " + unit.id + ", call: " + unit.call);
             return false;
         }
-        String q = "delete from units where id = ?";
+        String q = "delete from unit where id = ?";
         try {
             jdbc.update(q, unit.id);
         }

@@ -1,7 +1,7 @@
 package at.wrk.coceso.dao.mapper;
 
 
-import at.wrk.coceso.entities.CocesoPOI;
+import at.wrk.coceso.entities.Point;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
@@ -9,16 +9,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @Repository
-public class PoiMapper implements RowMapper<CocesoPOI> {
+public class PointMapper implements RowMapper<Point> {
     @Override
-    public CocesoPOI mapRow(ResultSet rs, int i) throws SQLException {
-        CocesoPOI poi = new CocesoPOI();
+    public Point mapRow(ResultSet rs, int i) throws SQLException {
+        Point poi = new Point();
 
         poi.id = rs.getInt("id");
-        poi.address = rs.getString("address");
+        poi.info = rs.getString("info");
         poi.latitude = rs.getDouble("latitude");
         poi.longitude = rs.getDouble("longitude");
-        poi.minimumUnits = rs.getInt("minimumunits");
 
         return poi;
     }

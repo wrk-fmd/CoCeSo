@@ -2,6 +2,9 @@ package at.wrk.coceso.controller;
 
 import at.wrk.coceso.dao.*;
 import at.wrk.coceso.entities.*;
+import at.wrk.coceso.service.IncidentService;
+import at.wrk.coceso.service.TaskService;
+import at.wrk.coceso.service.UnitService;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,19 +24,19 @@ import java.util.Map;
 public class WelcomeController {
 
     @Autowired
-    CaseDao caseDao;
+    ConcernDao concernDao;
 
     @Autowired
     LogDao logDao;
 
     @Autowired
-    IncidentDao incidentDao;
+    IncidentService incidentService;
 
     @Autowired
-    UnitDao unitDao;
+    UnitService unitService;
 
     @Autowired
-    TaskDao taskDao;
+    TaskService taskService;
 
     @RequestMapping("/")
     public String showIndex() {
@@ -62,14 +65,14 @@ public class WelcomeController {
     public String showWelcome(ModelMap map, Principal principal) {
 
         UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
-        Person user = (Person) token.getPrincipal();
+        Operator user = (Operator) token.getPrincipal();
 
         map.addAttribute("user", user);
 
-        List<Case> case_list = caseDao.getAll();
-        map.addAttribute("case_list", case_list);
+        List<Concern> concern_list = concernDao.getAll();
+        map.addAttribute("concern_list", concern_list);
 
-        Logger.debug("CaseList: size="+case_list.size());
+        Logger.debug("CaseList: size="+ concern_list.size());
 
         return "welcome";
     }
@@ -111,10 +114,10 @@ public class WelcomeController {
 
         if(s_sub.equals("Unit")) {
             map.addAttribute("unit", "active");
-            map.addAttribute("sel_units", unitDao.getAll(actCase));
+            map.addAttribute("sel_units", unitService.getAll(actCase));
 
             if(uid != null && uid > 0) {
-                Unit ret = unitDao.getById(uid);
+                Unit ret = unitService.getById(uid);
                 if(ret == null) {
                     map.addAttribute("error", "No Unit found");
                 }
@@ -124,16 +127,16 @@ public class WelcomeController {
                 }
             }
             else {
-                map.addAttribute("units", unitDao.getAll(actCase));
+                map.addAttribute("units", unitService.getAll(actCase));
             }
 
         } else if(s_sub.equals("Incident")) {
             map.addAttribute("incident", "active");
 
             if(uid != null && uid == -1) {
-                map.addAttribute("incidents", incidentDao.getAllActive(actCase));
+                map.addAttribute("incidents", incidentService.getAllActive(actCase));
             } else if(iid != null) {
-                Incident ret = incidentDao.getById(iid);
+                Incident ret = incidentService.getById(iid);
 
                 if(ret == null) {
                     map.addAttribute("error", "No Incident Found");
@@ -141,7 +144,7 @@ public class WelcomeController {
                 else {
                     Map<Integer, String> i_map = new HashMap<Integer, String>();
                     for(Map.Entry<Integer, TaskState> entry : ret.units.entrySet()) {
-                        Unit u = unitDao.getById(entry.getKey());
+                        Unit u = unitService.getById(entry.getKey());
                         i_map.put(u.getId(), u.getCall());
                     }
                     map.addAttribute("i_map", i_map);
@@ -149,7 +152,7 @@ public class WelcomeController {
                     map.addAttribute("i_incident", ret);
                 }
             } else {
-                map.addAttribute("incidents", incidentDao.getAll(actCase));
+                map.addAttribute("incidents", incidentService.getAll(actCase));
             }
 
 
@@ -159,10 +162,10 @@ public class WelcomeController {
                 map.addAttribute("error", "No ID specified");
             }
             else if(uid != null) {
-                map.addAttribute("tasks", taskDao.getAllByUnitId(uid));
+                map.addAttribute("tasks", taskService.getAllByUnitId(uid));
             }
             else {
-                map.addAttribute("tasks", taskDao.getAllByIncidentId(iid));
+                map.addAttribute("tasks", taskService.getAllByIncidentId(iid));
             }
 
         } else {

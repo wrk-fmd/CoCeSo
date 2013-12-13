@@ -8,6 +8,9 @@ import at.wrk.coceso.utils.LogText;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Map;
+
 @Service
 public class TaskService {
     @Autowired
@@ -22,39 +25,39 @@ public class TaskService {
     @Autowired
     LogService log;
 
-    public boolean assignUnit(int incident_id, int unit_id, Person user) {
+    public boolean assignUnit(int incident_id, int unit_id, Operator user) {
         Incident i = incidentDao.getById(incident_id);
         Unit u = unitDao.getById(unit_id);
 
-        // Not in same Case; HoldPosition and Standby can't be assigned to multiple Units
-        if(!i.aCase.equals(u.aCase) || i.type == IncidentType.HoldPosition || i.type == IncidentType.Standby) {
+        // Not in same Concern; HoldPosition and Standby can't be assigned to multiple Units
+        if(!i.concern.equals(u.concern) || i.type == IncidentType.HoldPosition || i.type == IncidentType.Standby) {
             return false;
         }
 
         if(user != null) {
-            log.logFull(user, LogText.UNIT_ASSIGN, u.aCase.id, u, i, true);
+            log.logFull(user, LogText.UNIT_ASSIGN, u.concern.id, u, i, true);
         }
 
         return taskDao.add(incident_id, unit_id, TaskState.Assigned);
 
     }
 
-    public void detachUnit(int incident_id, int unit_id, Person user) {
+    public void detachUnit(int incident_id, int unit_id, Operator user) {
         Incident i = incidentDao.getById(incident_id);
         Unit u = unitDao.getById(unit_id);
 
-        if(!i.aCase.equals(u.aCase)) {  // Not in same Case
+        if(!i.concern.equals(u.concern)) {  // Not in same Concern
             return;
         }
 
         if(user != null) {
-            log.logFull(user, LogText.UNIT_DETACH, i.aCase.id, u, i, true);
+            log.logFull(user, LogText.UNIT_DETACH, i.concern.id, u, i, true);
         }
 
         taskDao.remove(incident_id, unit_id);
     }
 
-    public void changeState(int incident_id, int unit_id, TaskState state, Person user) {
+    public void changeState(int incident_id, int unit_id, TaskState state, Operator user) {
         Incident i = incidentDao.getById(incident_id);
         Unit u = unitDao.getById(unit_id);
 
@@ -66,12 +69,12 @@ public class TaskService {
 
         i.units.put(unit_id, state);
 
-        if(!i.aCase.equals(u.aCase)) {    // Not in same Case
+        if(!i.concern.equals(u.concern)) {    // Not in same Concern
             return;
         }
 
         if(user != null) {
-            log.logFull(user, LogText.UNIT_TASKSTATE_CHANGED, i.aCase.id, u, i, true);
+            log.logFull(user, LogText.UNIT_TASKSTATE_CHANGED, i.concern.id, u, i, true);
         }
 
         taskDao.update(incident_id, unit_id, state);
@@ -81,28 +84,28 @@ public class TaskService {
                 if(i.state == IncidentState.New) {
                     Incident wIncident = i.slimCopy();
                     wIncident.state = IncidentState.Dispo;
-                    log.logFull(user, LogText.INCIDENT_AUTO_STATE, i.aCase.id, u, wIncident, true);
+                    log.logFull(user, LogText.INCIDENT_AUTO_STATE, i.concern.id, u, wIncident, true);
                     incidentDao.update(wIncident);
                 }
                 break;
             case ABO:
                 Unit writeUnit = u.slimCopy();
                 writeUnit.position = i.bo;
-                log.logFull(user, LogText.UNIT_AUTOSET_POSITION, i.aCase.id, writeUnit, i, true);
+                log.logFull(user, LogText.UNIT_AUTOSET_POSITION, i.concern.id, writeUnit, i, true);
                 unitDao.update(writeUnit);
                 break;
             case ZAO:
                 if(i.type == IncidentType.Relocation) {
                     Incident writeIncident = i.slimCopy();
                     writeIncident.state = IncidentState.Working;
-                    log.logFull(user, LogText.INCIDENT_AUTO_STATE, i.aCase.id, u, writeIncident, true);
+                    log.logFull(user, LogText.INCIDENT_AUTO_STATE, i.concern.id, u, writeIncident, true);
                     incidentDao.update(writeIncident);
                 }
                 break;
             case AAO:
                 Unit writeUnit2 = u.slimCopy();
                 writeUnit2.position = i.ao;
-                log.logFull(user, LogText.UNIT_AUTOSET_POSITION, i.aCase.id, writeUnit2, i, true);
+                log.logFull(user, LogText.UNIT_AUTOSET_POSITION, i.concern.id, writeUnit2, i, true);
                 unitDao.update(writeUnit2);
 
                 break;
@@ -110,7 +113,7 @@ public class TaskService {
                 if(i.type == IncidentType.Standby || i.type == IncidentType.HoldPosition) {
                     Incident wInc = i.slimCopy();
                     wInc.state = IncidentState.Done;
-                    log.logFull(user, LogText.INCIDENT_AUTO_STATE, i.aCase.id, u, wInc, true);
+                    log.logFull(user, LogText.INCIDENT_AUTO_STATE, i.concern.id, u, wInc, true);
                     incidentDao.update(wInc);
                 }
                 break;
@@ -123,20 +126,20 @@ public class TaskService {
         }
     }
 
-    public void checkStates(int incident_id, Person user) {
+    public void checkStates(int incident_id, Operator user) {
         Incident i = incidentDao.getById(incident_id);
 
         checkEmpty(i, user);
 
         for(Integer unitId : i.units.keySet()) {
             if(i.state == IncidentState.Done) {
-                log.logWithIDs(user.id, LogText.UNIT_AUTO_DETACH, i.aCase.id, unitId, i.id, true);
+                log.logWithIDs(user.id, LogText.UNIT_AUTO_DETACH, i.concern.id, unitId, i.id, true);
                 detachUnit(i.id, unitId, null);
                 i.units.remove(unitId);
             } else {
                 TaskState state = i.units.get(unitId);
                 if(state == TaskState.Detached) {
-                    log.logWithIDs(user.id, LogText.UNIT_AUTO_DETACH, i.aCase.id, unitId, i.id, true);
+                    log.logWithIDs(user.id, LogText.UNIT_AUTO_DETACH, i.concern.id, unitId, i.id, true);
                     detachUnit(i.id, unitId, null);
                     i.units.remove(unitId);
                 }
@@ -146,12 +149,20 @@ public class TaskService {
         checkEmpty(i, user);
     }
 
-    private void checkEmpty(Incident i, Person user) {
+    private void checkEmpty(Incident i, Operator user) {
         if(i.units.isEmpty() && i.state != IncidentState.Done) {
             Incident write = i.slimCopy();
             write.state = IncidentState.Done;
-            log.logFull(user, LogText.INCIDENT_NO_UNIT_ATTACHED, i.aCase.id, null, write, true);
+            log.logFull(user, LogText.INCIDENT_NO_UNIT_ATTACHED, i.concern.id, null, write, true);
             incidentDao.update(write);
         }
+    }
+
+    public Map<Integer, TaskState> getAllByUnitId(int uid) {
+        return taskDao.getAllByUnitId(uid);
+    }
+
+    public Map<Integer, TaskState> getAllByIncidentId(Integer iid) {
+        return taskDao.getAllByIncidentId(iid);
     }
 }

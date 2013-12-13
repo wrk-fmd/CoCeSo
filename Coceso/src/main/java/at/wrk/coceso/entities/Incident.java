@@ -33,7 +33,7 @@ public class Incident {
 
     public int id;
 
-    public Case aCase;
+    public Concern concern;
 
     public IncidentState state;
 
@@ -43,9 +43,9 @@ public class Incident {
 
     public Map<Integer, TaskState> units;
 
-    public CocesoPOI bo;
+    public Point bo;
 
-    public CocesoPOI ao;
+    public Point ao;
 
     public String casusNr;
 
@@ -87,7 +87,7 @@ public class Incident {
     public Incident slimCopy() {
         Incident ret = new Incident();
         ret.id = this.id;
-        ret.aCase = this.aCase;
+        ret.concern = this.concern;
         ret.type = this.type;
 
         return ret;
@@ -113,11 +113,11 @@ public class Incident {
         return units;
     }
 
-    public CocesoPOI getBo() {
+    public Point getBo() {
         return bo;
     }
 
-    public CocesoPOI getAo() {
+    public Point getAo() {
         return ao;
     }
 

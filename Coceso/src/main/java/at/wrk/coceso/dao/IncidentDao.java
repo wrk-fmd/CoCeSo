@@ -28,6 +28,12 @@ public class IncidentDao extends CocesoDao<Incident> {
     private IncidentMapper incidentMapper;
 
     @Autowired
+    PointDao pointDao;
+
+    @Autowired
+    UnitDao unitDao;
+
+    @Autowired
     public IncidentDao(DataSource dataSource) {
         super(dataSource);
     }
@@ -39,7 +45,7 @@ public class IncidentDao extends CocesoDao<Incident> {
             return null;
         }
 
-        String q = "SELECT * FROM incidents WHERE id = ?";
+        String q = "SELECT * FROM incident WHERE id = ?";
         Incident incident;
 
         try {
@@ -63,7 +69,7 @@ public class IncidentDao extends CocesoDao<Incident> {
             return null;
         }
 
-        String q = "SELECT * FROM incidents WHERE acase = ? ORDER BY id ASC";
+        String q = "SELECT * FROM incident WHERE concern_fk = ? ORDER BY id ASC";
 
         return jdbc.query(q, new Object[] {case_id}, incidentMapper);
     }
@@ -73,7 +79,7 @@ public class IncidentDao extends CocesoDao<Incident> {
             return null;
         }
 
-        String q = "SELECT * FROM incidents WHERE acase = ? AND state NOT IN ('Done') ORDER BY id ASC";
+        String q = "SELECT * FROM incident WHERE concern_fk = ? AND state NOT IN ('Done') ORDER BY id ASC";
 
         return jdbc.query(q, new Object[] {case_id}, incidentMapper);
     }
@@ -83,7 +89,7 @@ public class IncidentDao extends CocesoDao<Incident> {
             return null;
         }
 
-        String q = "SELECT * FROM incidents WHERE acase = ? AND state = ? ORDER BY id ASC";
+        String q = "SELECT * FROM incident WHERE concern_fk = ? AND state = ? ORDER BY id ASC";
 
         return jdbc.query(q, new Object[] {case_id, state.name()}, incidentMapper);
     }
@@ -98,12 +104,15 @@ public class IncidentDao extends CocesoDao<Incident> {
     public boolean update(Incident incident) {
         if(incident == null) return false;
 
-        final String pre_q = "UPDATE incidents SET ";
+        final String pre_q = "UPDATE incident SET ";
         final String suf_q = "WHERE id = ?";
 
         String q = pre_q;
         List<Object> parameters = new ArrayList<Object>();
         boolean comma = false;
+
+        incident.bo = unitDao.createPointIfNotExist(incident.bo);
+        incident.ao = unitDao.createPointIfNotExist(incident.ao);
 
         if(incident.caller != null) {
             q += "caller = ? ";
@@ -161,13 +170,18 @@ public class IncidentDao extends CocesoDao<Incident> {
     }
 
     //TODO Default IncidentType is now TASK
+    @Override
     public int add(final Incident incident) {
-        if (incident == null || incident.aCase == null) return -1;
+        if (incident == null || incident.concern == null) return -1;
 
-        final String q = "INSERT INTO incidents (acase, state, type, priority, blue, bo, ao, info, caller, casusnr) " +
+        final String q = "INSERT INTO incident (concern_fk, state, type, priority, blue, bo_point_fk, " +
+                "ao_point_fk, info, caller, casusnr) " +
                 "VALUES (?,?,?,?,?,?,?,?,?,?)";
 
         KeyHolder holder = new GeneratedKeyHolder();
+
+        incident.bo = unitDao.createPointIfNotExist(incident.bo);
+        incident.ao = unitDao.createPointIfNotExist(incident.ao);
 
         jdbc.update(new PreparedStatementCreator() {
 
@@ -176,7 +190,7 @@ public class IncidentDao extends CocesoDao<Incident> {
                     throws SQLException {
                 PreparedStatement ps = connection.prepareStatement(q, Statement.RETURN_GENERATED_KEYS);
 
-                ps.setInt(1, incident.aCase.id);
+                ps.setInt(1, incident.concern.id);
                 ps.setString(2, incident.state == null ? IncidentState.New.name() : incident.state.name());
                 ps.setString(3, incident.type == null ? IncidentType.Task.name() : incident.type.name());
                 ps.setInt(4, incident.priority);
@@ -207,7 +221,7 @@ public class IncidentDao extends CocesoDao<Incident> {
     @Override
     public boolean remove(Incident incident) {
         if(incident == null) return false;
-        String q = "DELETE FROM incidents WHERE id = ?";
+        String q = "DELETE FROM incident WHERE id = ?";
 
         jdbc.update(q, incident.id);
 

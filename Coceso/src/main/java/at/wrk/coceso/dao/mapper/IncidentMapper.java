@@ -1,8 +1,8 @@
 package at.wrk.coceso.dao.mapper;
 
 
-import at.wrk.coceso.dao.CaseDao;
-import at.wrk.coceso.dao.PoiDao;
+import at.wrk.coceso.dao.ConcernDao;
+import at.wrk.coceso.dao.PointDao;
 import at.wrk.coceso.dao.TaskDao;
 import at.wrk.coceso.entities.*;
 import at.wrk.coceso.utils.Logger;
@@ -12,17 +12,15 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 @Repository
 public class IncidentMapper implements RowMapper<Incident> {
 
     @Autowired
-    private CaseDao caseDao;
+    private ConcernDao concernDao;
 
     @Autowired
-    private PoiDao poiDao;
+    private PointDao pointDao;
 
     @Autowired
     private TaskDao taskDao;
@@ -53,9 +51,9 @@ public class IncidentMapper implements RowMapper<Incident> {
             inc.type = null;
         }
         // References
-        inc.aCase = caseDao.getById(rs.getInt("aCase"));
-        inc.bo = poiDao.getById(rs.getInt("bo"));
-        inc.ao = poiDao.getById(rs.getInt("ao"));
+        inc.concern = concernDao.getById(rs.getInt("concern_fk"));
+        inc.bo = pointDao.getById(rs.getInt("bo_point_fk"));
+        inc.ao = pointDao.getById(rs.getInt("ao_point_fk"));
         inc.units = taskDao.getAllByIncidentId(inc.id);
 
         return inc;
