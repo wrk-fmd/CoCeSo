@@ -33,7 +33,7 @@ public class Incident {
 
     public int id;
 
-    public Concern concern;
+    public Integer concern;
 
     public IncidentState state;
 

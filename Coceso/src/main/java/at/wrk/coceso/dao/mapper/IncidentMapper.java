@@ -51,7 +51,7 @@ public class IncidentMapper implements RowMapper<Incident> {
             inc.type = null;
         }
         // References
-        inc.concern = concernDao.getById(rs.getInt("concern_fk"));
+        inc.concern = rs.getInt("concern_fk");
         inc.bo = pointDao.getById(rs.getInt("bo_point_fk"));
         inc.ao = pointDao.getById(rs.getInt("ao_point_fk"));
         inc.units = taskDao.getAllByIncidentId(inc.id);

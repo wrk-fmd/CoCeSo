@@ -83,15 +83,14 @@ public class UnitController implements IEntityController<Unit> {
 
         if(unit.id > 0) {
             Unit u = unitService.getById(unit.id);
-            if(u.concern.id != caseId)
+            if(u.concern != caseId)
                 return "{\"success\": false, \"info\":\"Active Concern not valid\"}";
         }
 
 
-        unit.concern = new Concern();
-        unit.concern.id = caseId;
+        unit.concern = caseId;
 
-        if(unit.concern.id <= 0) {
+        if(unit.concern <= 0) {
             return "{\"success\": false, \"info\":\"No active Concern. Cookies enabled?\"}";
         }
 
@@ -137,8 +136,7 @@ public class UnitController implements IEntityController<Unit> {
 
         Incident toHome = new Incident();
         toHome.state = IncidentState.Dispo;
-        toHome.concern = new Concern();
-        toHome.concern.id = activeCase;
+        toHome.concern = activeCase;
         toHome.ao = unit.home;
         toHome.bo = unit.position; // TODO useful?
         toHome.type = IncidentType.Relocation;

@@ -13,4 +13,9 @@ public class Point {
     public void prepareNotNull() {
         if(info == null) info = "";
     }
+
+    @Override
+    public String toString() {
+        return info+"";
+    }
 }

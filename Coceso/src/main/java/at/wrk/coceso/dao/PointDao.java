@@ -59,7 +59,6 @@ public class PointDao extends CocesoDao<Point> {
             return null;
 
         String q = "SELECT * FROM point WHERE info = ?";
-        Point poi;
 
         try {
             List<Point> list = jdbc.query(q, new Object[] {info}, pointMapper);

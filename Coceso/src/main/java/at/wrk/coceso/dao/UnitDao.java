@@ -197,7 +197,7 @@ public class UnitDao extends CocesoDao<Unit> {
             Logger.error("UnitDao.add(Unit): unit is NULL");
             return -1;
         }
-        if(uunit.concern == null || uunit.concern.id <= 0) {
+        if(uunit.concern == null || uunit.concern <= 0) {
             Logger.error("UnitDao.add(Unit): No concern given. call: " + uunit.call);
             return -1;
         }
@@ -224,7 +224,7 @@ public class UnitDao extends CocesoDao<Unit> {
                         throws SQLException {
                     PreparedStatement ps = connection.prepareStatement(q, Statement.RETURN_GENERATED_KEYS);
 
-                    ps.setInt(1, unit.concern.id);
+                    ps.setInt(1, unit.concern);
                     ps.setString(2, unit.state == null ? UnitState.AD.name() : unit.state.name());
                     ps.setString(3, unit.call);
                     ps.setString(4, unit.ani);

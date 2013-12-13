@@ -50,7 +50,7 @@ public class UnitMapper implements RowMapper<Unit> {
         }
 
         // References
-        unit.concern = concernDao.getById(rs.getInt("concern_fk"));
+        unit.concern = rs.getInt("concern_fk");
         unit.home = pointDao.getById(rs.getInt("home_point_fk"));
         unit.position = pointDao.getById(rs.getInt("position_point_fk"));
 

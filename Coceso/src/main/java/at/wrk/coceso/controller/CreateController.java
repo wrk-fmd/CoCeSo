@@ -79,6 +79,7 @@ public class CreateController {
         Operator user = (Operator) token.getPrincipal();
 
         Unit unit = new Unit();
+        unit.concern = case_id;
         unit.id = Integer.parseInt(request.getParameter("id"));
         unit.call = request.getParameter("call");
         unit.ani = request.getParameter("ani");
@@ -108,8 +109,7 @@ public class CreateController {
         Operator user = (Operator) token.getPrincipal();
 
         Unit unit = new Unit();
-        unit.concern = new Concern();
-        unit.concern.id = case_id;
+        unit.concern = case_id;
 
         unit.id = -1;
         unit.call = request.getParameter("call");
@@ -135,8 +135,7 @@ public class CreateController {
         Operator user = (Operator) token.getPrincipal();
 
         Unit unit = new Unit();
-        unit.concern = new Concern();
-        unit.concern.id = case_id;
+        unit.concern = case_id;
 
         unit.id = -1;
         unit.portable = request.getParameter("portable") != null;

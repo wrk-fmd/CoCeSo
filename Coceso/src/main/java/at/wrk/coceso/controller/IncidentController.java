@@ -102,15 +102,14 @@ public class IncidentController implements IEntityController<Incident> {
 
         if(incident.id > 0) {
             Incident i = incidentService.getById(incident.id);
-            if(i.concern.id != caseId)
+            if(i.concern != caseId)
                 return "{\"success\": false, \"info\":\"Active Concern not valid\"}";
         }
 
-        if(incident.concern == null)
-            incident.concern = new Concern();
-        incident.concern.id = caseId;
 
-        if(incident.concern.id <= 0) {
+        incident.concern = caseId;
+
+        if(incident.concern <= 0) {
             return "{\"success\": false, \"info\":\"No active Concern. Cookies enabled?\"}";
         }
 

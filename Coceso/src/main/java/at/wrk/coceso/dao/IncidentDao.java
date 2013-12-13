@@ -190,7 +190,7 @@ public class IncidentDao extends CocesoDao<Incident> {
                     throws SQLException {
                 PreparedStatement ps = connection.prepareStatement(q, Statement.RETURN_GENERATED_KEYS);
 
-                ps.setInt(1, incident.concern.id);
+                ps.setInt(1, incident.concern);
                 ps.setString(2, incident.state == null ? IncidentState.New.name() : incident.state.name());
                 ps.setString(3, incident.type == null ? IncidentType.Task.name() : incident.type.name());
                 ps.setInt(4, incident.priority);

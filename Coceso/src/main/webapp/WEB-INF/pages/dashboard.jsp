@@ -309,10 +309,10 @@
                                 ${eIncident.type}
                         </td>
                         <td>
-                                ## BO ##
+                                ${eIncident.bo}
                         </td>
                         <td>
-                                ## AO ##
+                                ${eIncident.ao}
                         </td>
                         <td>
                             ${eIncident.info}

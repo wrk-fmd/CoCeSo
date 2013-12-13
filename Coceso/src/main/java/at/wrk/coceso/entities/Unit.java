@@ -8,7 +8,7 @@ public class Unit {
 
     public int id;
 
-    public Concern concern;
+    public Integer concern;
 
     public UnitState state;
 
