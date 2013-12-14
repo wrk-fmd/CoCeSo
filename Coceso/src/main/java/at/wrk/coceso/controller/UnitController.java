@@ -5,6 +5,7 @@ import at.wrk.coceso.dao.TaskDao;
 import at.wrk.coceso.entity.*;
 import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.enums.IncidentType;
+import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.service.IncidentService;
 import at.wrk.coceso.service.TaskService;
 import at.wrk.coceso.service.UnitService;
@@ -145,6 +146,8 @@ public class UnitController implements IEntityController<Unit> {
         toHome.id = incidentService.add(toHome, user);
         //log.logFull(user, LogText.SEND_HOME_ASSIGN, activeCase, unit, toHome, true);
         taskService.assignUnit(toHome.id, unitId, user);
+
+        unit.incidents.put(toHome.getId(), TaskState.Assigned);
 
         return unit;
     }
