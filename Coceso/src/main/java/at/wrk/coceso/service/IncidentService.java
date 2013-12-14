@@ -51,9 +51,9 @@ public class IncidentService {
     }
 
     public int add(Incident incident, Operator operator) {
-        int ret = add(incident);
+        incident.id = add(incident);
         logService.logFull(operator, LogText.INCIDENT_NEW, incident.concern, null, incident, true);
-        return ret;
+        return incident.id;
     }
 
     public boolean remove(Incident incident) {

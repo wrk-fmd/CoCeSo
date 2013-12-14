@@ -53,10 +53,10 @@ public class UnitService {
     }
 
     public int add(Unit unit, Operator operator) {
-        int ret = add(unit);
-        unit.id = ret;
+
+        unit.id = add(unit);;
         logService.logFull(operator, LogText.UNIT_NEW+": "+unit.getCall(), unit.concern, unit, null, true);
-        return ret;
+        return unit.id;
     }
 
     public boolean remove(Unit unit) {
