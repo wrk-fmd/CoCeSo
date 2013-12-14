@@ -39,6 +39,10 @@
     <script src="js/coceso.js" type="text/javascript"></script>
     <script type="text/javascript">
       $(document).ready(function() {
+        if (window.location.hostname === "saturn.kuga28.at") {
+          Coceso.Conf.jsonBase = "../data/";
+        }
+
         Coceso.startup();
       });
     </script>

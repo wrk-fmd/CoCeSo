@@ -36,7 +36,7 @@ var Coceso = {
   Conf: {
     interval: 10000,
     contentBase: "content/",
-    jsonBase: "../data/"
+    jsonBase: "data/"
   },
   /**
    * Initialize the application
@@ -319,7 +319,7 @@ var Coceso = {
         url: Coceso.Conf.jsonBase + url,
         dataType: "json",
         contentType: "application/json",
-        data: data,
+        data: ko.toJSON(data),
         processData: false,
         success: function(data, status) {
           alert("success");
@@ -564,9 +564,9 @@ Coceso.ViewModels.ViewModelSingle = function(data, options) {
       if (self.changed()) {
         //Some data was locally edited
         orig = ko.utils.unwrapObservable(self.orig);
-        for (var i in data) {
+        for (var i in self.keepChanges) {
           var viewItem = ko.utils.unwrapObservable(self[i]);
-          if ((typeof orig[i] !== "undefined") && (viewItem !== orig[i]) && (viewItem !== data[i])) {
+          if ((typeof data[i] !== "undefined") && (typeof orig[i] !== "undefined") && (viewItem !== orig[i]) && (viewItem !== data[i])) {
             newData[i] = viewItem;
             if (data[i] !== orig[i]) {
               newOrig[i] = orig[i];
@@ -704,6 +704,16 @@ Coceso.ViewModels.ViewModelSingle.prototype = Object.create(Coceso.ViewModels.Vi
    */
   saveUrl: {value: null},
   /**
+   * Local changes to prioritize over server changes
+   *
+   * @type Object
+   */
+  keepChanges: {
+    value: {
+      info: true
+    }
+  },
+  /**
    * Save modified data
    *
    * @function
@@ -715,13 +725,7 @@ Coceso.ViewModels.ViewModelSingle.prototype = Object.create(Coceso.ViewModels.Vi
         return false;
       }
 
-      var data = ko.mapping.toJS(this);
-      data.units = undefined;
-      data.aCase = undefined;
-      data = ko.toJSON(data);
-      console.log(data);
-      Coceso.Ajax.save(data, this.saveUrl);
-
+      Coceso.Ajax.save(ko.mapping.toJS(this, {ignore: ["incidents", "units"]}), this.saveUrl);
       return true;
     }
   },
@@ -1189,37 +1193,39 @@ Coceso.ViewModels.Incident.prototype = Object.create(Coceso.ViewModels.ViewModel
    * @see Coceso.ViewModels.ViewModelSingle#save
    * @override
    */
-  save: {
-    value: function() {
-      if (!this.getOption("writeable") || !this.saveUrl) {
-        return false;
-      }
-
-      var data = ko.mapping.toJS(this, {ignore: ["units"]});
-
-      console.log(data);
-
-      if (!data.id) {
-
-      }
-
-      var units = (typeof this.units.units !== "undefined") ? ko.utils.arrayMap(this.units.units(), function(unit) {
-        return "incident/setToState/" + data.id + "/" + unit.id() + "/" + unit.taskState();
-      }) : [];
-
-      console.log(data.units);
-      console.log(units);
-
-      data.units = undefined;
-
-
-      data = ko.toJSON(data);
-      console.log(data);
-      Coceso.Ajax.save(data, this.saveUrl);
-
-      return true;
-    }
-  }
+//  save: {
+//    value: function() {
+//
+//
+//      if (!this.getOption("writeable") || !this.saveUrl) {
+//        return false;
+//      }
+//
+//      var data = ko.mapping.toJS(this, {ignore: ["units"]});
+//
+//      console.log(data);
+//
+//      if (!data.id) {
+//
+//      }
+//
+//      var units = (typeof this.units.units !== "undefined") ? ko.utils.arrayMap(this.units.units(), function(unit) {
+//        return "incident/setToState/" + data.id + "/" + unit.id() + "/" + unit.taskState();
+//      }) : [];
+//
+//      console.log(data.units);
+//      console.log(units);
+//
+//      data.units = undefined;
+//
+//
+//      data = ko.toJSON(data);
+//      console.log(data);
+//      Coceso.Ajax.save(data, this.saveUrl);
+//
+//      return true;
+//    }
+//  }
 });
 
 /**
