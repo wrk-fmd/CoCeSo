@@ -39,6 +39,10 @@
     <script src="js/coceso.js" type="text/javascript"></script>
     <script type="text/javascript">
       $(document).ready(function() {
+        if (window.location.hostname === "saturn.kuga28.at") {
+          Coceso.Conf.jsonBase = "../data/";
+        }
+
         Coceso.startup();
       });
     </script>
@@ -54,23 +58,24 @@
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">Units <b class="caret"></b></a>
             <ul class="dropdown-menu">
-              <li><a href="#" title="Units" onclick="Coceso.UI.openUnits(this.title, 'units.html');
-        return false;">Overview</a></li>
+              <li><a href="#" title="Units" onclick="return Coceso.UI.openUnits(this.title, 'units.html');">Overview</a></li>
+              <li><a href="#" title="Assigned Units" onclick="return Coceso.UI.openUnits(this.title, 'units.html', {filter: ['radio']});">Assigned Units (Radio operator)</a></li>
             </ul>
           </li>
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">Incidents <b class="caret"></b></a>
             <ul class="dropdown-menu">
-              <li><a href="#" title="Add Incident" onclick="Coceso.UI.openIncident(this.title, 'incident_form.html');
-        return false;">Add</a></li>
-              <li><a href="#" title="Incidents" onclick="Coceso.UI.openIncidents(this.title, 'incidents.html');
-        return false;">Show Incidents</a></li>
+              <li><a href="#" title="Add Incident" onclick="return Coceso.UI.openIncident(this.title, 'incident_form.html');">Add</a></li>
+              <li><a href="#" title="Active Incidents" onclick="return Coceso.UI.openIncidents(this.title, 'incidents.html', {filter: ['overview', 'active']});">Active Incidents</a></li>
+              <li><a href="#" title="New Incidents" onclick="return Coceso.UI.openIncidents(this.title, 'incidents.html', {filter: ['overview', 'new'], showTabs: false});">New Incidents (Calltaker)</a></li>
+              <li><a href="#" title="Open Incidents" onclick="return Coceso.UI.openIncidents(this.title, 'incidents.html', {filter: ['overview', 'open'], showTabs: false});">Open Incidents (Dispo)</a></li>
+              <li><a href="#" title="Completed Incidents" onclick="return Coceso.UI.openIncidents(this.title, 'incidents.html', {filter: ['overview', 'completed']});">Completed Incidents</a></li>
             </ul>
           </li>
+          <li><a href="#" title="Logs" onclick="return Coceso.UI.openLogs(this.title, 'log.html');">Logs</a></li>
           <li><a href="/coceso/edit" target="_blank">Admin</a></li>
           <li><a href="/coceso/dashboard" target="_blank">Dashboard</a></li>
-          <li><a href="#" title="License" onclick="Coceso.UI.openStatic(this.title, 'license.html');
-        return false;">License</a></li>
+          <li><a href="#" title="License" onclick="return Coceso.UI.openStatic(this.title, 'license.html');">License</a></li>
         </ul>
       </nav>
     </header>

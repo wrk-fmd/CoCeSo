@@ -110,6 +110,7 @@ $.widget("ui.winman", {
       el.find("*").each(function(i, child) {
         $(child).prependAttr("id", id + "-");
         $(child).prependAttr("for", id + "-");
+        $(child).prependAttr("name", id + "-");
       });
       callback(el.get(0));
     });
@@ -121,6 +122,7 @@ $.widget("ui.winman", {
     });
 
     this.windows[id].dialog({
+      closeOnEscape: false,
       width: 'auto',
       height: 'auto',
       autoOpen: true,

@@ -24,7 +24,7 @@
  */
 
 @import "bootstrap.css";
-@import "ui-bootstrap/jquery-ui-1.10.0.custom.css";
+@import "ui-bootstrap/jquery-ui-1.10.3.custom.css";
 @import "jquery.ui.winman.css";
 
 /**
@@ -47,6 +47,17 @@ body > .ajax_content {
   display: none;
 }
 
+.key {
+  display: inline-block;
+  font-weight: bold;
+  margin-right: 0.3em;
+  min-width: 3em;
+}
+
+.key:after {
+  content: ":";
+}
+
 /**
  * Overwrite/extend some UI defaults
  */
@@ -56,12 +67,15 @@ body > .ajax_content {
 }
 
 .ui-dialog, .ui-dialog-content {
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
   box-sizing: content-box;
 }
 
 .ui-dialog .ui-dialog-titlebar {
   font-size: 14px;
   padding: 3px 60px 5px 5px;
+  background: none;
 }
 
 .ui-dialog .ui-dialog-title {
@@ -78,11 +92,11 @@ body > .ajax_content {
 }
 
 .ui-accordion .ui-accordion-header {
-  padding: 0.2em 0.6em 0.2em 1.8em;
+  padding: 0.5em 0.6em 0.5em 2em;
 }
 
 .ui-accordion .ui-accordion-content {
-  padding: 0 0.5em;
+  padding: 0.5em;
 }
 
 label.ui-button {
@@ -115,7 +129,7 @@ label.ui-button {
 
 .ui-buttonset.ui-tabs .ui-button {
   background: none;
-  margin: 0;
+  margin: 0 0 -1px;
   padding: 0;
   text-shadow: none;
   white-space: nowrap;
@@ -123,10 +137,14 @@ label.ui-button {
   -webkit-border-radius: 4px 4px 0 0;
   -moz-border-radius: 4px 4px 0 0;
   border-radius: 4px 4px 0 0;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
 }
 
 .ui-buttonset.ui-tabs .ui-button:hover {
   background: whiteSmoke;
+  border-color: #ddd;
 }
 
 .ui-buttonset.ui-tabs .ui-button .ui-button-text {
@@ -137,9 +155,9 @@ label.ui-button {
 }
 
 .ui-buttonset.ui-tabs .ui-button.ui-state-active {
-  background-color: #ffffff;
+  background: none;
   border-color: #ddd;
-  border-bottom-color: transparent;
+  border-bottom-color: #ffffff;
 }
 
 .ui-buttonset.ui-tabs .ui-button.ui-state-active:hover {
@@ -193,13 +211,34 @@ textarea.form-control {
  * Incidents list view
  */
 
+.ui-accordion-header.incidents_open {
+  color: #cd0a0a;
+}
+
+.incidents_ao {
+  display: block;
+  font-size: 0.9em;
+  color: #888888;
+  line-height: 17px;
+  font-weight: normal;
+}
+
+.ui-accordion-header .incidents_ao .ui-icon {
+  position: initial;
+  top: auto;
+  left: auto;
+  float: left;
+  background-image: url("ui-bootstrap/images/ui-icons_888888_256x240.png");
+  margin-top: 0;
+}
+
 span.incidents_priority {
   margin-left: 1em;
   float: right;
 }
 
 span.incidents_blue {
-  color: #0000ff;
+  color: #0064cd;
   font-weight: bold;
 }
 
@@ -226,7 +265,7 @@ span.incidents_blue {
   list-style: none;
 }
 
-.units_list li {
+.units_list > li {
   display: inline-block;
   margin: 5px;
 }
