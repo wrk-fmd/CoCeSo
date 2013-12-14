@@ -51,6 +51,26 @@ function uiBindingHandler(widget) {
   };
 }
 
+/**
+ * Generate the binding to refresh a jQuery UI widget
+ *
+ * @param {String} widget The jQuery UI widget constructor
+ * @return {BindingHandler}
+ */
+function uiBindingHandlerRefresh(widget) {
+  return {
+    init: function(element, valueAccessor) {
+      ko.utils.unwrapObservable(valueAccessor());
+    },
+    update: function(element, valueAccessor) {
+      ko.utils.unwrapObservable(valueAccessor());
+      if ($(element).data("ui-" + widget)) {
+        $(element)[widget]("refresh");
+      }
+    }
+  };
+}
+
 
 /**
  * Generate Accordion from loop
@@ -60,18 +80,26 @@ function uiBindingHandler(widget) {
 ko.bindingHandlers.accordion = uiBindingHandler("accordion");
 
 /**
- * Generate Tabs from element
+ * Generate Button from element
  *
  * @type {BindingHandler}
  */
 ko.bindingHandlers.button = uiBindingHandler("button");
 
 /**
- * Generate Tabs from element
+ * Generate Buttonset from element
  *
  * @type {BindingHandler}
  */
 ko.bindingHandlers.buttonset = uiBindingHandler("buttonset");
+
+/**
+ * Subscribe to refresh buttonset
+ *
+ * @param {String} widget The jQuery UI widget constructor
+ * @return {BindingHandler}
+ */
+ko.bindingHandlers.buttonset_refresh = uiBindingHandlerRefresh("buttonset");
 
 /**
  * Generate Draggable from element
@@ -127,6 +155,24 @@ ko.extenders.integer = function(target, active) {
  * @see applyFilter
  */
 ko.extenders.filtered = function(target, options) {
+  var compare = function(op, a, b) {
+    if (a instanceof Object) {
+      var i;
+      for (i in a) {
+        if (compare(op, a[i], b)) {
+          return true;
+        }
+      }
+      return false;
+    } else {
+      if (op === "not") {
+        return (a !== b);
+      }
+
+      return (a === b);
+    }
+  };
+
   /**
    * Recursively apply filters
    *
@@ -148,6 +194,9 @@ ko.extenders.filtered = function(target, options) {
    *    }
    *  }
    *
+   * Each filter may also be an object like
+   *  {op: "operator", val: "value"}
+   *
    * @param {Object} filterObj
    * @param {ViewModelSingle} val The ViewModel to check
    * @return {boolean} True if
@@ -158,11 +207,27 @@ ko.extenders.filtered = function(target, options) {
     for (i in filterObj.filter) {
       //Check all objects in filter
       if (typeof filterObj.filter[i] !== "undefined") {
-        var ret = (typeof filterObj.filter[i].filter !== "undefined")
+        var ret;
+        if (typeof filterObj.filter[i].filter !== "undefined") {
           //Checked filter is actually another filterObj: Recursive call
-          ? applyFilter(filterObj.filter[i], val)
+          ret = applyFilter(filterObj.filter[i], val);
+        } else {
           //Compare
-          : (val[i] && (ko.utils.unwrapObservable(val[i]) === filterObj.filter[i]));
+          if (typeof val[i] === "undefined") {
+            ret = false;
+          } else {
+            var filter = filterObj.filter[i], op = "equal";
+            if ((typeof filter.op !== "undefined") && (typeof filter.val !== "undefined")) {
+              op = filter.op;
+              filter = filter.val;
+            } else if (typeof filter.val !== "undefined") {
+              filter = filter.val;
+            }
+
+            ret = compare(op, filter, ko.utils.unwrapObservable(val[i]));
+          }
+        }
+
         if (ret !== and) {
           //"and" connection and this result is false => return false
           //"or" connection and this result is true => return true
