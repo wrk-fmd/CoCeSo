@@ -60,7 +60,7 @@
                     <div class="form-group">
                         <label for="case_pax">Persons</label>
                         <input type="number" id="case_pax" name="pax" value="${caze.pax}"
-                               class="form-control input-sm">
+                               class="form-control input-sm" maxlength="9">
                     </div>
                 </div>
             </div>
