@@ -2,7 +2,7 @@ package at.wrk.coceso.utils;
 
 
 import at.wrk.coceso.dao.OperatorDao;
-import at.wrk.coceso.entities.Operator;
+import at.wrk.coceso.entity.Operator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;

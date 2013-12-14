@@ -1,7 +1,7 @@
 package at.wrk.coceso.dao.mapper;
 
 import at.wrk.coceso.dao.ConcernDao;
-import at.wrk.coceso.entities.Person;
+import at.wrk.coceso.entity.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;

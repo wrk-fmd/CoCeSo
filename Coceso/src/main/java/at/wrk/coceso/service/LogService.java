@@ -2,7 +2,7 @@ package at.wrk.coceso.service;
 
 
 import at.wrk.coceso.dao.LogDao;
-import at.wrk.coceso.entities.*;
+import at.wrk.coceso.entity.*;
 import at.wrk.coceso.utils.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;

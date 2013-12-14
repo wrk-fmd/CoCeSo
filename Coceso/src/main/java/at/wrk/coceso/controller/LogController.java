@@ -2,8 +2,8 @@
 package at.wrk.coceso.controller;
 
 import at.wrk.coceso.dao.LogDao;
-import at.wrk.coceso.entities.LogEntry;
-import at.wrk.coceso.entities.Operator;
+import at.wrk.coceso.entity.LogEntry;
+import at.wrk.coceso.entity.Operator;
 import at.wrk.coceso.service.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

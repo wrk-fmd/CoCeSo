@@ -3,8 +3,8 @@ package at.wrk.coceso.dao;
 
 import at.wrk.coceso.dao.mapper.CrewPersonMapper;
 import at.wrk.coceso.dao.mapper.CrewUnitMapper;
-import at.wrk.coceso.entities.Person;
-import at.wrk.coceso.entities.Unit;
+import at.wrk.coceso.entity.Person;
+import at.wrk.coceso.entity.Unit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;

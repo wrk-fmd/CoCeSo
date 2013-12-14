@@ -40,7 +40,7 @@
         <h2>Edit Case</h2>
     </div>
     <div>
-        <c:url value="/update" var="update" />
+        <c:url value="/edit/update" var="update" />
         <form action="${update}" method="post" role="form">
             <input type="hidden" name="id" value="${caze.id}">
 
@@ -99,7 +99,7 @@
             </tr>
             </thead>
             <tbody>
-                <c:url value="/updateUnit" var="updateUnit" />
+                <c:url value="/edit/updateUnit" var="updateUnit" />
                 <c:forEach items="${unit_list}" var="unit">
                     <form action="${updateUnit}" method="post" class="form-inline" role="form">
                         <tr>
@@ -141,7 +141,7 @@
                     </form>
                 </c:forEach>
 
-                <c:url value="/createUnit" var="createUnit" />
+                <c:url value="/edit/createUnit" var="createUnit" />
                 <form action="${createUnit}" method="post" class="form-inline" role="form">
                     <tr>
                         <td style="display: none;"></td>
@@ -184,7 +184,7 @@
         <h2>Create Units as Batch Job</h2>
     </div>
     <div>
-        <c:url value="/createUnitBatch" var="createUnitBatch" />
+        <c:url value="/edit/createUnitBatch" var="createUnitBatch" />
         <form action="${createUnitBatch}" method="post" role="form">
 
             <div class="row">

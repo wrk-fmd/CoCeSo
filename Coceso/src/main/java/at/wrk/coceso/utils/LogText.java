@@ -21,5 +21,5 @@ public class LogText {
     public static final String INCIDENT_DELETE = "Incident deleted";
     public static final String UNIT_NEW = UNIT+" created";
     public static final String UNIT_DELETE = UNIT + " deleted";
-    public static final String UNIT_UPDATE = UNIT + "updated";
+    public static final String UNIT_UPDATE = UNIT + " updated";
 }

@@ -3,12 +3,14 @@ package at.wrk.coceso.service;
 import at.wrk.coceso.dao.IncidentDao;
 import at.wrk.coceso.dao.TaskDao;
 import at.wrk.coceso.dao.UnitDao;
-import at.wrk.coceso.entities.*;
+import at.wrk.coceso.entity.*;
+import at.wrk.coceso.entity.enums.IncidentState;
+import at.wrk.coceso.entity.enums.IncidentType;
+import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.utils.LogText;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Map;
 
 @Service

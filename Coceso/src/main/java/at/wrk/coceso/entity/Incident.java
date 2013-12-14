@@ -1,5 +1,9 @@
-package at.wrk.coceso.entities;
+package at.wrk.coceso.entity;
 
+
+import at.wrk.coceso.entity.enums.IncidentState;
+import at.wrk.coceso.entity.enums.IncidentType;
+import at.wrk.coceso.entity.enums.TaskState;
 
 import java.util.ArrayList;
 import java.util.HashMap;

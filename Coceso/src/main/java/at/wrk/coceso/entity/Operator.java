@@ -1,5 +1,6 @@
-package at.wrk.coceso.entities;
+package at.wrk.coceso.entity;
 
+import at.wrk.coceso.entity.enums.CocesoAuthority;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,18 +24,39 @@ public class Operator extends Person implements UserDetails {
     @JsonIgnore
     public String username;
 
+    @JsonIgnore
+    private List<CocesoAuthority> authorities;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> ret = new ArrayList<GrantedAuthority>();
 
-        if(allowLogin) ret.add(new GrantedAuthority() {
-            @Override
-            public String getAuthority() {
-                return "MLS";
-            }
-        });
-
+        if(authorities != null) for(final CocesoAuthority auth : authorities) {
+            ret.add(new GrantedAuthority() {
+                @Override
+                public String getAuthority() {
+                    return auth.name();
+                }
+                @Override
+                public String toString() {
+                    return auth.name();
+                }
+            });
+        }
         return ret;
+    }
+
+    public void setAuthorities(List<CocesoAuthority> grantedAuthorities) {
+        authorities = grantedAuthorities;
+
+    }
+
+    public void addAuthority(CocesoAuthority authority) {
+        authorities.add(authority);
+    }
+
+    public boolean removeAuthority(CocesoAuthority authority) {
+        return authorities.remove(authority);
     }
 
     @Override

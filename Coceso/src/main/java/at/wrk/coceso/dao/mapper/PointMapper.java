@@ -1,7 +1,7 @@
 package at.wrk.coceso.dao.mapper;
 
 
-import at.wrk.coceso.entities.Point;
+import at.wrk.coceso.entity.Point;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 

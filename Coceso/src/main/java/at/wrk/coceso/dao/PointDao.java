@@ -1,7 +1,7 @@
 package at.wrk.coceso.dao;
 
 import at.wrk.coceso.dao.mapper.PointMapper;
-import at.wrk.coceso.entities.Point;
+import at.wrk.coceso.entity.Point;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;

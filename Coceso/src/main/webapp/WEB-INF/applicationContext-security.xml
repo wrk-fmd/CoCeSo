@@ -11,7 +11,16 @@
     <http use-expressions="true">
         <intercept-url pattern="/" access="permitAll" />
         <intercept-url pattern="/login" access="permitAll" />
-        <intercept-url pattern="/**" access="isAuthenticated()" />
+        <intercept-url pattern="/loginfailed" access="permitAll" />
+        <intercept-url pattern="/logout" access="isAuthenticated()" />
+
+        <intercept-url pattern="/dashboard" access="hasAnyRole('Dashboard', 'Root', 'MLS')" />
+        <intercept-url pattern="/data/**" access="hasAnyRole('MLS', 'Root')"/>
+        <intercept-url pattern="/main" access="hasAnyRole('MLS', 'Root')"/>
+        <intercept-url pattern="/welcome" access="hasAnyRole('MLS', 'Root')"/>
+        <intercept-url pattern="/edit" access="hasAnyRole('MLS', 'Root')"/>
+        <intercept-url pattern="/edit/**" access="hasAnyRole('MLS', 'Root')"/>
+        <intercept-url pattern="/**" access="hasAnyRole('Root')" />
 
         <logout delete-cookies="true" invalidate-session="true" logout-url="/logout" logout-success-url="/" />
         <form-login login-page="/login" default-target-url="/welcome" authentication-failure-url="/loginfailed" />

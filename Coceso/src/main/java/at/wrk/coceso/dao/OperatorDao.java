@@ -2,13 +2,20 @@ package at.wrk.coceso.dao;
 
 
 import at.wrk.coceso.dao.mapper.OperatorMapper;
-import at.wrk.coceso.entities.Operator;
+import at.wrk.coceso.entity.Operator;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 
@@ -20,6 +27,9 @@ public class OperatorDao extends CocesoDao<Operator> {
 
     @Autowired
     private PersonDao personDao;
+
+    @Autowired
+    private RoleDao roleDao;
 
     @Autowired
     public OperatorDao(DataSource dataSource) {
@@ -77,17 +87,38 @@ public class OperatorDao extends CocesoDao<Operator> {
     }
 
     @Override
-    public int add(Operator p) {
+    public int add(final Operator p) {
         if(p == null) return -1;
 
         p.id = personDao.add(p);
 
-        String q = "INSERT INTO operator (id, allowlogin, username, hashedpw, concern_fk) " +
+        final String q = "INSERT INTO operator (id, allowlogin, username, hashedpw, concern_fk) " +
                 "VALUES (?, ?, ?, ?, ?)";
 
-        jdbc.update(q, p.id, p.allowLogin, p.username, p.hashedPW, p.activeConcern == null ? null : p.activeConcern.id);
+        KeyHolder holder = new GeneratedKeyHolder();
 
-        return 0;
+        jdbc.update(new PreparedStatementCreator() {
+
+            @Override
+            public PreparedStatement createPreparedStatement(Connection connection)
+                    throws SQLException {
+                PreparedStatement ps = connection.prepareStatement(q, Statement.RETURN_GENERATED_KEYS);
+
+                ps.setInt(1, p.id);
+                ps.setBoolean(2, p.allowLogin);
+                ps.setString(3, p.username);
+                ps.setString(4, p.hashedPW);
+                if(p.activeConcern == null)
+                    ps.setObject(5, null);
+                else ps.setInt(5, p.activeConcern.id);
+
+                return ps;
+            }
+        }, holder);
+
+        roleDao.add(p.id, p.getAuthorities());
+
+        return (Integer) holder.getKeys().get("id");
     }
 
     @Override

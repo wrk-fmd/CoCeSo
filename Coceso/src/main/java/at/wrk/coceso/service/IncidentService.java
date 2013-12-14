@@ -1,10 +1,9 @@
 package at.wrk.coceso.service;
 
-import at.wrk.coceso.dao.CocesoDao;
 import at.wrk.coceso.dao.IncidentDao;
-import at.wrk.coceso.entities.Incident;
-import at.wrk.coceso.entities.IncidentState;
-import at.wrk.coceso.entities.Operator;
+import at.wrk.coceso.entity.Incident;
+import at.wrk.coceso.entity.enums.IncidentState;
+import at.wrk.coceso.entity.Operator;
 import at.wrk.coceso.utils.LogText;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

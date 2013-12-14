@@ -1,6 +1,6 @@
 package at.wrk.coceso.controller;
 
-import at.wrk.coceso.entities.Operator;
+import at.wrk.coceso.entity.Operator;
 import at.wrk.coceso.service.LogService;
 import at.wrk.coceso.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;

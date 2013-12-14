@@ -1,10 +1,10 @@
-<%@ page import="at.wrk.coceso.entities.Unit" %>
+<%@ page import="at.wrk.coceso.entity.Unit" %>
 <%@ page import="java.util.Map" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <html>
 <head>
-    <title></title>
+    <title>Coceso - Dashboard</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -40,38 +40,47 @@
                 <li class="dropdown ${log}">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Log <b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        <li><a href="?sub=Log">Full Log</a></li>
+                        <li><a href="?concern=${concern}&sub=Log">Full Log</a></li>
                         <li class="divider"></li>
-                        <li><a href="?sub=Log&uid=0">Log by Unit</a></li>
-                        <li><a href="?sub=Log&iid=0">Log by Incident</a></li>
+                        <li><a href="?concern=${concern}&sub=Log&uid=0">Log by Unit</a></li>
+                        <li><a href="?concern=${concern}&sub=Log&iid=0">Log by Incident</a></li>
                     </ul>
                 </li>
                 <li class="dropdown ${task}">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Task <b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        <li><a href="?sub=Task&uid=0">Tasks by Unit</a></li>
-                        <li><a href="?sub=Task&iid=0">Tasks by Incident</a></li>
+                        <li><a href="?concern=${concern}&sub=Task&uid=0">Tasks by Unit</a></li>
+                        <li><a href="?concern=${concern}&sub=Task&iid=0">Tasks by Incident</a></li>
                     </ul>
                 </li>
                 <li class="dropdown ${unit}">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Unit <b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        <li><a href="?sub=Unit">Unit List</a></li>
+                        <li><a href="?concern=${concern}&sub=Unit">Unit List</a></li>
                         <li class="divider"></li>
-                        <li><a href="?sub=Unit&uid=0">Unit by Id</a></li>
+                        <li><a href="?concern=${concern}&sub=Unit&uid=0">Unit by Id</a></li>
                     </ul>
                 </li>
                 <li class="dropdown ${incident}">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Incident <b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        <li><a href="?sub=Incident">Incident List</a></li>
-                        <li><a href="?sub=Incident&uid=-1">Active Incidents</a></li>
+                        <li><a href="?concern=${concern}&sub=Incident">Incident List</a></li>
+                        <li><a href="?concern=${concern}&sub=Incident&uid=-1">Active Incidents</a></li>
                         <li class="divider"></li>
-                        <li><a href="?sub=Incident&iid=0">Incident by Id</a></li>
+                        <li><a href="?concern=${concern}&sub=Incident&iid=0">Incident by Id</a></li>
                     </ul>
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Concern <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <c:forEach items="${concerns}" var="c_concern">
+                            <li><a href="?concern=${c_concern.id}">${c_concern.name}</a></li>
+                        </c:forEach>
+
+                    </ul>
+                </li>
                 <li><a href="${back_link}">Back</a></li>
                 <li><a href="${logout_link}">Logout</a></li>
             </ul>
@@ -85,8 +94,8 @@
     </c:if>
 
 
-    <c:url var="get_inc" value="/dashboard?sub=Incident&iid=" />
-    <c:url var="get_unit" value="/dashboard?sub=Unit&uid=" />
+    <c:url var="get_inc" value="/dashboard?concern=${concern}&sub=Incident&iid=" />
+    <c:url var="get_unit" value="/dashboard?concern=${concern}&sub=Unit&uid=" />
 
     <c:if test="${not empty unit && not empty uid}">
         <div>
@@ -94,6 +103,7 @@
                 <div class="row">
                     <div class="col-lg-2">
                         <input type="hidden" name="sub" value="Unit" />
+                        <input type="hidden" name="concern" value="${concern}" />
                     </div>
                     <div class="col-lg-2">
                         <!--input type="number" placeholder="Unit ID" name="uid" class="form-control" value="${uid}"/-->

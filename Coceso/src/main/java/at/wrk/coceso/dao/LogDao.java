@@ -1,8 +1,8 @@
 package at.wrk.coceso.dao;
 
 import at.wrk.coceso.dao.mapper.LogMapper;
-import at.wrk.coceso.entities.LogEntry;
-import at.wrk.coceso.entities.TaskState;
+import at.wrk.coceso.entity.LogEntry;
+import at.wrk.coceso.entity.enums.TaskState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
@@ -10,8 +10,6 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.sql.Timestamp;
 import java.util.List;
-
-//TODO CHECK!!
 
 @Repository
 public class LogDao extends CocesoDao<LogEntry> {

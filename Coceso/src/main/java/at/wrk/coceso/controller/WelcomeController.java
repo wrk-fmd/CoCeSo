@@ -1,7 +1,8 @@
 package at.wrk.coceso.controller;
 
 import at.wrk.coceso.dao.*;
-import at.wrk.coceso.entities.*;
+import at.wrk.coceso.entity.*;
+import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.service.IncidentService;
 import at.wrk.coceso.service.TaskService;
 import at.wrk.coceso.service.UnitService;
@@ -26,8 +27,12 @@ public class WelcomeController {
     @Autowired
     ConcernDao concernDao;
 
+    // Read Only use, TODO change to Service
     @Autowired
     LogDao logDao;
+
+    @Autowired
+    OperatorDao operatorDao;
 
     @Autowired
     IncidentService incidentService;
@@ -67,6 +72,8 @@ public class WelcomeController {
         UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
         Operator user = (Operator) token.getPrincipal();
 
+        user = operatorDao.getById(user.id);
+
         map.addAttribute("user", user);
 
         List<Concern> concern_list = concernDao.getAll();
@@ -102,9 +109,12 @@ public class WelcomeController {
                                 @RequestParam(value = "uid", required = false) Integer uid,
                                 @RequestParam(value = "iid", required = false) Integer iid,
                                 ModelMap map,
-                                @CookieValue(value = "active_case", defaultValue = "0") String caze)
+                                @RequestParam(value = "concern", defaultValue = "0") String caze)
     {
         int actCase = Integer.parseInt(caze);
+        map.addAttribute("concern", actCase);
+
+        map.addAttribute("concerns", concernDao.getAll());
 
         if(uid != null)
             map.addAttribute("uid", uid);

@@ -1,4 +1,4 @@
-package at.wrk.coceso.entities;
+package at.wrk.coceso.entity;
 
 import org.junit.Assert;
 import org.junit.Before;

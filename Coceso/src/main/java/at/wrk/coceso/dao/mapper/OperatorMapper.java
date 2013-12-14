@@ -1,7 +1,8 @@
 package at.wrk.coceso.dao.mapper;
 
 import at.wrk.coceso.dao.ConcernDao;
-import at.wrk.coceso.entities.Operator;
+import at.wrk.coceso.dao.RoleDao;
+import at.wrk.coceso.entity.Operator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -14,6 +15,9 @@ public class OperatorMapper implements RowMapper<Operator> {
 
     @Autowired
     ConcernDao concernDao;
+
+    @Autowired
+    RoleDao roleDao;
 
     @Override
     public Operator mapRow(ResultSet rs, int i) throws SQLException {
@@ -30,6 +34,7 @@ public class OperatorMapper implements RowMapper<Operator> {
         p.given_name = rs.getString("given_name");
         p.sur_name = rs.getString("sur_name");
 
+        p.setAuthorities(roleDao.getByOperatorId(p.id));
 
         // References
         p.activeConcern = concernDao.getById(rs.getInt("concern_fk"));

@@ -1,9 +1,9 @@
 package at.wrk.coceso.dao;
 
-import at.wrk.coceso.entities.Incident;
-import at.wrk.coceso.entities.IncidentState;
-import at.wrk.coceso.entities.IncidentType;
-import at.wrk.coceso.entities.TaskState;
+import at.wrk.coceso.entity.Incident;
+import at.wrk.coceso.entity.enums.IncidentState;
+import at.wrk.coceso.entity.enums.IncidentType;
+import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;

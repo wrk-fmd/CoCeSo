@@ -14,19 +14,14 @@
 
 </head>
 <body>
-<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<c:url var="jquery" value="/static/jquery.js" />
-<script src="${jquery}"></script>
-<!-- Include all compiled plugins (below), or include individual files as needed -->
-<c:url var="bootstrap_js" value="/static/bootstrap.js" />
-<script src="${bootstrap_js}"></script>
 
 <div class="container">
     <div class="alert alert-success">
         <c:url var="logout_link" value="/logout" />
         <div class="row">
             <div class="col-lg-8 text-left">
-                <strong>Current User:</strong> ${user.given_name} ${user.sur_name} (${user.username})
+                <strong>Current User:</strong> ${user.given_name} ${user.sur_name} (${user.username})<br>
+                Roles: <c:forEach items="${user.authorities}" var="role">${role} - </c:forEach><br>
             </div>
             <div class="col-lg-4 text-right">
                 <a href="${pageContext.request.contextPath}/dashboard" class="btn btn-primary">Dashboard</a>
@@ -75,7 +70,7 @@
         </h2>
     </div>
     <div>
-        <form action="${pageContext.request.contextPath}/create" method="post" role="form">
+        <form action="${pageContext.request.contextPath}/edit/create" method="post" role="form">
             <div class="row">
                 <div class="col-lg-2">
                     &nbsp;
@@ -125,6 +120,13 @@
     </div>
     <!--##############-->
 </div>
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<c:url var="jquery" value="/static/jquery.js" />
+<script src="${jquery}"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<c:url var="bootstrap_js" value="/static/bootstrap.js" />
+<script src="${bootstrap_js}"></script>
 
 
 </body>

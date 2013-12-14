@@ -1,7 +1,7 @@
 package at.wrk.coceso.dao;
 
 import at.wrk.coceso.dao.mapper.ConcernMapper;
-import at.wrk.coceso.entities.Concern;
+import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;

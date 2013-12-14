@@ -1,5 +1,8 @@
-package at.wrk.coceso.entities;
+package at.wrk.coceso.entity;
 
+
+import at.wrk.coceso.entity.enums.TaskState;
+import at.wrk.coceso.entity.enums.UnitState;
 
 import java.util.List;
 import java.util.Map;

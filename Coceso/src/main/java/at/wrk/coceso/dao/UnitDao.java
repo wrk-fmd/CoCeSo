@@ -2,10 +2,10 @@ package at.wrk.coceso.dao;
 
 
 import at.wrk.coceso.dao.mapper.UnitMapper;
-import at.wrk.coceso.entities.Person;
-import at.wrk.coceso.entities.Point;
-import at.wrk.coceso.entities.Unit;
-import at.wrk.coceso.entities.UnitState;
+import at.wrk.coceso.entity.Person;
+import at.wrk.coceso.entity.Point;
+import at.wrk.coceso.entity.Unit;
+import at.wrk.coceso.entity.enums.UnitState;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;

@@ -2,7 +2,8 @@ package at.wrk.coceso.dao.mapper;
 
 import at.wrk.coceso.dao.IncidentDao;
 import at.wrk.coceso.dao.UnitDao;
-import at.wrk.coceso.entities.*;
+import at.wrk.coceso.entity.*;
+import at.wrk.coceso.entity.enums.TaskState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;

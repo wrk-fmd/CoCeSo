@@ -73,17 +73,10 @@ CREATE TABLE operator (
   FOREIGN KEY (concern_fk) REFERENCES concern ON DELETE SET NULL
 );
 
-CREATE TABLE role (
-  id INTEGER NOT NULL DEFAULT nextval('role_id_seq'),
-  description VARCHAR(16),
-  PRIMARY KEY (id)
-);
-
-CREATE TABLE operator_roles (
-  operator INTEGER NOT NULL,
-  role INTEGER NOT NULL,
-  PRIMARY KEY (operator, role),
-  FOREIGN KEY (operator) REFERENCES operator
+CREATE TABLE operator_role (
+  operator_fk INTEGER NOT NULL,
+  role VARCHAR (16) NOT NULL,
+  PRIMARY KEY (operator_fk, role)
 );
 
 CREATE TABLE crew (
@@ -125,7 +118,7 @@ CREATE TABLE log (
   json TEXT,
   PRIMARY KEY (id),
   FOREIGN KEY (concern_fk) REFERENCES concern ON DELETE NO ACTION,
-  FOREIGN KEY (unit_fk) REFERENCES unit ON DELETE NO ACTION,
+  FOREIGN KEY (unit_fk) REFERENCES unit ON DELETE SET NULL,
   FOREIGN KEY (incident_fk) REFERENCES incident ON DELETE NO ACTION,
   FOREIGN KEY (operator_fk) REFERENCES operator ON DELETE NO ACTION
 );

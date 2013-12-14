@@ -1,10 +1,10 @@
 
 package at.wrk.coceso.controller;
 
-import at.wrk.coceso.dao.IncidentDao;
-import at.wrk.coceso.entities.*;
+import at.wrk.coceso.entity.*;
+import at.wrk.coceso.entity.enums.IncidentState;
+import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.service.IncidentService;
-import at.wrk.coceso.service.LogService;
 import at.wrk.coceso.service.TaskService;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

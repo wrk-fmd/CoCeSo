@@ -1,9 +1,9 @@
 package at.wrk.coceso.controller;
 
 import at.wrk.coceso.dao.ConcernDao;
-import at.wrk.coceso.entities.Concern;
-import at.wrk.coceso.entities.Operator;
-import at.wrk.coceso.entities.Unit;
+import at.wrk.coceso.entity.Concern;
+import at.wrk.coceso.entity.Operator;
+import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.service.UnitService;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class CreateController {
     @Autowired
     UnitService unitService;
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    @RequestMapping(value = "/edit/create", method = RequestMethod.POST)
     public String create(HttpServletRequest request) {
 
         Concern caze = new Concern();
@@ -54,7 +54,7 @@ public class CreateController {
         return "edit";
     }
 
-    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    @RequestMapping(value = "/edit/update", method = RequestMethod.POST)
     public String updateCase(@RequestParam("id") int id, @RequestParam("name") String name,
                          @RequestParam("info") String info,
                          @RequestParam("pax") int pax) {
@@ -71,7 +71,7 @@ public class CreateController {
     }
 
 
-    @RequestMapping(value = "/updateUnit", method = RequestMethod.POST)
+    @RequestMapping(value = "/edit/updateUnit", method = RequestMethod.POST)
     public String updateUnit(HttpServletRequest request,
                          @CookieValue("active_case") int case_id, Principal principal)
     {
@@ -101,7 +101,7 @@ public class CreateController {
         return "redirect:/edit";
     }
 
-    @RequestMapping(value = "/createUnit", method = RequestMethod.POST)
+    @RequestMapping(value = "/edit/createUnit", method = RequestMethod.POST)
     public String createUnit(HttpServletRequest request,
                              @CookieValue("active_case") int case_id, Principal principal)
     {
@@ -126,7 +126,7 @@ public class CreateController {
         return "redirect:/edit";
     }
 
-    @RequestMapping(value = "/createUnitBatch", method = RequestMethod.POST)
+    @RequestMapping(value = "/edit/createUnitBatch", method = RequestMethod.POST)
     public String createUnitBatch(HttpServletRequest request,
                              @CookieValue("active_case") int case_id,
                              Principal principal)

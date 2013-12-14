@@ -1,4 +1,6 @@
-package at.wrk.coceso.entities;
+package at.wrk.coceso.entity;
+
+import at.wrk.coceso.entity.enums.TaskState;
 
 import java.sql.Timestamp;
 

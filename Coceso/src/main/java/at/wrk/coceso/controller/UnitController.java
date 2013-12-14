@@ -2,12 +2,12 @@
 package at.wrk.coceso.controller;
 
 import at.wrk.coceso.dao.TaskDao;
-import at.wrk.coceso.entities.*;
+import at.wrk.coceso.entity.*;
+import at.wrk.coceso.entity.enums.IncidentState;
+import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.service.IncidentService;
-import at.wrk.coceso.service.LogService;
 import at.wrk.coceso.service.TaskService;
 import at.wrk.coceso.service.UnitService;
-import at.wrk.coceso.utils.LogText;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
