@@ -108,6 +108,7 @@ public class UnitController implements IEntityController<Unit> {
         return "{\"success\": " + unitService.update(unit, user) + ", \"new\": false}";
     }
 
+    //TODO move logic to UnitService
     @RequestMapping(value = "sendHome/{id}", produces = "application/json", method = RequestMethod.GET)
     @ResponseBody
     public Unit sendHome(@CookieValue(value="active_case", defaultValue = "0") String case_id,

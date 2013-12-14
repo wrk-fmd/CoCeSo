@@ -121,13 +121,13 @@ public class IncidentDao extends CocesoDao<Incident> {
         }
         if(incident.ao != null) {
             if(comma) q+= ",";
-            q += "ao = ? ";
+            q += "ao_point_fk = ? ";
             parameters.add(incident.ao.id);
             comma = true;
         }
         if(incident.bo != null) {
             if(comma) q+= ",";
-            q += "bo = ? ";
+            q += "bo_point_fk = ? ";
             parameters.add(incident.bo.id);
             comma = true;
         }
@@ -155,10 +155,18 @@ public class IncidentDao extends CocesoDao<Incident> {
             parameters.add(incident.type.name());
             comma = true;
         }
-
-        q += (comma ? "," : "")+"priority = ?, blue = ? ";
-        parameters.add(incident.priority);
-        parameters.add(incident.blue);
+        if(incident.priority != null) {
+            if(comma) q+= ",";
+            q += "priority = ? ";
+            parameters.add(incident.priority);
+            comma = true;
+        }
+        if(incident.blue != null) {
+            if(comma) q+= ",";
+            q += "blue = ? ";
+            parameters.add(incident.blue);
+            comma = true;
+        }
 
         parameters.add(incident.id);
 
@@ -193,8 +201,8 @@ public class IncidentDao extends CocesoDao<Incident> {
                 ps.setInt(1, incident.concern);
                 ps.setString(2, incident.state == null ? IncidentState.New.name() : incident.state.name());
                 ps.setString(3, incident.type == null ? IncidentType.Task.name() : incident.type.name());
-                ps.setInt(4, incident.priority);
-                ps.setBoolean(5, incident.blue);
+                ps.setInt(4, incident.priority == null ? 0 : incident.priority);
+                ps.setBoolean(5, incident.blue == null ? false : incident.blue);
 
                 if(incident.bo != null)
                     ps.setInt(6, incident.bo.id);
