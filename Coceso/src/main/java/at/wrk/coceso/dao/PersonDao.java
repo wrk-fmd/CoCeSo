@@ -53,6 +53,12 @@ public class PersonDao extends CocesoDao<Person> {
         throw new UnsupportedOperationException();
     }
 
+    public List<Person> getAll() {
+        String q = "SELECT * FROM person";
+
+        return jdbc.query(q, personMapper);
+    }
+
     @Override
     public boolean update(Person p) {
         if(p == null || p.id <= 0) return false;
@@ -83,7 +89,7 @@ public class PersonDao extends CocesoDao<Person> {
                 PreparedStatement ps = connection.prepareStatement(q, Statement.RETURN_GENERATED_KEYS);
 
                 ps.setInt(1, p.dNr);
-                ps.setString(2, p.contact);
+                ps.setString(2, p.contact == null ? "" : p.contact);
                 ps.setString(3, p.given_name);
                 ps.setString(4, p.sur_name);
 

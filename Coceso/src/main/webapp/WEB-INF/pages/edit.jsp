@@ -16,7 +16,7 @@
 
 <body>
 
-<c:set var="transportVehicle" value="Transport Vehicle" />
+<c:set var="transportVehicle" value="Vehicle" />
 <c:set var="withDoc" value="Doctor" />
 <c:set var="call" value="Call" />
 <c:set var="ani" value="ANI" />
@@ -26,14 +26,20 @@
 
 <!-- #################### Start of Page ############## -->
 <div class="container">
+    <%--
     <div class="">
         <c:url var="welcomeScreen" value="/welcome" />
         <a href="${welcomeScreen}" class="active btn btn-warning">Back</a>
     </div>
+    --%>
+
+    <c:set value="active" var="nav_concern" />
+    <%@include file="parts/navbar.jsp"%>
 
     <div class="page-header">
         <h2>Edit Case</h2>
     </div>
+
     <div>
         <c:url value="/edit/update" var="update" />
         <form action="${update}" method="post" role="form">
@@ -108,30 +114,48 @@
                                 <input type="text" name="ani" value="${unit.ani}" maxlength="16" class="form-control"
                                         placeholder="${ani}">
                             </td>
-                            <c:choose>
-                                <c:when test="${unit.withDoc}">
-                                    <td><input type="checkbox" name="withDoc" checked></td>
-                                </c:when>
-                                <c:otherwise>
-                                    <td><input type="checkbox" name="withDoc"></td>
-                                </c:otherwise>
-                            </c:choose>
-                            <c:choose>
-                                <c:when test="${unit.transportVehicle}">
-                                    <td><input type="checkbox" name="transportVehicle" checked></td>
-                                </c:when>
-                                <c:otherwise>
-                                    <td><input type="checkbox" name="transportVehicle"></td>
-                                </c:otherwise>
-                            </c:choose>
-                            <c:choose>
-                                <c:when test="${unit.portable}">
-                                    <td><input type="checkbox" name="portable" checked></td>
-                                </c:when>
-                                <c:otherwise>
-                                    <td><input type="checkbox" name="portable"></td>
-                                </c:otherwise>
-                            </c:choose>
+                            <td>
+                                <div class="btn-group" data-toggle="buttons">
+                                    <c:choose>
+                                        <c:when test="${unit.withDoc}">
+                                            <label class="btn btn-default active">
+                                        </c:when>
+                                        <c:otherwise>
+                                            <label class="btn btn-default">
+                                        </c:otherwise>
+                                    </c:choose>
+                                    <input type="checkbox" name="withDoc">${withDoc}
+                                    </label>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="btn-group" data-toggle="buttons">
+                                    <c:choose>
+                                        <c:when test="${unit.transportVehicle}">
+                                            <label class="btn btn-default active">
+                                        </c:when>
+                                        <c:otherwise>
+                                            <label class="btn btn-default">
+                                        </c:otherwise>
+                                    </c:choose>
+                                    <input type="checkbox" name="transportVehicle">${transportVehicle}
+                                    </label>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="btn-group" data-toggle="buttons">
+                                        <c:choose>
+                                            <c:when test="${unit.portable}">
+                                                <label class="btn btn-default active">
+                                            </c:when>
+                                            <c:otherwise>
+                                                <label class="btn btn-default">
+                                            </c:otherwise>
+                                        </c:choose>
+                                        <input type="checkbox" name="portable">${portable}
+                                    </label>
+                                </div>
+                            </td>
                             <td>
                                 <input type="text" name="info" value="${unit.info}" maxlength="128" class="form-control"
                                         placeholder="${info}">
@@ -164,13 +188,25 @@
                             <input type="text" id="new_ani" name="ani" maxlength="16" class="form-control" placeholder="${ani}">
                         </td>
                         <td>
-                            <input type="checkbox" name="withDoc" >
+                            <div class="btn-group" data-toggle="buttons">
+                                <label class="btn btn-default">
+                                    <input type="checkbox" name="withDoc">${withDoc}
+                                </label>
+                            </div>
                         </td>
                         <td>
-                            <input type="checkbox" name="transportVehicle" >
+                            <div class="btn-group" data-toggle="buttons">
+                                <label class="btn btn-default">
+                                    <input type="checkbox" name="transportVehicle">${transportVehicle}
+                                </label>
+                                </div>
                         </td>
                         <td>
-                            <input type="checkbox" name="portable" >
+                            <div class="btn-group" data-toggle="buttons">
+                                <label class="btn btn-default">
+                                    <input type="checkbox" name="portable">${portable}
+                                </label>
+                            </div>
                         </td>
                         <td>
                             <label class="sr-only" for="new_info">${info}</label>
@@ -234,28 +270,23 @@
                     &nbsp;
                 </div>
 
-                <div class="col-lg-3">
-                    <label>
-                        <input type="checkbox" id="batch_doc" name="withDoc" class="checkbox-inline">
+                <div class="col-lg-5 btn-group text-center" data-toggle="buttons">
+                    <label class="btn btn-default">
+                        <input type="checkbox" id="batch_doc" name="withDoc">
                         ${withDoc}
                     </label>
-                </div>
-                <div class="col-lg-3">
-                    <label>
-                        <input type="checkbox" id="batch_vhcl" name="transportVehicle" class="checkbox-inline">
+
+                    <label class="btn btn-default">
+                        <input type="checkbox" id="batch_vhcl" name="transportVehicle">
                         ${transportVehicle}
                     </label>
-                </div>
-                <div class="col-lg-3">
-                    <label>
-                        <input type="checkbox" id="batch_portable" name="portable" class="checkbox-inline">
+
+                    <label class="btn btn-default">
+                        <input type="checkbox" id="batch_portable" name="portable">
                         ${portable}
                     </label>
                 </div>
 
-                <div class="col-lg-1">
-                    &nbsp;
-                </div>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-success">

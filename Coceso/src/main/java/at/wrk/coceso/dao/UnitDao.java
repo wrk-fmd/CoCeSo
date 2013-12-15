@@ -76,20 +76,24 @@ public class UnitDao extends CocesoDao<Unit> {
         }
     }
 
+    //TODO move to PointService
     Point createPointIfNotExist(Point dummy) {
         if(dummy == null)
             return null;
-        if(dummy.id <= 0) {
-            Point point = pointDao.getByInfo(dummy.info);
-            if(point == null && dummy.info != null) {
-                dummy.id = pointDao.add(dummy);
-                return dummy;
-            }
-            else return point;
+
+        if(dummy.id > 0) {
+            Point p = pointDao.getById(dummy.id);
+            if(p != null)
+                return p;
         }
-        else {
-            return pointDao.getById(dummy.id);
+
+
+        Point point = pointDao.getByInfo(dummy.info);
+        if(point == null && dummy.info != null && !dummy.info.isEmpty()) {
+            dummy.id = pointDao.add(dummy);
+            return dummy;
         }
+        else return point;
     }
 
     /**

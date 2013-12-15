@@ -1,6 +1,7 @@
 <%@ page import="at.wrk.coceso.entity.Unit" %>
 <%@ page import="java.util.Map" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <html>
 <head>
@@ -263,7 +264,7 @@
                 <c:forEach items="${logs}" var="logEntry">
                     <tr>
                         <td>
-                            ${logEntry.timestamp.hours}:${logEntry.timestamp.minutes}:${logEntry.timestamp.seconds}
+                            <fmt:formatNumber minIntegerDigits="2" value="${logEntry.timestamp.hours}" />:<fmt:formatNumber minIntegerDigits="2" value="${logEntry.timestamp.minutes}" />:<fmt:formatNumber minIntegerDigits="2" value="${logEntry.timestamp.seconds}" />
                         </td>
                         <td>
                             ${logEntry.user.username}

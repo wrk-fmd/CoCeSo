@@ -16,18 +16,14 @@
 <body>
 
 <div class="container">
+
+    <c:set value="active" var="nav_home" />
+    <%@include file="parts/navbar.jsp"%>
+
+
     <div class="alert alert-success">
-        <c:url var="logout_link" value="/logout" />
-        <div class="row">
-            <div class="col-lg-8 text-left">
-                <strong>Current User:</strong> ${user.given_name} ${user.sur_name} (${user.username})<br>
-                Roles: <c:forEach items="${user.authorities}" var="role">${role} - </c:forEach><br>
-            </div>
-            <div class="col-lg-4 text-right">
-                <a href="${pageContext.request.contextPath}/dashboard" class="btn btn-primary">Dashboard</a>
-                <a href="${logout_link}" class="btn btn-danger">Logout</a>
-            </div>
-        </div>
+            <strong>Current User:</strong> ${user.given_name} ${user.sur_name} (${user.username})<br>
+            Roles: <c:forEach items="${user.authorities}" var="role">${role} - </c:forEach>
     </div>
     <div class="page-header">
         <h2>

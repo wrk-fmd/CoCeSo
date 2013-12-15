@@ -42,7 +42,7 @@ public class CreateController {
         return "redirect:/welcome";
     }
 
-    @RequestMapping("/")
+    @RequestMapping("")
     public String edit(@CookieValue("active_case") int id, ModelMap map) {
 
         Concern caze = concernDao.getById(id);
