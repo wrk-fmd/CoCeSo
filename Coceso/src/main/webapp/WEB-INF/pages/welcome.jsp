@@ -1,8 +1,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <html>
 <head>
-    <title>CoCeSo - Internal Startpage</title>
+    <title><spring:message code="label.coceso"/> - <spring:message code="label.nav.home"/></title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
@@ -22,12 +23,12 @@
 
 
     <div class="alert alert-success">
-            <strong>Current User:</strong> ${user.given_name} ${user.sur_name} (${user.username})<br>
+            <strong><spring:message code="label.operator"/>:</strong> ${user.given_name} ${user.sur_name} (${user.username})<br>
             Roles: <c:forEach items="${user.authorities}" var="role">${role} - </c:forEach>
     </div>
     <div class="page-header">
         <h2>
-            Existing Cases
+            <spring:message code="label.concerns"/>
         </h2>
     </div>
     <div>
@@ -50,10 +51,10 @@
                     &nbsp;
                 </div>
                 <div class="col-lg-2 text-center">
-                    <input type="submit" value="Start!" name="start" class="btn btn-success">
+                    <input type="submit" value="<spring:message code="label.start"/>" name="start" class="btn btn-success">
                 </div>
                 <div class="col-lg-2 text-center">
-                    <input type="submit" value="Edit" name="edit" class="btn btn-warning">
+                    <input type="submit" value="<spring:message code="label.edit"/>" name="edit" class="btn btn-warning">
                 </div>
             </div>
 
@@ -62,7 +63,7 @@
     </div>
     <div class="page-header">
         <h2>
-            Create new Case
+            <spring:message code="label.concern.create"/>
         </h2>
     </div>
     <div>
@@ -72,14 +73,14 @@
                     &nbsp;
                 </div>
                 <div class="col-lg-5">
-                    <label class="sr-only" for="new_name">Name</label>
-                    <input type="text" id="new_name" name="name" maxlength="64" class="form-control" placeholder="Name"/>
+                    <label class="sr-only" for="new_name"><spring:message code="label.concern.name"/></label>
+                    <input type="text" id="new_name" name="name" maxlength="64" class="form-control" placeholder="<spring:message code="label.concern.name"/>"/>
                 </div>
                 <!--div>
                     <Info of Organiser: <input type="text" name="info" maxlength="64" /><br>>
                 </div-->
                 <div class="col-lg-3">
-                    <input type="submit" value="Create" class="btn btn-success"/>
+                    <input type="submit" value="<spring:message code="label.create"/>" class="btn btn-success"/>
                 </div>
                 <div class="col-lg-2">
                     &nbsp;

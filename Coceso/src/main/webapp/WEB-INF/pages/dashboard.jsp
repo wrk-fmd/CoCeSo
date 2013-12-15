@@ -2,10 +2,11 @@
 <%@ page import="java.util.Map" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <html>
 <head>
-    <title>Coceso - Dashboard</title>
+    <title><spring:message code="label.coceso"/> - <spring:message code="label.nav.dashboard"/></title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -32,28 +33,28 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="${home_link}">CoCeSo</a>
+            <a class="navbar-brand" href="${home_link}"><spring:message code="label.coceso"/></a>
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li><a href="#">Dashboard</a></li>
                 <li><a href="#"></a></li>
                 <li class="dropdown ${log}">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Log <b class="caret"></b></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><spring:message code="label.log"/> <b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        <li><a href="?concern=${concern}&sub=Log">Full Log</a></li>
+                        <li><a href="?concern=${concern}&sub=Log"><spring:message code="label.dashboard.log.full"/></a></li>
                         <li class="divider"></li>
-                        <li><a href="?concern=${concern}&sub=Log&uid=0">Log by Unit</a></li>
-                        <li><a href="?concern=${concern}&sub=Log&iid=0">Log by Incident</a></li>
+                        <li><a href="?concern=${concern}&sub=Log&uid=0"><spring:message code="label.dashboard.log.unit"/></a></li>
+                        <li><a href="?concern=${concern}&sub=Log&iid=0"><spring:message code="label.dashboard.log.incident"/></a></li>
                     </ul>
                 </li>
                 <li class="dropdown ${task}">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Task <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="?concern=${concern}&sub=Task&uid=0">Tasks by Unit</a></li>
-                        <li><a href="?concern=${concern}&sub=Task&iid=0">Tasks by Incident</a></li>
-                    </ul>
-                </li>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Task <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    <li><a href="?concern=${concern}&sub=Task&uid=0">Tasks by Unit</a></li>
+                    <li><a href="?concern=${concern}&sub=Task&iid=0">Tasks by Incident</a></li>
+                </ul>
+            </li>
                 <li class="dropdown ${unit}">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Unit <b class="caret"></b></a>
                     <ul class="dropdown-menu">
@@ -63,7 +64,7 @@
                     </ul>
                 </li>
                 <li class="dropdown ${incident}">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Incident <b class="caret"></b></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><spring:message code="label.incident"/> <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li><a href="?concern=${concern}&sub=Incident">Incident List</a></li>
                         <li><a href="?concern=${concern}&sub=Incident&uid=-1">Active Incidents</a></li>
@@ -74,7 +75,7 @@
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Concern <b class="caret"></b></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><spring:message code="label.concern"/> <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <c:forEach items="${concerns}" var="c_concern">
                             <li><a href="?concern=${c_concern.id}">${c_concern.name}</a></li>
@@ -82,8 +83,8 @@
 
                     </ul>
                 </li>
-                <li><a href="${back_link}">Back</a></li>
-                <li><a href="${logout_link}">Logout</a></li>
+                <li><a href="${back_link}"><spring:message code="label.nav.back"/></a></li>
+                <li><a href="${logout_link}"><spring:message code="label.nav.logout"/></a></li>
             </ul>
         </div><!--/.nav-collapse -->
     </div>
@@ -207,19 +208,19 @@
             <c:if test="${not empty units}">
                 <tr>
                     <th>
-                        Call
+                        <spring:message code="label.unit.call"/>
                     </th>
                     <th>
-                        State
+                        <spring:message code="label.unit.state"/>
                     </th>
                     <th>
-                          ANI
+                        <spring:message code="label.unit.ani"/>
                     </th>
                     <th>
-                        Info
+                        <spring:message code="label.unit.info"/>
                     </th>
                     <th>
-                        TaskState **
+                        <spring:message code="label.task.state"/> **
                     </th>
                 </tr>
             </c:if>
@@ -229,22 +230,22 @@
                         ID
                     </th>
                     <th>
-                        Type
+                        <spring:message code="label.incident.type"/>
                     </th>
                     <th>
-                        BO
+                        <spring:message code="label.incident.bo"/>
                     </th>
                     <th>
-                        AO
+                        <spring:message code="label.incident.ao"/>
                     </th>
                     <th>
-                        Info
+                        <spring:message code="label.incident.info"/>
                     </th>
                     <th>
-                        Casus
+                        <spring:message code="label.incident.casus"/>
                     </th>
                     <th>
-                        State
+                        <spring:message code="label.incident.state"/>
                     </th>
                 </tr>
             </c:if>
@@ -254,7 +255,7 @@
                         ID
                     </th>
                     <th>
-                        State
+                        <spring:message code="label.task.state"/>
                     </th>
                 </tr>
             </c:if>

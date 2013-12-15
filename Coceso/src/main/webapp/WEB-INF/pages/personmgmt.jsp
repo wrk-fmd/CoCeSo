@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
@@ -69,24 +70,24 @@
 
     <c:if test="${not empty error}">
         <div class="alert alert-danger">
-            <strong>Error:</strong><br>${error}
+            <strong><spring:message code="label.error"/>:</strong><br>${error}
         </div>
     </c:if>
     <div class="page-header">
         <h2>
-            Search Person
+            <spring:message code="label.person.search"/>
         </h2>
     </div>
     <div class="row">
         <form role="form" action="?" class="form-inline">
             <div class="col-lg-3 form-group">
-                <label for="person">Select a Person:</label>
+                <label for="person"><spring:message code="label.person.select"/>:</label>
                 <input type="text" id="person" class="form-control">
                 <p id="person-description" class="hidden"></p>
             </div>
             <div class="col-lg-2">
                     <input type="hidden" id="person-id" name="id" value="-1">
-                    <input type="submit" class="btn btn-success" value="Send">
+                    <input type="submit" class="btn btn-success" value="<spring:message code="label.edit"/>">
             </div>
         </form>
 
@@ -94,27 +95,27 @@
     </div>
     <div class="page-header">
         <h2>
-            Create new Person
+            <spring:message code="label.person.create"/>
         </h2>
     </div>
     <div class="row">
         <form role="form" action="<c:url value="/edit/person/create"/>" class="form-inline" method="POST">
             <div class="col-lg-3 form-group">
                 <label>
-                    <input type="text" name="given_name" class="form-control" placeholder="First Name">
+                    <input type="text" name="given_name" class="form-control" placeholder="<spring:message code="label.person.given_name"/>">
                 </label>
             </div>
             <div class="col-lg-3 form-group">
                 <label>
-                    <input type="text" name="sur_name" class="form-control" placeholder="Last Name">
+                    <input type="text" name="sur_name" class="form-control" placeholder="<spring:message code="label.person.sur_name"/>">
                 </label>
             </div>
             <div class="col-lg-1">
-                <input class="form-control" placeholder="DNr" name="dNr">
+                <input class="form-control" placeholder="<spring:message code="label.person.dnr"/>" name="dNr">
             </div>
             <div class="col-lg-2">
                 <input type="hidden" id="new_id" name="id" value="-1">
-                <input type="submit" class="btn btn-success" value="Send">
+                <input type="submit" class="btn btn-success" value="<spring:message code="label.create"/>">
             </div>
         </form>
 

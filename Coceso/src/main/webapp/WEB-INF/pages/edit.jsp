@@ -1,8 +1,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <html>
 <head>
-    <title>Edit Case - ${caze.name}</title>
+    <title><spring:message code="label.coceso"/> - <spring:message code="label.concern.edit"/>: ${caze.name}</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
@@ -16,13 +17,13 @@
 
 <body>
 
-<c:set var="transportVehicle" value="Vehicle" />
-<c:set var="withDoc" value="Doctor" />
-<c:set var="call" value="Call" />
-<c:set var="ani" value="ANI" />
-<c:set var="portable" value="Portable" />
-<c:set var="info" value="Info" />
-<c:set var="home" value="Home" />
+<spring:message var="transportVehicle" code="label.unit.vehicle" />
+<spring:message var="withDoc" code="label.unit.withdoc" />
+<spring:message var="call" code="label.unit.call"/>
+<spring:message var="ani" code="label.unit.ani" />
+<spring:message var="portable" code="label.unit.portable" />
+<spring:message var="info" code="label.unit.info" />
+<spring:message var="home" code="label.unit.home" />
 
 <!-- #################### Start of Page ############## -->
 <div class="container">
@@ -36,53 +37,10 @@
     <c:set value="active" var="nav_concern" />
     <%@include file="parts/navbar.jsp"%>
 
-    <div class="page-header">
-        <h2>Edit Case</h2>
-    </div>
-
-    <div>
-        <c:url value="/edit/update" var="update" />
-        <form action="${update}" method="post" role="form">
-            <input type="hidden" name="id" value="${caze.id}">
-
-            <div class="row">
-                <div class="col-lg-1">
-                    &nbsp;
-                </div>
-                <div class="col-lg-3">
-                    <div class="form-group">
-                        <label for="case_name">Name</label>
-                        <input type="text" id="case_name" name="name" value="${caze.name}"
-                               maxlength="64" class="form-control">
-                    </div>
-                </div>
-
-                <div class="col-lg-3">
-                    <div class="form-group">
-                        <label for="case_pax">Persons</label>
-                        <input type="number" id="case_pax" name="pax" value="${caze.pax}"
-                               class="form-control input-sm" min="0" max="2000000000">
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="form-group col-lg-8">
-                    <label for="case_organiser">Info</label>
-                    <textarea id="case_organiser" name="info" maxlength="128" class="form-control" rows="5">${caze.info}</textarea>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <input class="btn btn-success" type="submit" name="submit" value="Update">
-            </div>
-
-        </form>
-    </div>
-
 
     <!--##### TABLE -->
     <div class="page-header">
-        <h2>Edit Units of Case</h2>
+        <h2><spring:message code="label.concern.edit.unit"/></h2>
     </div>
     <div>
         <table class="table table-striped">
@@ -169,10 +127,10 @@
                                         placeholder="${home}">
                             </td>
                             <td>
-                                <input type="submit" name="update" value="Update" class="btn btn-success">
+                                <input type="submit" name="update" value="<spring:message code="label.update"/>" class="btn btn-success">
                             </td>
                             <td>
-                                <input type="submit" name="remove" value="Remove" class="btn btn-danger">
+                                <input type="submit" name="remove" value="<spring:message code="label.remove"/>" class="btn btn-danger">
                             </td>
                         </tr>
                     </form>
@@ -223,7 +181,7 @@
                                    placeholder="${home}">
                         </td>
                         <td>
-                            <input type="submit" value="Create" class="btn btn-success">
+                            <input type="submit" value="<spring:message code="label.create"/>" class="btn btn-success">
                         </td>
                         <td>
 
@@ -235,7 +193,52 @@
     </div>
 
     <div class="page-header">
-        <h2>Create Units as Batch Job</h2>
+        <h2><spring:message code="label.concern.edit"/></h2>
+    </div>
+
+    <div>
+        <c:url value="/edit/update" var="update" />
+        <form action="${update}" method="post" role="form">
+            <input type="hidden" name="id" value="${caze.id}">
+
+            <div class="row">
+                <div class="col-lg-1">
+                    &nbsp;
+                </div>
+                <div class="col-lg-3">
+                    <div class="form-group">
+                        <label for="case_name"><spring:message code="label.concern.name"/></label>
+                        <input type="text" id="case_name" name="name" value="${caze.name}"
+                               maxlength="64" class="form-control">
+                    </div>
+                </div>
+
+                <div class="col-lg-3">
+                    <div class="form-group">
+                        <label for="case_pax"><spring:message code="label.concern.pax"/></label>
+                        <input type="number" id="case_pax" name="pax" value="${caze.pax}"
+                               class="form-control input-sm" min="0" max="2000000000">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-lg-8">
+                    <label for="case_organiser"><spring:message code="label.concern.info"/></label>
+                    <textarea id="case_organiser" name="info" maxlength="128" class="form-control" rows="5">${caze.info}</textarea>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <input class="btn btn-success" type="submit" name="submit" value="<spring:message code="label.update"/>">
+            </div>
+
+        </form>
+    </div>
+
+
+
+    <div class="page-header">
+        <h2><spring:message code="label.concern.edit.batch"/></h2>
     </div>
     <div>
         <c:url value="/edit/createUnitBatch" var="createUnitBatch" />
@@ -244,25 +247,25 @@
             <div class="row">
                 <div class="col-lg-5">
                     <div class="form-group">
-                        <label for="batch_call">${call} Prefix</label>
+                        <label for="batch_call">${call} <spring:message code="label.prefix"/></label>
                         <input type="text" id="batch_call" name="call_pre" maxlength="50" class="form-control"
                                placeholder="${call} Prefix">
                     </div>
                 </div>
 
                 <div class="col-lg-3 text-center form-control-static">
-                    <strong>Number Range:</strong>
+                    <strong><spring:message code="label.range"/></strong>
                 </div>
                 <div class="col-lg-2">
                     <div class="form-group">
-                        <label for="batch_from">from</label>
+                        <label for="batch_from"><spring:message code="label.from"/></label>
                         <input type="number" id="batch_from" name="from" value="1" class="form-control">
                     </div>
                 </div>
 
                 <div class="col-lg-2">
                     <div class="form-group">
-                        <label for="batch_to">to</label>
+                        <label for="batch_to"><spring:message code="label.to"/></label>
                         <input type="number" id="batch_to" name="to" value="5" class="form-control">
                     </div>
                 </div>
@@ -293,7 +296,7 @@
 
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-success">
+                <input type="submit" value="<spring:message code="label.create"/>" class="btn btn-success">
             </div>
 
         </form>
