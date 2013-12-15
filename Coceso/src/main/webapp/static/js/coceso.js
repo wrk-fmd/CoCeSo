@@ -1154,7 +1154,7 @@ Coceso.ViewModels.Incident = function(data, options) {
     var unit = ko.dataFor(ui.draggable.context);
 
     if ((unit instanceof Coceso.ViewModels.Unit) && self.id() && unit.id()) {
-      Coceso.Ajax.save({}, "assignUnit/" + self.id() + "/" + unit.id());
+      Coceso.Ajax.save({incident_id: self.id(), unit_id: unit.id()}, "assignUnit");
     }
   };
 
