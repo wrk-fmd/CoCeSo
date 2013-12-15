@@ -119,12 +119,14 @@
                                     <c:choose>
                                         <c:when test="${unit.withDoc}">
                                             <label class="btn btn-default active">
+                                            <input type="checkbox" name="withDoc" checked>${withDoc}
                                         </c:when>
                                         <c:otherwise>
                                             <label class="btn btn-default">
+                                            <input type="checkbox" name="withDoc">${withDoc}
                                         </c:otherwise>
                                     </c:choose>
-                                    <input type="checkbox" name="withDoc">${withDoc}
+
                                     </label>
                                 </div>
                             </td>
@@ -133,12 +135,13 @@
                                     <c:choose>
                                         <c:when test="${unit.transportVehicle}">
                                             <label class="btn btn-default active">
+                                            <input type="checkbox" name="transportVehicle" checked>${transportVehicle}
                                         </c:when>
                                         <c:otherwise>
                                             <label class="btn btn-default">
+                                            <input type="checkbox" name="transportVehicle">${transportVehicle}
                                         </c:otherwise>
                                     </c:choose>
-                                    <input type="checkbox" name="transportVehicle">${transportVehicle}
                                     </label>
                                 </div>
                             </td>
@@ -147,12 +150,13 @@
                                         <c:choose>
                                             <c:when test="${unit.portable}">
                                                 <label class="btn btn-default active">
+                                                <input type="checkbox" name="portable" checked>${portable}
                                             </c:when>
                                             <c:otherwise>
                                                 <label class="btn btn-default">
+                                                <input type="checkbox" name="portable">${portable}
                                             </c:otherwise>
                                         </c:choose>
-                                        <input type="checkbox" name="portable">${portable}
                                     </label>
                                 </div>
                             </td>
