@@ -173,15 +173,18 @@ var Coceso = {
      * @param {String} title The title of the window
      * @param {String} src The source to load the HTML from
      * @param {ViewModel} viewmodel The viewmodel to bind with
-     * @param {Function} callback
      * @return {void}
      */
-    openWindow: function(title, src, viewmodel, callback) {
-      var id = $("#taskbar").winman("addWindow", title, src, function(el) {
+    openWindow: function(title, src, viewmodel) {
+      var id = $("#taskbar").winman("addWindow", title, src, function(el, id) {
+        viewmodel.ui = id;
         ko.applyBindings(viewmodel, el);
-        if (typeof callback === "function") {
-          callback.call(viewmodel, el);
+      }, function(el, id) {
+        if (typeof viewmodel.destroy === "function") {
+          viewmodel.destroy.call(viewmodel);
         }
+        ko.cleanNode(el);
+        delete Coceso.UI.windows[id];
       });
       this.windows[id] = viewmodel;
     },
@@ -286,10 +289,11 @@ var Coceso = {
         success: function(data, status) {
           if (status !== "notmodified") {
             Coceso.Ajax.data[type][type] = data;
-            var i;
-            for (i = 0; i < Coceso.Ajax.subscriptions[type].length; i++) {
-              Coceso.Ajax.subscriptions[type][i](Coceso.Ajax.data[type]);
-            }
+            ko.utils.arrayForEach(Coceso.Ajax.subscriptions[type], function(item) {
+              if (typeof item === "function") {
+                item(Coceso.Ajax.data[type]);
+              }
+            });
           }
         },
         complete: function() {
@@ -313,6 +317,31 @@ var Coceso = {
         this.subscriptions[type].push(func);
       }
     },
+    /**
+     * Unsubscribe from loading of specified data
+     *
+     * @param {String} type The data type
+     * @param {Function} func The callback function
+     * @return {void}
+     */
+    unsubscribe: function(type, func) {
+      if (this.subscriptions[type]) {
+        var subscriptions = this.subscriptions[type];
+        ko.utils.arrayForEach(subscriptions, function(item) {
+          if (item === func) {
+            ko.utils.arrayRemoveItem(subscriptions, item);
+          }
+        });
+      }
+    },
+    /**
+     * Save entries with POST
+     *
+     * @param {Object} data
+     * @param {String} url
+     * @param {Function} callback
+     * @returns {void}
+     */
     save: function(data, url, callback) {
       $.ajax({
         type: "POST",
@@ -459,6 +488,20 @@ Coceso.ViewModels.ViewModel.prototype = Object.create({}, /** @lends Coceso.View
       }
 
       return (a === b);
+    }
+  },
+  /**
+   * Destroy the ViewModel
+   *
+   * @function
+   * @return {void}
+   */
+  destroy: {
+    value: function() {
+      //Unsubscribe from updates
+      if (this.dataType && (typeof this.setData === "function")) {
+        Coceso.Ajax.unsubscribe(this.dataType, this.setData);
+      }
     }
   }
 });
@@ -725,7 +768,7 @@ Coceso.ViewModels.ViewModelSingle.prototype = Object.create(Coceso.ViewModels.Vi
         return false;
       }
 
-      Coceso.Ajax.save(ko.mapping.toJS(this, {ignore: ["incidents", "units"]}), this.saveUrl);
+      Coceso.Ajax.save(ko.mapping.toJS(this, {ignore: ["incidents", "units", "taskState"]}), this.saveUrl);
       return true;
     }
   },
@@ -873,7 +916,7 @@ Coceso.ViewModels.Incidents = function(data, options) {
    * @return {Object}
    */
   this.accordionOptions = ko.computed(function() {
-    return {active: false, collapsible: true, heightStyle: "content", subscribe: this.filtered()};
+    return {active: false, collapsible: true, heightStyle: "content"};
   }, this);
 };
 Coceso.ViewModels.Incidents.prototype = Object.create(Coceso.ViewModels.ViewModelList.prototype, /** @lends Coceso.ViewModels.Incidents.prototype */ {

@@ -80,6 +80,14 @@ function uiBindingHandlerRefresh(widget) {
 ko.bindingHandlers.accordion = uiBindingHandler("accordion");
 
 /**
+ * Subscribe to refresh accordion
+ *
+ * @type {BindingHandler}
+ */
+ko.bindingHandlers.accordionRefresh = uiBindingHandlerRefresh("accordion");
+
+
+/**
  * Generate Button from element
  *
  * @type {BindingHandler}
@@ -92,14 +100,6 @@ ko.bindingHandlers.button = uiBindingHandler("button");
  * @type {BindingHandler}
  */
 ko.bindingHandlers.buttonset = uiBindingHandler("buttonset");
-
-/**
- * Subscribe to refresh buttonset
- *
- * @param {String} widget The jQuery UI widget constructor
- * @return {BindingHandler}
- */
-ko.bindingHandlers.buttonset_refresh = uiBindingHandlerRefresh("buttonset");
 
 /**
  * Generate Draggable from element

@@ -101,7 +101,7 @@ $.widget("ui.winman", {
     this.index = 0;
   },
   // Add a window
-  addWindow: function(title, src, callback) {
+  addWindow: function(title, src, create, destroy) {
     var self = this;
 
     var id = 'ui-id-' + this.uuid + '-' + (++this.index);
@@ -112,7 +112,9 @@ $.widget("ui.winman", {
         $(child).prependAttr("for", id + "-");
         $(child).prependAttr("name", id + "-");
       });
-      callback(el.get(0));
+      if (typeof create === "function") {
+        create(el.get(0), id);
+      }
     });
 
     this.windows[id] = el;
@@ -134,6 +136,9 @@ $.widget("ui.winman", {
       },
       destroy: function(event, ui) {
         self._close.call(self, event, ui);
+        if (typeof destroy === "function") {
+          destroy(el.get(0), id);
+        }
       }
     });
     this.element.append(this.buttons[id]);

@@ -125,33 +125,45 @@
           <div class="form-group clearfix">
             <label class="col-md-2 control-label" data-bind="text: call"></label>
             <div class="col-md-10 ui-buttonset">
-              <input type="radio" class="ui-helper-hidden-accessible" data-bind="checked: taskState, attr: {id: 'taskState_assigned_' + $index(), name: 'taskState_' + $index()}, value: Coceso.Constants.TaskState.assigned" />
-              <label class="ui-button ui-widget ui-state-default ui-corner-left" data-bind="attr: {for: 'taskState_assigned_' + $index()}, css: {'ui-state-active': isAssigned()}">
+              <input type="radio" class="ui-helper-hidden-accessible"
+                     data-bind="checked: taskState, attr: {id: $root.ui + '-taskState_assigned_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.assigned" />
+              <label class="ui-button ui-widget ui-state-default ui-corner-left"
+                     data-bind="attr: {for: $root.ui + '-taskState_assigned_' + $index()}, css: {'ui-state-active': isAssigned()}">
                 <span class="ui-button-text">Assign</span>
               </label>
 
-              <input type="radio" class="ui-helper-hidden-accessible" data-bind="checked: taskState, enable: $parent.enableBO, attr: {id: 'taskState_zbo_' + $index(), name: 'taskState_' + $index()}, value: Coceso.Constants.TaskState.zbo" />
-              <label class="ui-button ui-widget ui-state-default" data-bind="attr: {for: 'taskState_zbo_' + $index()}, css: {'ui-state-active': isZBO(), 'ui-state-disabled': !$parent.enableBO()}">
+              <input type="radio" class="ui-helper-hidden-accessible"
+                     data-bind="checked: taskState, enable: $parent.enableBO, attr: {id: $root.ui + '-taskState_zbo_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.zbo" />
+              <label class="ui-button ui-widget ui-state-default"
+                     data-bind="attr: {for: $root.ui + '-taskState_zbo_' + $index()}, css: {'ui-state-active': isZBO(), 'ui-state-disabled': !$parent.enableBO()}">
                 <span class="ui-button-text">ZBO</span>
               </label>
 
-              <input type="radio" class="ui-helper-hidden-accessible" data-bind="checked: taskState, enable: $parent.enableBO, attr: {id: 'taskState_abo_' + $index(), name: 'taskState_' + $index()}, value: Coceso.Constants.TaskState.abo" />
-              <label class="ui-button ui-widget ui-state-default" data-bind="attr: {for: 'taskState_abo_' + $index()}, css: {'ui-state-active': isABO(), 'ui-state-disabled': !$parent.enableBO()}">
+              <input type="radio" class="ui-helper-hidden-accessible"
+                     data-bind="checked: taskState, enable: $parent.enableBO, attr: {id: $root.ui + '-taskState_abo_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.abo" />
+              <label class="ui-button ui-widget ui-state-default"
+                     data-bind="attr: {for: $root.ui + '-taskState_abo_' + $index()}, css: {'ui-state-active': isABO(), 'ui-state-disabled': !$parent.enableBO()}">
                 <span class="ui-button-text">ABO</span>
               </label>
 
-              <input type="radio" class="ui-helper-hidden-accessible" data-bind="checked: taskState, attr: {id: 'taskState_zao_' + $index(), name: 'taskState_' + $index()}, value: Coceso.Constants.TaskState.zao" />
-              <label class="ui-button ui-widget ui-state-default" data-bind="attr: {for: 'taskState_zao_' + $index()}, css: {'ui-state-active': isZAO()}">
+              <input type="radio" class="ui-helper-hidden-accessible"
+                     data-bind="checked: taskState, attr: {id: $root.ui + '-taskState_zao_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.zao" />
+              <label class="ui-button ui-widget ui-state-default"
+                     data-bind="attr: {for: $root.ui + '-taskState_zao_' + $index()}, css: {'ui-state-active': isZAO()}">
                 <span class="ui-button-text">ZAO</span>
               </label>
 
-              <input type="radio" class="ui-helper-hidden-accessible" data-bind="checked: taskState, attr: {id: 'taskState_aao_' + $index(), name: 'taskState_' + $index()}, value: Coceso.Constants.TaskState.aao" />
-              <label class="ui-button ui-widget ui-state-default" data-bind="attr: {for: 'taskState_aao_' + $index()}, css: {'ui-state-active': isAAO()}">
+              <input type="radio" class="ui-helper-hidden-accessible"
+                     data-bind="checked: taskState, attr: {id: $root.ui + '-taskState_aao_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.aao" />
+              <label class="ui-button ui-widget ui-state-default"
+                     data-bind="attr: {for: $root.ui + '-taskState_aao_' + $index()}, css: {'ui-state-active': isAAO()}">
                 <span class="ui-button-text">AAO</span>
               </label>
 
-              <input type="radio" class="ui-helper-hidden-accessible" data-bind="checked: taskState, attr: {id: 'taskState_det_' + $index(), name: 'taskState_' + $index()}, value: Coceso.Constants.TaskState.detached" />
-              <label class="ui-button ui-widget ui-state-default ui-corner-right" data-bind="attr: {for: 'taskState_det_' + $index()}, css: {'ui-state-active': isDetached()}">
+              <input type="radio" class="ui-helper-hidden-accessible"
+                     data-bind="checked: taskState, attr: {id: $root.ui + '-taskState_det_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.detached" />
+              <label class="ui-button ui-widget ui-state-default ui-corner-right"
+                     data-bind="attr: {for: $root.ui + 'taskState_det_' + $index()}, css: {'ui-state-active': isDetached()}">
                 <span class="ui-button-text">Det</span>
               </label>
             </div>
