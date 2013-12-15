@@ -91,4 +91,8 @@ public class Unit {
     public Map<Integer, TaskState> getIncidents() {
         return incidents;
     }
+
+    public Point getHome() {
+        return home;
+    }
 }

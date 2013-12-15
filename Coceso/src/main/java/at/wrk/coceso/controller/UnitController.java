@@ -153,4 +153,11 @@ public class UnitController implements IEntityController<Unit> {
         return unit;
     }
 
+    @RequestMapping(value = "sendHome", produces = "application/json", method = RequestMethod.POST)
+    @ResponseBody
+    public Unit sendHomeByPost(@CookieValue(value="active_case", defaultValue = "0") String case_id,
+                         @RequestParam("id") int unitId, Principal principal)
+    {
+        return sendHome(case_id, unitId, principal);
+    }
 }

@@ -2,6 +2,14 @@ package at.wrk.coceso.entity;
 
 public class Point {
 
+    public Point() {
+        super();
+    }
+
+    public Point(String info) {
+        this.info = info;
+    }
+
     public int id;
 
     public String info;
