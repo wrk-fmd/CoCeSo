@@ -41,9 +41,9 @@ public class Incident {
 
     public IncidentState state;
 
-    public int priority;
+    public Integer priority;
 
-    public boolean blue;
+    public Boolean blue;
 
     public Map<Integer, TaskState> units;
 

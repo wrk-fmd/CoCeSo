@@ -6,10 +6,7 @@ import at.wrk.coceso.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
@@ -33,5 +30,13 @@ public class DataController {
         Operator user = (Operator) token.getPrincipal();
 
         return "{\"success\": " + taskService.assignUnit(incident_id, unit_id, user) + "}";
+    }
+
+    @ResponseBody
+    @RequestMapping(value="assignUnit", method = RequestMethod.POST, produces = "application/json")
+    public String assignUnitByPost(@RequestParam("incident_id") int incident_id, @RequestParam("unit_id") int unit_id,
+                             Principal principal)
+    {
+        return assignUnit(incident_id, unit_id, principal);
     }
 }

@@ -150,6 +150,15 @@ public class IncidentController implements IEntityController<Incident> {
         return incidentService.getById(incident_id);
     }
 
+    @RequestMapping(value = "nextState", produces = "application/json", method = RequestMethod.POST)
+    @ResponseBody
+    public Incident nextStateByPost(@RequestParam("incident_id") int incident_id,
+                              @RequestParam("unit_id") int unit_id,
+                              Principal principal)
+    {
+        return nextState(incident_id, unit_id, principal);
+    }
+
     @RequestMapping(value = "setToState/{incident_id}/{unit_id}/{state}",
             produces = "application/json", method = RequestMethod.GET)
     @ResponseBody
@@ -172,5 +181,15 @@ public class IncidentController implements IEntityController<Incident> {
         taskService.changeState(incident_id, unit_id, state, user);
 
         return incidentService.getById(incident_id);
+    }
+
+    @RequestMapping(value = "setToState", produces = "application/json", method = RequestMethod.POST)
+    @ResponseBody
+    public Incident setToStateByPost(@RequestParam("incident_id") int incident_id,
+                               @RequestParam("unit_id") int unit_id,
+                               @RequestParam("state") String s_state,
+                               Principal principal)
+    {
+        return setToState(incident_id, unit_id, s_state, principal);
     }
 }

@@ -3,6 +3,7 @@ package at.wrk.coceso.controller;
 import at.wrk.coceso.dao.ConcernDao;
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Operator;
+import at.wrk.coceso.entity.Point;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.service.UnitService;
 import at.wrk.coceso.utils.Logger;
@@ -17,6 +18,7 @@ import java.security.Principal;
 import java.util.List;
 
 @Controller
+@RequestMapping("/edit")
 public class CreateController {
 
     @Autowired
@@ -28,7 +30,7 @@ public class CreateController {
     @Autowired
     UnitService unitService;
 
-    @RequestMapping(value = "/edit/create", method = RequestMethod.POST)
+    @RequestMapping(value = "create", method = RequestMethod.POST)
     public String create(HttpServletRequest request) {
 
         Concern caze = new Concern();
@@ -40,7 +42,7 @@ public class CreateController {
         return "redirect:/welcome";
     }
 
-    @RequestMapping("/edit")
+    @RequestMapping("/")
     public String edit(@CookieValue("active_case") int id, ModelMap map) {
 
         Concern caze = concernDao.getById(id);
@@ -54,7 +56,7 @@ public class CreateController {
         return "edit";
     }
 
-    @RequestMapping(value = "/edit/update", method = RequestMethod.POST)
+    @RequestMapping(value = "update", method = RequestMethod.POST)
     public String updateCase(@RequestParam("id") int id, @RequestParam("name") String name,
                          @RequestParam("info") String info,
                          @RequestParam("pax") int pax) {
@@ -71,7 +73,7 @@ public class CreateController {
     }
 
 
-    @RequestMapping(value = "/edit/updateUnit", method = RequestMethod.POST)
+    @RequestMapping(value = "updateUnit", method = RequestMethod.POST)
     public String updateUnit(HttpServletRequest request,
                          @CookieValue("active_case") int case_id, Principal principal)
     {
@@ -88,6 +90,11 @@ public class CreateController {
         unit.withDoc = request.getParameter("withDoc") != null;
         unit.transportVehicle = request.getParameter("transportVehicle") != null;
 
+        String home = request.getParameter("home");
+        if(home != null)
+            unit.home = new Point(home);
+
+
         if(request.getParameter("update") != null) {
             unitService.updateFull(unit, user);
         }
@@ -101,7 +108,7 @@ public class CreateController {
         return "redirect:/edit";
     }
 
-    @RequestMapping(value = "/edit/createUnit", method = RequestMethod.POST)
+    @RequestMapping(value = "createUnit", method = RequestMethod.POST)
     public String createUnit(HttpServletRequest request,
                              @CookieValue("active_case") int case_id, Principal principal)
     {
@@ -119,6 +126,10 @@ public class CreateController {
         unit.withDoc = request.getParameter("withDoc") != null;
         unit.transportVehicle = request.getParameter("transportVehicle") != null;
 
+        String home = request.getParameter("home");
+        if(home != null)
+            unit.home = new Point(home);
+
         unitService.add(unit, user);
 
         Logger.debug("createUnit: Unit: "+unit.id+", "+unit.call);
@@ -126,7 +137,7 @@ public class CreateController {
         return "redirect:/edit";
     }
 
-    @RequestMapping(value = "/edit/createUnitBatch", method = RequestMethod.POST)
+    @RequestMapping(value = "createUnitBatch", method = RequestMethod.POST)
     public String createUnitBatch(HttpServletRequest request,
                              @CookieValue("active_case") int case_id,
                              Principal principal)

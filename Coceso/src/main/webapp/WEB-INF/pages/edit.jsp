@@ -15,12 +15,6 @@
 </head>
 
 <body>
-<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<c:url var="jquery" value="/static/jquery.js" />
-<script src="${jquery}"></script>
-<!-- Include all compiled plugins (below), or include individual files as needed -->
-<c:url var="bootstrap_js" value="/static/bootstrap.js" />
-<script src="${bootstrap_js}"></script>
 
 <c:set var="transportVehicle" value="Transport Vehicle" />
 <c:set var="withDoc" value="Doctor" />
@@ -28,6 +22,7 @@
 <c:set var="ani" value="ANI" />
 <c:set var="portable" value="Portable" />
 <c:set var="info" value="Info" />
+<c:set var="home" value="Home" />
 
 <!-- #################### Start of Page ############## -->
 <div class="container">
@@ -94,6 +89,7 @@
                 <th>${transportVehicle}</th>
                 <th>${portable}</th>
                 <th>${info}</th>
+                <th>${home}</th>
                 <th></th>
                 <th></th>
             </tr>
@@ -104,8 +100,14 @@
                     <form action="${updateUnit}" method="post" class="form-inline" role="form">
                         <tr>
                             <td style="display: none;"><input type="hidden" name="id" value="${unit.id}"></td>
-                            <td><input type="text" name="call" value="${unit.call}" maxlength="64" class="form-control"></td>
-                            <td><input type="text" name="ani" value="${unit.ani}" maxlength="16" class="form-control"></td>
+                            <td>
+                                <input type="text" name="call" value="${unit.call}" maxlength="64" class="form-control"
+                                        placeholder="${call}">
+                            </td>
+                            <td>
+                                <input type="text" name="ani" value="${unit.ani}" maxlength="16" class="form-control"
+                                        placeholder="${ani}">
+                            </td>
                             <c:choose>
                                 <c:when test="${unit.withDoc}">
                                     <td><input type="checkbox" name="withDoc" checked></td>
@@ -130,9 +132,16 @@
                                     <td><input type="checkbox" name="portable"></td>
                                 </c:otherwise>
                             </c:choose>
-                            <td><input type="text" name="info" value="${unit.info}" maxlength="128" class="form-control"></td>
                             <td>
-                                <input type="submit" name="update" value="Update" class="btn btn-success">&nbsp;
+                                <input type="text" name="info" value="${unit.info}" maxlength="128" class="form-control"
+                                        placeholder="${info}">
+                            </td>
+                            <td>
+                                <input type="text" name="home" value="${unit.home}" class="form-control"
+                                        placeholder="${home}">
+                            </td>
+                            <td>
+                                <input type="submit" name="update" value="Update" class="btn btn-success">
                             </td>
                             <td>
                                 <input type="submit" name="remove" value="Remove" class="btn btn-danger">
@@ -167,6 +176,11 @@
                             <label class="sr-only" for="new_info">${info}</label>
                             <input type="text" id="new_info" name="info" maxlength="128" class="form-control"
                                    placeholder="${info}">
+                        </td>
+                        <td>
+                            <label class="sr-only" for="new_home">${home}</label>
+                            <input type="text" id="new_home" name="home" class="form-control"
+                                   placeholder="${home}">
                         </td>
                         <td>
                             <input type="submit" value="Create" class="btn btn-success">
@@ -251,6 +265,14 @@
     </div>
 
 </div>
+
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<c:url var="jquery" value="/static/jquery.js" />
+<script src="${jquery}"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<c:url var="bootstrap_js" value="/static/bootstrap.js" />
+<script src="${bootstrap_js}"></script>
 
 </body>
 </html>
