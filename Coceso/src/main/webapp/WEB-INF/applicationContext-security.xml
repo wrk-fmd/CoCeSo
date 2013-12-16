@@ -1,9 +1,12 @@
 <beans:beans xmlns="http://www.springframework.org/schema/security"
              xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:context="http://www.springframework.org/schema/context"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="http://www.springframework.org/schema/beans
                     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-                    http://www.springframework.org/schema/security 
+                    http://www.springframework.org/schema/context
+                    http://www.springframework.org/schema/context/spring-context.xsd
+                    http://www.springframework.org/schema/security
                     http://www.springframework.org/schema/security/spring-security-3.1.xsd">
 
     <http pattern="/static/**" security="none" />
@@ -14,13 +17,18 @@
         <intercept-url pattern="/loginfailed" access="permitAll" />
         <intercept-url pattern="/logout" access="isAuthenticated()" />
 
-        <intercept-url pattern="/dashboard" access="hasAnyRole('Dashboard', 'Root', 'MLS')" />
-        <intercept-url pattern="/data/**" access="hasAnyRole('MLS', 'Root')"/>
-        <intercept-url pattern="/main" access="hasAnyRole('MLS', 'Root')"/>
-        <intercept-url pattern="/welcome" access="hasAnyRole('MLS', 'Root')"/>
-        <intercept-url pattern="/edit" access="hasAnyRole('MLS', 'Root')"/>
-        <intercept-url pattern="/edit/**" access="hasAnyRole('MLS', 'Root')"/>
-        <intercept-url pattern="/**" access="hasAnyRole('Root')" />
+        <intercept-url pattern="/dashboard" access="hasAnyRole(${roles.dashboard})" />
+
+        <intercept-url pattern="/main" access="hasAnyRole(${roles.main})"/>
+        <intercept-url pattern="/main/**" access="hasAnyRole(${roles.main})"/>
+        <intercept-url pattern="/data/**" access="hasAnyRole(${roles.main})"/>
+
+        <intercept-url pattern="/welcome" access="hasAnyRole(${roles.main})"/>
+
+        <intercept-url pattern="/edit" access="hasAnyRole(${roles.edit})"/>
+        <intercept-url pattern="/edit/**" access="hasAnyRole(${roles.edit})"/>
+
+        <intercept-url pattern="/**" access="hasAnyRole(${roles.superuser})" />
 
         <logout delete-cookies="true" invalidate-session="true" logout-url="/logout" logout-success-url="/" />
         <form-login login-page="/login" default-target-url="/welcome" authentication-failure-url="/loginfailed" />

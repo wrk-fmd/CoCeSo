@@ -48,13 +48,6 @@ public class WelcomeController {
         return "index";
     }
 
-    @RequestMapping("/main")
-    public String showMain(ModelMap model, @CookieValue("active_case") int case_id) {
-        model.addAttribute("case_id", case_id);
-
-        return "main";
-    }
-
     @RequestMapping("/login")
     public String login(ModelMap model) {
 

@@ -24,7 +24,7 @@
 *  bootstrap.dropdown.js
 */
 -->
-<html lang="en">
+<html>
 <head>
     <title>CoCeSo</title>
     <meta charset="utf-8" />
@@ -41,10 +41,11 @@
     <script src="<c:url value="/static/js/bootstrap.dropdown.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/bindings.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/coceso.js"/>" type="text/javascript"></script>
+
     <script type="text/javascript">
         $(document).ready(function() {
             Coceso.Conf.jsonBase = "${pageContext.request.contextPath}/data/";
-            Coceso.Conf.contentBase = "${pageContext.request.contextPath}/static/content/";
+            Coceso.Conf.contentBase = "${pageContext.request.contextPath}/main/";
 
             Coceso.startup();
         });
@@ -61,24 +62,24 @@
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown"><spring:message code="label.units" /> <b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                    <li><a href="#" title="Units" onclick="return Coceso.UI.openUnits(this.title, 'units.html');"><spring:message code="label.main.unit.overview" /></a></li>
-                    <li><a href="#" title="Assigned Units" onclick="return Coceso.UI.openUnits(this.title, 'units.html', {filter: ['radio']});"><spring:message code="label.main.unit.assigned" /></a></li>
+                    <li><a href="#" title="<spring:message code="label.units" />" onclick="return Coceso.UI.openUnits(this.title, 'units.html');"><spring:message code="label.main.unit.overview" /></a></li>
+                    <li><a href="#" title="<spring:message code="label.unit.state.assigned" /> <spring:message code="label.units" />" onclick="return Coceso.UI.openUnits(this.title, 'units.html', {filter: ['radio']});"><spring:message code="label.main.unit.assigned" /></a></li>
                 </ul>
             </li>
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown"><spring:message code="label.incidents" /> <b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                    <li><a href="#" title="Add Incident" onclick="return Coceso.UI.openIncident(this.title, 'incident_form.html');"><spring:message code="label.add" /></a></li>
-                    <li><a href="#" title="Active Incidents" onclick="return Coceso.UI.openIncidents(this.title, 'incidents.html', {filter: ['overview', 'active']});"><spring:message code="label.main.incident.active" /></a></li>
-                    <li><a href="#" title="New Incidents" onclick="return Coceso.UI.openIncidents(this.title, 'incidents.html', {filter: ['overview', 'new'], showTabs: false});"><spring:message code="label.main.incident.new" /></a></li>
-                    <li><a href="#" title="Open Incidents" onclick="return Coceso.UI.openIncidents(this.title, 'incidents.html', {filter: ['overview', 'open'], showTabs: false});"><spring:message code="label.main.incident.open" /></a></li>
-                    <li><a href="#" title="Completed Incidents" onclick="return Coceso.UI.openIncidents(this.title, 'incidents.html', {filter: ['overview', 'completed']});"><spring:message code="label.main.incident.complete" /></a></li>
+                    <li><a href="#" title="<spring:message code="label.incident" /> / <spring:message code="label.add" />" onclick="return Coceso.UI.openIncident(this.title, 'incident_form.html');"><spring:message code="label.add" /></a></li>
+                    <li><a href="#" title="<spring:message code="label.main.incident.active" />" onclick="return Coceso.UI.openIncidents(this.title, 'incidents.html', {filter: ['overview', 'active']});"><spring:message code="label.main.incident.active" /></a></li>
+                    <li><a href="#" title="<spring:message code="label.main.incident.new" />" onclick="return Coceso.UI.openIncidents(this.title, 'incidents.html', {filter: ['overview', 'new'], showTabs: false});"><spring:message code="label.main.incident.new" /></a></li>
+                    <li><a href="#" title="<spring:message code="label.main.incident.open" />" onclick="return Coceso.UI.openIncidents(this.title, 'incidents.html', {filter: ['overview', 'open'], showTabs: false});"><spring:message code="label.main.incident.open" /></a></li>
+                    <li><a href="#" title="<spring:message code="label.main.incident.complete" />" onclick="return Coceso.UI.openIncidents(this.title, 'incidents.html', {filter: ['overview', 'completed']});"><spring:message code="label.main.incident.complete" /></a></li>
                 </ul>
             </li>
-            <li><a href="#" title="Logs" onclick="return Coceso.UI.openLogs(this.title, 'log.html');"><spring:message code="label.log" /></a></li>
+            <li><a href="#" title="<spring:message code="label.log" />" onclick="return Coceso.UI.openLogs(this.title, 'log.html');"><spring:message code="label.log" /></a></li>
             <li><a href="<c:url value="/edit/"/>" target="_blank"><spring:message code="label.nav.edit_concern" /></a></li>
             <li><a href="<c:url value="/dashboard"/>" target="_blank"><spring:message code="label.nav.dashboard" /></a></li>
-            <li><a href="#" title="License" onclick="return Coceso.UI.openStatic(this.title, 'license.html');"><spring:message code="label.main.license" /></a></li>
+            <li><a href="#" title="<spring:message code="label.main.license" />" onclick="return Coceso.UI.openStatic(this.title, 'license.html');"><spring:message code="label.main.license" /></a></li>
         </ul>
     </nav>
 </header>

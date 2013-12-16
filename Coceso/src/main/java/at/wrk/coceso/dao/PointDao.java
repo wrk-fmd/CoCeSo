@@ -31,7 +31,7 @@ public class PointDao extends CocesoDao<Point> {
     @Override
     public Point getById(int id) {
         if(id < 1) {
-            Logger.error("PoiDao.getById(int): Invalid ID: " + id);
+            //Logger.error("PoiDao.getById(int): Invalid ID: " + id);
             return null;
         }
 
@@ -95,11 +95,11 @@ public class PointDao extends CocesoDao<Point> {
     @Override
     public boolean update(Point poi) {
         if(poi == null) {
-            Logger.error("PoiDao.update(): poi is NULL");
+            Logger.debug("PoiDao.update(): poi is NULL");
             return false;
         }
         if(poi.id <= 0) {
-            Logger.error("PoiDao.update(): Invalid id: " + poi.id);
+            //Logger.error("PoiDao.update(): Invalid id: " + poi.id);
             return false;
         }
 
@@ -119,7 +119,7 @@ public class PointDao extends CocesoDao<Point> {
     @Override
     public int add(final Point poi) {
         if(poi == null) {
-            Logger.error("PoiDao.add(): poi is NULL");
+            Logger.debug("PoiDao.add(): poi is NULL");
             return -1;
         }
 
