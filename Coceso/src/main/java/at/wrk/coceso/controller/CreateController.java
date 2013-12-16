@@ -152,6 +152,7 @@ public class CreateController {
         unit.portable = request.getParameter("portable") != null;
         unit.withDoc = request.getParameter("withDoc") != null;
         unit.transportVehicle = request.getParameter("transportVehicle") != null;
+        unit.home = new Point(request.getParameter("home"));
 
         int from = Integer.parseInt(request.getParameter("from"));
         int to = Integer.parseInt(request.getParameter("to"));

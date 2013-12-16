@@ -3,6 +3,7 @@ package at.wrk.coceso.dao;
 
 import at.wrk.coceso.dao.mapper.OperatorMapper;
 import at.wrk.coceso.entity.Operator;
+import at.wrk.coceso.entity.Person;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -74,6 +75,12 @@ public class OperatorDao extends CocesoDao<Operator> {
         throw new UnsupportedOperationException();
     }
 
+    public List<Operator> getAll() {
+        String q = "SELECT * FROM operator o NATURAL JOIN person p";
+
+        return jdbc.query(q, operatorMapper);
+    }
+
     @Override
     public boolean update(Operator p) {
         if(p == null || p.id <= 0) return false;
@@ -90,7 +97,11 @@ public class OperatorDao extends CocesoDao<Operator> {
     public int add(final Operator p) {
         if(p == null) return -1;
 
-        p.id = personDao.add(p);
+        Person t = personDao.getById(p.id);
+
+        if(t == null) {
+            p.id = personDao.add(p);
+        }
 
         final String q = "INSERT INTO operator (id, allowlogin, username, hashedpw, concern_fk) " +
                 "VALUES (?, ?, ?, ?, ?)";

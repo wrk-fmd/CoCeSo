@@ -57,6 +57,38 @@
                         .append( "<a>" + item.label + "<br>" + item.desc + "</a>" )
                         .appendTo( ul );
             };
+
+            <c:if test="${not empty operators}">
+            var operator = [
+                <c:forEach items="${operators}" var="op" varStatus="loop">
+                {
+                    value: ${op.id},
+                    label: "${op.dNr}: ${op.given_name} ${op.sur_name}",
+                    desc: "<c:forEach items="{op.authorities}" var="auth" varStatus="l2">${auth}<c:if test="${!l2.last}"> - </c:if></c:forEach>"
+                }<c:if test="${!loop.last}">,</c:if>
+                </c:forEach>
+            ];
+            $( "#operator" ).autocomplete({
+                minLength: 0,
+                source: operator,
+                focus: function( event, ui ) {
+                    $( "#operator" ).val( ui.item.label );
+                    return false;
+                },
+                select: function( event, ui ) {
+                    $( "#operator" ).val( ui.item.label );
+                    $( "#operator-id" ).val( ui.item.value );
+                    $( "#operator-description" ).html( ui.item.desc );
+
+                    return false;
+                }
+            })
+                    .data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+                return $( "<li>" )
+                        .append( "<a>" + item.label + "<br>" + item.desc + "</a>" )
+                        .appendTo( ul );
+            };
+            </c:if>
         });
     </script>
 
@@ -65,21 +97,25 @@
 <body>
 
 <div class="container">
+    <%-- NAVBAR --%>
     <c:set value="active" var="nav_person" />
     <%@include file="parts/navbar.jsp"%>
 
+    <%-- ERROR MESSAGE --%>
     <c:if test="${not empty error}">
         <div class="alert alert-danger">
-            <strong><spring:message code="label.error"/>:</strong><br>${error}
+            <strong><spring:message code="label.error"/>:</strong><br>${error} <%-- TODO error via i18 --%>
         </div>
     </c:if>
+
+    <%-- Search for existing Person --%>
     <div class="page-header">
         <h2>
             <spring:message code="label.person.search"/>
         </h2>
     </div>
     <div class="row">
-        <form role="form" action="?" class="form-inline">
+        <form role="form" action="<c:url value="/edit/person/update"/>?" class="form-inline">
             <div class="col-lg-3 form-group">
                 <label for="person"><spring:message code="label.person.select"/>:</label>
                 <input type="text" id="person" class="form-control">
@@ -90,9 +126,32 @@
                     <input type="submit" class="btn btn-success" value="<spring:message code="label.edit"/>">
             </div>
         </form>
-
-
     </div>
+
+
+    <%-- Edit Operator --%>
+    <c:if test="${not empty operators}">
+        <%-- Edit existing Operator --%>
+        <div class="page-header">
+            <spring:message code="label.operator.search" />
+        </div>
+        <div class="row">
+            <form role="form" action="<c:url value="/edit/person/update"/>?" class="form-inline">
+                <div class="col-lg-3 form-group">
+                    <label for="operator"><spring:message code="label.operator.select"/>:</label>
+                    <input type="text" id="operator" class="form-control">
+                    <label for="operator-description"><spring:message code="label.operator.roles" /></label>
+                    <p id="operator-description" class="form-control-static"></p>
+                </div>
+                <div class="col-lg-2">
+                    <input type="hidden" id="operator-id" name="id" value="-1">
+                    <input type="submit" class="btn btn-success" value="<spring:message code="label.edit"/>">
+                </div>
+            </form>
+        </div>
+    </c:if>
+
+    <%-- Create new Person --%>
     <div class="page-header">
         <h2>
             <spring:message code="label.person.create"/>
@@ -118,9 +177,8 @@
                 <input type="submit" class="btn btn-success" value="<spring:message code="label.create"/>">
             </div>
         </form>
-
-
     </div>
+
 </div>
 
 

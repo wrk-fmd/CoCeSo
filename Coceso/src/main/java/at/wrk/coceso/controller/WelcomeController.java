@@ -52,7 +52,7 @@ public class WelcomeController {
     public String showMain(ModelMap model, @CookieValue("active_case") int case_id) {
         model.addAttribute("case_id", case_id);
 
-        return "redirect:/static/index.html"; // TODO move to main.jsp
+        return "main";
     }
 
     @RequestMapping("/login")

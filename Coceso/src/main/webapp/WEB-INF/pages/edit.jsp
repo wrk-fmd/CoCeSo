@@ -273,11 +273,11 @@
 
 
             <div class="row">
-                <div class="col-lg-1">
+                <%--div class="col-lg-1">
                     &nbsp;
-                </div>
+                </div--%>
 
-                <div class="col-lg-5 btn-group text-center" data-toggle="buttons">
+                <div class="col-lg-4 btn-group text-center" data-toggle="buttons">
                     <label class="btn btn-default">
                         <input type="checkbox" id="batch_doc" name="withDoc">
                         ${withDoc}
@@ -292,6 +292,12 @@
                         <input type="checkbox" id="batch_portable" name="portable">
                         ${portable}
                     </label>
+                </div>
+                <div class="col-lg-4">
+                    <label class="sr-only" for="batch_home">${home}</label>
+                    <input type="text" id="batch_home" name="home" class="form-control"
+                           placeholder="${home}">
+
                 </div>
 
             </div>
