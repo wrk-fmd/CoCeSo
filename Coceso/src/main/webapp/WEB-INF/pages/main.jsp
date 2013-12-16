@@ -63,7 +63,7 @@
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown"><spring:message code="label.units" /> <b class="caret"></b></a>
                 <ul class="dropdown-menu">
                     <li><a href="#" title="<spring:message code="label.units" />" onclick="return Coceso.UI.openUnits(this.title, 'units.html');"><spring:message code="label.main.unit.overview" /></a></li>
-                    <li><a href="#" title="<spring:message code="label.unit.state.assigned" /> <spring:message code="label.units" />" onclick="return Coceso.UI.openUnits(this.title, 'units.html', {filter: ['radio']});"><spring:message code="label.main.unit.assigned" /></a></li>
+                    <li><a href="#" title="<spring:message code="label.main.unit.assigned" />" onclick="return Coceso.UI.openUnits(this.title, 'units.html', {filter: ['radio']});"><spring:message code="label.main.unit.assigned" /></a></li>
                 </ul>
             </li>
             <li class="dropdown">
