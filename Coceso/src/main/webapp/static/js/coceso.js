@@ -107,8 +107,8 @@ var Coceso = {
       priority: 0,
       blue: false,
       units: {},
-      bo: "",
-      ao: "",
+      bo: {info: ""},
+      ao: {info: ""},
       casusNr: "",
       info: "",
       caller: "",
@@ -351,6 +351,9 @@ var Coceso = {
         data: ko.toJSON(data),
         processData: false,
         success: function(data, status) {
+          if (typeof callback === "function") {
+            callback(data);
+          }
           alert("success");
         },
         error: function() {
@@ -600,46 +603,35 @@ Coceso.ViewModels.ViewModelSingle = function(data, options) {
     });
 
     if (data) {
-      var remoteChanges = {},
-        newData = $.extend(true, {}, data),
-        newOrig = $.extend(true, {}, data);
+      var i, newData = $.extend(true, {}, data);
 
-      if (self.changed()) {
-        //Some data was locally edited
-        orig = ko.utils.unwrapObservable(self.orig);
-        for (var i in self.keepChanges) {
-          var viewItem = ko.utils.unwrapObservable(self[i]);
-          if ((typeof data[i] !== "undefined") && (typeof orig[i] !== "undefined") && (viewItem !== orig[i]) && (viewItem !== data[i])) {
-            newData[i] = viewItem;
-            if (data[i] !== orig[i]) {
-              newOrig[i] = orig[i];
-              remoteChanges[i] = data[i];
-            }
-          }
+      for (i in data) {
+        if (!self[i] || !self[i].localChange) {
+          //No such watched property exists
+          continue;
+        }
+
+        if (!self.keepChanges[i] || !self[i].localChange() || self[i].equals(self[i], data[i])) {
+          //No local change or synchronous change; or we don't care about local changes
+          self[i].orig(data[i]);
+          self[i].serverChange(null);
+        } else if (self[i].equals(self[i].orig, data[i])) {
+          //No server change
+          self[i].serverChange(null);
+          delete newData[i];
+        } else {
+          //Asynchronous server change
+          self[i].orig(data[i]);
+          self[i].serverChange(data[i]);
+          delete newData[i];
         }
       }
 
       ko.mapping.fromJS(newData, self);
-      self.orig(newOrig);
-      self.remoteChanges(remoteChanges);
     }
   };
 
   Coceso.ViewModels.ViewModel.call(this, data, options);
-
-  /**
-   * Original data to recognize local changes
-   *
-   * @type ko.observable
-   */
-  this.orig = ko.observable(orig);
-
-  /**
-   * Conflicting remote changes
-   *
-   * @type ko.observable
-   */
-  this.remoteChanges = ko.observable({});
 
   /**
    * Return if data has been changed by the user
@@ -648,24 +640,7 @@ Coceso.ViewModels.ViewModelSingle = function(data, options) {
    * @type ko.computed
    * @return {boolean}
    */
-  this.changed = ko.computed(function() {
-    if (!this.getOption("writeable")) {
-      return false;
-    }
-    orig = ko.utils.unwrapObservable(this.orig);
-    for (i in orig) {
-      if (!this.objEqual(orig[i], ko.utils.unwrapObservable(this[i]))) {
-        if (typeof this.compare[i] === "function") {
-          if (this.compare[i].call(this, orig[i], ko.utils.unwrapObservable(this[i]))) {
-            return true;
-          }
-        } else {
-          return true;
-        }
-      }
-    }
-    return false;
-  }, this);
+  this.changed = ko.observable().extend({multipleChanges: {active: this.getOption("writeable")}});
 
   /**
    * Return if TaskState is "Assigned"
@@ -768,7 +743,13 @@ Coceso.ViewModels.ViewModelSingle.prototype = Object.create(Coceso.ViewModels.Vi
         return false;
       }
 
-      Coceso.Ajax.save(ko.mapping.toJS(this, {ignore: ["incidents", "units", "taskState"]}), this.saveUrl);
+      var data = ko.mapping.toJS(this, {ignore: ["incidents", "units", "taskState"]});
+
+      if (typeof this.beforeSave === "function") {
+        data = this.beforeSave(data);
+      }
+
+      Coceso.Ajax.save(data, this.saveUrl, this.afterSave);
       return true;
     }
   },
@@ -954,16 +935,23 @@ Coceso.ViewModels.Incidents.prototype = Object.create(Coceso.ViewModels.ViewMode
 Coceso.ViewModels.Incident = function(data, options) {
   var self = this;
 
+  //Call parent constructor
   Coceso.ViewModels.ViewModelSingle.call(this, data, options);
 
-  /**
-   * Force priority to be an integer
-   *
-   * @function
-   * @type ko.computed
-   * @return {Integer}
-   */
-  this.priority = this.priority.extend({integer: true});
+  //Detect changes
+  this.type = this.type.extend({observeChanges: {notify: this.changed}});
+  this.priority = this.priority.extend({integer: true, observeChanges: {notify: this.changed}});
+  this.blue = this.blue.extend({observeChanges: {notify: this.changed}});
+  this.bo.info = this.bo.info.extend({observeChanges: {notify: this.changed}});
+  this.ao.info = this.ao.info.extend({observeChanges: {notify: this.changed}});
+  this.info = this.info.extend({observeChanges: {notify: this.changed}});
+  this.caller = this.caller.extend({observeChanges: {notify: this.changed}});
+  this.casusNr = this.casusNr.extend({observeChanges: {notify: this.changed}});
+  this.state = this.state.extend({observeChanges: {notify: this.changed}});
+
+  if (this.units.units) {
+
+  }
 
   /**
    * Incident is of type "Task"
@@ -1083,7 +1071,7 @@ Coceso.ViewModels.Incident = function(data, options) {
    * @return {boolean}
    */
   this.enableNew = ko.computed(function() {
-    return (this.getOption("writeable") && (!this.id() || (this.orig().state === Coceso.Constants.Incident.state.new )));
+    return (this.getOption("writeable") && (!this.id() || (this.state.orig() === Coceso.Constants.Incident.state.new )));
   }, this);
 
   /**
@@ -1232,43 +1220,22 @@ Coceso.ViewModels.Incident.prototype = Object.create(Coceso.ViewModels.ViewModel
       }
     }
   },
-  /**
-   * @see Coceso.ViewModels.ViewModelSingle#save
-   * @override
-   */
-//  save: {
-//    value: function() {
-//
-//
-//      if (!this.getOption("writeable") || !this.saveUrl) {
-//        return false;
-//      }
-//
-//      var data = ko.mapping.toJS(this, {ignore: ["units"]});
-//
-//      console.log(data);
-//
-//      if (!data.id) {
-//
-//      }
-//
-//      var units = (typeof this.units.units !== "undefined") ? ko.utils.arrayMap(this.units.units(), function(unit) {
-//        return "incident/setToState/" + data.id + "/" + unit.id() + "/" + unit.taskState();
-//      }) : [];
-//
-//      console.log(data.units);
-//      console.log(units);
-//
-//      data.units = undefined;
-//
-//
-//      data = ko.toJSON(data);
-//      console.log(data);
-//      Coceso.Ajax.save(data, this.saveUrl);
-//
-//      return true;
-//    }
-//  }
+  beforeSave: {
+    value: function(data) {
+      delete data.ao.id;
+      delete data.bo.id;
+
+      return data;
+    }
+  },
+  afterSave: {
+    value: function(data) {
+      var units = (typeof this.units.units !== "undefined") ? ko.utils.arrayMap(this.units.units(), function(unit) {
+        return "incident/setToState/" + data.id + "/" + unit.id() + "/" + unit.taskState();
+      }) : [];
+      console.log(units);
+    }
+  }
 });
 
 /**

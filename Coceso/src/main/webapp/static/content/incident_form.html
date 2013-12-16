@@ -50,7 +50,7 @@
         <div class="clearfix">
           <div class="form-group col-md-6">
             <label for="priority">Priority:</label>
-            <input type="number" id="priority" name="priority" min="0" max="100" data-bind="value: priority" />
+            <input type="number" id="priority" class="form-control" name="priority" min="0" max="100" data-bind="value: priority, css: {'form-changed': priority.changed}" />
           </div>
 
           <div class="form-group col-md-6">
@@ -64,28 +64,28 @@
         <div class="clearfix">
           <div class="form-group col-md-6">
             <label for="bo" class="sr-only">BO:</label>
-            <textarea id="bo" name="bo" rows="3" class="form-control" placeholder="BO" data-bind="enable: enableBO, value: bo.info"></textarea>
+            <textarea id="bo" name="bo" rows="3" class="form-control" placeholder="BO" data-bind="enable: enableBO, value: bo.info, css: {'form-changed': bo.info.changed}"></textarea>
           </div>
 
           <div class="form-group col-md-6">
             <label for="ao" class="sr-only">AO:</label>
-            <textarea id="ao" name="ao" rows="3" class="form-control" placeholder="AO" data-bind="value: ao.info"></textarea>
+            <textarea id="ao" name="ao" rows="3" class="form-control" placeholder="AO" data-bind="value: ao.info, css: {'form-changed': ao.info.changed}"></textarea>
           </div>
         </div>
 
         <div class="form-group col-md-12">
           <label for="info" class="sr-only">Info:</label>
-          <textarea id="info" name="info" rows="3" class="form-control" placeholder="Info" data-bind="value: info"></textarea>
+          <textarea id="info" name="info" rows="3" class="form-control" placeholder="Info" data-bind="value: info, css: {'form-changed': info.changed}"></textarea>
         </div>
 
         <div class="clearfix">
           <div class="form-group col-md-6">
             <label for="caller" class="sr-only">Caller:</label>
-            <input type="text" id="caller" name="caller" class="form-control" placeholder="Caller" data-bind="value: caller" />
+            <input type="text" id="caller" name="caller" class="form-control" placeholder="Caller" data-bind="value: caller, css: {'form-changed': caller.changed}" />
           </div>
           <div class="form-group col-md-6">
             <label for="casus" class="sr-only">Casus:</label>
-            <input type="text" id="casus" name="casus" class="form-control" placeholder="Casus" data-bind="value: casusNr" />
+            <input type="text" id="casus" name="casus" class="form-control" placeholder="Casus" data-bind="value: casusNr, css: {'form-changed': casusNr.changed}" />
           </div>
         </div>
 

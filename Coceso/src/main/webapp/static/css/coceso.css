@@ -182,11 +182,6 @@ label.ui-button {
   margin-right: 0;
 }
 
-input.form-control, textarea.form-control {
-  padding-left: 6px;
-  padding-right: 6px;
-}
-
 input[type="number"] {
   display: inline-block;
   padding: 4px;
@@ -197,6 +192,16 @@ input[type="number"] {
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
+  width: auto;
+}
+
+input.form-control, textarea.form-control {
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+.form-control.form-changed {
+  border-color: #c09853;
 }
 
 textarea.form-control {

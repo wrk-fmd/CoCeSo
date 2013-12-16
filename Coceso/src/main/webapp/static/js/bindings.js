@@ -132,7 +132,7 @@ ko.extenders.integer = function(target, active) {
 
       //only write if it changed
       if (newValueInt !== current) {
-        //target(newValueInt);
+        target(newValueInt);
       } else if (newValue !== current) {
         target.notifySubscribers(newValueInt);
       }
@@ -143,6 +143,72 @@ ko.extenders.integer = function(target, active) {
   result(target());
 
   //return the new computed observable
+  return result;
+};
+
+/**
+ * Allow change detection on observable
+ *
+ * @param {ko.observable} target
+ * @param {Object} options
+ * @returns {ko.computed}
+ */
+ko.extenders.observeChanges = function(target, options) {
+  target.orig = options.orig ? ko.observable(options.orig) : ko.observable(ko.utils.unwrapObservable(target));
+  target.serverChange = ko.observable(null);
+
+
+  if (options.notify) {
+    options.notify.push(target);
+  }
+
+  target.equals = function (a, b) {
+    if (typeof b === "undefined") {
+      b = this;
+    }
+
+    a = ko.utils.unwrapObservable(a);
+    b = ko.utils.unwrapObservable(b);
+
+    return (typeof options.equals === "function") ? options.equals(a, b) : (a === b);
+  };
+
+  target.localChange = ko.computed(function() {
+    return !this.equals(this.orig);
+  }, target);
+
+  return target;
+};
+
+/**
+ * Watch multiple observables for changes
+ *
+ * @param {ko.observable} target
+ * @param {Object} options
+ * @returns {ko.computed}
+ */
+ko.extenders.multipleChanges = function(target, options) {
+  if (!options.active) {
+    target.push = function() {
+    };
+    return target;
+  }
+
+  target.dependencies = ko.observableArray(options.dependencies || []);
+  var result = ko.computed(function() {
+    var i, dependencies = ko.utils.unwrapObservable(this.dependencies);
+    for (i = 0; i < dependencies.length; i++) {
+      if (ko.utils.unwrapObservable(dependencies[i].localChange)) {
+        return true;
+      }
+    }
+    return false;
+  }, target);
+  result.dependencies = target.dependencies;
+  result.push = function() {
+    target.dependencies.push.apply(target.dependencies, arguments);
+  };
+
   return result;
 };
 
