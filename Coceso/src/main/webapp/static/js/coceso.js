@@ -130,8 +130,8 @@ var Coceso = {
       transportVehicle: false,
       crew: [],
       info: null,
-      position: null,
-      home: null,
+      position: {info: ""},
+      home: {info: ""},
       incidents: {},
       taskState: null
     },
@@ -347,9 +347,9 @@ var Coceso = {
         type: "POST",
         url: Coceso.Conf.jsonBase + url,
         dataType: "json",
-        contentType: "application/json",
-        data: ko.toJSON(data),
-        processData: false,
+        contentType: (typeof data === "string") ? "application/json" : "application/x-www-form-urlencoded",
+        data: data,
+        processData: (typeof data !== "string"),
         success: function(data, status) {
           if (typeof callback === "function") {
             callback(data);
@@ -749,16 +749,10 @@ Coceso.ViewModels.ViewModelSingle.prototype = Object.create(Coceso.ViewModels.Vi
         data = this.beforeSave(data);
       }
 
-      Coceso.Ajax.save(data, this.saveUrl, this.afterSave);
+      Coceso.Ajax.save(ko.toJSON(data), this.saveUrl, this.afterSave);
       return true;
     }
   },
-  /**
-   * Specific comparison functions for some members
-   *
-   * @type Object
-   */
-  compare: {value: {}},
   /**
    * Options for draggables
    *
@@ -887,18 +881,6 @@ Coceso.ViewModels.Incidents = function(data, options) {
    * @return {Array}
    */
   this.filtered = this.incidents.extend({filtered: this.activeFilters});
-
-  /**
-   * The accordion view options
-   * Has to depend on the used data array for the accordion to update correctly
-   *
-   * @function
-   * @type ko.computed
-   * @return {Object}
-   */
-  this.accordionOptions = ko.computed(function() {
-    return {active: false, collapsible: true, heightStyle: "content"};
-  }, this);
 };
 Coceso.ViewModels.Incidents.prototype = Object.create(Coceso.ViewModels.ViewModelList.prototype, /** @lends Coceso.ViewModels.Incidents.prototype */ {
   /**
@@ -1145,15 +1127,6 @@ Coceso.ViewModels.Incident = function(data, options) {
       Coceso.Ajax.save({incident_id: self.id(), unit_id: unit.id()}, "assignUnit");
     }
   };
-
-  /**
-   * Open in a form
-   *
-   * @return {void}
-   */
-  this.openForm = function() {
-    Coceso.UI.openIncident("Edit Incident", "incident_form.html", {id: self.id()});
-  };
 };
 Coceso.ViewModels.Incident.prototype = Object.create(Coceso.ViewModels.ViewModelSingle.prototype, /** @lends Coceso.ViewModels.Incident.prototype */ {
   /**
@@ -1220,6 +1193,13 @@ Coceso.ViewModels.Incident.prototype = Object.create(Coceso.ViewModels.ViewModel
       }
     }
   },
+  /**
+   * Data manipulation before saving
+   *
+   * @function
+   * @param {Object} data The data to save
+   * @return {Object} The manipulated data
+   */
   beforeSave: {
     value: function(data) {
       delete data.ao.id;
@@ -1228,12 +1208,29 @@ Coceso.ViewModels.Incident.prototype = Object.create(Coceso.ViewModels.ViewModel
       return data;
     }
   },
+  /**
+   * Callback after saving
+   *
+   * @function
+   * @param {Object} data The data returned from server
+   * @return {void}
+   */
   afterSave: {
     value: function(data) {
       var units = (typeof this.units.units !== "undefined") ? ko.utils.arrayMap(this.units.units(), function(unit) {
         return "incident/setToState/" + data.id + "/" + unit.id() + "/" + unit.taskState();
       }) : [];
       console.log(units);
+    }
+  },
+  /**
+   * Open in a form
+   *
+   * @return {void}
+   */
+  openForm: {
+    value: function() {
+      Coceso.UI.openIncident("Edit Incident", "incident_form.html", {id: this.id()});
     }
   }
 });
@@ -1293,8 +1290,6 @@ Coceso.ViewModels.Units = function(data, options) {
    * @return {Array}
    */
   this.filtered = this.units.extend({filtered: this.activeFilters});
-
-
 };
 Coceso.ViewModels.Units.prototype = Object.create(Coceso.ViewModels.ViewModelList.prototype, /** @lends Coceso.ViewModels.Units.prototype */ {
   /**
@@ -1391,12 +1386,7 @@ Coceso.ViewModels.Unit.prototype = Object.create(Coceso.ViewModels.ViewModelSing
         }
       }
     }
-  },
-  /**
-   * @see Coceso.ViewModels.ViewModelSingle#compare
-   * @override
-   */
-  compare: {value: {}}
+  }
 });
 
 /**
@@ -1532,10 +1522,5 @@ Coceso.ViewModels.Log.prototype = Object.create(Coceso.ViewModels.ViewModelSingl
         }
       }
     }
-  },
-  /**
-   * @see Coceso.ViewModels.ViewModelSingle#compare
-   * @override
-   */
-  compare: {value: {}}
+  }
 });

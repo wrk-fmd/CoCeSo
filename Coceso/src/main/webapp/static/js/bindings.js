@@ -16,7 +16,6 @@
  * Dependencies:
  *	knockout.js
  *	jquery.ui.accordion.js
- *	jquery.ui.button.js
  *	jquery.ui.buttonset.js
  *	jquery.ui.draggable.js
  *	jquery.ui.dropable.js
@@ -71,7 +70,6 @@ function uiBindingHandlerRefresh(widget) {
   };
 }
 
-
 /**
  * Generate Accordion from loop
  *
@@ -86,20 +84,12 @@ ko.bindingHandlers.accordion = uiBindingHandler("accordion");
  */
 ko.bindingHandlers.accordionRefresh = uiBindingHandlerRefresh("accordion");
 
-
 /**
  * Generate Button from element
  *
  * @type {BindingHandler}
  */
 ko.bindingHandlers.button = uiBindingHandler("button");
-
-/**
- * Generate Buttonset from element
- *
- * @type {BindingHandler}
- */
-ko.bindingHandlers.buttonset = uiBindingHandler("buttonset");
 
 /**
  * Generate Draggable from element

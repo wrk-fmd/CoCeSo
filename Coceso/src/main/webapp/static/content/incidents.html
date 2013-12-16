@@ -37,7 +37,7 @@
         <input id="tab_relocations" type="radio" name="tab" value="2" data-bind="checked: selectedTab" /> <label for="tab_relocations">Relocation</label>
       </div>
 
-      <ul data-bind="foreach: filtered, accordion: accordionOptions, accordionRefresh: filtered">
+      <ul data-bind="foreach: filtered, accordion: {active: false, collapsible: true, heightStyle: 'content'}, accordionRefresh: filtered">
         <li data-bind="droppable: {drop: assignUnitList}">
           <h3 class="clearfix" data-bind="css: {incidents_open: isNew() || isOpen()}">
             <span class="incidents_priority" data-bind="text: priority, css: {incidents_blue: blue}, style: {fontSize: (priority() / 300 + 0.5) + 'em'}"></span>
