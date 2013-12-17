@@ -33,7 +33,7 @@ public class MainController {
     }
 
     @RequestMapping(value = "unit_form.html", method = RequestMethod.GET)
-    public String unit() {
+    public String unitForm() {
 
         return "main_content/unit_form";
     }
