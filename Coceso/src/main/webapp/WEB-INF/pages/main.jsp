@@ -26,7 +26,7 @@
 -->
 <html>
 <head>
-    <title>CoCeSo</title>
+    <title><spring:message code="label.coceso" /></title>
     <meta charset="utf-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 

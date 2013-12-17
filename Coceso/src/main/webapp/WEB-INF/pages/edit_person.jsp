@@ -8,10 +8,10 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
-    <c:url var="bootstrap" value="/static/bootstrap.css" />
+    <c:url var="bootstrap" value="/static/css/bootstrap.css" />
     <link href="${bootstrap}" rel="stylesheet">
 
-    <c:url var="bootstrap_theme" value="/static/bootstrap-theme.css" />
+    <c:url var="bootstrap_theme" value="/static/css/bootstrap-theme.css" />
     <link href="${bootstrap_theme}" rel="stylesheet">
 
 </head>
@@ -64,10 +64,10 @@
 </div>
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<c:url var="jquery" value="/static/jquery.js" />
+<c:url var="jquery" value="/static/js/jquery.js" />
 <script src="${jquery}"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
-<c:url var="bootstrap_js" value="/static/bootstrap.js" />
+<c:url var="bootstrap_js" value="/static/js/bootstrap.js" />
 <script src="${bootstrap_js}"></script>
 
 </body>

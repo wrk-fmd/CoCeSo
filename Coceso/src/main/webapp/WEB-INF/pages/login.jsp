@@ -9,23 +9,23 @@
 
     <title><spring:message code="label.nav.login"/></title>
 
-    <c:url var="bootstrap" value="/static/bootstrap.css" />
+    <c:url var="bootstrap" value="/static/css/bootstrap.css" />
     <link href="${bootstrap}" rel="stylesheet">
 
-    <c:url var="bootstrap_theme" value="/static/bootstrap-theme.css" />
+    <c:url var="bootstrap_theme" value="/static/css/bootstrap-theme.css" />
     <link href="${bootstrap_theme}" rel="stylesheet">
 
-    <c:url var="bootstrap_signin" value="/static/signin.css" />
+    <c:url var="bootstrap_signin" value="/static/css/signin.css" />
     <link href="${bootstrap_signin}" rel="stylesheet">
 
 </head>
 
 <body>
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<c:url var="jquery" value="/static/jquery.js" />
+<c:url var="jquery" value="/static/js/jquery.js" />
 <script src="${jquery}"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
-<c:url var="bootstrap_js" value="/static/bootstrap.js" />
+<c:url var="bootstrap_js" value="/static/js/bootstrap.js" />
 <script src="${bootstrap_js}"></script>
 
 <div class="container">

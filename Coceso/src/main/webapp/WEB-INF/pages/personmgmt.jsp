@@ -9,18 +9,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
 
-    <link href="<c:url value="/static/css/ui-bootstrap-0.5/jquery-ui-1.10.0.custom.css" />" rel="stylesheet">
+    <link href="<c:url value="/static/css/bootstrap.css" />" rel="stylesheet">
 
-    <link href="<c:url value="/static/bootstrap.css" />" rel="stylesheet">
-
-    <link href="<c:url value="/static/bootstrap-theme.css" />" rel="stylesheet">
+    <link href="<c:url value="/static/css/bootstrap-theme.css" />" rel="stylesheet">
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 
-    <script src="<c:url value="/static/jquery.js" />"></script>
+    <script src="<c:url value="/static/js/jquery.js" />"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
 
-    <script src="<c:url value="/static/bootstrap.js" />"></script>
+    <script src="<c:url value="/static/js/bootstrap.js" />"></script>
 
     <script src="<c:url value="/static/js/jquery.ui.js"/>"></script>
 
