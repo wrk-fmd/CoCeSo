@@ -26,13 +26,19 @@ public class MainController {
         return "main";
     }
 
-    @RequestMapping(value = "units.html", method = RequestMethod.GET)
+    @RequestMapping(value = "unit.html", method = RequestMethod.GET)
     public String unit() {
 
         return "main_content/unit";
     }
 
-    @RequestMapping(value = "incidents.html", method = RequestMethod.GET)
+    @RequestMapping(value = "unit_form.html", method = RequestMethod.GET)
+    public String unit() {
+
+        return "main_content/unit_form";
+    }
+
+    @RequestMapping(value = "incident.html", method = RequestMethod.GET)
     public String incident() {
 
         return "main_content/incident";
