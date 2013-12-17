@@ -89,7 +89,7 @@ ko.bindingHandlers.accordionRefresh = uiBindingHandlerRefresh("accordion");
  *
  * @type {BindingHandler}
  */
-ko.bindingHandlers.button = uiBindingHandler("button");
+ko.bindingHandlers.buttonset = uiBindingHandler("buttonset");
 
 /**
  * Generate Draggable from element
@@ -147,11 +147,6 @@ ko.extenders.observeChanges = function(target, options) {
   target.orig = options.orig ? ko.observable(options.orig) : ko.observable(ko.utils.unwrapObservable(target));
   target.serverChange = ko.observable(null);
 
-
-  if (options.notify) {
-    options.notify.push(target);
-  }
-
   target.equals = function (a, b) {
     if (typeof b === "undefined") {
       b = this;
@@ -166,6 +161,10 @@ ko.extenders.observeChanges = function(target, options) {
   target.localChange = ko.computed(function() {
     return !this.equals(this.orig);
   }, target);
+
+  if (options.notify) {
+    options.notify.push(target);
+  }
 
   return target;
 };

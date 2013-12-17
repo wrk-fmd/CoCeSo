@@ -1127,6 +1127,24 @@ Coceso.ViewModels.Incident = function(data, options) {
       Coceso.Ajax.save({incident_id: self.id(), unit_id: unit.id()}, "assignUnit");
     }
   };
+
+  /**
+   * Callback after saving
+   *
+   * @param {Object} data The data returned from server
+   * @return {void}
+   */
+  this.afterSave = function(data) {
+    if (data.incident_id) {
+      self.id(data.incident_id);
+      self.setData(Coceso.Ajax.data[self.dataType]);
+    }
+
+    var units = (typeof self.units.units !== "undefined") ? ko.utils.arrayMap(self.units.units(), function(unit) {
+      return "incident/setToState/" + data.id + "/" + unit.id() + "/" + unit.taskState();
+    }) : [];
+    console.log(units);
+  };
 };
 Coceso.ViewModels.Incident.prototype = Object.create(Coceso.ViewModels.ViewModelSingle.prototype, /** @lends Coceso.ViewModels.Incident.prototype */ {
   /**
@@ -1206,21 +1224,6 @@ Coceso.ViewModels.Incident.prototype = Object.create(Coceso.ViewModels.ViewModel
       delete data.bo.id;
 
       return data;
-    }
-  },
-  /**
-   * Callback after saving
-   *
-   * @function
-   * @param {Object} data The data returned from server
-   * @return {void}
-   */
-  afterSave: {
-    value: function(data) {
-      var units = (typeof this.units.units !== "undefined") ? ko.utils.arrayMap(this.units.units(), function(unit) {
-        return "incident/setToState/" + data.id + "/" + unit.id() + "/" + unit.taskState();
-      }) : [];
-      console.log(units);
     }
   },
   /**
@@ -1327,6 +1330,39 @@ Coceso.ViewModels.Unit = function(data, options) {
   Coceso.ViewModels.ViewModelSingle.call(this, data, options);
 
   /**
+   * Unit has state "AD"
+   *
+   * @function
+   * @type ko.computed
+   * @return {boolean}
+   */
+  this.isAD = ko.computed(function() {
+    return (this.state() === Coceso.Constants.Unit.state.ad);
+  }, this);
+
+  /**
+   * Unit has state "EB"
+   *
+   * @function
+   * @type ko.computed
+   * @return {boolean}
+   */
+  this.isEB = ko.computed(function() {
+    return (this.state() === Coceso.Constants.Unit.state.eb);
+  }, this);
+
+  /**
+   * Unit has state "NEB"
+   *
+   * @function
+   * @type ko.computed
+   * @return {boolean}
+   */
+  this.isNEB = ko.computed(function() {
+    return (this.state() === Coceso.Constants.Unit.state.neb);
+  }, this);
+
+  /**
    * CSS class based on the unit's state
    *
    * @function
@@ -1384,6 +1420,45 @@ Coceso.ViewModels.Unit.prototype = Object.create(Coceso.ViewModels.ViewModelSing
           }
           return new Coceso.ViewModels.Incidents({incidents: incidents}, options.parent.getOption("children", {children: {assigned: false, writeable: false}}));
         }
+      }
+    }
+  },
+  /**
+   * Set unit state to "AD"
+   *
+   * @function
+   * @return {void}
+   */
+  setAD: {
+    value: function() {
+      if (!this.isAD() && this.id()) {
+        Coceso.Ajax.save({id: this.id(), state: Coceso.Constants.Unit.state.ad}, "unit/update");
+      }
+    }
+  },
+  /**
+   * Set unit state to "EB"
+   *
+   * @function
+   * @return {void}
+   */
+  setEB: {
+    value: function() {
+      if (!this.isEB() && this.id()) {
+        Coceso.Ajax.save({id: this.id(), state: Coceso.Constants.Unit.state.eb}, "unit/update");
+      }
+    }
+  },
+  /**
+   * Set unit state to "NEB"
+   *
+   * @function
+   * @return {void}
+   */
+  setNEB: {
+    value: function() {
+      if (!this.isNEB() && this.id()) {
+        Coceso.Ajax.save({id: this.id(), state: Coceso.Constants.Unit.state.neb}, "unit/update");
       }
     }
   }

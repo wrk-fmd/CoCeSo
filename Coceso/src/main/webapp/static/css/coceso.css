@@ -265,7 +265,7 @@ span.incidents_blue {
  */
 
 .units_list {
-  padding: 0;
+  padding: 0 150px 240px 0;
   margin: 0;
   list-style: none;
 }
