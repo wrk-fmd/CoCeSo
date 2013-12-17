@@ -20,7 +20,6 @@
  *	coceso.client.winman
  */
 
-
 /**
  * Object containing the main code
  *
@@ -1432,7 +1431,7 @@ Coceso.ViewModels.Unit.prototype = Object.create(Coceso.ViewModels.ViewModelSing
   setAD: {
     value: function() {
       if (!this.isAD() && this.id()) {
-        Coceso.Ajax.save({id: this.id(), state: Coceso.Constants.Unit.state.ad}, "unit/update");
+        Coceso.Ajax.save(ko.toJSON({id: this.id(), state: Coceso.Constants.Unit.state.ad}), "unit/update");
       }
     }
   },
@@ -1445,7 +1444,7 @@ Coceso.ViewModels.Unit.prototype = Object.create(Coceso.ViewModels.ViewModelSing
   setEB: {
     value: function() {
       if (!this.isEB() && this.id()) {
-        Coceso.Ajax.save({id: this.id(), state: Coceso.Constants.Unit.state.eb}, "unit/update");
+        Coceso.Ajax.save(ko.toJSON({id: this.id(), state: Coceso.Constants.Unit.state.eb}), "unit/update");
       }
     }
   },
@@ -1458,7 +1457,7 @@ Coceso.ViewModels.Unit.prototype = Object.create(Coceso.ViewModels.ViewModelSing
   setNEB: {
     value: function() {
       if (!this.isNEB() && this.id()) {
-        Coceso.Ajax.save({id: this.id(), state: Coceso.Constants.Unit.state.neb}, "unit/update");
+        Coceso.Ajax.save(ko.toJSON({id: this.id(), state: Coceso.Constants.Unit.state.neb}), "unit/update");
       }
     }
   }
