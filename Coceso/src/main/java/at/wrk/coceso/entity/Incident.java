@@ -105,11 +105,11 @@ public class Incident {
         return state;
     }
 
-    public int getPriority() {
+    public Integer getPriority() {
         return priority;
     }
 
-    public boolean isBlue() {
+    public Boolean isBlue() {
         return blue;
     }
 
