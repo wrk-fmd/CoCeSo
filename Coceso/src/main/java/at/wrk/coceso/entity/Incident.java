@@ -28,6 +28,7 @@ public class Incident {
         tmp.add(1, TaskState.ZAO);
 
         possibleStates.put(IncidentType.Relocation, new ArrayList<TaskState>(tmp));
+        possibleStates.put(IncidentType.ToHome, new ArrayList<TaskState>(tmp));
 
         tmp.add(1, TaskState.ZBO);
         tmp.add(2, TaskState.ABO);
@@ -105,11 +106,11 @@ public class Incident {
         return state;
     }
 
-    public int getPriority() {
+    public Integer getPriority() {
         return priority;
     }
 
-    public boolean isBlue() {
+    public Boolean isBlue() {
         return blue;
     }
 

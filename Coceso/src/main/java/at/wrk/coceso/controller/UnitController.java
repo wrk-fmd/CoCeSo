@@ -141,7 +141,7 @@ public class UnitController implements IEntityController<Unit> {
         toHome.concern = activeCase;
         toHome.ao = unit.home;
         toHome.bo = unit.position; // TODO useful?
-        toHome.type = IncidentType.Relocation;
+        toHome.type = IncidentType.ToHome;
         toHome.caller = user.getUsername(); // TODO useful?
 
         toHome.id = incidentService.add(toHome, user);
