@@ -69,17 +69,17 @@
             <div class="ui-buttonset">
               <input id="state_eb" type="radio" class="ui-helper-hidden-accessible" name="state" data-bind="checked: state, value: Coceso.Constants.Unit.state.eb" />
               <label for="state_eb" class="ui-button ui-widget ui-state-default ui-corner-left" data-bind="css: {'ui-state-active': isEB()}">
-                <span class="ui-button-text"><spring:message code="label.incident.state.eb" /></span>
+                <span class="ui-button-text"><spring:message code="label.unit.state.eb" /></span>
               </label>
 
               <input id="state_neb" type="radio" class="ui-helper-hidden-accessible" name="state" data-bind="checked: state, value: Coceso.Constants.Unit.state.neb" />
               <label for="state_neb" class="ui-button ui-widget ui-state-default" data-bind="css: {'ui-state-active': isNEB()}">
-                <span class="ui-button-text"><spring:message code="label.incident.state.neb" /></span>
+                <span class="ui-button-text"><spring:message code="label.unit.state.neb" /></span>
               </label>
 
               <input id="state_ad" type="radio" class="ui-helper-hidden-accessible" name="state" data-bind="checked: state, value: Coceso.Constants.Unit.state.ad" />
               <label for="state_ad" class="ui-button ui-widget ui-state-default ui-corner-right" data-bind="css: {'ui-state-active': isAD()}">
-                <span class="ui-button-text"><spring:message code="label.incident.state.ad" /></span>
+                <span class="ui-button-text"><spring:message code="label.unit.state.ad" /></span>
               </label>
             </div>
           </div>
