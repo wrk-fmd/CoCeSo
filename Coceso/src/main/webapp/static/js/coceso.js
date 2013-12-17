@@ -188,18 +188,6 @@ var Coceso = {
       this.windows[id] = viewmodel;
     },
     /**
-     * Open the units overview
-     *
-     * @param {String} title
-     * @param {String} src
-     * @param {Object} options
-     * @return {void}
-     */
-    openUnits: function(title, src, options) {
-      this.openWindow(title, Coceso.Conf.contentBase + src, new Coceso.ViewModels.Units({}, options || {}));
-      return false;
-    },
-    /**
      * Open the incidents overview
      *
      * @param {String} title
@@ -221,6 +209,30 @@ var Coceso = {
      */
     openIncident: function(title, src, data) {
       this.openWindow(title, Coceso.Conf.contentBase + src, new Coceso.ViewModels.Incident(data || {}));
+      return false;
+    },
+    /**
+     * Open the units overview
+     *
+     * @param {String} title
+     * @param {String} src
+     * @param {Object} options
+     * @return {void}
+     */
+    openUnits: function(title, src, options) {
+      this.openWindow(title, Coceso.Conf.contentBase + src, new Coceso.ViewModels.Units({}, options || {}));
+      return false;
+    },
+    /**
+     * Open the units overview
+     *
+     * @param {String} title
+     * @param {String} src
+     * @param {Object} data
+     * @return {void}
+     */
+    openUnit: function(title, src, data) {
+      this.openWindow(title, Coceso.Conf.contentBase + src, new Coceso.ViewModels.Unit(data || {}));
       return false;
     },
     /**
@@ -930,10 +942,6 @@ Coceso.ViewModels.Incident = function(data, options) {
   this.casusNr = this.casusNr.extend({observeChanges: {notify: this.changed}});
   this.state = this.state.extend({observeChanges: {notify: this.changed}});
 
-  if (this.units.units) {
-
-  }
-
   /**
    * Incident is of type "Task"
    *
@@ -1326,6 +1334,8 @@ Coceso.ViewModels.Units.prototype = Object.create(Coceso.ViewModels.ViewModelLis
  * @param {Object} options
  */
 Coceso.ViewModels.Unit = function(data, options) {
+  var self = this;
+
   Coceso.ViewModels.ViewModelSingle.call(this, data, options);
 
   /**
@@ -1389,6 +1399,28 @@ Coceso.ViewModels.Unit = function(data, options) {
     }) !== null);
   }, this);
 
+  /**
+   * Assign a incident within the form
+   *
+   * @param {Event} event The jQuery Event (unused)
+   * @param {Object} ui jQuery UI properties
+   * @return {void}
+   */
+  this.assignIncidentForm = function(event, ui) {
+    var viewmodel = ko.dataFor(ui.draggable.context);
+    if (!viewmodel instanceof Coceso.ViewModels.Incident) {
+      return;
+    }
+    var incid = ko.utils.unwrapObservable(viewmodel.id);
+    if (incid && self.units.units) {
+      var assigned = ko.utils.arrayFirst(self.units.units(), function(incident) {
+        return (incident.id() === incid);
+      });
+      if (assigned === null) {
+        self.units.units.push(new Coceso.ViewModels.Unit({id: incid, taskState: "Assigned"}, self.getOption(["children", "children"], {assigned: false, writeable: false})));
+      }
+    }
+  };
 };
 Coceso.ViewModels.Unit.prototype = Object.create(Coceso.ViewModels.ViewModelSingle.prototype, /** @lends Coceso.ViewModels.Unit.prototype */ {
   /**
@@ -1408,6 +1440,16 @@ Coceso.ViewModels.Unit.prototype = Object.create(Coceso.ViewModels.ViewModelSing
   mappingOptions: {
     value: {
       ignore: ["concern"],
+      home: {
+        create: function(options) {
+          return ko.mapping.fromJS($.extend({}, Coceso.Models.Point, options.data));
+        }
+      },
+      position: {
+        create: function(options) {
+          return ko.mapping.fromJS($.extend({}, Coceso.Models.Point, options.data));
+        }
+      },
       incidents: {
         create: function(options) {
           if (!options.parent.getOption("assigned")) {
@@ -1459,6 +1501,55 @@ Coceso.ViewModels.Unit.prototype = Object.create(Coceso.ViewModels.ViewModelSing
       if (!this.isNEB() && this.id()) {
         Coceso.Ajax.save(ko.toJSON({id: this.id(), state: Coceso.Constants.Unit.state.neb}), "unit/update");
       }
+    }
+  },
+  /**
+   * Send unit home
+   *
+   * @function
+   * @return {void}
+   */
+  sendHome: {
+    value: function() {
+      if (this.id()) {
+        Coceso.Ajax.save({id: this.id()}, "unit/sendHome");
+      }
+    }
+  },
+  /**
+   * Send unit home
+   *
+   * @function
+   * @return {void}
+   */
+  standby: {
+    value: function() {
+      if (this.id()) {
+        Coceso.Ajax.save({id: this.id()}, "unit/sendHome");
+      }
+    }
+  },
+  /**
+   * Send unit home
+   *
+   * @function
+   * @return {void}
+   */
+  holdPosition: {
+    value: function() {
+      if (this.id()) {
+        Coceso.Ajax.save({id: this.id()}, "unit/sendHome");
+      }
+    }
+  },
+  /**
+   * Open in a form
+   *
+   * @return {void}
+   */
+  openForm: {
+    value: function() {
+      Coceso.UI.openUnit("Edit Unit", "unit_form.html", {id: this.id()});
     }
   }
 });

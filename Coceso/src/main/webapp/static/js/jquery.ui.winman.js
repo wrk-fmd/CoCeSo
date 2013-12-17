@@ -29,10 +29,10 @@ $.ui.dialog.prototype._init = function() {
 
   //set some variables for later use
   var dialog_element = this;
-  var dialog_id = this.uiDialogTitlebar.next().attr('id');
+  var dialog_id = this.uiDialogTitlebar.next().attr("id");
 
   //Close button completely destroys a dialog
-  this.uiDialogTitlebarClose.off('click');
+  this.uiDialogTitlebarClose.off("click");
   this._on(this.uiDialogTitlebarClose, {
     click: function(event) {
       event.preventDefault();
@@ -56,10 +56,10 @@ $.ui.dialog.prototype._init = function() {
   });
 
   //Create hover effect and click event for minimize button
-  $('#' + dialog_id + '-minbutton').hover(function() {
-    $(this).addClass('ui-state-hover');
+  $("#" + dialog_id + "-minbutton").hover(function() {
+    $(this).addClass("ui-state-hover");
   }, function() {
-    $(this).removeClass('ui-state-hover');
+    $(this).removeClass("ui-state-hover");
   }).click(function() {
     dialog_element.close();
   });
@@ -70,7 +70,7 @@ $.ui.dialog.prototype.destroy = function() {
   destroy.apply(this, arguments);
 
   //Trigger an event
-  this._trigger('destroy');
+  this._trigger("destroy");
 };
 
 /**
@@ -92,7 +92,7 @@ $.widget("ui.winman", {
   options: {},
   _create: function() {
     // Add classes to taskbar root element
-    this.element.addClass('ui-taskbar');
+    this.element.addClass("ui-taskbar");
 
     // List of elements
     this.windows = {};
@@ -104,9 +104,9 @@ $.widget("ui.winman", {
   addWindow: function(title, src, create, destroy) {
     var self = this;
 
-    var id = 'ui-id-' + this.uuid + '-' + (++this.index);
-    var el = $('<div class="dialog_window" id="' + id + '" title="' + title + '"></div>');
-    el.load(src + ' .ajax_content', function(response, status, request) {
+    var id = "ui-id-" + this.uuid + "-" + (++this.index);
+    var el = $("<div class='dialog_window' id='" + id + "' title='" + title + "'></div>");
+    el.load(src + " .ajax_content", function(response, status, request) {
       el.find("*").each(function(i, child) {
         $(child).prependAttr("id", id + "-");
         $(child).prependAttr("for", id + "-");
@@ -118,15 +118,15 @@ $.widget("ui.winman", {
     });
 
     this.windows[id] = el;
-    this.buttons[id] = $('<li class="ui-taskbar-item ui-widget ui-state-default ui-corner-all" id="' + id + '_taskbar">' + title + '</li>');
+    this.buttons[id] = $("<li class='ui-taskbar-item ui-widget ui-state-default ui-corner-all' id='" + id + "_taskbar'>" + title + "</li>");
     this.buttons[id].click(function() {
       self.toggle.call(self, id);
     });
 
     this.windows[id].dialog({
       closeOnEscape: false,
-      width: 'auto',
-      height: 'auto',
+      width: "auto",
+      height: "auto",
       autoOpen: true,
       focus: function(event, ui) {
         self._focus.call(self, event, ui);
@@ -140,35 +140,35 @@ $.widget("ui.winman", {
           destroy(el.get(0), id);
         }
       }
-    });
+    }).data("ui-dialog").uiDialog.draggable("option", "containment", $("body"));
     this.element.append(this.buttons[id]);
 
     return id;
   },
   //Toggle a window
   toggle: function(id) {
-    if (!this.windows[id].dialog('isOpen')) {
-      this.windows[id].dialog('open');
-    } else if (this.buttons[id].hasClass('ui-state-focus')) {
-      this.windows[id].dialog('close');
+    if (!this.windows[id].dialog("isOpen")) {
+      this.windows[id].dialog("open");
+    } else if (this.buttons[id].hasClass("ui-state-focus")) {
+      this.windows[id].dialog("close");
     } else {
-      this.windows[id].dialog('moveToTop');
+      this.windows[id].dialog("moveToTop");
     }
   },
   // Open/minimize/close a window
   open: function(id) {
     if (this.windows[id]) {
-      this.windows[id].dialog('open');
+      this.windows[id].dialog("open");
     }
   },
   minimize: function(id) {
     if (this.windows[id]) {
-      this.windows[id].dialog('close');
+      this.windows[id].dialog("close");
     }
   },
   close: function(id) {
     if (this.windows[id]) {
-      this.windows[id].dialog('destroy');
+      this.windows[id].dialog("destroy");
     }
   },
   _focus: function(event, ui) {
@@ -178,9 +178,9 @@ $.widget("ui.winman", {
   _minimize: function(event, ui) {
     //Update the taskbar after a window is set to invisible
     if (this.buttons[event.target.id]) {
-      this.buttons[event.target.id].removeClass('ui-state-focus ui-state-open').addClass('ui-state-default');
+      this.buttons[event.target.id].removeClass("ui-state-focus ui-state-open").addClass("ui-state-default");
     }
-    this._setFocused($('.dialog_window:visible').last().attr('id'));
+    this._setFocused($(".dialog_window:visible").last().attr("id"));
   },
   _close: function(event, ui) {
     //Update the taskbar after a window is closed
@@ -190,21 +190,21 @@ $.widget("ui.winman", {
     if (this.buttons[event.target.id]) {
       this.buttons[event.target.id].remove();
     }
-    this._setFocused($('.dialog_window:visible').last().attr('id'));
+    this._setFocused($(".dialog_window:visible").last().attr("id"));
   },
   _setFocused: function(id) {
     $.each(this.buttons, function(index, element) {
-      if (element.hasClass('ui-state-focus')) {
-        element.removeClass('ui-state-focus ui-state-default').addClass('ui-state-open');
+      if (element.hasClass("ui-state-focus")) {
+        element.removeClass("ui-state-focus ui-state-default").addClass("ui-state-open");
       }
     });
     if (this.buttons[id]) {
-      this.buttons[id].removeClass('ui-state-open ui-state-default').addClass('ui-state-focus');
+      this.buttons[id].removeClass("ui-state-open ui-state-default").addClass("ui-state-focus");
     }
   },
   _destroy: function() {
     $.each(this.windows, function(index, element) {
-      element.dialog('destroy');
+      element.dialog("destroy");
     });
 
     this.element.removeClass("ui-taskbar");

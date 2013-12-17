@@ -1,7 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
 <!DOCTYPE html>
 <!--
 /**
@@ -35,9 +34,9 @@
     <div class="alert alert-danger"><spring:message code="label.main.error.no_direct_access" /></div>
 
     <div class="ajax_content">
-      <ul class="units_list" data-bind="foreach: filtered">
+      <ul class="unit_list" data-bind="foreach: filtered">
         <li class="dropdown">
-          <a href="#" class="unit_state dropdown-toggle" data-bind="text: call, css: stateCss, draggable: dragOptions" data-toggle="dropdown" oncontextmenu="return this.click() && false;"></a>
+          <a href="#" class="unit_state dropdown-toggle" data-bind="text: call, css: stateCss, draggable: dragOptions" data-toggle="dropdown" oncontextmenu="this.click(); return false;"></a>
           <ul class="dropdown-menu">
             <li class="dropdown-header">Set State</li>
             <li data-bind="css: {disabled: isNEB}"><a href="#" title="Set to NEB" data-bind="click: setNEB">NEB</a></li>
@@ -46,9 +45,12 @@
 
             <li class="divider"></li>
             <li class="dropdown-header">Actions</li>
-            <li><a href="#" title="Send Home" onclick="return false;"><spring:message code="label.unit.send_home" /></a></li>
-            <li><a href="#" title="Standby" onclick="return false;"><spring:message code="label.unit.standby" /></a></li>
-            <li><a href="#" title="Hold Position" onclick="return false;"><spring:message code="label.unit.hold_position" /></a></li>
+            <li><a href="#" title="Send Home" data-bind="click: sendHome"><spring:message code="label.unit.send_home" /></a></li>
+            <li><a href="#" title="Standby" data-bind="click: standby"><spring:message code="label.unit.standby" /></a></li>
+            <li><a href="#" title="Hold Position" data-bind="click: holdPosition"><spring:message code="label.unit.hold_position" /></a></li>
+
+            <li class="divider"></li>
+            <li><a href="#" title="Edit Unit" data-bind="click: openForm">Edit Unit</a></li>
           </ul>
         </li>
       </ul>
