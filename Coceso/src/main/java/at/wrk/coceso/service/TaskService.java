@@ -97,7 +97,7 @@ public class TaskService {
                 unitDao.update(writeUnit);
                 break;
             case ZAO:
-                if(i.type == IncidentType.Relocation) {
+                if(i.type == IncidentType.Relocation || i.type == IncidentType.ToHome) {
                     Incident writeIncident = i.slimCopy();
                     writeIncident.state = IncidentState.Working;
                     log.logFull(user, LogText.INCIDENT_AUTO_STATE, i.concern, u, writeIncident, true);
