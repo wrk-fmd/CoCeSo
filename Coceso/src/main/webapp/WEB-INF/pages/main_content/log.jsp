@@ -47,17 +47,17 @@
         <!-- ko foreach: logs -->
         <tr>
             <td data-bind="text: time"></td>
-            <td data-bind="text: user.dNr"></td>
+            <td data-bind="text: user.username"></td>
             <td data-bind="text: text"></td>
-            <td data-bind="text: unit"></td>
-            <td data-bind="text: incident"></td>
+            <td data-bind="text: unit.call"></td>
+            <td data-bind="text: incident.id"></td>
             <td data-bind="text: state"></td>
         </tr>
-        <tr>
+        <%--tr>
             <td colspan="6">
                 <span data-bind="text: json.unit.call"></span>
             </td>
-        </tr>
+        </tr--%>
         <!-- /ko -->
     </table>
 </div>

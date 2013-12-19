@@ -30,6 +30,8 @@ public class LogDao extends CocesoDao<LogEntry> {
             "LEFT OUTER JOIN person p ON l.operator_fk = p.id " +
             "LEFT OUTER JOIN unit u ON l.unit_fk = u.id ";
 
+    private static final String sortSuffix = " ORDER BY timestamp DESC";
+
     @Override
     public LogEntry getById(int id) {
         if(id <= 0) return null;
@@ -46,7 +48,7 @@ public class LogDao extends CocesoDao<LogEntry> {
     public List<LogEntry> getByUnitId(int id) {
         if(id <= 0) return null;
 
-        String q = getPrefix + "WHERE l.unit_fk = ?";
+        String q = getPrefix + "WHERE l.unit_fk = ?"+sortSuffix;
 
         return jdbc.query(q, new Object[]{id}, logMapper);
     }
@@ -54,7 +56,7 @@ public class LogDao extends CocesoDao<LogEntry> {
     public List<LogEntry> getByIncidentId(int id) {
         if(id <= 0) return null;
 
-        String q = getPrefix + "WHERE l.incident_fk = ?";
+        String q = getPrefix + "WHERE l.incident_fk = ?" + sortSuffix;
 
         return jdbc.query(q, new Object[] {id}, logMapper);
     }
@@ -64,7 +66,7 @@ public class LogDao extends CocesoDao<LogEntry> {
     public List<LogEntry> getAll(int id) {
         if(id <= 0) return null;
 
-        String q = getPrefix + "WHERE l.concern_fk = ?";
+        String q = getPrefix + "WHERE l.concern_fk = ?" + sortSuffix;
 
         return jdbc.query(q, new Object[] {id}, logMapper);
     }
