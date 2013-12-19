@@ -599,8 +599,21 @@ Coceso.ViewModels.ViewModelSingle = function(data, options) {
     }) || {};
   }
 
-  orig = $.extend({}, this.model, orig);
-  data = $.extend({}, orig, data);
+console.log(orig);
+  orig = $.extend(true, {}, this.model, orig);
+/*  console.log(orig);
+  var i;
+  for (i in data) {
+    console.log(i);
+    console.log(orig[i]);
+    console.log(typeof this.model[i]);
+    if ((orig[i] === null) && (this.model[i] instanceof Object)) {
+      orig[i] = this.model[i];
+    }
+  }*/
+  data = $.extend(true, {}, orig, data);
+
+  this.mappingOptions.orig = orig;
 
   /**
    * Method to set refreshed data
@@ -614,7 +627,7 @@ Coceso.ViewModels.ViewModelSingle = function(data, options) {
     });
 
     if (data) {
-      var i, newData = $.extend(true, {}, data);
+/*      var i, newData = $.extend(true, {}, data);
 
       for (i in data) {
         if (!self[i] || !self[i].localChange) {
@@ -636,7 +649,7 @@ Coceso.ViewModels.ViewModelSingle = function(data, options) {
           self[i].serverChange(data[i]);
           delete newData[i];
         }
-      }
+      }*/
 
       ko.mapping.fromJS(newData, self);
     }
@@ -932,15 +945,7 @@ Coceso.ViewModels.Incident = function(data, options) {
   Coceso.ViewModels.ViewModelSingle.call(this, data, options);
 
   //Detect changes
-  this.type = this.type.extend({observeChanges: {notify: this.changed}});
-  this.priority = this.priority.extend({integer: true, observeChanges: {notify: this.changed}});
-  this.blue = this.blue.extend({observeChanges: {notify: this.changed}});
-  this.bo.info = this.bo.info.extend({observeChanges: {notify: this.changed}});
-  this.ao.info = this.ao.info.extend({observeChanges: {notify: this.changed}});
-  this.info = this.info.extend({observeChanges: {notify: this.changed}});
-  this.caller = this.caller.extend({observeChanges: {notify: this.changed}});
-  this.casusNr = this.casusNr.extend({observeChanges: {notify: this.changed}});
-  this.state = this.state.extend({observeChanges: {notify: this.changed}});
+  this.changed.push(this.type, this.priority, this.blue, this.bo.info, this.ao.info, this.info, this.caller, this.casusNr, this.state);
 
   /**
    * Incident is of type "Task"
@@ -1176,16 +1181,6 @@ Coceso.ViewModels.Incident.prototype = Object.create(Coceso.ViewModels.ViewModel
   mappingOptions: {
     value: {
       ignore: ["concern"],
-      bo: {
-        create: function(options) {
-          return ko.mapping.fromJS($.extend({}, Coceso.Models.Point, options.data));
-        }
-      },
-      ao: {
-        create: function(options) {
-          return ko.mapping.fromJS($.extend({}, Coceso.Models.Point, options.data));
-        }
-      },
       units: {
         create: function(options) {
           if (!options.parent.getOption("assigned")) {
@@ -1379,7 +1374,7 @@ Coceso.ViewModels.Unit = function(data, options) {
    * @return {string} The CSS class
    */
   this.stateCss = ko.computed(function() {
-    return "unit_state_" + this.state().toLowerCase();
+    return this.state() ? "unit_state_" + this.state().toLowerCase() : "unit_state_ad";
   }, this);
 
   /**
@@ -1390,7 +1385,7 @@ Coceso.ViewModels.Unit = function(data, options) {
    * @return {boolean}
    */
   this.hasAssigned = ko.computed(function() {
-    if (!this.incidents.incidents) {
+    if (!this.incidents || !this.incidents.incidents) {
       return false;
     }
 
@@ -1669,6 +1664,24 @@ Coceso.ViewModels.Log.prototype = Object.create(Coceso.ViewModels.ViewModelSingl
   mappingOptions: {
     value: {
       ignore: ["concern"],
+      incident: {
+        create: function(options) {
+          if (!options.parent.getOption("assigned")) {
+            return options.data;
+          }
+
+          return new Coceso.ViewModels.Unit(options.data, options.parent.getOption("children", {}));
+        }
+      },
+      unit: {
+        create: function(options) {
+          if (!options.parent.getOption("assigned")) {
+            return options.data;
+          }
+
+          return new Coceso.ViewModels.Incident(options.data, options.parent.getOption("children", {}));
+        }
+      },
       json: {
         create: function(options) {
           var data = JSON.parse(options.data);

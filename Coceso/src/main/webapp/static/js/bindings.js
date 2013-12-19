@@ -136,7 +136,7 @@ ko.extenders.integer = function(target, active) {
  * @returns {ko.computed}
  */
 ko.extenders.observeChanges = function(target, options) {
-  target.orig = options.orig ? ko.observable(options.orig) : ko.observable(ko.utils.unwrapObservable(target));
+  target.orig = (typeof options.orig !== "undefined") ? ko.observable(options.orig) : ko.observable(ko.utils.unwrapObservable(target));
   target.serverChange = ko.observable(null);
 
   target.equals = function (a, b) {
