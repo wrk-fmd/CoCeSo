@@ -65,7 +65,7 @@
                 {
                     value: ${op.id},
                     label: "${op.dNr}: ${op.given_name} ${op.sur_name}",
-                    desc: "<c:forEach items="{op.authorities}" var="auth" varStatus="l2">${auth}<c:if test="${!l2.last}"> - </c:if></c:forEach>"
+                    desc: "<c:forEach items="${op.authorities}" var="auth" varStatus="l2">${auth}<c:if test="${!l2.last}"> - </c:if></c:forEach>"
                 }<c:if test="${!loop.last}">,</c:if>
                 </c:forEach>
             ];
@@ -134,7 +134,9 @@
     <c:if test="${not empty operators}">
         <%-- Edit existing Operator --%>
         <div class="page-header">
-            <spring:message code="label.operator.search" />
+            <h2>
+                <spring:message code="label.operator.search" />
+            </h2>
         </div>
         <div class="row">
             <form role="form" action="<c:url value="/edit/person/update"/>?" class="form-inline">

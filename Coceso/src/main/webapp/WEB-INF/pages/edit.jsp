@@ -293,8 +293,8 @@
                         ${portable}
                     </label>
                 </div>
-                <div class="col-lg-4">
-                    <label class="sr-only" for="batch_home">${home}</label>
+                <div class="col-lg-4 form-group">
+                    <label for="batch_home">${home}</label>
                     <input type="text" id="batch_home" name="home" class="form-control"
                            placeholder="${home}">
 
