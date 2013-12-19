@@ -22,10 +22,13 @@ import java.util.Collection;
 
 @Service
 public class CocesoAuthenticationProvider implements AuthenticationProvider {
+
+    private boolean useThirdPartyAuth = false;
+
     // ###BEGIN### Third Party Authentication Config ###
-    private final int SUCCESS = 302;
-    private final int NOT_AUTHORIZED = 401;
-    private final int ERROR = -1;
+    private static final int SUCCESS = 302;
+    private static final int NOT_AUTHORIZED = 401;
+    private static final int ERROR = -1;
     // ###END### Third Party Authentication Config ###
 
     @Autowired
@@ -35,8 +38,9 @@ public class CocesoAuthenticationProvider implements AuthenticationProvider {
     private String thirdPartyAuthenticationURL;
 
     @Autowired
-    public CocesoAuthenticationProvider (String thirdPartyAuthenticationURL) {
+    public CocesoAuthenticationProvider (String thirdPartyAuthenticationURL, Boolean useThirdPartyAuth) {
         this.thirdPartyAuthenticationURL = thirdPartyAuthenticationURL;
+        this.useThirdPartyAuth = useThirdPartyAuth == null ? false : useThirdPartyAuth;
     }
 
     @Override
@@ -59,31 +63,35 @@ public class CocesoAuthenticationProvider implements AuthenticationProvider {
 
         int returnCode;
 
-        try { // #################### THIRD PARTY AUTHENTICATION ####################
-            URL url = new URL(thirdPartyAuthenticationURL);
-            String phrase = username+":"+password;
-            String encoded = new String(Base64.encode(phrase.getBytes()));
+        if(useThirdPartyAuth) {
+            try { // #################### THIRD PARTY AUTHENTICATION ####################
+                URL url = new URL(thirdPartyAuthenticationURL);
+                String phrase = username+":"+password;
+                String encoded = new String(Base64.encode(phrase.getBytes()));
 
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setInstanceFollowRedirects(false);
-            connection.setRequestProperty  ("Authorization", "Basic " + encoded);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+                connection.setInstanceFollowRedirects(false);
+                connection.setRequestProperty  ("Authorization", "Basic " + encoded);
 
-            returnCode = connection.getResponseCode();
+                returnCode = connection.getResponseCode();
 
-            connection.disconnect();
+                connection.disconnect();
 
-        }
-        catch(MalformedURLException e){
-            Logger.debug("Wrong URL! "+e.getMessage());
-            returnCode = ERROR;
-        }
-        catch (ProtocolException e) {
-            Logger.debug("ProtocolException: "+e.getMessage());
-            returnCode = ERROR;
-        }
-        catch (IOException e) {
-            Logger.debug("IOException (No Connection?) "+e.getMessage());
+            }
+            catch(MalformedURLException e){
+                Logger.debug("Wrong URL! "+e.getMessage());
+                returnCode = ERROR;
+            }
+            catch (ProtocolException e) {
+                Logger.debug("ProtocolException: "+e.getMessage());
+                returnCode = ERROR;
+            }
+            catch (IOException e) {
+                Logger.debug("IOException (No Connection?) "+e.getMessage());
+                returnCode = ERROR;
+            }
+        } else {
             returnCode = ERROR;
         }
 

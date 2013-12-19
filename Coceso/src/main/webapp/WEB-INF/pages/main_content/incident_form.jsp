@@ -131,50 +131,50 @@
                      data-bind="checked: taskState, attr: {id: $root.ui + '-taskState_assigned_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.assigned" />
               <label class="ui-button ui-widget ui-state-default ui-corner-left"
                      data-bind="attr: {for: $root.ui + '-taskState_assigned_' + $index()}, css: {'ui-state-active': isAssigned()}">
-                <span class="ui-button-text"><spring:message code="label.unit.state.assigned" /></span>
+                <span class="ui-button-text"><spring:message code="label.task.state.assigned" /></span>
               </label>
 
               <input type="radio" class="ui-helper-hidden-accessible"
                      data-bind="checked: taskState, enable: $parent.enableBO, attr: {id: $root.ui + '-taskState_zbo_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.zbo" />
               <label class="ui-button ui-widget ui-state-default"
                      data-bind="attr: {for: $root.ui + '-taskState_zbo_' + $index()}, css: {'ui-state-active': isZBO(), 'ui-state-disabled': !$parent.enableBO()}">
-                <span class="ui-button-text"><spring:message code="label.unit.state.zbo" /></span>
+                <span class="ui-button-text"><spring:message code="label.task.state.zbo" /></span>
               </label>
 
               <input type="radio" class="ui-helper-hidden-accessible"
                      data-bind="checked: taskState, enable: $parent.enableBO, attr: {id: $root.ui + '-taskState_abo_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.abo" />
               <label class="ui-button ui-widget ui-state-default"
                      data-bind="attr: {for: $root.ui + '-taskState_abo_' + $index()}, css: {'ui-state-active': isABO(), 'ui-state-disabled': !$parent.enableBO()}">
-                <span class="ui-button-text"><spring:message code="label.unit.state.abo" /></span>
+                <span class="ui-button-text"><spring:message code="label.task.state.abo" /></span>
               </label>
 
               <input type="radio" class="ui-helper-hidden-accessible"
                      data-bind="checked: taskState, attr: {id: $root.ui + '-taskState_zao_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.zao" />
               <label class="ui-button ui-widget ui-state-default"
                      data-bind="attr: {for: $root.ui + '-taskState_zao_' + $index()}, css: {'ui-state-active': isZAO()}">
-                <span class="ui-button-text"><spring:message code="label.unit.state.zao" /></span>
+                <span class="ui-button-text"><spring:message code="label.task.state.zao" /></span>
               </label>
 
               <input type="radio" class="ui-helper-hidden-accessible"
                      data-bind="checked: taskState, attr: {id: $root.ui + '-taskState_aao_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.aao" />
               <label class="ui-button ui-widget ui-state-default"
                      data-bind="attr: {for: $root.ui + '-taskState_aao_' + $index()}, css: {'ui-state-active': isAAO()}">
-                <span class="ui-button-text"><spring:message code="label.unit.state.aao" /></span>
+                <span class="ui-button-text"><spring:message code="label.task.state.aao" /></span>
               </label>
 
               <input type="radio" class="ui-helper-hidden-accessible"
                      data-bind="checked: taskState, attr: {id: $root.ui + '-taskState_det_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.detached" />
               <label class="ui-button ui-widget ui-state-default ui-corner-right"
                      data-bind="attr: {for: $root.ui + '-taskState_det_' + $index()}, css: {'ui-state-active': isDetached()}">
-                <span class="ui-button-text"><spring:message code="label.unit.state.detached" /></span>
+                <span class="ui-button-text"><spring:message code="label.task.state.detached" /></span>
               </label>
             </div>
           </div>
         </div>
 
         <div class="clearfix">
-          <div class="form-group col-md-offset-2 col-md-10" data-bind="visible: changed">
-            <input type="button" class="btn btn-success" value="<spring:message code='label.save' />" data-bind="click: save" />
+          <div class="form-group col-md-offset-2 col-md-10">
+            <input type="button" class="btn btn-success" value="<spring:message code='label.save' />" data-bind="enable: changed, click: save" />
           </div>
         </div>
       </form>

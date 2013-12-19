@@ -34,7 +34,7 @@ public class UnitService {
 
     public boolean update(Unit unit, Operator operator) {
         boolean ret = update(unit);
-        logService.logFull(operator, LogText.UNIT_UPDATE+": "+unit.getCall(), unit.concern, unit, null, true);
+        logService.logFull(operator, LogText.UNIT_UPDATE, unit.concern, unit, null, true);
         return ret;
     }
 
@@ -54,7 +54,7 @@ public class UnitService {
 
     public int add(Unit unit, Operator operator) {
 
-        unit.id = add(unit);;
+        unit.id = add(unit);
         logService.logFull(operator, LogText.UNIT_NEW+": "+unit.getCall(), unit.concern, unit, null, true);
         return unit.id;
     }

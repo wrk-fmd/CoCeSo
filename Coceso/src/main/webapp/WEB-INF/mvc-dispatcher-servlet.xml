@@ -36,6 +36,10 @@
         <constructor-arg value="${backend.thirdPartyAuthenticationURL}" />
     </bean>
 
+    <bean id="useThirdPartyAuth" class="java.lang.Boolean">
+        <constructor-arg value="${backend.useThirdPartyAuth}" />
+    </bean>
+
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <property name="basename" value="classpath:messages" />
         <property name="defaultEncoding" value="UTF-8"/>

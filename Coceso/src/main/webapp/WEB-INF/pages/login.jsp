@@ -31,13 +31,13 @@
 <div class="container">
     <c:if test="${not empty error}">
         <div class="alert alert-danger">
-            Your login attempt was not successful, try again.<br />
+            Your login attempt was not successful, try again.<br /> <%-- TODO i18 --%>
             Is your Account enabled?
         </div>
     </c:if>
 
     <form class="form-signin" action="<c:url value='j_spring_security_check' />" method="POST">
-        <h2 class="form-signin-heading">Coceso Login<br />(NIU User)</h2>
+        <h2 class="form-signin-heading"><spring:message code="label.login" /></h2>
         <input type="text" class="form-control" name="j_username" placeholder="<spring:message code="label.username"/>" required autofocus>
         <input type="password" class="form-control" name="j_password" placeholder="<spring:message code="label.password"/>" required>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>

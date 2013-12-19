@@ -49,8 +49,8 @@
             <td data-bind="text: time"></td>
             <td data-bind="text: user.username"></td>
             <td data-bind="text: text"></td>
-            <td data-bind="text: unit.call"></td>
-            <td data-bind="text: incident.id"></td>
+            <td><a href="#" data-bind="text: unit.call, click: unit.openForm"></a></td>
+            <td><a href="#"  data-bind="text: incident.id, click: incident.openForm"></a></td>
             <td data-bind="text: state"></td>
         </tr>
         <%--tr>

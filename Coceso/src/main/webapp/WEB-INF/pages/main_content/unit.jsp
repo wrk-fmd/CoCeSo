@@ -38,19 +38,19 @@
         <li class="dropdown">
           <a href="#" class="unit_state dropdown-toggle" data-bind="text: call, css: stateCss, draggable: dragOptions" data-toggle="dropdown" oncontextmenu="this.click(); return false;"></a>
           <ul class="dropdown-menu">
-            <li class="dropdown-header">Set State</li>
-            <li data-bind="css: {disabled: isNEB}"><a href="#" title="Set to NEB" data-bind="click: setNEB">NEB</a></li>
-            <li data-bind="css: {disabled: isEB}"><a href="#" title="Set to EB" data-bind="click: setEB">EB</a></li>
-            <li data-bind="css: {disabled: isAD}"><a href="#" title="Set to AD" data-bind="click: setAD">AD</a></li>
+            <li class="dropdown-header"><spring:message code="label.unit.state_set" /></li>
+            <li data-bind="css: {disabled: isNEB}"><a href="#" title="<spring:message code="label.set" />: <spring:message code="label.unit.state.neb" />" data-bind="click: setNEB"><spring:message code="label.unit.state.neb" /></a></li>
+            <li data-bind="css: {disabled: isEB}"><a href="#" title="<spring:message code="label.set" />: <spring:message code="label.unit.state.eb" />" data-bind="click: setEB"><spring:message code="label.unit.state.eb" /></a></li>
+            <li data-bind="css: {disabled: isAD}"><a href="#" title="<spring:message code="label.set" />: <spring:message code="label.unit.state.ad" />" data-bind="click: setAD"><spring:message code="label.unit.state.ad" /></a></li>
 
             <li class="divider"></li>
-            <li class="dropdown-header">Actions</li>
+            <li class="dropdown-header"><spring:message code="label.actions" /></li>
             <li><a href="#" title="Send Home" data-bind="click: sendHome"><spring:message code="label.unit.send_home" /></a></li>
             <li><a href="#" title="Standby" data-bind="click: standby"><spring:message code="label.incident.type.standby" /></a></li>
             <li><a href="#" title="Hold Position" data-bind="click: holdPosition"><spring:message code="label.incident.type.hold_position" /></a></li>
 
             <li class="divider"></li>
-            <li><a href="#" title="Edit Unit" data-bind="click: openForm">Edit Unit</a></li>
+            <li><a href="#" title="Edit Unit" data-bind="click: openForm"><spring:message code="label.unit.edit" /></a></li>
           </ul>
         </li>
       </ul>

@@ -21,7 +21,6 @@ public class Operator extends Person implements UserDetails {
     @JsonIgnore
     public String hashedPW;
 
-    @JsonIgnore
     public String username;
 
     @JsonIgnore
@@ -66,7 +65,6 @@ public class Operator extends Person implements UserDetails {
     }
 
     @Override
-    @JsonIgnore
     public String getUsername() {
         return username;
     }

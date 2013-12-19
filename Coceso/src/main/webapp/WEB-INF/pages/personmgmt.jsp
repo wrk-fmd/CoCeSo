@@ -4,10 +4,13 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Coceso - Person Management</title>
+    <title><spring:message code="label.coceso" /> - <spring:message code="label.person.mgmt" /></title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
+
+    <%-- For Autocomplete!! --%>
+    <link href="<c:url value="/static/css/ui-bootstrap/jquery-ui-1.10.3.custom.css" />" rel="stylesheet">
 
     <link href="<c:url value="/static/css/bootstrap.css" />" rel="stylesheet">
 
