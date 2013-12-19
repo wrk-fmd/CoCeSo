@@ -627,31 +627,7 @@ console.log(orig);
     });
 
     if (data) {
-/*      var i, newData = $.extend(true, {}, data);
-
-      for (i in data) {
-        if (!self[i] || !self[i].localChange) {
-          //No such watched property exists
-          continue;
-        }
-
-        if (!self.keepChanges[i] || !self[i].localChange() || self[i].equals(self[i], data[i])) {
-          //No local change or synchronous change; or we don't care about local changes
-          self[i].orig(data[i]);
-          self[i].serverChange(null);
-        } else if (self[i].equals(self[i].orig, data[i])) {
-          //No server change
-          self[i].serverChange(null);
-          delete newData[i];
-        } else {
-          //Asynchronous server change
-          self[i].orig(data[i]);
-          self[i].serverChange(data[i]);
-          delete newData[i];
-        }
-      }*/
-
-      ko.mapping.fromJS(newData, self);
+      ko.mapping.fromJS(data, self);
     }
   };
 
