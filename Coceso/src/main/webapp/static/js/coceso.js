@@ -1458,11 +1458,18 @@ Coceso.ViewModels.Unit.prototype = Object.create(Coceso.ViewModels.ViewModelSing
           if (!options.parent.getOption("assigned")) {
             return options.data;
           }
+          return new Coceso.ViewModels.Incidents({incidentlist: []}, options.parent.getOption("children", {children: {assigned: false}}));
+        },
+        update: function(options) {
+          if (!options.parent.getOption("assigned")) {
+            return options.target;
+          }
           var incidents = [], i;
           for (i in options.data) {
             incidents.push({id: parseInt(i), taskState: options.data[i]});
           }
-          return new Coceso.ViewModels.Incidents({incidents: incidents}, options.parent.getOption("children", {children: {assigned: false, writeable: false}}));
+          options.target.setData({incidentlist: incidents});
+          return options.target;
         }
       }
     }
