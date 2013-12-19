@@ -82,7 +82,7 @@
               <span data-bind="text: state"></span>
             </p>
 
-            <!-- ko foreach: units.units -->
+            <!-- ko foreach: units.unitlist -->
             <p>
               <span class="key" data-bind="text: call"></span>
               <span data-bind="text: taskState"></span>

@@ -123,7 +123,7 @@
           </div>
         </div>
 
-        <div class="assigned" data-bind="foreach: units.units">
+        <div class="assigned" data-bind="foreach: units.unitlist">
           <div class="form-group clearfix">
             <label class="col-md-2 control-label" data-bind="text: call"></label>
             <div class="col-md-10 ui-buttonset">

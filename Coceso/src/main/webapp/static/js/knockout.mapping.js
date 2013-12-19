@@ -411,7 +411,7 @@
                 if (!mappedRootObject.localChange) {
                   //No change observer
                   mappedRootObject(valueToWrite);
-                } else if (!mappedRootObject.localChange() || mappedRootObject.equals(mappedRootObject, valueToWrite)) {
+                } else if (!options.keepChanges || !options.keepChanges[parentPropertyName] || !mappedRootObject.localChange() || mappedRootObject.equals(mappedRootObject, valueToWrite)) {
                   //No local change or synchronous change; or we don't care about local changes
                   mappedRootObject.orig(valueToWrite);
                   mappedRootObject.serverChange(null);
@@ -441,7 +441,7 @@
                   observeOptions.orig = options.orig;
                   var path = parentPropertyName.split("."), i;
                   for (i = 0; i < path.length; i++) {
-                    if (typeof observeOptions.orig[path[i]] === "undefined") {
+                    if (!observeOptions.orig || (typeof observeOptions.orig[path[i]] === "undefined")) {
                       observeOptions.orig = undefined;
                       break;
                     }
@@ -463,6 +463,7 @@
 
       } else {
         mappedRootObject = ko.utils.unwrapObservable(mappedRootObject);
+
         if (!mappedRootObject) {
           if (hasCreateCallback()) {
             var result = createCallback();

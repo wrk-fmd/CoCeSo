@@ -44,7 +44,7 @@
             <th><spring:message code="label.incident" /></th>
             <th><spring:message code="label.task.state" /></th>
         </tr>
-        <!-- ko foreach: logs -->
+        <!-- ko foreach: loglist -->
         <tr>
             <td data-bind="text: time"></td>
             <td data-bind="text: user.username"></td>

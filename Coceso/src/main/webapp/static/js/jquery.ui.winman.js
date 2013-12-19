@@ -140,7 +140,7 @@ $.widget("ui.winman", {
           destroy(el.get(0), id);
         }
       }
-    }).data("ui-dialog").uiDialog.draggable("option", "containment", $("body"));
+    }).css("maxHeight", window.innerHeight - 150).data("ui-dialog").uiDialog.draggable("option", "containment", $("body"));
     this.element.append(this.buttons[id]);
 
     return id;

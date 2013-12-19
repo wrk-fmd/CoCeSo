@@ -47,8 +47,8 @@ var Coceso = {
     $("#taskbar").winman();
 
     //Preload incidents and units
-    Coceso.Ajax.getAll("incidents", "incident/getAll.json", Coceso.Conf.interval);
-    Coceso.Ajax.getAll("units", "unit/getAll.json", Coceso.Conf.interval);
+    Coceso.Ajax.getAll("incidents", "incidentlist", "incident/getAll.json", Coceso.Conf.interval);
+    Coceso.Ajax.getAll("units", "unitlist", "unit/getAll.json", Coceso.Conf.interval);
   },
   /**
    * Constants for some values (states, types)
@@ -272,8 +272,8 @@ var Coceso = {
      * @type Object
      */
     data: {
-      incidents: {incidents: []},
-      units: {units: []}
+      incidents: {incidentlist: []},
+      units: {unitlist: []}
     },
     /**
      * Subscriptions to data loading
@@ -288,18 +288,19 @@ var Coceso = {
      * Load the specified data
      *
      * @param {String} type The data type
+     * @param {String} list The list name
      * @param {String} url The URL to load from
      * @param {int} interval The interval to reload. 0 or false for no autoload.
      * @return {void}
      */
-    getAll: function(type, url, interval) {
+    getAll: function(type, list, url, interval) {
       $.ajax({
         dataType: "json",
         url: Coceso.Conf.jsonBase + url,
         ifModified: true,
         success: function(data, status) {
           if (status !== "notmodified") {
-            Coceso.Ajax.data[type][type] = data;
+            Coceso.Ajax.data[type][list] = data;
             ko.utils.arrayForEach(Coceso.Ajax.subscriptions[type], function(item) {
               if (typeof item === "function") {
                 item(Coceso.Ajax.data[type]);
@@ -310,7 +311,7 @@ var Coceso = {
         complete: function() {
           if (interval) {
             window.setTimeout(function() {
-              Coceso.Ajax.getAll(type, url, interval);
+              Coceso.Ajax.getAll(type, list, url, interval);
             }, interval);
           }
         }
@@ -513,7 +514,7 @@ Coceso.ViewModels.ViewModel.prototype = Object.create({}, /** @lends Coceso.View
   destroy: {
     value: function() {
       //Unsubscribe from updates
-      if (this.dataType && (typeof this.setData === "function")) {
+      if (this.dataType && (this.setData instanceof Function)) {
         Coceso.Ajax.unsubscribe(this.dataType, this.setData);
       }
     }
@@ -594,24 +595,13 @@ Coceso.ViewModels.ViewModelSingle = function(data, options) {
   }, options);
 
   if (options.initial && this.dataType && data.id) {
-    orig = ko.utils.arrayFirst(Coceso.Ajax.data[this.dataType][this.dataType], function(item) {
+    orig = ko.utils.arrayFirst(Coceso.Ajax.data[this.dataType][this.dataList], function(item) {
       return (item.id === data.id);
     }) || {};
   }
 
-console.log(orig);
-  orig = $.extend(true, {}, this.model, orig);
-/*  console.log(orig);
-  var i;
-  for (i in data) {
-    console.log(i);
-    console.log(orig[i]);
-    console.log(typeof this.model[i]);
-    if ((orig[i] === null) && (this.model[i] instanceof Object)) {
-      orig[i] = this.model[i];
-    }
-  }*/
-  data = $.extend(true, {}, orig, data);
+  orig = this.replaceNull($.extend(true, {}, this.model, orig));
+  data = this.replaceNull($.extend(true, {}, orig, data));
 
   this.mappingOptions.orig = orig;
 
@@ -622,9 +612,13 @@ console.log(orig);
    * @return {void}
    */
   this.setData = function(data) {
-    data = ko.utils.arrayFirst(data[self.dataType], function(item) {
-      return (item.id === self.id());
-    });
+    if (data[self.dataList] instanceof Array) {
+      data = ko.utils.arrayFirst(data[self.dataList], function(item) {
+        return (item.id === self.id());
+      });
+    }
+
+    data = self.replaceNull($.extend(true, {}, data));
 
     if (data) {
       ko.mapping.fromJS(data, self);
@@ -716,21 +710,17 @@ Coceso.ViewModels.ViewModelSingle.prototype = Object.create(Coceso.ViewModels.Vi
    */
   model: {value: null},
   /**
+   * The list name
+   *
+   * @type String
+   */
+  dataList: {value: null},
+  /**
    * The URL to send the POST to
    *
    * @type String
    */
   saveUrl: {value: null},
-  /**
-   * Local changes to prioritize over server changes
-   *
-   * @type Object
-   */
-  keepChanges: {
-    value: {
-      info: true
-    }
-  },
   /**
    * Save modified data
    *
@@ -751,6 +741,28 @@ Coceso.ViewModels.ViewModelSingle.prototype = Object.create(Coceso.ViewModels.Vi
 
       Coceso.Ajax.save(ko.toJSON(data), this.saveUrl, this.afterSave);
       return true;
+    }
+  },
+  /**
+   * Replace null values with empty objects
+   *
+   * @function
+   * @param {Object} data
+   * @return {Object}
+   */
+  replaceNull: {
+    value: function(data) {
+      if (!this.model) {
+        return data;
+      }
+
+      var i;
+      for (i in data) {
+        if ((data[i] === null) && (typeof this.model[i] === "object")) {
+          data[i] = this.model[i];
+        }
+      }
+      return data;
     }
   },
   /**
@@ -880,7 +892,7 @@ Coceso.ViewModels.Incidents = function(data, options) {
    * @type ko.computed
    * @return {Array}
    */
-  this.filtered = this.incidents.extend({filtered: this.activeFilters});
+  this.filtered = this.incidentlist.extend({filtered: this.activeFilters});
 };
 Coceso.ViewModels.Incidents.prototype = Object.create(Coceso.ViewModels.ViewModelList.prototype, /** @lends Coceso.ViewModels.Incidents.prototype */ {
   /**
@@ -894,12 +906,16 @@ Coceso.ViewModels.Incidents.prototype = Object.create(Coceso.ViewModels.ViewMode
    */
   mappingOptions: {
     value: {
-      incidents: {
+      incidentlist: {
         key: function(data) {
           return ko.utils.unwrapObservable(data.id);
         },
         create: function(options) {
           return new Coceso.ViewModels.Incident(options.data, options.parent.getOption("children", {}));
+        },
+        update: function(options) {
+          options.target.setData(options.data);
+          return options.target;
         }
       }
     }
@@ -1052,11 +1068,11 @@ Coceso.ViewModels.Incident = function(data, options) {
    * @return {boolean}
    */
   this.enableDispo = ko.computed(function() {
-    if (!this.getOption("writeable") || !this.units.units) {
+    if (!this.getOption("writeable") || !this.units.unitlist) {
       return false;
     }
 
-    return (ko.utils.arrayFirst(this.units.units(), function(unit) {
+    return (ko.utils.arrayFirst(this.units.unitlist(), function(unit) {
       return (unit.isAssigned() || unit.isZBO());
     }) !== null);
   }, this);
@@ -1069,11 +1085,11 @@ Coceso.ViewModels.Incident = function(data, options) {
    * @return {boolean}
    */
   this.enableWorking = ko.computed(function() {
-    if (!this.getOption("writeable") || !this.units.units) {
+    if (!this.getOption("writeable") || !this.units.unitlist) {
       return false;
     }
 
-    return (ko.utils.arrayFirst(this.units.units(), function(unit) {
+    return (ko.utils.arrayFirst(this.units.unitlist(), function(unit) {
       return (unit.isABO() || unit.isZAO() || unit.isAAO());
     }) !== null);
   }, this);
@@ -1091,12 +1107,12 @@ Coceso.ViewModels.Incident = function(data, options) {
       return;
     }
     var unitid = ko.utils.unwrapObservable(viewmodel.id);
-    if (unitid && self.units.units) {
-      var assigned = ko.utils.arrayFirst(self.units.units(), function(unit) {
+    if (unitid && self.units.unitlist) {
+      var assigned = ko.utils.arrayFirst(self.units.unitlist(), function(unit) {
         return (unit.id() === unitid);
       });
       if (assigned === null) {
-        self.units.units.push(new Coceso.ViewModels.Unit({id: unitid, taskState: "Assigned"}, self.getOption(["children", "children"], {assigned: false, writeable: false})));
+        self.units.unitlist.push(new Coceso.ViewModels.Unit({id: unitid, taskState: "Assigned"}, self.getOption(["children", "children"], {assigned: false, writeable: false})));
       }
     }
   };
@@ -1128,10 +1144,9 @@ Coceso.ViewModels.Incident = function(data, options) {
       self.setData(Coceso.Ajax.data[self.dataType]);
     }
 
-    var units = (typeof self.units.units !== "undefined") ? ko.utils.arrayMap(self.units.units(), function(unit) {
+    var units = (typeof self.units.unitlist !== "undefined") ? ko.utils.arrayMap(self.units.unitlist(), function(unit) {
       return "incident/setToState/" + data.id + "/" + unit.id() + "/" + unit.taskState();
     }) : [];
-    console.log(units);
   };
 };
 Coceso.ViewModels.Incident.prototype = Object.create(Coceso.ViewModels.ViewModelSingle.prototype, /** @lends Coceso.ViewModels.Incident.prototype */ {
@@ -1140,6 +1155,11 @@ Coceso.ViewModels.Incident.prototype = Object.create(Coceso.ViewModels.ViewModel
    * @override
    */
   dataType: {value: "incidents"},
+  /**
+   * @see Coceso.ViewModels.ViewModel#dataList
+   * @override
+   */
+  dataList: {value: "incidentlist"},
   /**
    * @see Coceso.ViewModels.ViewModelSingle#model
    * @override
@@ -1157,16 +1177,26 @@ Coceso.ViewModels.Incident.prototype = Object.create(Coceso.ViewModels.ViewModel
   mappingOptions: {
     value: {
       ignore: ["concern"],
+      keepChanges: {
+        info: true
+      },
       units: {
         create: function(options) {
           if (!options.parent.getOption("assigned")) {
             return options.data;
           }
+          return new Coceso.ViewModels.Units({unitlist: []}, options.parent.getOption("children", {children: {assigned: false}}));
+        },
+        update: function(options) {
+          if (!options.parent.getOption("assigned")) {
+            return options.target;
+          }
           var units = [], i;
           for (i in options.data) {
             units.push({id: parseInt(i), taskState: options.data[i]});
           }
-          return new Coceso.ViewModels.Units({units: units}, options.parent.getOption("children", {children: {assigned: false}}));
+          options.target.setData({unitlist: units});
+          return options.target;
         }
       }
     }
@@ -1270,7 +1300,7 @@ Coceso.ViewModels.Units = function(data, options) {
    * @type ko.computed
    * @return {Array}
    */
-  this.filtered = this.units.extend({filtered: this.activeFilters});
+  this.filtered = this.unitlist.extend({filtered: this.activeFilters});
 };
 Coceso.ViewModels.Units.prototype = Object.create(Coceso.ViewModels.ViewModelList.prototype, /** @lends Coceso.ViewModels.Units.prototype */ {
   /**
@@ -1284,12 +1314,16 @@ Coceso.ViewModels.Units.prototype = Object.create(Coceso.ViewModels.ViewModelLis
    */
   mappingOptions: {
     value: {
-      units: {
+      unitlist: {
         key: function(data) {
           return ko.utils.unwrapObservable(data.id);
         },
         create: function(options) {
           return new Coceso.ViewModels.Unit(options.data, options.parent.getOption("children", {}));
+        },
+        update: function(options) {
+          options.target.setData(options.data);
+          return options.target;
         }
       }
     }
@@ -1383,12 +1417,12 @@ Coceso.ViewModels.Unit = function(data, options) {
       return;
     }
     var incid = ko.utils.unwrapObservable(viewmodel.id);
-    if (incid && self.units.units) {
-      var assigned = ko.utils.arrayFirst(self.units.units(), function(incident) {
+    if (incid && self.incidents.incidentlist) {
+      var assigned = ko.utils.arrayFirst(self.incidents.incidentlist(), function(incident) {
         return (incident.id() === incid);
       });
       if (assigned === null) {
-        self.units.units.push(new Coceso.ViewModels.Unit({id: incid, taskState: "Assigned"}, self.getOption(["children", "children"], {assigned: false, writeable: false})));
+        self.incidents.incidentlist.push(new Coceso.ViewModels.Incident({id: incid, taskState: "Assigned"}, self.getOption(["children", "children"], {assigned: false, writeable: false})));
       }
     }
   };
@@ -1399,6 +1433,11 @@ Coceso.ViewModels.Unit.prototype = Object.create(Coceso.ViewModels.ViewModelSing
    * @override
    */
   dataType: {value: "units"},
+  /**
+   * @see Coceso.ViewModels.ViewModel#dataList
+   * @override
+   */
+  dataList: {value: "unitlist"},
   /**
    * @see Coceso.ViewModels.ViewModelSingle#model
    * @override
@@ -1411,15 +1450,8 @@ Coceso.ViewModels.Unit.prototype = Object.create(Coceso.ViewModels.ViewModelSing
   mappingOptions: {
     value: {
       ignore: ["concern"],
-      home: {
-        create: function(options) {
-          return ko.mapping.fromJS($.extend({}, Coceso.Models.Point, options.data));
-        }
-      },
-      position: {
-        create: function(options) {
-          return ko.mapping.fromJS($.extend({}, Coceso.Models.Point, options.data));
-        }
+      keepChanges: {
+        info: true
       },
       incidents: {
         create: function(options) {
@@ -1561,7 +1593,7 @@ Coceso.ViewModels.Logs = function(data, options) {
       ifModified: true,
       success: function(data, status) {
         if (status !== "notmodified") {
-          self.setData({logs: data});
+          self.setData({loglist: data});
         }
       },
       complete: function() {
@@ -1586,7 +1618,7 @@ Coceso.ViewModels.Logs.prototype = Object.create(Coceso.ViewModels.ViewModelList
    */
   mappingOptions: {
     value: {
-      logs: {
+      loglist: {
         key: function(data) {
           return ko.utils.unwrapObservable(data.id);
         },

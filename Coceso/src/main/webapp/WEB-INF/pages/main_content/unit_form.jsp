@@ -85,7 +85,7 @@
           </div>
         </div>
 
-        <div class="assigned" data-bind="foreach: incidents.incidents">
+        <div class="assigned" data-bind="foreach: incidents.incidentlist">
           <div class="form-group clearfix">
             <label class="col-md-2 control-label" data-bind="text: id"></label>
             <div class="col-md-10 ui-buttonset">
