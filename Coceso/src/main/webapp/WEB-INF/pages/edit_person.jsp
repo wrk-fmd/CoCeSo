@@ -50,16 +50,98 @@
                     </label>
                 </div>
             </div>
+            <div class="row">
                 <div class="form-group">
                     <label>
                         <spring:message code="label.person.contact"/><textarea class="form-control" rows="5" name="contact">${p_person.contact}</textarea>
                     </label>
                 </div>
+            </div>
+
+            <div class="row">
                 <div class="form-group">
-                    <input type="submit" class="btn btn-success">
+                    <input type="submit" class="btn btn-success" value="<spring:message code="label.save" />">
                 </div>
+            </div>
+
         </form>
     </div>
+
+    <c:if test="${not empty operator}">
+        <div class="page-header">
+            <h2>
+                <spring:message code="label.operator.edit"/>
+            </h2>
+        </div>
+        <div>
+            <form role="form" action="<c:url value="/edit/person/updateOp" />" method="POST">
+                <div class="row">
+                    <input type="hidden" name="id" value="${operator.id}">
+
+                    <div class="form-group col-lg-4">
+                        <label>
+                            <spring:message code="label.operator.username"/>
+                            <input type="text" class="form-control" name="username" value="${operator.username}">
+                        </label>
+                    </div>
+
+                    <div class="form-group col-lg-4">
+                        <label>
+                            <spring:message code="label.operator.allowlogin"/>
+                            <c:if test="${operator.allowLogin}">
+                                <c:set value="checked" var="o_allowlogin" />
+                            </c:if>
+                            <input class="form-control" name="allowLogin" type="checkbox" ${o_allowlogin}>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <input type="submit" class="btn btn-success" value="<spring:message code="label.save" />">
+                    </div>
+                </div>
+
+            </form>
+        </div>
+
+    </c:if>
+
+    <c:if test="${not empty user_not_op}">
+        <div class="page-header">
+            <h2>
+                <spring:message code="label.operator.make"/>
+            </h2>
+        </div>
+        <div>
+            <form role="form" action="<c:url value="/edit/person/createOp" />" method="POST">
+                <div class="row">
+                    <input type="hidden" name="id" value="${p_person.id}">
+
+                    <div class="form-group col-lg-4">
+                        <label>
+                            <spring:message code="label.operator.username"/>
+                            <input type="text" class="form-control" name="username" placeholder="<spring:message code="label.operator.username" />">
+                        </label>
+                    </div>
+
+                    <div class="form-group col-lg-4">
+                        <label>
+                            <spring:message code="label.operator.allowlogin"/>
+                            <input class="form-control" type="checkbox" name="allowLogin">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <input type="submit" class="btn btn-success" value="<spring:message code="label.create" />">
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </c:if>
 
 </div>
 

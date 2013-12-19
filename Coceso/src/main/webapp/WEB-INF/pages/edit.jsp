@@ -276,6 +276,12 @@
                 <%--div class="col-lg-1">
                     &nbsp;
                 </div--%>
+                <div class="col-lg-4 form-group">
+                    <label for="batch_home">${home}</label>
+                    <input type="text" id="batch_home" name="home" class="form-control"
+                           placeholder="${home}">
+
+                </div>
 
                 <div class="col-lg-4 btn-group text-center" data-toggle="buttons">
                     <label class="btn btn-default">
@@ -293,12 +299,7 @@
                         ${portable}
                     </label>
                 </div>
-                <div class="col-lg-4 form-group">
-                    <label for="batch_home">${home}</label>
-                    <input type="text" id="batch_home" name="home" class="form-control"
-                           placeholder="${home}">
 
-                </div>
 
             </div>
             <div class="form-group">

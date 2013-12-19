@@ -23,6 +23,14 @@ public class Operator extends Person implements UserDetails {
 
     public String username;
 
+    public Operator() {
+        super();
+    }
+
+    public Operator(Person person) {
+        super(person);
+    }
+
     @JsonIgnore
     private List<CocesoAuthority> authorities;
 
@@ -102,5 +110,17 @@ public class Operator extends Person implements UserDetails {
     public void setPassword(String pw) {
         PasswordEncoder enc = new BCryptPasswordEncoder();
         hashedPW = enc.encode(pw);
+    }
+
+    public boolean isAllowLogin() {
+        return allowLogin;
+    }
+
+    public void setAllowLogin(boolean allowLogin) {
+        this.allowLogin = allowLogin;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

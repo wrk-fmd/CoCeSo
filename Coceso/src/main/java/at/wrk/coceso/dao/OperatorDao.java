@@ -86,9 +86,9 @@ public class OperatorDao extends CocesoDao<Operator> {
         if(p == null || p.id <= 0) return false;
 
         personDao.update(p);
-        String q = "UPDATE operator SET allowlogin = ?, hashedpw = ?, concern_fk = ? WHERE id = ?";
+        String q = "UPDATE operator SET username = ?, allowlogin = ?, hashedpw = ?, concern_fk = ? WHERE id = ?";
 
-        jdbc.update(q, p.allowLogin, p.hashedPW, p.activeConcern == null ? null : p.activeConcern.id, p.id);
+        jdbc.update(q, p.username, p.allowLogin, p.hashedPW, p.activeConcern == null ? null : p.activeConcern.id, p.id);
 
         return true;
     }

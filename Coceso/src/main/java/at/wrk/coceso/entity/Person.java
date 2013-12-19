@@ -9,6 +9,19 @@ public class Person {
     public int dNr;
     public String contact;
 
+    public Person() {
+        super();
+    }
+
+    public Person(Person person) {
+        super();
+        this.id = person.id;
+        this.given_name = person.given_name;
+        this.sur_name = person.sur_name;
+        this.dNr = person.dNr;
+        this.contact = person.contact;
+    }
+
     public String getGiven_name() {
         return given_name;
     }
