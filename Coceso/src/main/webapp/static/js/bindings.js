@@ -139,7 +139,7 @@ ko.extenders.observeChanges = function(target, options) {
   target.orig = (typeof options.orig !== "undefined") ? ko.observable(options.orig) : ko.observable(ko.utils.unwrapObservable(target));
   target.serverChange = ko.observable(null);
 
-  target.equals = function (a, b) {
+  target.equals = function(a, b) {
     if (typeof b === "undefined") {
       b = this;
     }
@@ -154,43 +154,55 @@ ko.extenders.observeChanges = function(target, options) {
     return !this.equals(this.orig);
   }, target);
 
-  if (options.notify) {
-    options.notify.push(target);
-  }
+  target.reset = function() {
+    if (target.localChange()) {
+      target(target.orig());
+      target.serverChange(null);
+    }
+  };
 
   return target;
 };
 
 /**
- * Watch multiple observables for changes
+ * Allow change detection on array
  *
- * @param {ko.observable} target
+ * @param {ko.observableArray} target
  * @param {Object} options
- * @returns {ko.computed}
+ * @returns {ko.observableArray}
  */
-ko.extenders.multipleChanges = function(target, options) {
-  if (!options.active) {
-    target.push = function() {
-    };
-    return target;
-  }
+ko.extenders.arrayChanges = function(target, options) {
+  //Include those for matching interface with observeChanges
+  target.orig = ko.observable(null);
+  target.serverChange = ko.observable(null);
 
-  target.dependencies = ko.observableArray(options.dependencies || []);
-  var result = ko.computed(function() {
-    var i, dependencies = ko.utils.unwrapObservable(this.dependencies);
-    for (i = 0; i < dependencies.length; i++) {
-      if (ko.utils.unwrapObservable(dependencies[i].localChange)) {
+  target.localChange = ko.computed(function() {
+    var i, items = ko.utils.unwrapObservable(this);
+    if (!items instanceof Array) {
+      return false;
+    }
+    for (i = 0; i < items.length; i++) {
+      console.log(items[i].localChange());
+      if (ko.utils.unwrapObservable(items[i].localChange)) {
         return true;
       }
     }
     return false;
   }, target);
-  result.dependencies = target.dependencies;
-  result.push = function() {
-    target.dependencies.push.apply(target.dependencies, arguments);
+
+  target.reset = function() {
+    var i, items = ko.utils.unwrapObservable(target);
+    if (!items instanceof Array) {
+      return;
+    }
+    for (i = 0; i < items.length; i++) {
+      if (items[i].reset instanceof Function) {
+        items[i].reset();
+      }
+    }
   };
 
-  return result;
+  return target;
 };
 
 /**

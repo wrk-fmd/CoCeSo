@@ -49,7 +49,7 @@
         <div class="clearfix">
           <div class="form-group col-md-6">
             <label for="position"><spring:message code="label.unit.position" />:</label>
-            <textarea id="position" name="position" rows="3" class="form-control" data-bind="value: position.info, css: {'form-changed': position.info.changed}"></textarea>
+            <textarea id="position" name="position" rows="3" class="form-control" data-bind="value: position.info, css: {'form-changed': position.info.localChange}"></textarea>
           </div>
 
           <div class="form-group col-md-6">
@@ -60,7 +60,11 @@
 
         <div class="form-group col-md-12">
           <label for="info" class="sr-only"><spring:message code="label.unit.info" />:</label>
-          <textarea id="info" name="info" rows="3" class="form-control" placeholder="<spring:message code='label.unit.info' />" data-bind="value: info, css: {'form-changed': info.changed}"></textarea>
+          <div class="alert alert-warning" data-bind="visible: info.serverChange">
+            Field has changed on server!<br>
+            New Value: <a href="#" title="Apply new value" data-bind="text: info.serverChange, click: info.reset"></a>
+          </div>
+          <textarea id="info" name="info" rows="3" class="form-control" placeholder="<spring:message code='label.unit.info' />" data-bind="value: info, css: {'form-changed': info.localChange}"></textarea>
         </div>
 
         <div class="clearfix">
@@ -136,7 +140,8 @@
 
         <div class="clearfix">
           <div class="form-group col-md-offset-2 col-md-10">
-            <input type="button" class="btn btn-success" value="<spring:message code='label.save' />" data-bind="enable: changed, click: save" />
+            <input type="button" class="btn btn-success" value="<spring:message code='label.save' />" data-bind="enable: localChange, click: save" />
+            <input type="button" class="btn btn-warning" value="Reset" data-bind="enable: localChange, click: reset" />
           </div>
         </div>
       </form>

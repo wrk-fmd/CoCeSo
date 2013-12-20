@@ -52,7 +52,7 @@
         <div class="clearfix">
           <div class="form-group col-md-6">
             <label for="priority"><spring:message code="label.incident.priority" />:</label>
-            <input type="number" id="priority" class="form-control" name="priority" min="0" max="100" data-bind="value: priority, css: {'form-changed': priority.changed}" />
+            <input type="number" id="priority" class="form-control" name="priority" min="0" max="100" data-bind="value: priority, css: {'form-changed': priority.localChange}" />
           </div>
 
           <div class="form-group col-md-6">
@@ -66,28 +66,32 @@
         <div class="clearfix">
           <div class="form-group col-md-6">
             <label for="bo" class="sr-only"><spring:message code="label.incident.bo" />:</label>
-            <textarea id="bo" name="bo" rows="3" class="form-control" placeholder="<spring:message code='label.incident.bo' />" data-bind="enable: enableBO, value: bo.info, css: {'form-changed': bo.info.changed}"></textarea>
+            <textarea id="bo" name="bo" rows="3" class="form-control" placeholder="<spring:message code='label.incident.bo' />" data-bind="enable: enableBO, value: bo.info, css: {'form-changed': bo.info.localChange}"></textarea>
           </div>
 
           <div class="form-group col-md-6">
             <label for="ao" class="sr-only"><spring:message code="label.incident.ao" />:</label>
-            <textarea id="ao" name="ao" rows="3" class="form-control" placeholder="<spring:message code='label.incident.ao' />" data-bind="value: ao.info, css: {'form-changed': ao.info.changed}"></textarea>
+            <textarea id="ao" name="ao" rows="3" class="form-control" placeholder="<spring:message code='label.incident.ao' />" data-bind="value: ao.info, css: {'form-changed': ao.info.localChange}"></textarea>
           </div>
         </div>
 
         <div class="form-group col-md-12">
           <label for="info" class="sr-only"><spring:message code="label.incident.info" />:</label>
-          <textarea id="info" name="info" rows="3" class="form-control" placeholder="<spring:message code='label.incident.info' />" data-bind="value: info, css: {'form-changed': info.changed}"></textarea>
+          <div class="alert alert-warning" data-bind="visible: info.serverChange">
+            Field has changed on server!<br>
+            New Value: <a href="#" title="Apply new value" data-bind="text: info.serverChange, click: info.reset"></a>
+          </div>
+          <textarea id="info" name="info" rows="3" class="form-control" placeholder="<spring:message code='label.incident.info' />" data-bind="value: info, css: {'form-changed': info.localChange}"></textarea>
         </div>
 
         <div class="clearfix">
           <div class="form-group col-md-6">
             <label for="caller" class="sr-only"><spring:message code="label.incident.caller" />:</label>
-            <input type="text" id="caller" name="caller" class="form-control" placeholder="<spring:message code='label.incident.caller' />" data-bind="value: caller, css: {'form-changed': caller.changed}" />
+            <input type="text" id="caller" name="caller" class="form-control" placeholder="<spring:message code='label.incident.caller' />" data-bind="value: caller, css: {'form-changed': caller.localChange}" />
           </div>
           <div class="form-group col-md-6">
             <label for="casus" class="sr-only"><spring:message code="label.incident.casus" />:</label>
-            <input type="text" id="casus" name="casus" class="form-control" placeholder="<spring:message code='label.incident.casus' />" data-bind="value: casusNr, css: {'form-changed': casusNr.changed}" />
+            <input type="text" id="casus" name="casus" class="form-control" placeholder="<spring:message code='label.incident.casus' />" data-bind="value: casusNr, css: {'form-changed': casusNr.localChange}" />
           </div>
         </div>
 
@@ -174,7 +178,8 @@
 
         <div class="clearfix">
           <div class="form-group col-md-offset-2 col-md-10">
-            <input type="button" class="btn btn-success" value="<spring:message code='label.save' />" data-bind="enable: changed, click: save" />
+            <input type="button" class="btn btn-success" value="<spring:message code='label.save' />" data-bind="enable: localChange, click: save" />
+            <input type="button" class="btn btn-warning" value="Reset" data-bind="enable: localChange, click: reset" />
           </div>
         </div>
       </form>

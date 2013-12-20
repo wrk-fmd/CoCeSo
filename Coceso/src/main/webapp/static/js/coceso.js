@@ -628,13 +628,35 @@ Coceso.ViewModels.ViewModelSingle = function(data, options) {
   Coceso.ViewModels.ViewModel.call(this, data, options);
 
   /**
+   * Watch dependencies
+   *
+   * @type ko.observableArray
+   */
+  this.dependencies = ko.observableArray().extend({arrayChanges: {}});
+
+  if (typeof this.taskState !== "undefined") {
+    this.dependencies.push(this.taskState);
+  }
+
+  /**
    * Return if data has been changed by the user
    *
    * @function
    * @type ko.computed
    * @return {boolean}
    */
-  this.changed = ko.observable().extend({multipleChanges: {active: this.getOption("writeable")}});
+  this.localChange = ko.computed(function() {
+    return this.dependencies.localChange();
+  }, this);
+
+  /**
+   * Reset the form to its original state
+   *
+   * @return {void}
+   */
+  this.reset = function() {
+    self.dependencies.reset();
+  };
 
   /**
    * Return if TaskState is "Assigned"
@@ -937,7 +959,10 @@ Coceso.ViewModels.Incident = function(data, options) {
   Coceso.ViewModels.ViewModelSingle.call(this, data, options);
 
   //Detect changes
-  this.changed.push(this.type, this.priority, this.blue, this.bo.info, this.ao.info, this.info, this.caller, this.casusNr, this.state);
+  this.dependencies.push(this.type, this.priority, this.blue, this.bo.info, this.ao.info, this.info, this.caller, this.casusNr, this.state);
+  if (this.units && this.units.unitlist) {
+    this.dependencies.push(this.units.unitlist);
+  }
 
   /**
    * Incident is of type "Task"
@@ -1343,6 +1368,12 @@ Coceso.ViewModels.Unit = function(data, options) {
 
   Coceso.ViewModels.ViewModelSingle.call(this, data, options);
 
+  //Detect changes
+  this.dependencies.push(this.position.info, this.info, this.state);
+  if (this.incidents && this.incidents.incidentlist) {
+    this.dependencies.push(this.incidents.incidentlist);
+  }
+
   /**
    * Unit has state "AD"
    *
@@ -1685,7 +1716,7 @@ Coceso.ViewModels.Log.prototype = Object.create(Coceso.ViewModels.ViewModelSingl
             return options.data;
           }
 
-          return new Coceso.ViewModels.Unit(options.data, options.parent.getOption("children", {}));
+          return new Coceso.ViewModels.Incident(options.data, options.parent.getOption("children", {}));
         }
       },
       unit: {
@@ -1694,7 +1725,7 @@ Coceso.ViewModels.Log.prototype = Object.create(Coceso.ViewModels.ViewModelSingl
             return options.data;
           }
 
-          return new Coceso.ViewModels.Incident(options.data, options.parent.getOption("children", {}));
+          return new Coceso.ViewModels.Unit(options.data, options.parent.getOption("children", {}));
         }
       },
       json: {

@@ -45,12 +45,12 @@
 
             <li class="divider"></li>
             <li class="dropdown-header"><spring:message code="label.actions" /></li>
-            <li><a href="#" title="Send Home" data-bind="click: sendHome"><spring:message code="label.unit.send_home" /></a></li>
-            <li><a href="#" title="Standby" data-bind="click: standby"><spring:message code="label.incident.type.standby" /></a></li>
-            <li><a href="#" title="Hold Position" data-bind="click: holdPosition"><spring:message code="label.incident.type.hold_position" /></a></li>
+            <li><a href="#" title="<spring:message code="label.unit.send_home" />" data-bind="click: sendHome"><spring:message code="label.unit.send_home" /></a></li>
+            <li><a href="#" title="<spring:message code="label.incident.type.standby" />" data-bind="click: standby"><spring:message code="label.incident.type.standby" /></a></li>
+            <li><a href="#" title="<spring:message code="label.incident.type.hold_position" />" data-bind="click: holdPosition"><spring:message code="label.incident.type.hold_position" /></a></li>
 
             <li class="divider"></li>
-            <li><a href="#" title="Edit Unit" data-bind="click: openForm"><spring:message code="label.unit.edit" /></a></li>
+            <li><a href="#" title="<spring:message code="label.unit.edit" />" data-bind="click: openForm"><spring:message code="label.unit.edit" /></a></li>
           </ul>
         </li>
       </ul>
