@@ -61,4 +61,10 @@ public class MainController {
 
         return "main_content/log";
     }
+
+    @RequestMapping(value = "debug.html", method = RequestMethod.GET)
+    public String debug() {
+
+        return "main_content/debug";
+    }
 }

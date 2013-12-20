@@ -34,6 +34,7 @@
     <script src="<c:url value="/static/js/jquery.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/jquery.ui.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/jquery.ui.winman.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/static/js/util.js" />"></script>
     <script src="<c:url value="/static/js/knockout.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/knockout.mapping.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/bootstrap.dropdown.js"/>" type="text/javascript"></script>
@@ -46,6 +47,8 @@
         Coceso.Conf.contentBase = "${pageContext.request.contextPath}/main/";
 
         Coceso.startup();
+
+        setInterval('updateClock()', 1000);
       });
     </script>
   </head>
@@ -80,6 +83,9 @@
           <li><a href="#" title="<spring:message code='label.main.license' />" onclick="return Coceso.UI.openStatic(this.title, 'license.html');"><spring:message code="label.main.license" /></a></li>
           <li><a href="#" title="Debug" onclick="return Coceso.UI.openDebug(this.title, 'debug.html');">Debug</a></li>
         </ul>
+          <ul class="nav navbar-nav navbar-right">
+               <li><a id="clock" class="navbar-brand"></a></li>
+          </ul>
       </nav>
     </header>
 
