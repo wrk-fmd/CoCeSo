@@ -182,7 +182,6 @@ ko.extenders.arrayChanges = function(target, options) {
       return false;
     }
     for (i = 0; i < items.length; i++) {
-      console.log(items[i].localChange());
       if (ko.utils.unwrapObservable(items[i].localChange)) {
         return true;
       }
