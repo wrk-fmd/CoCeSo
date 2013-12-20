@@ -1296,7 +1296,7 @@ Coceso.ViewModels.Incident.prototype = Object.create(Coceso.ViewModels.ViewModel
             units.push({id: parseInt(i), taskState: options.data[i]});
           }
 
-          ko.utils.arrayForEach(options.target.unitlist, function(unit) {
+          ko.utils.arrayForEach(options.target.unitlist(), function(unit) {
             if ((unit.taskState.orig() === null) && (typeof options.data[unit.id()] === "undefined")) {
               units.push({id: unit.id()});
             }

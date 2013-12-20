@@ -422,7 +422,7 @@
                 } else {
                   //Asynchronous server change
                   mappedRootObject.orig(valueToWrite);
-                  if (options.keepChanges && !options.keepChanges[parentPropertyName]) {
+                  if (options.keepChanges && options.keepChanges[parentPropertyName]) {
                     //Keep local changes
                     mappedRootObject.serverChange(valueToWrite);
                     valueToWrite = mappedRootObject();
