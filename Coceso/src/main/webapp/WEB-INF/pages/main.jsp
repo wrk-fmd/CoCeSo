@@ -78,6 +78,7 @@
           <li><a href="<c:url value="/edit/"/>" target="_blank"><spring:message code="label.nav.edit_concern" /></a></li>
           <li><a href="<c:url value="/dashboard"/>" target="_blank"><spring:message code="label.nav.dashboard" /></a></li>
           <li><a href="#" title="<spring:message code='label.main.license' />" onclick="return Coceso.UI.openStatic(this.title, 'license.html');"><spring:message code="label.main.license" /></a></li>
+          <li><a href="#" title="Debug" onclick="return Coceso.UI.openDebug(this.title, 'debug.html');">Debug</a></li>
         </ul>
       </nav>
     </header>

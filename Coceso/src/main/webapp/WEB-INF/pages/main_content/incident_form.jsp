@@ -33,8 +33,9 @@
     <div class="alert alert-danger"><spring:message code="label.main.error.no_direct_access" /></div>
 
     <div class="ajax_content" data-bind="droppable: {drop: assignUnitForm}">
-      <form class="incidents_form">
-        <div class="form-group col-md-12">
+      <div class="alert alert-danger" id="error" style="display: none"><strong>Saving failed</strong><br/>Try again or see <em>Debug</em> for further information.</div>
+
+      <div class="form-group col-md-12">
           <label class="sr-only"><spring:message code="label.incident.type" />:</label>
           <div class="ui-buttonset">
             <input id="type_task" type="radio" class="ui-helper-hidden-accessible" name="type" data-bind="checked: type, enable: enableTask, value: Coceso.Constants.Incident.type.task" />
@@ -182,7 +183,6 @@
             <input type="button" class="btn btn-warning" value="Reset" data-bind="enable: localChange, click: reset" />
           </div>
         </div>
-      </form>
     </div>
   </body>
 </html>

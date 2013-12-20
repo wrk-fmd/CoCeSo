@@ -167,6 +167,12 @@ var Coceso = {
      */
     windows: {},
     /**
+     * Debugging information, such as HTTP errors
+     *
+     * @type Coceso.ViewModels.Debug
+     */
+    Debug: null,
+    /**
      * Add a window to the UI
      *
      * @param {String} title The title of the window
@@ -179,7 +185,7 @@ var Coceso = {
         viewmodel.ui = id;
         ko.applyBindings(viewmodel, el);
       }, function(el, id) {
-        if (typeof viewmodel.destroy === "function") {
+        if (viewmodel.destroy instanceof Function) {
           viewmodel.destroy.call(viewmodel);
         }
         ko.cleanNode(el);
@@ -245,6 +251,18 @@ var Coceso = {
      */
     openLogs: function(title, src, options) {
       this.openWindow(title, Coceso.Conf.contentBase + src, new Coceso.ViewModels.Logs({}, options || {}));
+      return false;
+    },
+    /**
+     * Open debug window
+     *
+     * @param {String} title
+     * @param {String} src
+     * @param {Object} options
+     * @return {void}
+     */
+    openDebug: function(title, src, options) {
+      this.openWindow(title, Coceso.Conf.contentBase + src, this.Debug);
       return false;
     },
     /**
@@ -326,7 +344,7 @@ var Coceso = {
           if (status !== "notmodified") {
             Coceso.Ajax.data[type][options.list] = data;
             ko.utils.arrayForEach(Coceso.Ajax.subscriptions[type], function(item) {
-              if (typeof item === "function") {
+              if (item instanceof Function) {
                 item(Coceso.Ajax.data[type]);
               }
             });
@@ -334,9 +352,7 @@ var Coceso = {
         },
         complete: function() {
           if (options.interval) {
-            options.id = window.setTimeout(function() {
-              Coceso.Ajax.getAll(type);
-            }, options.interval);
+            options.id = window.setTimeout(Coceso.Ajax.getAll, options.interval, type);
           }
         }
       });
@@ -375,10 +391,12 @@ var Coceso = {
      *
      * @param {Object} data
      * @param {String} url
-     * @param {Function} callback
+     * @param {Function} success
+     * @param {Function} error
+     * @param {Function} httperror
      * @returns {void}
      */
-    save: function(data, url, callback) {
+    save: function(data, url, success, error, httperror) {
       $.ajax({
         type: "POST",
         url: Coceso.Conf.jsonBase + url,
@@ -386,14 +404,22 @@ var Coceso = {
         contentType: (typeof data === "string") ? "application/json" : "application/x-www-form-urlencoded",
         data: data,
         processData: (typeof data !== "string"),
-        success: function(data, status) {
-          if (typeof callback === "function") {
-            callback(data);
+        success: function(data) {
+          if (data.success) {
+            if (success instanceof Function) {
+              success(data);
+            }
+          } else {
+            if (error instanceof Function) {
+              error(data);
+            }
           }
-          alert("success");
         },
-        error: function() {
-          alert("error");
+        error: function(jqXHR) {
+          Coceso.UI.Debug.pushHttpError(jqXHR, url, data);
+          if (httperror instanceof Function) {
+            httperror(jqXHR);
+          }
         },
         complete: function() {
           var i;
@@ -455,7 +481,7 @@ Coceso.ViewModels.ViewModel = function(data, options) {
   ko.mapping.fromJS(data, this.mappingOptions, this);
 
   //Subscribe to updates
-  if (this.getOption("reload") && this.dataType && (typeof this.setData === "function")) {
+  if (this.getOption("reload") && this.dataType && (this.setData instanceof Function)) {
     Coceso.Ajax.subscribe(this.dataType, this.setData);
   }
 };
@@ -658,6 +684,16 @@ Coceso.ViewModels.ViewModelSingle = function(data, options) {
   Coceso.ViewModels.ViewModel.call(this, data, options);
 
   /**
+   * Callback on error saving
+   *
+   * @return {void}
+   */
+  this.saveError = function() {
+    console.log("#" + self.ui + "-error");
+    $("#" + self.ui + "-error").stop(true).show().fadeOut(7000);
+  };
+
+  /**
    * Watch dependencies
    *
    * @type ko.observableArray
@@ -787,11 +823,11 @@ Coceso.ViewModels.ViewModelSingle.prototype = Object.create(Coceso.ViewModels.Vi
 
       var data = ko.mapping.toJS(this, {ignore: ["incidents", "units", "taskState"]});
 
-      if (typeof this.beforeSave === "function") {
+      if (this.beforeSave instanceof Function) {
         data = this.beforeSave(data);
       }
 
-      Coceso.Ajax.save(ko.toJSON(data), this.saveUrl, this.afterSave);
+      Coceso.Ajax.save(ko.toJSON(data), this.saveUrl, this.afterSave, this.saveError, this.saveError);
       return true;
     }
   },
@@ -944,7 +980,7 @@ Coceso.ViewModels.Incidents = function(data, options) {
    * @type ko.computed
    * @return {Array}
    */
-  this.filtered = this.incidentlist.extend({filtered: this.activeFilters});
+  this.filtered = this.incidentlist.extend({filtered: {filters: this.activeFilters}});
 };
 Coceso.ViewModels.Incidents.prototype = Object.create(Coceso.ViewModels.ViewModelList.prototype, /** @lends Coceso.ViewModels.Incidents.prototype */ {
   /**
@@ -1158,7 +1194,7 @@ Coceso.ViewModels.Incident = function(data, options) {
    */
   this.assignUnitForm = function(event, ui) {
     var viewmodel = ko.dataFor(ui.draggable.context);
-    if (!viewmodel instanceof Coceso.ViewModels.Unit) {
+    if (!(viewmodel instanceof Coceso.ViewModels.Unit)) {
       return;
     }
     var unitid = ko.utils.unwrapObservable(viewmodel.id);
@@ -1183,10 +1219,9 @@ Coceso.ViewModels.Incident = function(data, options) {
     var unit = ko.dataFor(ui.draggable.context);
 
     if ((unit instanceof Coceso.ViewModels.Unit) && self.id() && unit.id()) {
-      Coceso.Ajax.save({incident_id: self.id(), unit_id: unit.id()}, "assignUnit");
+      Coceso.Ajax.save({incident_id: self.id(), unit_id: unit.id()}, "assignUnit.json");
     }
   };
-
   /**
    * Callback after saving
    *
@@ -1199,9 +1234,19 @@ Coceso.ViewModels.Incident = function(data, options) {
       self.setData(Coceso.Ajax.data[self.dataType]);
     }
 
-    var units = (typeof self.units.unitlist !== "undefined") ? ko.utils.arrayMap(self.units.unitlist(), function(unit) {
-      return "incident/setToState/" + data.id + "/" + unit.id() + "/" + unit.taskState();
-    }) : [];
+    if (self.id() && (typeof self.units.unitlist !== "undefined")) {
+      ko.utils.arrayForEach(self.units.unitlist(), function(unit) {
+        if (unit.taskState.localChange()) {
+          if (unit.taskState.orig() === null) {
+            Coceso.Ajax.save({incident_id: self.id(), unit_id: unit.id()}, "assignUnit.json", function() {
+              Coceso.Ajax.save({incident_id: self.id(), unit_id: unit.id(), state: unit.taskState()}, "incident/setToState.json");
+            });
+          } else {
+            Coceso.Ajax.save({incident_id: self.id(), unit_id: unit.id(), state: unit.taskState()}, "incident/setToState.json");
+          }
+        }
+      });
+    }
   };
 };
 Coceso.ViewModels.Incident.prototype = Object.create(Coceso.ViewModels.ViewModelSingle.prototype, /** @lends Coceso.ViewModels.Incident.prototype */ {
@@ -1224,7 +1269,7 @@ Coceso.ViewModels.Incident.prototype = Object.create(Coceso.ViewModels.ViewModel
    * @see Coceso.ViewModels.ViewModelSingle#saveUrl
    * @override
    */
-  saveUrl: {value: "incident/update"},
+  saveUrl: {value: "incident/update.json"},
   /**
    * @see Coceso.ViewModels.ViewModel#mappingOptions
    * @override
@@ -1250,6 +1295,13 @@ Coceso.ViewModels.Incident.prototype = Object.create(Coceso.ViewModels.ViewModel
           for (i in options.data) {
             units.push({id: parseInt(i), taskState: options.data[i]});
           }
+
+          ko.utils.arrayForEach(options.target.unitlist, function(unit) {
+            if ((unit.taskState.orig() === null) && (typeof options.data[unit.id()] === "undefined")) {
+              units.push({id: unit.id()});
+            }
+          });
+
           options.target.setData({unitlist: units});
           return options.target;
         }
@@ -1355,7 +1407,7 @@ Coceso.ViewModels.Units = function(data, options) {
    * @type ko.computed
    * @return {Array}
    */
-  this.filtered = this.unitlist.extend({filtered: this.activeFilters});
+  this.filtered = this.unitlist.extend({filtered: {filters: this.activeFilters}});
 };
 Coceso.ViewModels.Units.prototype = Object.create(Coceso.ViewModels.ViewModelList.prototype, /** @lends Coceso.ViewModels.Units.prototype */ {
   /**
@@ -1474,9 +1526,10 @@ Coceso.ViewModels.Unit = function(data, options) {
    */
   this.assignIncidentForm = function(event, ui) {
     var viewmodel = ko.dataFor(ui.draggable.context);
-    if (!viewmodel instanceof Coceso.ViewModels.Incident) {
+    if (!(viewmodel instanceof Coceso.ViewModels.Incident)) {
       return;
     }
+
     var incid = ko.utils.unwrapObservable(viewmodel.id);
     if (incid && self.incidents.incidentlist) {
       var assigned = ko.utils.arrayFirst(self.incidents.incidentlist(), function(incident) {
@@ -1505,6 +1558,11 @@ Coceso.ViewModels.Unit.prototype = Object.create(Coceso.ViewModels.ViewModelSing
    */
   model: {value: Coceso.Models.Unit},
   /**
+   * @see Coceso.ViewModels.ViewModel#saveUrl
+   * @override
+   */
+  saveUrl: {value: "unit/update.json"},
+  /**
    * @see Coceso.ViewModels.ViewModel#mappingOptions
    * @override
    */
@@ -1529,10 +1587,38 @@ Coceso.ViewModels.Unit.prototype = Object.create(Coceso.ViewModels.ViewModelSing
           for (i in options.data) {
             incidents.push({id: parseInt(i), taskState: options.data[i]});
           }
+
+          ko.utils.arrayForEach(options.target.incidentlist, function(incident) {
+            if ((incident.taskState.orig() === null) && (typeof options.data[incident.id()] === "undefined")) {
+              incidents.push({id: incident.id()});
+            }
+          });
+
           options.target.setData({incidentlist: incidents});
           return options.target;
         }
       }
+    }
+  },
+  /**
+   * Data manipulation before saving
+   *
+   * @function
+   * @param {Object} data The data to save
+   * @return {Object} The manipulated data
+   */
+  beforeSave: {
+    value: function(data) {
+      delete data.call;
+      delete data.ani;
+      delete data.withDoc;
+      delete data.portable;
+      delete data.transportVehicle;
+      delete data.crew;
+      delete data.position.id;
+      delete data.home;
+
+      return data;
     }
   },
   /**
@@ -1544,7 +1630,7 @@ Coceso.ViewModels.Unit.prototype = Object.create(Coceso.ViewModels.ViewModelSing
   setAD: {
     value: function() {
       if (!this.isAD() && this.id()) {
-        Coceso.Ajax.save(ko.toJSON({id: this.id(), state: Coceso.Constants.Unit.state.ad}), "unit/update");
+        Coceso.Ajax.save(ko.toJSON({id: this.id(), state: Coceso.Constants.Unit.state.ad}), "unit/update.json");
       }
     }
   },
@@ -1557,7 +1643,7 @@ Coceso.ViewModels.Unit.prototype = Object.create(Coceso.ViewModels.ViewModelSing
   setEB: {
     value: function() {
       if (!this.isEB() && this.id()) {
-        Coceso.Ajax.save(ko.toJSON({id: this.id(), state: Coceso.Constants.Unit.state.eb}), "unit/update");
+        Coceso.Ajax.save(ko.toJSON({id: this.id(), state: Coceso.Constants.Unit.state.eb}), "unit/update.json");
       }
     }
   },
@@ -1570,7 +1656,7 @@ Coceso.ViewModels.Unit.prototype = Object.create(Coceso.ViewModels.ViewModelSing
   setNEB: {
     value: function() {
       if (!this.isNEB() && this.id()) {
-        Coceso.Ajax.save(ko.toJSON({id: this.id(), state: Coceso.Constants.Unit.state.neb}), "unit/update");
+        Coceso.Ajax.save(ko.toJSON({id: this.id(), state: Coceso.Constants.Unit.state.neb}), "unit/update.json");
       }
     }
   },
@@ -1583,7 +1669,7 @@ Coceso.ViewModels.Unit.prototype = Object.create(Coceso.ViewModels.ViewModelSing
   sendHome: {
     value: function() {
       if (this.id()) {
-        Coceso.Ajax.save({id: this.id()}, "unit/sendHome");
+        Coceso.Ajax.save({id: this.id()}, "unit/sendHome.json");
       }
     }
   },
@@ -1596,7 +1682,7 @@ Coceso.ViewModels.Unit.prototype = Object.create(Coceso.ViewModels.ViewModelSing
   standby: {
     value: function() {
       if (this.id()) {
-        Coceso.Ajax.save({id: this.id()}, "unit/sendHome");
+        Coceso.Ajax.save({id: this.id()}, "unit/sendHome.json");
       }
     }
   },
@@ -1609,7 +1695,7 @@ Coceso.ViewModels.Unit.prototype = Object.create(Coceso.ViewModels.ViewModelSing
   holdPosition: {
     value: function() {
       if (this.id()) {
-        Coceso.Ajax.save({id: this.id()}, "unit/sendHome");
+        Coceso.Ajax.save({id: this.id()}, "unit/sendHome.json");
       }
     }
   },
@@ -1778,3 +1864,38 @@ Coceso.ViewModels.Log.prototype = Object.create(Coceso.ViewModels.ViewModelSingl
     }
   }
 });
+
+/**
+ * Debug viewmodel (contains errors)
+ *
+ * @returns {undefined}
+ */
+Coceso.UI.Debug = new function() {
+  var self = this;
+
+  this.errors = ko.observableArray();
+
+  this.filtered = this.errors.extend({
+    filtered: {
+      sort: function(a, b) {
+        return (b.timestamp - a.timestamp);
+      }
+    }
+  });
+
+  this.pushHttpError = function(jqXHR, url, data) {
+    var time = new Date();
+    self.errors.push({
+      timestamp: time.getTime(),
+      time: time.toLocaleString(),
+      type: "HTTP-Error",
+      status: jqXHR.status,
+      message: jqXHR.statusText,
+      url: url,
+      data: data
+    });
+  };
+};
+
+
+

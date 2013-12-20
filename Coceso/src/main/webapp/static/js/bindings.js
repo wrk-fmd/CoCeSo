@@ -147,7 +147,7 @@ ko.extenders.observeChanges = function(target, options) {
     a = ko.utils.unwrapObservable(a);
     b = ko.utils.unwrapObservable(b);
 
-    return (typeof options.equals === "function") ? options.equals(a, b) : (a === b);
+    return (options.equals instanceof Function) ? options.equals(a, b) : (a === b);
   };
 
   target.localChange = ko.computed(function() {
@@ -299,17 +299,26 @@ ko.extenders.filtered = function(target, options) {
   };
 
   return ko.computed(function() {
-    var data = ko.utils.unwrapObservable(target) || [],
-      filters = ko.utils.unwrapObservable(options) || {};
+    var data = ko.utils.unwrapObservable(target) || [];
 
-    if (!filters.filter || !data.length) {
-      //No filters or no data: Return an empty array
+    if (!data.length) {
       return data;
     }
 
-    return ko.utils.arrayFilter(data, function(val) {
-      //Apply the filters to all child elements
-      return applyFilter(filters, val);
-    });
+    var filters = options.filters ? ko.utils.unwrapObservable(options.filters) || {} : {},
+      sort = options.sort ? ko.utils.unwrapObservable(options.sort) : null;
+
+    if (filters.filter) {
+      data = ko.utils.arrayFilter(data, function(val) {
+        //Apply the filters to all child elements
+        return applyFilter(filters, val);
+      });
+    }
+
+    if (sort) {
+      data = data.sort(sort);
+    }
+
+    return data;
   });
 };

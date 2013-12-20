@@ -124,6 +124,10 @@ label.ui-button {
   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
 }
 
+.ui-buttonset {
+  white-space: nowrap;
+}
+
 .ui-buttonset.ui-tabs {
   background: none;
   padding: .2em .2em 0;
@@ -252,11 +256,7 @@ span.incident_blue {
  * Forms
  */
 
-.incident_form, .unit_form {
-  width: 480px;
-}
-
-.incident_form .assigned label.control-label, .unit_form .assigned label.control-label {
+.assigned label.control-label {
   padding-top: 4px;
   text-align: right;
 }

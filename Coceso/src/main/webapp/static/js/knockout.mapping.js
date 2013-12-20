@@ -411,8 +411,8 @@
                 if (!mappedRootObject.localChange) {
                   //No change observer
                   mappedRootObject(valueToWrite);
-                } else if (!options.keepChanges || !options.keepChanges[parentPropertyName] || !mappedRootObject.localChange() || mappedRootObject.equals(mappedRootObject, valueToWrite)) {
-                  //No local change or synchronous change; or we don't care about local changes
+                } else if (!mappedRootObject.localChange() || mappedRootObject.equals(mappedRootObject, valueToWrite)) {
+                  //No local change or synchronous change
                   mappedRootObject.orig(valueToWrite);
                   mappedRootObject.serverChange(null);
                   mappedRootObject(valueToWrite);
@@ -422,8 +422,14 @@
                 } else {
                   //Asynchronous server change
                   mappedRootObject.orig(valueToWrite);
-                  mappedRootObject.serverChange(valueToWrite);
-                  valueToWrite = mappedRootObject();
+                  if (options.keepChanges && !options.keepChanges[parentPropertyName]) {
+                    //Keep local changes
+                    mappedRootObject.serverChange(valueToWrite);
+                    valueToWrite = mappedRootObject();
+                  } else {
+                    mappedRootObject.serverChange(null);
+                    mappedRootObject(valueToWrite);
+                  }
                 }
                 return valueToWrite;
                 //END CHANGES
