@@ -418,7 +418,6 @@
                   mappedRootObject(valueToWrite);
                 } else if (mappedRootObject.equals(mappedRootObject.orig, valueToWrite)) {
                   //No server change
-                  mappedRootObject.serverChange(null);
                   valueToWrite = mappedRootObject();
                 } else {
                   //Asynchronous server change

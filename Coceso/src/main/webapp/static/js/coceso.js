@@ -47,8 +47,8 @@ var Coceso = {
     $("#taskbar").winman();
 
     //Preload incidents and units
-    Coceso.Ajax.getAll("incidents", "incidentlist", "incident/getAll.json", Coceso.Conf.interval);
-    Coceso.Ajax.getAll("units", "unitlist", "unit/getAll.json", Coceso.Conf.interval);
+    Coceso.Ajax.getAll("incidents");
+    Coceso.Ajax.getAll("units");
   },
   /**
    * Constants for some values (states, types)
@@ -284,23 +284,47 @@ var Coceso = {
       incidents: [],
       units: []
     },
+    loadOptions: {
+      units: {
+        list: "unitlist",
+        url: "unit/getAll.json",
+        interval: null,
+        id: null
+      },
+      incidents: {
+        list: "incidentlist",
+        url: "incident/getAll.json",
+        interval: null,
+        id: null
+      }
+    },
     /**
      * Load the specified data
      *
      * @param {String} type The data type
-     * @param {String} list The list name
-     * @param {String} url The URL to load from
-     * @param {int} interval The interval to reload. 0 or false for no autoload.
      * @return {void}
      */
-    getAll: function(type, list, url, interval) {
+    getAll: function(type) {
+      if (!Coceso.Ajax.loadOptions[type]) {
+        return false;
+      }
+
+      var options = Coceso.Ajax.loadOptions[type];
+      if (options.id) {
+        window.clearTimeout(options.id);
+        options.id = null;
+      }
+      if (options.interval === null) {
+        options.interval = Coceso.Conf.interval;
+      }
+
       $.ajax({
         dataType: "json",
-        url: Coceso.Conf.jsonBase + url,
+        url: Coceso.Conf.jsonBase + options.url,
         ifModified: true,
         success: function(data, status) {
           if (status !== "notmodified") {
-            Coceso.Ajax.data[type][list] = data;
+            Coceso.Ajax.data[type][options.list] = data;
             ko.utils.arrayForEach(Coceso.Ajax.subscriptions[type], function(item) {
               if (typeof item === "function") {
                 item(Coceso.Ajax.data[type]);
@@ -309,10 +333,10 @@ var Coceso = {
           }
         },
         complete: function() {
-          if (interval) {
-            window.setTimeout(function() {
-              Coceso.Ajax.getAll(type, list, url, interval);
-            }, interval);
+          if (options.interval) {
+            options.id = window.setTimeout(function() {
+              Coceso.Ajax.getAll(type);
+            }, options.interval);
           }
         }
       });
@@ -370,6 +394,12 @@ var Coceso = {
         },
         error: function() {
           alert("error");
+        },
+        complete: function() {
+          var i;
+          for (i in Coceso.Ajax.loadOptions) {
+            Coceso.Ajax.getAll(i);
+          }
         }
       });
     },
