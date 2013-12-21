@@ -140,14 +140,14 @@ public class UnitDao extends CocesoDao<Unit> {
             if(!first) {
                 q += ",";
             }
-            q += " position = " + unit.position.id;
+            q += " position_point_fk = " + unit.position.id;
             first = false;
         }
         if(unit.home != null && unit.home.id  > 0) {
             if(!first) {
                 q += ",";
             }
-            q += " home = " + unit.home.id;
+            q += " home_point_fk = " + unit.home.id;
             // first = false;
         }
         q += suf_q;
