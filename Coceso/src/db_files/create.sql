@@ -1,7 +1,7 @@
-CREATE SEQUENCE units_id_seq;
-CREATE SEQUENCE persons_id_seq;
+CREATE SEQUENCE unit_id_seq;
+CREATE SEQUENCE person_id_seq;
 CREATE SEQUENCE log_id_seq;
-CREATE SEQUENCE incidents_id_seq;
+CREATE SEQUENCE incident_id_seq;
 CREATE SEQUENCE point_id_seq;
 CREATE SEQUENCE concern_id_seq;
 CREATE SEQUENCE role_id_seq;
@@ -36,7 +36,7 @@ CREATE TABLE concern (
 );
 
 CREATE TABLE unit (
-  id INTEGER NOT NULL DEFAULT nextval('units_id_seq'),
+  id INTEGER NOT NULL DEFAULT nextval('unit_id_seq'),
   concern_fk INTEGER NOT NULL,
   state VARCHAR (16) NOT NULL,
   call VARCHAR (64) NOT NULL,
@@ -54,7 +54,7 @@ CREATE TABLE unit (
 );
 
 CREATE TABLE person (
-  id INTEGER NOT NULL DEFAULT nextval('persons_id_seq'),
+  id INTEGER NOT NULL DEFAULT nextval('person_id_seq'),
   given_name VARCHAR (32) NOT NULL ,
   sur_name VARCHAR (32) NOT NULL,
   dnr INTEGER NOT NULL,
@@ -88,7 +88,7 @@ CREATE TABLE crew (
 );
 
 CREATE TABLE incident (
-  id INTEGER NOT NULL DEFAULT nextval('incidents_id_seq'),
+  id INTEGER NOT NULL DEFAULT nextval('incident_id_seq'),
   concern_fk INTEGER NOT NULL,
   state VARCHAR (16) NOT NULL,
   type VARCHAR (16) NOT NULL,
