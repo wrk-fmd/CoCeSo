@@ -67,7 +67,13 @@ public class CocesoAuthenticationProvider implements AuthenticationProvider {
 
         int returnCode;
 
-        if(useThirdPartyAuth) {
+        boolean offline_failed = !user.validatePassword(password);
+
+        if(offline_failed) { // Offline Auth failed
+            Logger.debug("Offline Authentication failed");
+        }
+
+        if(offline_failed && useThirdPartyAuth) {
             try { // #################### THIRD PARTY AUTHENTICATION ####################
                 URL url = new URL(thirdPartyAuthenticationURL);
                 String phrase = username+":"+password;
@@ -95,30 +101,29 @@ public class CocesoAuthenticationProvider implements AuthenticationProvider {
                 Logger.debug("IOException (No Connection?) "+e.getMessage());
                 returnCode = ERROR;
             }
+        } else if(offline_failed && !useThirdPartyAuth) {
+            returnCode = firstUse ? SUCCESS : NOT_AUTHORIZED;
         } else {
-            returnCode = firstUse ? SUCCESS : ERROR;
+            returnCode = SUCCESS;
         }
 
         if(returnCode == NOT_AUTHORIZED) {
             Logger.debug("Online Authentication Failed");
             throw new BadCredentialsException("Wrong Username/Password");
         }
-        if(returnCode == SUCCESS) { // Online Authentication succeeded
-            if(!user.validatePassword(password)) { // Offline Auth failed -> set new Password in DB
+        if(returnCode == SUCCESS) {
+            if(offline_failed) {
                 user.setPassword(password);
                 operatorDao.update(user);
                 Logger.debug("User "+username+": PW written to DB");
             }
-            Logger.debug("User "+username+" authenticated online");
+            Logger.debug("User "+username+" authenticated");
             return new UsernamePasswordAuthenticationToken(user,password, auth);
         }
-        if(returnCode == ERROR) { // Online Auth not reachable
-            if(!user.validatePassword(password)) { // Offline Auth failed
-                Logger.debug("Offline Authentication failed");
-                throw new BadCredentialsException("Wrong Username/Password");
-            }
-            Logger.debug("User "+username+" authenticated offline");
-            return new UsernamePasswordAuthenticationToken(user, password, auth); // Offline Auth succeeded
+        if(returnCode == ERROR) {
+
+            Logger.debug("Authentication failed");
+            throw new BadCredentialsException("Wrong Username/Password");
         }
         else { // Wrong Status Code Definition?
             throw new BadCredentialsException("Internal Error");
