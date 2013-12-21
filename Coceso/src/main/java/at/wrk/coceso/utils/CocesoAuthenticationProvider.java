@@ -23,7 +23,9 @@ import java.util.Collection;
 @Service
 public class CocesoAuthenticationProvider implements AuthenticationProvider {
 
-    private boolean useThirdPartyAuth = false;
+    private final boolean firstUse;
+
+    private final boolean useThirdPartyAuth;
 
     // ###BEGIN### Third Party Authentication Config ###
     private static final int SUCCESS = 302;
@@ -38,9 +40,11 @@ public class CocesoAuthenticationProvider implements AuthenticationProvider {
     private String thirdPartyAuthenticationURL;
 
     @Autowired
-    public CocesoAuthenticationProvider (String thirdPartyAuthenticationURL, Boolean useThirdPartyAuth) {
+    public CocesoAuthenticationProvider (String thirdPartyAuthenticationURL, Boolean useThirdPartyAuth, Boolean firstUse)
+    {
         this.thirdPartyAuthenticationURL = thirdPartyAuthenticationURL;
         this.useThirdPartyAuth = useThirdPartyAuth == null ? false : useThirdPartyAuth;
+        this.firstUse = firstUse == null ? false : firstUse;
     }
 
     @Override
@@ -92,7 +96,7 @@ public class CocesoAuthenticationProvider implements AuthenticationProvider {
                 returnCode = ERROR;
             }
         } else {
-            returnCode = ERROR;
+            returnCode = firstUse ? SUCCESS : ERROR;
         }
 
         if(returnCode == NOT_AUTHORIZED) {
