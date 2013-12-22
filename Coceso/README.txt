@@ -13,18 +13,20 @@ Server:
 - Java JRE (version 1.6 and newer tested)
 - Tomcat (version 7 and newer tested)
 - PostgreSQL DB (9.1 and newer tested)
+- Maven (Build Manager)
 Client:
 - Web Browser (full features only in Mozilla Firefox and Google Chrome tested)
 
 2. INSTALLATION
-- Set up a Database for the Project
-- Write your DB Login Data to src/main/webapp/WEB-INF/classes/coceso.properties
-- Execute src/db_files/create.sql on the Database
-- Execute YOUR MODIFIED create_operator.sql on the Database
-- Build the Project via Maven (i.e. ´mvn package´)
-- Load the Project into Tomcat
+- Set up a database for the project
+- Write your DB login data to src/main/webapp/WEB-INF/classes/coceso.properties
+- Execute src/db_files/create.sql on the database
+- Execute YOUR MODIFIED create_operator.sql on the database
+- Build the project via Maven (i.e. ´mvn package´)
+- Load the project into Tomcat
+- Navigate your browser to http://localhost:8080/coceso
 
-On First Login, the Password used for Login will NOT be validated, only set into DB. When the Password is set (for the
-user as in 'create_operator.sql), change in coceso.properties the Flag 'firstUse' to false. (In file in the Tomcat
- Subdirectory) After a restart (or redeploy) only the set Password will be accepted. The first User is automatically
-Superuser and can add new User and set their Passwords.
+On first login, the password used for login will NOT be validated, but set in the DB. After the password was set (for the
+user created in 'create_operator.sql), change the flag 'firstUse' in coceso.properties to false.
+After the next restart (or redeployment) the afore set password will be accepted only. The first user has
+superuser privileges and can add new users and set their passwords.
