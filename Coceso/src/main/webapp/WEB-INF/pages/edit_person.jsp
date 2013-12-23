@@ -1,6 +1,11 @@
+<%@ page import="org.springframework.security.core.GrantedAuthority" %>
+<%@ page import="java.util.List" %>
+<%@ page import="at.wrk.coceso.entity.Operator" %>
+<%@ page import="at.wrk.coceso.entity.enums.CocesoAuthority" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <html>
 <head>
@@ -93,6 +98,24 @@
                             </c:if>
                             <input class="form-control" name="allowLogin" type="checkbox" ${o_allowlogin}>
                         </label>
+                    </div>
+
+                    <div class="form-group col-lg-4">
+                        <%--form:select multiple="true" path="internalAuthorities" items="${authorities}" cssClass="form-control"/--%>
+                        <%--TODO Just a Workaround...--%>
+                        <select multiple class="form-control" name="internalAuthorities">
+
+                            <c:set value="${operator.internalAuthorities}" var="i_auths"/>
+                            <%
+                                List<CocesoAuthority> opAuths = (List<CocesoAuthority>) pageContext.getAttribute("i_auths");
+                            %>
+                            <c:forEach items="${authorities}" var="authority">
+                                <%
+                                    CocesoAuthority auth = (CocesoAuthority) pageContext.getAttribute("authority");
+                                %>
+                                <option <%= opAuths.contains(auth) ? "selected" : "" %>>${authority}</option>
+                            </c:forEach>
+                        </select>
                     </div>
                 </div>
 

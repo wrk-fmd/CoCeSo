@@ -1,20 +1,20 @@
 package at.wrk.coceso.controller;
 
-import at.wrk.coceso.dao.PersonDao;
+import at.wrk.coceso.dao.RoleDao;
 import at.wrk.coceso.entity.Operator;
 import at.wrk.coceso.entity.Person;
+import at.wrk.coceso.entity.enums.CocesoAuthority;
 import at.wrk.coceso.service.OperatorService;
 import at.wrk.coceso.service.PersonService;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.security.Principal;
+import java.util.List;
 
 @Controller
 @RequestMapping("/edit/person")
@@ -25,6 +25,9 @@ public class PersonController {
 
     @Autowired
     OperatorService operatorService;
+
+    @Autowired
+    RoleDao roleDao;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String index(ModelMap map, HttpServletRequest request, @RequestParam(value = "error", required = false) String s_error) {
@@ -68,6 +71,9 @@ public class PersonController {
 
         if(request.isUserInRole("Root")) {
             Operator op = operatorService.getById(p.getId());
+
+            map.addAttribute("authorities", CocesoAuthority.class.getEnumConstants());
+
             if(op == null) {
                 map.addAttribute("user_not_op", true);
             }
@@ -98,7 +104,7 @@ public class PersonController {
 
     @RequestMapping(value = "updateOp", method = RequestMethod.POST)
     @PreAuthorize("hasRole('Root')")
-    public String updateOpByPost(@ModelAttribute Operator operator, ModelMap map) {
+    public String updateOpByPost(@ModelAttribute Operator operator, ModelMap map, HttpServletRequest request) {
         if(operator.id <= 0) {
             map.addAttribute("error", "Update of User Failed. Invalid ID: "+operator.id);
             return "redirect:/edit/person";
@@ -110,6 +116,16 @@ public class PersonController {
         }
         op.username = operator.username;
         op.allowLogin = operator.allowLogin;
+
+        List<CocesoAuthority> new_authorities = operator.getInternalAuthorities();
+        List<CocesoAuthority> old_authorities = op.getInternalAuthorities();
+        for(CocesoAuthority auth : CocesoAuthority.class.getEnumConstants()) {
+            if(new_authorities.contains(auth) && !old_authorities.contains(auth))
+                roleDao.add(operator.id, auth);
+            if(!new_authorities.contains(auth) && old_authorities.contains(auth)) {
+                roleDao.remove(operator.id, auth);
+            }
+        }
 
         if(!operatorService.update(op)) {
             map.addAttribute("error", "Something went wrong on Update...");   //TODO Error Message not shown

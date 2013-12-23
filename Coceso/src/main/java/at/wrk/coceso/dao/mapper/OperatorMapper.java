@@ -34,7 +34,7 @@ public class OperatorMapper implements RowMapper<Operator> {
         p.given_name = rs.getString("given_name");
         p.sur_name = rs.getString("sur_name");
 
-        p.setAuthorities(roleDao.getByOperatorId(p.id));
+        p.setInternalAuthorities(roleDao.getByOperatorId(p.id));
 
         // References
         p.activeConcern = concernDao.getById(rs.getInt("concern_fk"));

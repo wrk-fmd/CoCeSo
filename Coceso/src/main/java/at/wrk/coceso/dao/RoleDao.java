@@ -4,6 +4,7 @@ import at.wrk.coceso.dao.mapper.RoleMapper;
 import at.wrk.coceso.entity.enums.CocesoAuthority;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Repository;
@@ -47,7 +48,11 @@ public class RoleDao {
 
         String q = "INSERT INTO operator_role (operator_fk, role) VALUES (?,?)";
 
-        jdbc.update(q, operator_fk, authority.name());
+        try {
+            jdbc.update(q, operator_fk, authority.name());
+        } catch (DataAccessException dae) {
+            Logger.debug("RoleDao.add(): "+dae.getMessage());
+        }
 
         return true;
     }

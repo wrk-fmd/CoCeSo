@@ -32,13 +32,13 @@ public class Operator extends Person implements UserDetails {
     }
 
     @JsonIgnore
-    private List<CocesoAuthority> authorities;
+    private List<CocesoAuthority> internalAuthorities;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> ret = new ArrayList<GrantedAuthority>();
 
-        if(authorities != null) for(final CocesoAuthority auth : authorities) {
+        if(internalAuthorities != null) for(final CocesoAuthority auth : internalAuthorities) {
             ret.add(new GrantedAuthority() {
                 @Override
                 public String getAuthority() {
@@ -53,17 +53,22 @@ public class Operator extends Person implements UserDetails {
         return ret;
     }
 
-    public void setAuthorities(List<CocesoAuthority> grantedAuthorities) {
-        authorities = grantedAuthorities;
+    @JsonIgnore
+    public List<CocesoAuthority> getInternalAuthorities() {
+        return internalAuthorities;
+    }
+
+    public void setInternalAuthorities(List<CocesoAuthority> grantedAuthorities) {
+        internalAuthorities = grantedAuthorities;
 
     }
 
     public void addAuthority(CocesoAuthority authority) {
-        authorities.add(authority);
+        internalAuthorities.add(authority);
     }
 
     public boolean removeAuthority(CocesoAuthority authority) {
-        return authorities.remove(authority);
+        return internalAuthorities.remove(authority);
     }
 
     @Override
