@@ -146,7 +146,7 @@ public class UnitController implements IEntityController<Unit> {
 
         toHome.id = incidentService.add(toHome, user);
         //log.logFull(user, LogText.SEND_HOME_ASSIGN, activeCase, unit, toHome, true);
-        taskService.assignUnit(toHome.id, unitId, user);
+        taskService.changeState(toHome.id, unitId, TaskState.Assigned, user);
 
         unit.incidents.put(toHome.getId(), TaskState.Assigned);
 

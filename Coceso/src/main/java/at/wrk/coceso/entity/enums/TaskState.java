@@ -9,5 +9,9 @@ package at.wrk.coceso.entity.enums;
  * Detached - Einsatz nicht mehr zugewiesen
  */
 public enum TaskState {
-    Assigned, ZBO, ABO, ZAO, AAO, Detached
+    Assigned, ZBO, ABO, ZAO, AAO, Detached;
+
+    public static TaskState[] orderedValues() {
+        return new TaskState[]{Assigned, ZBO, ABO, ZAO, AAO, Detached};
+    }
 }

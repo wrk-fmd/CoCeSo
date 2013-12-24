@@ -12,9 +12,9 @@ import java.util.Map;
 
 public class Incident {
 
-    private static HashMap<IncidentType, List<TaskState>> possibleStates;
+    //private static HashMap<IncidentType, List<TaskState>> possibleStates;
 
-    static {
+    /*static {
         possibleStates = new HashMap<IncidentType, List<TaskState>>();
         List<TaskState> tmp = new ArrayList<TaskState>();
 
@@ -34,7 +34,7 @@ public class Incident {
         tmp.add(2, TaskState.ABO);
 
         possibleStates.put(IncidentType.Task, new ArrayList<TaskState>(tmp));
-    }
+    }*/
 
     public int id;
 
@@ -64,7 +64,7 @@ public class Incident {
         if(state == null || type == null || !units.containsKey(unit_id))
             return null;
 
-        List<TaskState> l = possibleStates.get(type);
+        List<TaskState> l = type.getPossibleStates();
         if(l == null)
             return null;
         int index = l.indexOf(units.get(unit_id));
@@ -72,19 +72,6 @@ public class Incident {
             return null;
 
         TaskState ret = l.get(index+1);
-
-        units.put(unit_id, ret);
-
-        if(type == IncidentType.HoldPosition || type == IncidentType.Standby) {
-            if(ret == TaskState.Detached)
-                state = IncidentState.Done;
-            if(ret == TaskState.AAO)
-                state = IncidentState.Working;
-        } else {
-            if(ret == TaskState.Detached)
-                units.remove(unit_id);
-        }
-
 
         return ret;
     }
@@ -110,7 +97,7 @@ public class Incident {
         return priority;
     }
 
-    public Boolean isBlue() {
+    public Boolean getBlue() {
         return blue;
     }
 
@@ -140,5 +127,57 @@ public class Incident {
 
     public IncidentType getType() {
         return type;
+    }
+
+    public Integer getConcern() {
+        return concern;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setConcern(Integer concern) {
+        this.concern = concern;
+    }
+
+    public void setState(IncidentState state) {
+        this.state = state;
+    }
+
+    public void setPriority(Integer priority) {
+        this.priority = priority;
+    }
+
+    public void setBlue(Boolean blue) {
+        this.blue = blue;
+    }
+
+    public void setUnits(Map<Integer, TaskState> units) {
+        this.units = units;
+    }
+
+    public void setBo(Point bo) {
+        this.bo = bo;
+    }
+
+    public void setAo(Point ao) {
+        this.ao = ao;
+    }
+
+    public void setCasusNr(String casusNr) {
+        this.casusNr = casusNr;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
+    }
+
+    public void setCaller(String caller) {
+        this.caller = caller;
+    }
+
+    public void setType(IncidentType type) {
+        this.type = type;
     }
 }

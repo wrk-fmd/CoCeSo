@@ -67,7 +67,7 @@ var Coceso = {
       type: {
         holdposition: "HoldPosition",
         relocation: "Relocation",
-        sendhome: "SendHome",
+        sendhome: "SendHome",       // TODO Enum is 'ToHome', SendHome is the Action of sending them Home
         standby: "Standby",
         task: "Task"
       },
