@@ -303,8 +303,8 @@
                         <td>
                             <%
                                 Unit u = (Unit) pageContext.getAttribute("eUnit");
-                                if(u.incidents.size() == 1) {
-                                    out.print(u.incidents.get(u.incidents.keySet().iterator().next()).name());
+                                if(u.getIncidents().size() == 1) {
+                                    out.print(u.getIncidents().get(u.getIncidents().keySet().iterator().next()).name());
                                 }
                             %>
                         </td>

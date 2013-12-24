@@ -5,8 +5,6 @@ import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.TaskState;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,38 +34,38 @@ public class Incident {
         possibleStates.put(IncidentType.Task, new ArrayList<TaskState>(tmp));
     }*/
 
-    public int id;
+    private int id;
 
-    public Integer concern;
+    private Integer concern;
 
-    public IncidentState state;
+    private IncidentState state;
 
-    public Integer priority;
+    private Integer priority;
 
-    public Boolean blue;
+    private Boolean blue;
 
-    public Map<Integer, TaskState> units;
+    private Map<Integer, TaskState> units;
 
-    public Point bo;
+    private Point bo;
 
-    public Point ao;
+    private Point ao;
 
-    public String casusNr;
+    private String casusNr;
 
-    public String info;
+    private String info;
 
-    public String caller;
+    private String caller;
 
-    public IncidentType type;
+    private IncidentType type;
 
     public TaskState nextState(int unit_id) {
-        if(state == null || type == null || !units.containsKey(unit_id))
+        if(getState() == null || getType() == null || !getUnits().containsKey(unit_id))
             return null;
 
-        List<TaskState> l = type.getPossibleStates();
+        List<TaskState> l = getType().getPossibleStates();
         if(l == null)
             return null;
-        int index = l.indexOf(units.get(unit_id));
+        int index = l.indexOf(getUnits().get(unit_id));
         if(index < 0 || index > l.size() - 2)
             return null;
 
@@ -78,9 +76,9 @@ public class Incident {
 
     public Incident slimCopy() {
         Incident ret = new Incident();
-        ret.id = this.id;
-        ret.concern = this.concern;
-        ret.type = this.type;
+        ret.setId(this.id);
+        ret.setConcern(this.concern);
+        ret.setType(this.type);
 
         return ret;
     }

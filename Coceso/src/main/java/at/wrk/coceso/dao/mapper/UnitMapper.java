@@ -34,30 +34,30 @@ public class UnitMapper implements RowMapper<Unit> {
         Unit unit = new Unit();
 
         // Basic Datatype
-        unit.id = rs.getInt("id");
-        unit.ani = rs.getString("ani");
-        unit.call = rs.getString("call");
-        unit.info = rs.getString("info");
-        unit.portable = rs.getBoolean("portable");
-        unit.transportVehicle = rs.getBoolean("transportVehicle");
-        unit.withDoc = rs.getBoolean("withDoc");
+        unit.setId(rs.getInt("id"));
+        unit.setAni(rs.getString("ani"));
+        unit.setCall(rs.getString("call"));
+        unit.setInfo(rs.getString("info"));
+        unit.setPortable(rs.getBoolean("portable"));
+        unit.setTransportVehicle(rs.getBoolean("transportVehicle"));
+        unit.setWithDoc(rs.getBoolean("withDoc"));
         try {
-            unit.state = UnitState.valueOf(rs.getString("state"));
+            unit.setState(UnitState.valueOf(rs.getString("state")));
         }
         catch(IllegalArgumentException e) {
-            Logger.error("IncidentMapper: incident_id:" + unit.id + ", Cant read UnitState, Reset To NULL");
-            unit.state = null;
+            Logger.error("IncidentMapper: incident_id:" + unit.getId() + ", Cant read UnitState, Reset To NULL");
+            unit.setState(null);
         }
 
         // References
-        unit.concern = rs.getInt("concern_fk");
-        unit.home = pointDao.getById(rs.getInt("home_point_fk"));
-        unit.position = pointDao.getById(rs.getInt("position_point_fk"));
+        unit.setConcern(rs.getInt("concern_fk"));
+        unit.setHome(pointDao.getById(rs.getInt("home_point_fk")));
+        unit.setPosition(pointDao.getById(rs.getInt("position_point_fk")));
 
         // Extra Table
-        unit.crew = crewDao.getByUnitId(unit.id);
+        unit.setCrew(crewDao.getByUnitId(unit.getId()));
 
-        unit.incidents = taskDao.getAllByUnitId(unit.id);
+        unit.setIncidents(taskDao.getAllByUnitId(unit.getId()));
 
         return unit;
     }

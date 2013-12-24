@@ -83,12 +83,12 @@ public class OperatorDao extends CocesoDao<Operator> {
 
     @Override
     public boolean update(Operator p) {
-        if(p == null || p.id <= 0) return false;
+        if(p == null || p.getId() <= 0) return false;
 
         personDao.update(p);
         String q = "UPDATE operator SET username = ?, allowlogin = ?, hashedpw = ?, concern_fk = ? WHERE id = ?";
 
-        jdbc.update(q, p.username, p.allowLogin, p.hashedPW, p.activeConcern == null ? null : p.activeConcern.id, p.id);
+        jdbc.update(q, p.getUsername(), p.isAllowLogin(), p.getHashedPW(), p.getActiveConcern() == null ? null : p.getActiveConcern().getId(), p.getId());
 
         return true;
     }
@@ -97,10 +97,10 @@ public class OperatorDao extends CocesoDao<Operator> {
     public int add(final Operator p) {
         if(p == null) return -1;
 
-        Person t = personDao.getById(p.id);
+        Person t = personDao.getById(p.getId());
 
         if(t == null) {
-            p.id = personDao.add(p);
+            p.setId(personDao.add(p));
         }
 
         final String q = "INSERT INTO operator (id, allowlogin, username, hashedpw, concern_fk) " +
@@ -115,19 +115,19 @@ public class OperatorDao extends CocesoDao<Operator> {
                     throws SQLException {
                 PreparedStatement ps = connection.prepareStatement(q, Statement.RETURN_GENERATED_KEYS);
 
-                ps.setInt(1, p.id);
-                ps.setBoolean(2, p.allowLogin);
-                ps.setString(3, p.username);
-                ps.setString(4, p.hashedPW);
-                if(p.activeConcern == null)
+                ps.setInt(1, p.getId());
+                ps.setBoolean(2, p.isAllowLogin());
+                ps.setString(3, p.getUsername());
+                ps.setString(4, p.getHashedPW());
+                if(p.getActiveConcern() == null)
                     ps.setObject(5, null);
-                else ps.setInt(5, p.activeConcern.id);
+                else ps.setInt(5, p.getActiveConcern().getId());
 
                 return ps;
             }
         }, holder);
 
-        roleDao.add(p.id, p.getAuthorities());
+        roleDao.add(p.getId(), p.getAuthorities());
 
         return (Integer) holder.getKeys().get("id");
     }
@@ -138,7 +138,7 @@ public class OperatorDao extends CocesoDao<Operator> {
 
         String q = "DELETE FROM operator WHERE id = ?";
 
-        jdbc.update(q, p.id);
+        jdbc.update(q, p.getId());
 
         return true;
     }

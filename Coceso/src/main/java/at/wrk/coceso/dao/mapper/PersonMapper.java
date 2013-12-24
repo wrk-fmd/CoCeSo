@@ -20,11 +20,11 @@ public class PersonMapper implements RowMapper<Person> {
         Person p = new Person();
 
         //Basic Datatypes
-        p.id = rs.getInt("id");
-        p.dNr = rs.getInt("dNr");
-        p.contact = rs.getString("contact");
-        p.given_name = rs.getString("given_name");
-        p.sur_name = rs.getString("sur_name");
+        p.setId(rs.getInt("id"));
+        p.setdNr(rs.getInt("dNr"));
+        p.setContact(rs.getString("contact"));
+        p.setGiven_name(rs.getString("given_name"));
+        p.setSur_name(rs.getString("sur_name"));
 
         return p;
     }

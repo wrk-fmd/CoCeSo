@@ -90,8 +90,8 @@ public class PersonController {
     @RequestMapping(value = "update", method = RequestMethod.POST)
     //@PreAuthorize("hasAnyRole('MLS', 'Root')")
     public String updateByPost(@ModelAttribute Person person, ModelMap map) {
-        if(person.id <= 0) {
-            map.addAttribute("error", "Update of User Failed. Invalid ID: "+person.id);
+        if(person.getId() <= 0) {
+            map.addAttribute("error", "Update of User Failed. Invalid ID: "+ person.getId());
             return "redirect:/edit/person";
         }
         if(!personService.update(person)) {
@@ -99,31 +99,31 @@ public class PersonController {
             return "redirect:/edit/person";
         }
 
-        return "redirect:/edit/person/update?id="+person.id;
+        return "redirect:/edit/person/update?id="+ person.getId();
     }
 
     @RequestMapping(value = "updateOp", method = RequestMethod.POST)
     @PreAuthorize("hasRole('Root')")
     public String updateOpByPost(@ModelAttribute Operator operator, ModelMap map, HttpServletRequest request) {
-        if(operator.id <= 0) {
-            map.addAttribute("error", "Update of User Failed. Invalid ID: "+operator.id);
+        if(operator.getId() <= 0) {
+            map.addAttribute("error", "Update of User Failed. Invalid ID: "+ operator.getId());
             return "redirect:/edit/person";
         }
         Operator op = operatorService.getById(operator.getId());
         if(op == null) {
-            map.addAttribute("error", "Person not found: "+operator.id);
+            map.addAttribute("error", "Person not found: "+ operator.getId());
             return "redirect:/edit/person";
         }
-        op.username = operator.username;
-        op.allowLogin = operator.allowLogin;
+        op.setUsername(operator.getUsername());
+        op.setAllowLogin(operator.isAllowLogin());
 
         List<CocesoAuthority> new_authorities = operator.getInternalAuthorities();
         List<CocesoAuthority> old_authorities = op.getInternalAuthorities();
         for(CocesoAuthority auth : CocesoAuthority.class.getEnumConstants()) {
             if(new_authorities.contains(auth) && !old_authorities.contains(auth))
-                roleDao.add(operator.id, auth);
+                roleDao.add(operator.getId(), auth);
             if(!new_authorities.contains(auth) && old_authorities.contains(auth)) {
-                roleDao.remove(operator.id, auth);
+                roleDao.remove(operator.getId(), auth);
             }
         }
 
@@ -132,30 +132,30 @@ public class PersonController {
             return "redirect:/edit/person";
         }
 
-        return "redirect:/edit/person/update?id="+operator.id;
+        return "redirect:/edit/person/update?id="+ operator.getId();
     }
 
 
     @RequestMapping(value = "create", method = RequestMethod.POST)
     public String create(@ModelAttribute Person person, ModelMap map) {
-        person.id = personService.add(person);
-        if(person.id == -1)
+        person.setId(personService.add(person));
+        if(person.getId() == -1)
             map.addAttribute("error", "Something went wrong on Create...");  //TODO Error Message not shown
 
-        return "redirect:/edit/person/update?id="+person.id;
+        return "redirect:/edit/person/update?id="+ person.getId();
     }
 
     @RequestMapping(value = "createOp", method = RequestMethod.POST)
     @PreAuthorize("hasRole('Root')")
     public String createOp(@ModelAttribute Operator operator, ModelMap map) {
-        Operator op = new Operator(personService.getById(operator.id));
-        op.allowLogin = operator.allowLogin;
-        op.username = operator.username;
+        Operator op = new Operator(personService.getById(operator.getId()));
+        op.setAllowLogin(operator.isAllowLogin());
+        op.setUsername(operator.getUsername());
 
         int id = operatorService.add(operator);
         if(id != operator.getId())
             map.addAttribute("error", "Something went wrong on Create...");  //TODO Error Message not shown
 
-        return "redirect:/edit/person/update?id="+operator.id;
+        return "redirect:/edit/person/update?id="+ operator.getId();
     }
 }

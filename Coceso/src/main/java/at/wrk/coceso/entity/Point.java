@@ -10,13 +10,13 @@ public class Point {
         this.info = info;
     }
 
-    public int id;
+    private int id;
 
-    public String info;
+    private String info;
 
-    public double longitude;
+    private double longitude;
 
-    public double latitude;
+    private double latitude;
 
     public void prepareNotNull() {
         if(info == null) info = "";
@@ -25,5 +25,37 @@ public class Point {
     @Override
     public String toString() {
         return info+"";
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
     }
 }

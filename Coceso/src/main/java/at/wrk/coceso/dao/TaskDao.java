@@ -65,12 +65,12 @@ public class TaskDao {
         while(rs.next()) {
 
             Incident tmp = new Incident();
-            tmp.id = rs.getInt("id");
+            tmp.setId(rs.getInt("id"));
 
             String x = rs.getString("type");
-            tmp.type = (x == null ? null : IncidentType.valueOf(x));
+            tmp.setType((x == null ? null : IncidentType.valueOf(x)));
             x = rs.getString("state");
-            tmp.state = (x == null ? null : IncidentState.valueOf(x));
+            tmp.setState((x == null ? null : IncidentState.valueOf(x)));
 
             ret.add(tmp);
         }

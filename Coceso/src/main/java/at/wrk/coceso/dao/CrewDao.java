@@ -46,22 +46,22 @@ public class CrewDao {
 
 
     public boolean remove(Unit unit, Person person) {
-        if(unit == null || person == null || unit.id <= 0 || person.id <= 0) return false;
+        if(unit == null || person == null || unit.getId() <= 0 || person.getId() <= 0) return false;
 
         String q = "DELETE FROM crew WHERE unit_fk = ? AND person_fk = ?";
 
-        jdbc.update(q, unit.id, person.id);
+        jdbc.update(q, unit.getId(), person.getId());
 
         return true;
     }
 
 
     public boolean add(Unit unit, Person person) {
-        if(unit == null || person == null || unit.id <= 0 || person.id <= 0) return false;
+        if(unit == null || person == null || unit.getId() <= 0 || person.getId() <= 0) return false;
 
         String q = "INSERT INTO crew (unit_fk, person_fk) VALUES (?,?)";
 
-        jdbc.update(q, unit.id, person.id);
+        jdbc.update(q, unit.getId(), person.getId());
 
         return true;
     }

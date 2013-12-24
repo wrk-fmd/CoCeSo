@@ -18,29 +18,29 @@ public class ConcernTest {
     @Test
     public void prepareNotNullTest() {
         /* Prepare */
-        this.t.name = null;
-        this.t.info = null;
+        this.t.setName(null);
+        this.t.setInfo(null);
 
         /* Execute */
         this.t.prepareNotNull();
 
         /* Check */
-        Assert.assertEquals("", this.t.name);
-        Assert.assertEquals("", this.t.info);
+        Assert.assertEquals("", this.t.getName());
+        Assert.assertEquals("", this.t.getInfo());
     }
 
     @Test
     public void prepareAnotherNotNullTest() {
         /* Prepare */
-        this.t.name = "f00";
-        this.t.info = null;
+        this.t.setName("f00");
+        this.t.setInfo(null);
 
         /* Execute */
         this.t.prepareNotNull();
 
         /* Check */
-        Assert.assertEquals("f00", this.t.name);
-        Assert.assertEquals("", this.t.info);
+        Assert.assertEquals("f00", this.t.getName());
+        Assert.assertEquals("", this.t.getInfo());
     }
 
     @Test

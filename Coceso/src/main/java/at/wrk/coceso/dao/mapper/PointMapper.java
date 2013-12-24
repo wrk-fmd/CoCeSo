@@ -14,10 +14,10 @@ public class PointMapper implements RowMapper<Point> {
     public Point mapRow(ResultSet rs, int i) throws SQLException {
         Point poi = new Point();
 
-        poi.id = rs.getInt("id");
-        poi.info = rs.getString("info");
-        poi.latitude = rs.getDouble("latitude");
-        poi.longitude = rs.getDouble("longitude");
+        poi.setId(rs.getInt("id"));
+        poi.setInfo(rs.getString("info"));
+        poi.setLatitude(rs.getDouble("latitude"));
+        poi.setLongitude(rs.getDouble("longitude"));
 
         return poi;
     }

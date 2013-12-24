@@ -82,26 +82,26 @@ public class UnitController implements IEntityController<Unit> {
             return "{\"success\": false, description: \"Binding Error\"}";
         }
 
-        if(unit.id > 0) {
-            Unit u = unitService.getById(unit.id);
-            if(u.concern != caseId)
+        if(unit.getId() > 0) {
+            Unit u = unitService.getById(unit.getId());
+            if(u.getConcern() != caseId)
                 return "{\"success\": false, \"info\":\"Active Concern not valid\"}";
         }
 
 
-        unit.concern = caseId;
+        unit.setConcern(caseId);
 
-        if(unit.concern <= 0) {
+        if(unit.getConcern() <= 0) {
             return "{\"success\": false, \"info\":\"No active Concern. Cookies enabled?\"}";
         }
 
-        if(unit.id < 1) {
-            unit.id = 0;
+        if(unit.getId() < 1) {
+            unit.setId(0);
 
-            unit.id = unitService.add(unit, user);
+            unit.setId(unitService.add(unit, user));
 
             //log.logFull(user, "Unit created", caseId, unit, null, true);
-            return "{\"success\": " + (unit.id != -1) + ", \"new\": true, \"unit_id\":"+unit.id+"}";
+            return "{\"success\": " + (unit.getId() != -1) + ", \"new\": true, \"unit_id\":"+ unit.getId() +"}";
         }
 
         //log.logFull(user, "Unit updated", caseId, unit, null, true);
@@ -122,7 +122,7 @@ public class UnitController implements IEntityController<Unit> {
 
         // If active Task != Standby or HoldPosition is present, don't send home
         for(Incident i : list) {
-            if(i.type != IncidentType.HoldPosition && i.type != IncidentType.Standby)
+            if(i.getType() != IncidentType.HoldPosition && i.getType() != IncidentType.Standby)
                 return null;
         }
 
@@ -130,25 +130,25 @@ public class UnitController implements IEntityController<Unit> {
 
         // Detach from all HoldPosition and Standby Incidents
         for(Incident i : list) {
-            i.state = IncidentState.Done;
+            i.setState(IncidentState.Done);
             //log.logWithIDs(user.id, LogText.SEND_HOME_AUTO_DETACH, activeCase, unitId, i.id, true);
             incidentService.update(i, user);
-            taskDao.remove(i.id, unitId);
+            taskDao.remove(i.getId(), unitId);
         }
 
         Incident toHome = new Incident();
-        toHome.state = IncidentState.Dispo;
-        toHome.concern = activeCase;
-        toHome.ao = unit.home;
-        toHome.bo = unit.position; // TODO useful?
-        toHome.type = IncidentType.ToHome;
-        toHome.caller = user.getUsername(); // TODO useful?
+        toHome.setState(IncidentState.Dispo);
+        toHome.setConcern(activeCase);
+        toHome.setAo(unit.getHome());
+        toHome.setBo(unit.getPosition()); // TODO useful?
+        toHome.setType(IncidentType.ToHome);
+        toHome.setCaller(user.getUsername()); // TODO useful?
 
-        toHome.id = incidentService.add(toHome, user);
+        toHome.setId(incidentService.add(toHome, user));
         //log.logFull(user, LogText.SEND_HOME_ASSIGN, activeCase, unit, toHome, true);
-        taskService.changeState(toHome.id, unitId, TaskState.Assigned, user);
+        taskService.changeState(toHome.getId(), unitId, TaskState.Assigned, user);
 
-        unit.incidents.put(toHome.getId(), TaskState.Assigned);
+        unit.getIncidents().put(toHome.getId(), TaskState.Assigned);
 
         return unit;
     }

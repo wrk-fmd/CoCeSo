@@ -98,7 +98,7 @@ public class PointDao extends CocesoDao<Point> {
             Logger.debug("PoiDao.update(): poi is NULL");
             return false;
         }
-        if(poi.id <= 0) {
+        if(poi.getId() <= 0) {
             //Logger.error("PoiDao.update(): Invalid id: " + poi.id);
             return false;
         }
@@ -107,7 +107,7 @@ public class PointDao extends CocesoDao<Point> {
                 "WHERE id = ?";
 
         try {
-            jdbc.update(q, poi.info, poi.longitude, poi.latitude, poi.id);
+            jdbc.update(q, poi.getInfo(), poi.getLongitude(), poi.getLatitude(), poi.getId());
         }
         catch(DataAccessException dae) {
             Logger.error("PoiDao.update(): DataAccessException: " + dae.getMessage());
@@ -138,9 +138,9 @@ public class PointDao extends CocesoDao<Point> {
                         throws SQLException {
                     PreparedStatement ps = connection.prepareStatement(q, Statement.RETURN_GENERATED_KEYS);
 
-                    ps.setString(1, poi.info);
-                    ps.setDouble(2, poi.longitude);
-                    ps.setDouble(3, poi.latitude);
+                    ps.setString(1, poi.getInfo());
+                    ps.setDouble(2, poi.getLongitude());
+                    ps.setDouble(3, poi.getLatitude());
 
                     return ps;
                 }
@@ -160,15 +160,15 @@ public class PointDao extends CocesoDao<Point> {
             Logger.error("PoiDao.remove(): poi is NULL");
             return false;
         }
-        if(poi.id <= 0) {
-            Logger.error("PoiDao.remove(): Invalid id: " + poi.id);
+        if(poi.getId() <= 0) {
+            Logger.error("PoiDao.remove(): Invalid id: " + poi.getId());
             return false;
         }
 
         String q = "DELETE FROM point WHERE id = ?";
 
         try {
-            jdbc.update(q, poi.id);
+            jdbc.update(q, poi.getId());
         }
         catch(DataAccessException dae) {
             Logger.error("PoiDao.update(): DataAccessException: " + dae.getMessage());

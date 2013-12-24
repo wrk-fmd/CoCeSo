@@ -77,8 +77,8 @@ public class ConcernDao extends CocesoDao<Concern> {
         String q = "UPDATE concern SET name = ?, point_fk = ?, info = ?, pax = ?, closed = ? WHERE id = ?";
 
         try {
-            jdbc.update(q, caze.name, caze.place == null ? null : caze.place.id,
-                    caze.info, caze.pax, caze.closed, caze.id);
+            jdbc.update(q, caze.getName(), caze.getPlace() == null ? null : caze.getPlace().getId(),
+                    caze.getInfo(), caze.getPax(), caze.isClosed(), caze.getId());
             return true;
         }
         catch (DataAccessException dae) {
@@ -96,7 +96,7 @@ public class ConcernDao extends CocesoDao<Concern> {
         String q = "INSERT INTO concern (name, point_fk, info, pax) VALUES (?, ?, ?, ?)";
 
         try {
-            jdbc.update(q, caze.name, caze.place == null ? null : caze.place.id, caze.info, caze.pax);
+            jdbc.update(q, caze.getName(), caze.getPlace() == null ? null : caze.getPlace().getId(), caze.getInfo(), caze.getPax());
             return 0;
         }
         catch (DataAccessException dae) {
@@ -114,7 +114,7 @@ public class ConcernDao extends CocesoDao<Concern> {
 
         String q = "DELETE FROM concern WHERE id = ?";
 
-        jdbc.update(q, caze.id);
+        jdbc.update(q, caze.getId());
         return false;
     }
 }

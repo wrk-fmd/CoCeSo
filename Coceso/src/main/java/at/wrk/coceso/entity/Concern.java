@@ -2,17 +2,17 @@ package at.wrk.coceso.entity;
 
 public class Concern {
 
-    public int id;
+    private int id;
 
-    public String name;
+    private String name;
 
-    public Point place;
+    private Point place;
 
-    public String info;
+    private String info;
 
-    public int pax;
+    private int pax;
 
-    public boolean closed;
+    private boolean closed;
 
     public void prepareNotNull() {
         if(name == null) name = "";
@@ -40,5 +40,37 @@ public class Concern {
         if(obj == null || !(obj instanceof Concern))
             return false;
         return this.id == ((Concern) obj).id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Point getPlace() {
+        return place;
+    }
+
+    public void setPlace(Point place) {
+        this.place = place;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
+    }
+
+    public void setPax(int pax) {
+        this.pax = pax;
+    }
+
+    public boolean isClosed() {
+        return closed;
+    }
+
+    public void setClosed(boolean closed) {
+        this.closed = closed;
     }
 }

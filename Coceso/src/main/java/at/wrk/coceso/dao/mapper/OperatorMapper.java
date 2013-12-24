@@ -24,20 +24,20 @@ public class OperatorMapper implements RowMapper<Operator> {
         Operator p = new Operator();
 
         //Basic Datatypes
-        p.id = rs.getInt("id");
-        p.allowLogin = rs.getBoolean("allowLogin");
-        p.username = rs.getString("username");
-        p.hashedPW = rs.getString("hashedPW");
+        p.setId(rs.getInt("id"));
+        p.setAllowLogin(rs.getBoolean("allowLogin"));
+        p.setUsername(rs.getString("username"));
+        p.setHashedPW(rs.getString("hashedPW"));
 
-        p.dNr = rs.getInt("dNr");
-        p.contact = rs.getString("contact");
-        p.given_name = rs.getString("given_name");
-        p.sur_name = rs.getString("sur_name");
+        p.setdNr(rs.getInt("dNr"));
+        p.setContact(rs.getString("contact"));
+        p.setGiven_name(rs.getString("given_name"));
+        p.setSur_name(rs.getString("sur_name"));
 
-        p.setInternalAuthorities(roleDao.getByOperatorId(p.id));
+        p.setInternalAuthorities(roleDao.getByOperatorId(p.getId()));
 
         // References
-        p.activeConcern = concernDao.getById(rs.getInt("concern_fk"));
+        p.setActiveConcern(concernDao.getById(rs.getInt("concern_fk")));
 
         return p;
     }

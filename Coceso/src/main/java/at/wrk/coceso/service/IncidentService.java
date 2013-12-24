@@ -42,7 +42,7 @@ public class IncidentService {
 
     public boolean update(Incident incident, Operator operator) {
         boolean ret = update(incident);
-        logService.logFull(operator, LogText.INCIDENT_UPDATE, incident.concern, null, incident, true);
+        logService.logFull(operator, LogText.INCIDENT_UPDATE, incident.getConcern(), null, incident, true);
         return ret;
     }
 
@@ -51,9 +51,9 @@ public class IncidentService {
     }
 
     public int add(Incident incident, Operator operator) {
-        incident.id = add(incident);
-        logService.logFull(operator, LogText.INCIDENT_NEW, incident.concern, null, incident, true);
-        return incident.id;
+        incident.setId(add(incident));
+        logService.logFull(operator, LogText.INCIDENT_NEW, incident.getConcern(), null, incident, true);
+        return incident.getId();
     }
 
     public boolean remove(Incident incident) {
@@ -61,7 +61,7 @@ public class IncidentService {
     }
 
     public boolean remove(Incident incident, Operator operator) {
-        logService.logFull(operator, LogText.INCIDENT_DELETE, incident.concern, null, incident, true);
+        logService.logFull(operator, LogText.INCIDENT_DELETE, incident.getConcern(), null, incident, true);
         return remove(incident);
     }
 }

@@ -34,7 +34,7 @@ public class UnitService {
 
     public boolean update(Unit unit, Operator operator) {
         boolean ret = update(unit);
-        logService.logFull(operator, LogText.UNIT_UPDATE, unit.concern, unit, null, true);
+        logService.logFull(operator, LogText.UNIT_UPDATE, unit.getConcern(), unit, null, true);
         return ret;
     }
 
@@ -44,7 +44,7 @@ public class UnitService {
 
     public boolean updateFull(Unit unit, Operator operator) {
         boolean ret = updateFull(unit);
-        logService.logFull(operator, LogText.UNIT_UPDATE+": "+unit.getCall(), unit.concern, unit, null, true);
+        logService.logFull(operator, LogText.UNIT_UPDATE+": "+unit.getCall(), unit.getConcern(), unit, null, true);
         return ret;
     }
 
@@ -54,9 +54,9 @@ public class UnitService {
 
     public int add(Unit unit, Operator operator) {
 
-        unit.id = add(unit);
-        logService.logFull(operator, LogText.UNIT_NEW+": "+unit.getCall(), unit.concern, unit, null, true);
-        return unit.id;
+        unit.setId(add(unit));
+        logService.logFull(operator, LogText.UNIT_NEW+": "+unit.getCall(), unit.getConcern(), unit, null, true);
+        return unit.getId();
     }
 
     public boolean remove(Unit unit) {
@@ -66,7 +66,7 @@ public class UnitService {
     public boolean remove(Unit unit, Operator operator) {
         if(unit == null)
             return false;
-        logService.logFull(operator, LogText.UNIT_DELETE+": "+unit.getCall(), unit.concern, unit, null, true);
+        logService.logFull(operator, LogText.UNIT_DELETE+": "+unit.getCall(), unit.getConcern(), unit, null, true);
         return remove(unit);
     }
 }

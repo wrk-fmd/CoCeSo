@@ -61,12 +61,12 @@ public class PersonDao extends CocesoDao<Person> {
 
     @Override
     public boolean update(Person p) {
-        if(p == null || p.id <= 0) return false;
+        if(p == null || p.getId() <= 0) return false;
 
         String q = "UPDATE person SET dnr = ?, contact = ?, given_name = ?, " +
                 "sur_name = ? WHERE id = ?";
 
-        jdbc.update(q,  p.dNr, p.contact, p.given_name, p.sur_name, p.id);
+        jdbc.update(q, p.getdNr(), p.getContact(), p.getGiven_name(), p.getSur_name(), p.getId());
 
         return true;
     }
@@ -88,10 +88,10 @@ public class PersonDao extends CocesoDao<Person> {
                     throws SQLException {
                 PreparedStatement ps = connection.prepareStatement(q, Statement.RETURN_GENERATED_KEYS);
 
-                ps.setInt(1, p.dNr);
-                ps.setString(2, p.contact == null ? "" : p.contact);
-                ps.setString(3, p.given_name);
-                ps.setString(4, p.sur_name);
+                ps.setInt(1, p.getdNr());
+                ps.setString(2, p.getContact() == null ? "" : p.getContact());
+                ps.setString(3, p.getGiven_name());
+                ps.setString(4, p.getSur_name());
 
                 return ps;
             }
@@ -106,7 +106,7 @@ public class PersonDao extends CocesoDao<Person> {
 
         String q = "DELETE FROM person WHERE id = ?";
 
-        jdbc.update(q, p.id);
+        jdbc.update(q, p.getId());
 
         return true;
     }

@@ -21,13 +21,13 @@ public class ConcernMapper implements RowMapper<Concern> {
         Concern caze = new Concern();
 
         // Basic Datatypes
-        caze.id = rs.getInt("id");
-        caze.pax = rs.getInt("pax");
-        caze.info = rs.getString("info");
-        caze.name = rs.getString("name");
-        caze.closed = rs.getBoolean("closed");
+        caze.setId(rs.getInt("id"));
+        caze.setPax(rs.getInt("pax"));
+        caze.setInfo(rs.getString("info"));
+        caze.setName(rs.getString("name"));
+        caze.setClosed(rs.getBoolean("closed"));
 
-        caze.place = pointDao.getById(rs.getInt("point_fk"));
+        caze.setPlace(pointDao.getById(rs.getInt("point_fk")));
 
         return caze;
     }

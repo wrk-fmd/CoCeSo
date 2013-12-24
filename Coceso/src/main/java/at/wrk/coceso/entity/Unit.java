@@ -9,31 +9,31 @@ import java.util.Map;
 
 public class Unit {
 
-    public int id;
+    private int id;
 
-    public Integer concern;
+    private Integer concern;
 
-    public UnitState state;
+    private UnitState state;
 
-    public String call;
+    private String call;
 
-    public String ani; // Radio ID
+    private String ani; // Radio ID
 
-    public boolean withDoc;
+    private boolean withDoc;
 
-    public boolean portable;
+    private boolean portable;
 
-    public boolean transportVehicle;
+    private boolean transportVehicle;
 
-    public List<Person> crew;
+    private List<Person> crew;
 
-    public String info;
+    private String info;
 
-    public Point position;
+    private Point position;
 
-    public Point home;
+    private Point home;
 
-    public Map<Integer, TaskState> incidents;
+    private Map<Integer, TaskState> incidents;
 
     /**
      * Default Values for Insert in Database
@@ -94,5 +94,65 @@ public class Unit {
 
     public Point getHome() {
         return home;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Integer getConcern() {
+        return concern;
+    }
+
+    public void setConcern(Integer concern) {
+        this.concern = concern;
+    }
+
+    public void setState(UnitState state) {
+        this.state = state;
+    }
+
+    public void setCall(String call) {
+        this.call = call;
+    }
+
+    public void setAni(String ani) {
+        this.ani = ani;
+    }
+
+    public void setWithDoc(boolean withDoc) {
+        this.withDoc = withDoc;
+    }
+
+    public void setPortable(boolean portable) {
+        this.portable = portable;
+    }
+
+    public void setTransportVehicle(boolean transportVehicle) {
+        this.transportVehicle = transportVehicle;
+    }
+
+    public List<Person> getCrew() {
+        return crew;
+    }
+
+    public void setCrew(List<Person> crew) {
+        this.crew = crew;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
+    }
+
+    public void setPosition(Point position) {
+        this.position = position;
+    }
+
+    public void setHome(Point home) {
+        this.home = home;
+    }
+
+    public void setIncidents(Map<Integer, TaskState> incidents) {
+        this.incidents = incidents;
     }
 }

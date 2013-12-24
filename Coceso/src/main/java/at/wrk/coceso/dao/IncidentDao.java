@@ -111,64 +111,64 @@ public class IncidentDao extends CocesoDao<Incident> {
         List<Object> parameters = new ArrayList<Object>();
         boolean comma = false;
 
-        incident.bo = unitDao.createPointIfNotExist(incident.bo);
-        incident.ao = unitDao.createPointIfNotExist(incident.ao);
+        incident.setBo(unitDao.createPointIfNotExist(incident.getBo()));
+        incident.setAo(unitDao.createPointIfNotExist(incident.getAo()));
 
-        if(incident.caller != null) {
+        if(incident.getCaller() != null) {
             q += "caller = ? ";
-            parameters.add(incident.caller);
+            parameters.add(incident.getCaller());
             comma = true;
         }
-        if(incident.ao != null) {
+        if(incident.getAo() != null) {
             if(comma) q+= ",";
             q += "ao_point_fk = ? ";
-            parameters.add(incident.ao.id);
+            parameters.add(incident.getAo().getId());
             comma = true;
         }
-        if(incident.bo != null) {
+        if(incident.getBo() != null) {
             if(comma) q+= ",";
             q += "bo_point_fk = ? ";
-            parameters.add(incident.bo.id);
+            parameters.add(incident.getBo().getId());
             comma = true;
         }
-        if(incident.casusNr != null) {
+        if(incident.getCasusNr() != null) {
             if(comma) q+= ",";
             q += "casusnr = ? ";
-            parameters.add(incident.casusNr);
+            parameters.add(incident.getCasusNr());
             comma = true;
         }
-        if(incident.info != null) {
+        if(incident.getInfo() != null) {
             if(comma) q+= ",";
             q += "info = ? ";
-            parameters.add(incident.info);
+            parameters.add(incident.getInfo());
             comma = true;
         }
-        if(incident.state != null) {
+        if(incident.getState() != null) {
             if(comma) q+= ",";
             q += "state = ? ";
-            parameters.add(incident.state.name());
+            parameters.add(incident.getState().name());
             comma = true;
         }
-        if(incident.type != null) {
+        if(incident.getType() != null) {
             if(comma) q+= ",";
             q += "type = ? ";
-            parameters.add(incident.type.name());
+            parameters.add(incident.getType().name());
             comma = true;
         }
-        if(incident.priority != null) {
+        if(incident.getPriority() != null) {
             if(comma) q+= ",";
             q += "priority = ? ";
-            parameters.add(incident.priority);
+            parameters.add(incident.getPriority());
             comma = true;
         }
-        if(incident.blue != null) {
+        if(incident.getBlue() != null) {
             if(comma) q+= ",";
             q += "blue = ? ";
-            parameters.add(incident.blue);
+            parameters.add(incident.getBlue());
             comma = true;
         }
 
-        parameters.add(incident.id);
+        parameters.add(incident.getId());
 
         q += suf_q;
 
@@ -180,7 +180,7 @@ public class IncidentDao extends CocesoDao<Incident> {
     //TODO Default IncidentType is now TASK
     @Override
     public int add(final Incident incident) {
-        if (incident == null || incident.concern == null) return -1;
+        if (incident == null || incident.getConcern() == null) return -1;
 
         final String q = "INSERT INTO incident (concern_fk, state, type, priority, blue, bo_point_fk, " +
                 "ao_point_fk, info, caller, casusnr) " +
@@ -188,8 +188,8 @@ public class IncidentDao extends CocesoDao<Incident> {
 
         KeyHolder holder = new GeneratedKeyHolder();
 
-        incident.bo = unitDao.createPointIfNotExist(incident.bo);
-        incident.ao = unitDao.createPointIfNotExist(incident.ao);
+        incident.setBo(unitDao.createPointIfNotExist(incident.getBo()));
+        incident.setAo(unitDao.createPointIfNotExist(incident.getAo()));
 
         jdbc.update(new PreparedStatementCreator() {
 
@@ -198,25 +198,25 @@ public class IncidentDao extends CocesoDao<Incident> {
                     throws SQLException {
                 PreparedStatement ps = connection.prepareStatement(q, Statement.RETURN_GENERATED_KEYS);
 
-                ps.setInt(1, incident.concern);
-                ps.setString(2, incident.state == null ? IncidentState.New.name() : incident.state.name());
-                ps.setString(3, incident.type == null ? IncidentType.Task.name() : incident.type.name());
-                ps.setInt(4, incident.priority == null ? 0 : incident.priority);
-                ps.setBoolean(5, incident.blue == null ? false : incident.blue);
+                ps.setInt(1, incident.getConcern());
+                ps.setString(2, incident.getState() == null ? IncidentState.New.name() : incident.getState().name());
+                ps.setString(3, incident.getType() == null ? IncidentType.Task.name() : incident.getType().name());
+                ps.setInt(4, incident.getPriority() == null ? 0 : incident.getPriority());
+                ps.setBoolean(5, incident.getBlue() == null ? false : incident.getBlue());
 
-                if(incident.bo != null)
-                    ps.setInt(6, incident.bo.id);
+                if(incident.getBo() != null)
+                    ps.setInt(6, incident.getBo().getId());
                 else
                     ps.setObject(6, null);
 
-                if(incident.ao != null)
-                    ps.setInt(7, incident.ao.id);
+                if(incident.getAo() != null)
+                    ps.setInt(7, incident.getAo().getId());
                 else
                     ps.setObject(7, null);
 
-                ps.setString(8, incident.info);
-                ps.setString(9, incident.caller);
-                ps.setString(10, incident.casusNr);
+                ps.setString(8, incident.getInfo());
+                ps.setString(9, incident.getCaller());
+                ps.setString(10, incident.getCasusNr());
                 return ps;
             }
         }, holder);
@@ -231,7 +231,7 @@ public class IncidentDao extends CocesoDao<Incident> {
         if(incident == null) return false;
         String q = "DELETE FROM incident WHERE id = ?";
 
-        jdbc.update(q, incident.id);
+        jdbc.update(q, incident.getId());
 
         return true;
     }

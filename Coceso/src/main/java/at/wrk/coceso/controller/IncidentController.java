@@ -100,32 +100,32 @@ public class IncidentController implements IEntityController<Incident> {
             return "{\"success\": false, description: \"Binding Error\"}";
         }
 
-        if(incident.id > 0) {
-            Incident i = incidentService.getById(incident.id);
-            if(i.concern != caseId)
+        if(incident.getId() > 0) {
+            Incident i = incidentService.getById(incident.getId());
+            if(i.getConcern() != caseId)
                 return "{\"success\": false, \"info\":\"Active Concern not valid\"}";
         }
 
 
-        incident.concern = caseId;
+        incident.setConcern(caseId);
 
-        if(incident.concern <= 0) {
+        if(incident.getConcern() <= 0) {
             return "{\"success\": false, \"info\":\"No active Concern. Cookies enabled?\"}";
         }
 
-        if(incident.id < 1) {
-            incident.id = 0;
+        if(incident.getId() < 1) {
+            incident.setId(0);
 
-            incident.id = incidentService.add(incident);
+            incident.setId(incidentService.add(incident));
             //log.logFull(user, "Incident created", caseId, null, incident, true);
-            return "{\"success\": " + (incident.id != -1) + ", \"new\": true, \"incident_id\":"+incident.id+"}";
+            return "{\"success\": " + (incident.getId() != -1) + ", \"new\": true, \"incident_id\":"+incident.getId()+"}";
         }
 
         //log.logFull(user, "Incident updated", caseId, null, incident, true);
         boolean ret = incidentService.update(incident, user);
 
-        if(ret && incident.state == IncidentState.Done)
-            taskService.checkStates(incident.id, user);
+        if(ret && incident.getState() == IncidentState.Done)
+            taskService.checkStates(incident.getId(), user);
 
         return "{\"success\": " + ret + ", \"new\": false}";
     }

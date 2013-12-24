@@ -65,7 +65,7 @@ public class WelcomeController {
         UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
         Operator user = (Operator) token.getPrincipal();
 
-        user = operatorDao.getById(user.id);
+        user = operatorDao.getById(user.getId());
 
         map.addAttribute("user", user);
 
@@ -146,7 +146,7 @@ public class WelcomeController {
                 }
                 else {
                     Map<Integer, String> i_map = new HashMap<Integer, String>();
-                    for(Map.Entry<Integer, TaskState> entry : ret.units.entrySet()) {
+                    for(Map.Entry<Integer, TaskState> entry : ret.getUnits().entrySet()) {
                         Unit u = unitService.getById(entry.getKey());
                         i_map.put(u.getId(), u.getCall());
                     }

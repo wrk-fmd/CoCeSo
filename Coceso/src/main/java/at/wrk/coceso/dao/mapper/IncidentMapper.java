@@ -32,31 +32,31 @@ public class IncidentMapper implements RowMapper<Incident> {
         Incident inc = new Incident();
 
         // Basic Datatypes
-        inc.id = rs.getInt("id");
-        inc.blue = rs.getBoolean("blue");
-        inc.caller = rs.getString("caller");
-        inc.casusNr = rs.getString("casusNr");
-        inc.priority = rs.getInt("priority");
-        inc.info = rs.getString("info");
+        inc.setId(rs.getInt("id"));
+        inc.setBlue(rs.getBoolean("blue"));
+        inc.setCaller(rs.getString("caller"));
+        inc.setCasusNr(rs.getString("casusNr"));
+        inc.setPriority(rs.getInt("priority"));
+        inc.setInfo(rs.getString("info"));
         try {
-            inc.state = IncidentState.valueOf(rs.getString("state"));
+            inc.setState(IncidentState.valueOf(rs.getString("state")));
         }
         catch(NullPointerException e) {
-            Logger.error("IncidentMapper: incident_id:"+inc.id+", Cant read IncidentState, Reset To NULL");
-            inc.state = null;
+            Logger.error("IncidentMapper: incident_id:"+inc.getId()+", Cant read IncidentState, Reset To NULL");
+            inc.setState(null);
         }
         try {
-            inc.type = IncidentType.valueOf(rs.getString("type"));
+            inc.setType(IncidentType.valueOf(rs.getString("type")));
         }
         catch(NullPointerException e) {
-            Logger.error("IncidentMapper: incident_id:"+inc.id+", Cant read IncidentType, Reset To NULL");
-            inc.type = null;
+            Logger.error("IncidentMapper: incident_id:"+inc.getId()+", Cant read IncidentType, Reset To NULL");
+            inc.setType(null);
         }
         // References
-        inc.concern = rs.getInt("concern_fk");
-        inc.bo = pointDao.getById(rs.getInt("bo_point_fk"));
-        inc.ao = pointDao.getById(rs.getInt("ao_point_fk"));
-        inc.units = taskDao.getAllByIncidentId(inc.id);
+        inc.setConcern(rs.getInt("concern_fk"));
+        inc.setBo(pointDao.getById(rs.getInt("bo_point_fk")));
+        inc.setAo(pointDao.getById(rs.getInt("ao_point_fk")));
+        inc.setUnits(taskDao.getAllByIncidentId(inc.getId()));
 
         return inc;
     }

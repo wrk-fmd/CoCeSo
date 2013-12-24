@@ -68,8 +68,8 @@ public class LogController {
         Operator user = (Operator) token.getPrincipal();
 
 
-        log.logFull(user, logEntry.text, Integer.parseInt(case_id),
-                logEntry.unit, logEntry.incident, false);
+        log.logFull(user, logEntry.getText(), Integer.parseInt(case_id),
+                logEntry.getUnit(), logEntry.getIncident(), false);
 
         return "{\"success\":true}";
     }

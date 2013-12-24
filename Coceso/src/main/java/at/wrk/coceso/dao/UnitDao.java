@@ -81,16 +81,16 @@ public class UnitDao extends CocesoDao<Unit> {
         if(dummy == null)
             return null;
 
-        if(dummy.id > 0) {
-            Point p = pointDao.getById(dummy.id);
+        if(dummy.getId() > 0) {
+            Point p = pointDao.getById(dummy.getId());
             if(p != null)
                 return p;
         }
 
 
-        Point point = pointDao.getByInfo(dummy.info);
-        if(point == null && dummy.info != null && !dummy.info.isEmpty()) {
-            dummy.id = pointDao.add(dummy);
+        Point point = pointDao.getByInfo(dummy.getInfo());
+        if(point == null && dummy.getInfo() != null && !dummy.getInfo().isEmpty()) {
+            dummy.setId(pointDao.add(dummy));
             return dummy;
         }
         else return point;
@@ -109,26 +109,26 @@ public class UnitDao extends CocesoDao<Unit> {
             Logger.error("UnitDao.update(Unit): unit is NULL");
             return false;
         }
-        if(unit.id <= 0) {
-            Logger.error("UnitDao.update(Unit): Invalid id: " + unit.id + ", call: "+unit.call);
+        if(unit.getId() <= 0) {
+            Logger.error("UnitDao.update(Unit): Invalid id: " + unit.getId() + ", call: "+ unit.getCall());
             return false;
         }
 
-        unit.home = createPointIfNotExist(unit.home);
-        unit.position = createPointIfNotExist(unit.position);
+        unit.setHome(createPointIfNotExist(unit.getHome()));
+        unit.setPosition(createPointIfNotExist(unit.getPosition()));
 
         final String pre_q = "update unit set";
-        final String suf_q = " where id = " + unit.id;
+        final String suf_q = " where id = " + unit.getId();
 
         boolean first = true;
         boolean info_given = false;
 
         String q = pre_q;
-        if(unit.state != null) {
-            q += " state = '" + unit.state.name() + "'";
+        if(unit.getState() != null) {
+            q += " state = '" + unit.getState().name() + "'";
             first = false;
         }
-        if(unit.info != null) {
+        if(unit.getInfo() != null) {
             if(!first) {
                 q += ",";
             }
@@ -136,24 +136,24 @@ public class UnitDao extends CocesoDao<Unit> {
             info_given = true;
             first = false;
         }
-        if(unit.position != null && unit.position.id > 0) {
+        if(unit.getPosition() != null && unit.getPosition().getId() > 0) {
             if(!first) {
                 q += ",";
             }
-            q += " position_point_fk = " + unit.position.id;
+            q += " position_point_fk = " + unit.getPosition().getId();
             first = false;
         }
-        if(unit.home != null && unit.home.id  > 0) {
+        if(unit.getHome() != null && unit.getHome().getId() > 0) {
             if(!first) {
                 q += ",";
             }
-            q += " home_point_fk = " + unit.home.id;
+            q += " home_point_fk = " + unit.getHome().getId();
             // first = false;
         }
         q += suf_q;
         try {
             if(info_given) {
-                jdbc.update(q, unit.info);
+                jdbc.update(q, unit.getInfo());
             }
             else {
                 jdbc.update(q);
@@ -171,22 +171,22 @@ public class UnitDao extends CocesoDao<Unit> {
             Logger.error("UnitDao.updateFull(Unit): unit is NULL");
             return false;
         }
-        if(unit.id <= 0) {
-            Logger.error("UnitDao.updateFull(Unit): Invalid id: " + unit.id + ", call: "+unit.call);
+        if(unit.getId() <= 0) {
+            Logger.error("UnitDao.updateFull(Unit): Invalid id: " + unit.getId() + ", call: "+ unit.getCall());
             return false;
         }
 
-        unit.home = createPointIfNotExist(unit.home);
-        unit.position = createPointIfNotExist(unit.position);
+        unit.setHome(createPointIfNotExist(unit.getHome()));
+        unit.setPosition(createPointIfNotExist(unit.getPosition()));
 
 
         String q = "UPDATE unit SET state = ?, call = ?, ani = ?, withdoc = ?, " +
                 "portable = ?, transportvehicle = ?, info = ?, position_point_fk = ?, home_point_fk = ? WHERE id = ?";
 
         try {
-            jdbc.update(q, unit.state == null ? UnitState.AD.name() : unit.state.name(), unit.call, unit.ani, unit.withDoc, unit.portable, unit.transportVehicle,
-                    unit.info, unit.position == null ? null : unit.position.id,
-                    unit.home == null ? null : unit.home.id, unit.id);
+            jdbc.update(q, unit.getState() == null ? UnitState.AD.name() : unit.getState().name(), unit.getCall(), unit.getAni(), unit.isWithDoc(), unit.isPortable(), unit.isTransportVehicle(),
+                    unit.getInfo(), unit.getPosition() == null ? null : unit.getPosition().getId(),
+                    unit.getHome() == null ? null : unit.getHome().getId(), unit.getId());
         }
         catch(DataAccessException dae) {
             Logger.error("UnitDao.updateFull(Unit): DataAccessException: " + dae.getMessage());
@@ -201,15 +201,15 @@ public class UnitDao extends CocesoDao<Unit> {
             Logger.error("UnitDao.add(Unit): unit is NULL");
             return -1;
         }
-        if(uunit.concern == null || uunit.concern <= 0) {
-            Logger.error("UnitDao.add(Unit): No concern given. call: " + uunit.call);
+        if(uunit.getConcern() == null || uunit.getConcern() <= 0) {
+            Logger.error("UnitDao.add(Unit): No concern given. call: " + uunit.getCall());
             return -1;
         }
 
         uunit.prepareNotNull();
 
-        uunit.home = createPointIfNotExist(uunit.home);
-        uunit.position = createPointIfNotExist(uunit.position);
+        uunit.setHome(createPointIfNotExist(uunit.getHome()));
+        uunit.setPosition(createPointIfNotExist(uunit.getPosition()));
 
 
         final Unit unit = uunit;
@@ -228,36 +228,36 @@ public class UnitDao extends CocesoDao<Unit> {
                         throws SQLException {
                     PreparedStatement ps = connection.prepareStatement(q, Statement.RETURN_GENERATED_KEYS);
 
-                    ps.setInt(1, unit.concern);
-                    ps.setString(2, unit.state == null ? UnitState.AD.name() : unit.state.name());
-                    ps.setString(3, unit.call);
-                    ps.setString(4, unit.ani);
-                    ps.setBoolean(5, unit.withDoc);
-                    ps.setBoolean(6, unit.portable);
-                    ps.setBoolean(7, unit.transportVehicle);
-                    ps.setString(8, unit.info);
-                    if(unit.position == null)
+                    ps.setInt(1, unit.getConcern());
+                    ps.setString(2, unit.getState() == null ? UnitState.AD.name() : unit.getState().name());
+                    ps.setString(3, unit.getCall());
+                    ps.setString(4, unit.getAni());
+                    ps.setBoolean(5, unit.isWithDoc());
+                    ps.setBoolean(6, unit.isPortable());
+                    ps.setBoolean(7, unit.isTransportVehicle());
+                    ps.setString(8, unit.getInfo());
+                    if(unit.getPosition() == null)
                         ps.setObject(9,  null);
                     else
-                        ps.setInt(9, unit.position.id);
+                        ps.setInt(9, unit.getPosition().getId());
 
-                    if(unit.home == null)
+                    if(unit.getHome() == null)
                         ps.setObject(10,  null);
                     else
-                        ps.setInt(10, unit.home.id);
+                        ps.setInt(10, unit.getHome().getId());
                     return ps;
                 }
             }, holder);
 
-            if(unit.crew != null) {
-                for(Person p : unit.crew) {
+            if(unit.getCrew() != null) {
+                for(Person p : unit.getCrew()) {
                     crewDao.add(unit, p);
                 }
             }
             return (Integer) holder.getKeys().get("id");
         }
         catch (DataAccessException dae) {
-            Logger.error("UnitDao.add(Unit): call: "+unit.call+"; DataAccessException: "+dae.getMessage());
+            Logger.error("UnitDao.add(Unit): call: "+ unit.getCall() +"; DataAccessException: "+dae.getMessage());
             return -1;
         }
 
@@ -269,16 +269,16 @@ public class UnitDao extends CocesoDao<Unit> {
             Logger.error("UnitDao.remove(Unit): unit is NULL");
             return false;
         }
-        if(unit.id <= 0) {
-            Logger.error("UnitDao.remove(Unit): invalid id: " + unit.id + ", call: " + unit.call);
+        if(unit.getId() <= 0) {
+            Logger.error("UnitDao.remove(Unit): invalid id: " + unit.getId() + ", call: " + unit.getCall());
             return false;
         }
         String q = "delete from unit where id = ?";
         try {
-            jdbc.update(q, unit.id);
+            jdbc.update(q, unit.getId());
         }
         catch (DataAccessException dae) {
-            Logger.error("UnitDao.remove(Unit): id: "+unit.id+"; DataAccessException: "+dae.getMessage());
+            Logger.error("UnitDao.remove(Unit): id: "+ unit.getId() +"; DataAccessException: "+dae.getMessage());
             return false;
         }
 

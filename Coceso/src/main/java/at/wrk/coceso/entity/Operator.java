@@ -13,15 +13,15 @@ import java.util.List;
 
 public class Operator extends Person implements UserDetails {
 
-    public Concern activeConcern;
+    private Concern activeConcern;
 
     @JsonIgnore
-    public boolean allowLogin;
+    private boolean allowLogin;
 
     @JsonIgnore
-    public String hashedPW;
+    private String hashedPW;
 
-    public String username;
+    private String username;
 
     public Operator() {
         super();
@@ -127,5 +127,21 @@ public class Operator extends Person implements UserDetails {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public Concern getActiveConcern() {
+        return activeConcern;
+    }
+
+    public void setActiveConcern(Concern activeConcern) {
+        this.activeConcern = activeConcern;
+    }
+
+    public String getHashedPW() {
+        return hashedPW;
+    }
+
+    public void setHashedPW(String hashedPW) {
+        this.hashedPW = hashedPW;
     }
 }

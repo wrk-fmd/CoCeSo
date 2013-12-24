@@ -2,12 +2,12 @@ package at.wrk.coceso.entity;
 
 
 public class Person {
-    public int id;
+    private int id;
 
-    public String given_name;
-    public String sur_name;
-    public int dNr;
-    public String contact;
+    private String given_name;
+    private String sur_name;
+    private int dNr;
+    private String contact;
 
     public Person() {
         super();

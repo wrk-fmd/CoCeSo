@@ -34,8 +34,8 @@ public class CreateController {
     public String create(HttpServletRequest request) {
 
         Concern caze = new Concern();
-        caze.name = request.getParameter("name");
-        caze.info = request.getParameter("info");
+        caze.setName(request.getParameter("name"));
+        caze.setInfo(request.getParameter("info"));
 
         concernDao.add(caze);
 
@@ -62,10 +62,10 @@ public class CreateController {
                          @RequestParam("pax") int pax) {
 
         Concern caze = new Concern();
-        caze.id = id;
-        caze.name = name;
-        caze.pax = pax;
-        caze.info = info;
+        caze.setId(id);
+        caze.setName(name);
+        caze.setPax(pax);
+        caze.setInfo(info);
 
         concernDao.update(caze);
 
@@ -81,18 +81,18 @@ public class CreateController {
         Operator user = (Operator) token.getPrincipal();
 
         Unit unit = new Unit();
-        unit.concern = case_id;
-        unit.id = Integer.parseInt(request.getParameter("id"));
-        unit.call = request.getParameter("call");
-        unit.ani = request.getParameter("ani");
-        unit.info = request.getParameter("info");
-        unit.portable = request.getParameter("portable") != null;
-        unit.withDoc = request.getParameter("withDoc") != null;
-        unit.transportVehicle = request.getParameter("transportVehicle") != null;
+        unit.setConcern(case_id);
+        unit.setId(Integer.parseInt(request.getParameter("id")));
+        unit.setCall(request.getParameter("call"));
+        unit.setAni(request.getParameter("ani"));
+        unit.setInfo(request.getParameter("info"));
+        unit.setPortable(request.getParameter("portable") != null);
+        unit.setWithDoc(request.getParameter("withDoc") != null);
+        unit.setTransportVehicle(request.getParameter("transportVehicle") != null);
 
         String home = request.getParameter("home");
         if(home != null)
-            unit.home = new Point(home);
+            unit.setHome(new Point(home));
 
 
         if(request.getParameter("update") != null) {
@@ -116,23 +116,23 @@ public class CreateController {
         Operator user = (Operator) token.getPrincipal();
 
         Unit unit = new Unit();
-        unit.concern = case_id;
+        unit.setConcern(case_id);
 
-        unit.id = -1;
-        unit.call = request.getParameter("call");
-        unit.ani = request.getParameter("ani");
-        unit.info = request.getParameter("info");
-        unit.portable = request.getParameter("portable") != null;
-        unit.withDoc = request.getParameter("withDoc") != null;
-        unit.transportVehicle = request.getParameter("transportVehicle") != null;
+        unit.setId(-1);
+        unit.setCall(request.getParameter("call"));
+        unit.setAni(request.getParameter("ani"));
+        unit.setInfo(request.getParameter("info"));
+        unit.setPortable(request.getParameter("portable") != null);
+        unit.setWithDoc(request.getParameter("withDoc") != null);
+        unit.setTransportVehicle(request.getParameter("transportVehicle") != null);
 
         String home = request.getParameter("home");
         if(home != null)
-            unit.home = new Point(home);
+            unit.setHome(new Point(home));
 
         unitService.add(unit, user);
 
-        Logger.debug("createUnit: Unit: "+unit.id+", "+unit.call);
+        Logger.debug("createUnit: Unit: "+ unit.getId() +", "+ unit.getCall());
 
         return "redirect:/edit";
     }
@@ -146,19 +146,19 @@ public class CreateController {
         Operator user = (Operator) token.getPrincipal();
 
         Unit unit = new Unit();
-        unit.concern = case_id;
+        unit.setConcern(case_id);
 
-        unit.id = -1;
-        unit.portable = request.getParameter("portable") != null;
-        unit.withDoc = request.getParameter("withDoc") != null;
-        unit.transportVehicle = request.getParameter("transportVehicle") != null;
-        unit.home = new Point(request.getParameter("home"));
+        unit.setId(-1);
+        unit.setPortable(request.getParameter("portable") != null);
+        unit.setWithDoc(request.getParameter("withDoc") != null);
+        unit.setTransportVehicle(request.getParameter("transportVehicle") != null);
+        unit.setHome(new Point(request.getParameter("home")));
 
         int from = Integer.parseInt(request.getParameter("from"));
         int to = Integer.parseInt(request.getParameter("to"));
 
         for(int i = from; i <= to; i++){
-            unit.call = request.getParameter("call_pre")+i;
+            unit.setCall(request.getParameter("call_pre")+i);
             unitService.add(unit, user);
         }
 
