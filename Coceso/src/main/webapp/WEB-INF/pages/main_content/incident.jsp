@@ -33,27 +33,85 @@
     <div class="alert alert-danger"><spring:message code="label.main.error.no_direct_access" /></div>
 
     <div class="ajax_content">
-      <div class="ui-tabs ui-buttonset" data-bind="visible: showTabs">
-        <input id="tab_emergency" type="radio" class="ui-helper-hidden-accessible" name="tab" value="0" data-bind="checked: selectedTab" />
-        <label for="tab_emergency" class="ui-button ui-widget ui-state-default ui-corner-top" data-bind="css: {'ui-state-active': selectedTab() === '0'}">
-          <span class="ui-button-text"><spring:message code="label.main.emergency" /></span>
-        </label>
-
-        <input id="tab_tasks" type="radio" class="ui-helper-hidden-accessible" name="tab" value="1" data-bind="checked: selectedTab" />
-        <label for="tab_tasks" class="ui-button ui-widget ui-state-default ui-corner-top" data-bind="css: {'ui-state-active': selectedTab() === '1'}">
-          <span class="ui-button-text"><spring:message code="label.incident.type.task" /></span>
-        </label>
-
-        <input id="tab_relocations" type="radio" class="ui-helper-hidden-accessible" name="tab" value="2" data-bind="checked: selectedTab" />
-        <label for="tab_relocations" class="ui-button ui-widget ui-state-default ui-corner-top" data-bind="css: {'ui-state-active': selectedTab() === '2'}">
-          <span class="ui-button-text"><spring:message code="label.incident.type.relocation" /></span>
-        </label>
+      <div class="filter" data-bind="accordion: {active: false, collapsible: true, heightStyle: 'content'}, visible: (disableFilter !== true)">
+        <h3>Filter</h3>
+        <div>
+          <div class="form-group" data-bind="visible: (disableFilter.type !== true)">
+            <label><spring:message code="label.incident.type" />:</label>
+            <div class="clearfix">
+              <div class="checkbox-inline">
+                <label>
+                  <input type="checkbox" data-bind="value: Coceso.Constants.Incident.type.task, checked: filter.type" />
+                  <spring:message code="label.incident.type.task" />
+                </label>
+              </div>
+              <div class="checkbox-inline">
+                <label>
+                  <input type="checkbox" data-bind="value: Coceso.Constants.Incident.type.relocation, checked: filter.type" />
+                  <spring:message code="label.incident.type.relocation" />
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="form-group" data-bind="visible: (disableFilter.blue !== true)">
+            <label><spring:message code="label.incident.blue" />:</label>
+            <div class="clearfix">
+              <div class="checkbox-inline">
+                <label>
+                  <input type="checkbox" value="true" data-bind="checked: filter.blue" />
+                  Yes
+                </label>
+              </div>
+              <div class="checkbox-inline">
+                <label>
+                  <input type="checkbox" value="false" data-bind="checked: filter.blue" />
+                  No
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="form-group" data-bind="visible: (disableFilter.state !== true)">
+            <label><spring:message code="label.incident.state" />:</label>
+            <div class="clearfix">
+              <div class="checkbox-inline" data-bind="visible: (!disableFilter.state || disableFilter.state.new !== true)">
+                <label>
+                  <input type="checkbox" data-bind="value: Coceso.Constants.Incident.state.new, checked: filter.state" />
+                  <spring:message code="label.incident.state.new" />
+                </label>
+              </div>
+              <div class="checkbox-inline" data-bind="visible: (!disableFilter.state || disableFilter.state.open !== true)">
+                <label>
+                  <input type="checkbox" data-bind="value: Coceso.Constants.Incident.state.open, checked: filter.state" />
+                  <spring:message code="label.incident.state.open" />
+                </label>
+              </div>
+              <div class="checkbox-inline" data-bind="visible: (!disableFilter.state || disableFilter.state.dispo !== true)">
+                <label>
+                  <input type="checkbox" data-bind="value: Coceso.Constants.Incident.state.dispo, checked: filter.state" />
+                  <spring:message code="label.incident.state.dispo" />
+                </label>
+              </div>
+              <div class="checkbox-inline" data-bind="visible: (!disableFilter.state || disableFilter.state.working !== true)">
+                <label>
+                  <input type="checkbox" data-bind="value: Coceso.Constants.Incident.state.working, checked: filter.state" />
+                  <spring:message code="label.incident.state.working" />
+                </label>
+              </div>
+              <div class="checkbox-inline" data-bind="visible: (!disableFilter.state || disableFilter.state.done !== true)">
+                <label>
+                  <input type="checkbox" data-bind="value: Coceso.Constants.Incident.state.done, checked: filter.state" />
+                  <spring:message code="label.incident.state.done" />
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <ul data-bind="foreach: filtered, accordion: {active: false, collapsible: true, heightStyle: 'content'}, accordionRefresh: filtered">
         <li data-bind="droppable: {drop: assignUnitList}">
           <h3 class="clearfix" data-bind="css: {incident_open: isNew() || isOpen()}">
-            <span class="incident_priority" data-bind="text: priority, css: {incident_blue: blue}, style: {fontSize: (priority() / 300 + 0.5) + 'em'}"></span>
+            <span class="incident_priority" data-bind="text: typeString, css: {incident_blue: blue}"></span>
 
             <span data-bind="text: enableBO() ? (bo.info() ? bo.info() : 'No BO') : (ao.info() ? ao.info() : 'No AO') "></span>
             <span class="incident_ao clearfix" data-bind="visible: enableBO() && ao.info()">
@@ -86,6 +144,9 @@
             <p>
               <span class="key" data-bind="text: call"></span>
               <span data-bind="text: taskState"></span>
+              <button class="ui-button ui-state-default ui-corner-all ui-button-icon-only" data-bind="click: function() {nextState($parent.id())}">
+                <span class="ui-button-icon-primary ui-icon ui-icon-arrowthick-1-e"></span>
+              </button>
             </p>
             <!-- /ko -->
 

@@ -36,7 +36,9 @@
     <div class="ajax_content">
       <ul class="unit_list" data-bind="foreach: filtered">
         <li class="dropdown">
-          <a href="#" class="unit_state dropdown-toggle" data-bind="text: call, css: stateCss, draggable: dragOptions" data-toggle="dropdown" oncontextmenu="this.click(); return false;"></a>
+          <a href="#" class="unit_state dropdown-toggle" data-bind="draggable: dragOptions" data-toggle="dropdown" oncontextmenu="this.click(); return false;">
+            <span class="ui-corner-left" data-bind="text: call, css: stateCss"></span><span class="ui-corner-right" data-bind="text: taskText, css: taskCss, click: function() {nextState()}, clickBubble: false"></span>
+          </a>
           <ul class="dropdown-menu">
             <li class="dropdown-header"><spring:message code="label.unit.state_set" /></li>
             <li data-bind="css: {disabled: isNEB}"><a href="#" title="<spring:message code="label.set" />: <spring:message code="label.unit.state.neb" />" data-bind="click: setNEB"><spring:message code="label.unit.state.neb" /></a></li>
@@ -51,6 +53,7 @@
 
             <li class="divider"></li>
             <li><a href="#" title="<spring:message code="label.unit.edit" />" data-bind="click: openForm"><spring:message code="label.unit.edit" /></a></li>
+            <li><a href="#" title="Log" data-bind="click: openLog">View Log</a></li>
           </ul>
         </li>
       </ul>

@@ -127,6 +127,7 @@ $.widget("ui.winman", {
       closeOnEscape: false,
       width: "auto",
       height: "auto",
+      position: {my: "top+10", of: "body"},
       autoOpen: true,
       focus: function(event, ui) {
         self._focus.call(self, event, ui);

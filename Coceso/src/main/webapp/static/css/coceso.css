@@ -200,6 +200,13 @@ input[type="number"] {
   width: auto;
 }
 
+.checkbox-inline label {
+  display: inline;
+  margin-bottom: 0;
+  font-weight: normal;
+  cursor: pointer;
+}
+
 input.form-control, textarea.form-control {
   padding-left: 6px;
   padding-right: 6px;
@@ -215,6 +222,15 @@ textarea.form-control {
 
 .ui-dialog p span {
   white-space: pre-wrap;
+}
+
+.filter {
+  margin-bottom: 20px;
+}
+
+.filter .ui-accordion-header {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
 }
 
 /**
@@ -243,12 +259,18 @@ textarea.form-control {
 }
 
 span.incident_priority {
+  display: block;
+  text-align: center;
   margin-left: 1em;
+  min-height: 1.4em;
+  min-width: 1.4em;
+  padding: 0.2em;
   float: right;
 }
 
 span.incident_blue {
-  color: #0064cd;
+  background-color: #0064cd;
+  color: #ffffff;
   font-weight: bold;
 }
 
@@ -277,10 +299,14 @@ span.incident_blue {
 }
 
 .unit_state {
-  padding: 5px;
   display: block;
+  white-space: nowrap;
+}
+
+.unit_state span {
+  padding: 5px;
+  display: inline-block;
   color: #555;
-  border-radius: 3px;
 }
 
 .unit_state_eb {
@@ -288,11 +314,44 @@ span.incident_blue {
 }
 
 .unit_state_neb {
-  background-color: #ebccd1;
+  background-color: #ff9999;
 }
 
 .unit_state_ad {
   background-color: #dddddd;
+}
+
+.unit_state_task {
+  background-color: #9999ff;
+}
+
+.unit_state_task_blue {
+  background-color: #0000ff;
+  color: #ffffff;
+}
+
+.unit_state_relocation {
+  background-color: #cc99ff;
+}
+
+.unit_state_holdposition {
+  background-color: #cc00ff;
+}
+
+.unit_state_tohome {
+  background-color: #99ff99;
+}
+
+.unit_state_ishome {
+  background-color: #33ff66;
+}
+
+.unit_state_standby {
+  background-color: #ff9933;
+}
+
+.unit_state_free {
+  background-color: #ff3333;
 }
 
 /**

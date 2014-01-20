@@ -50,6 +50,7 @@
       <div class="clearfix">
         <div class="form-group col-md-6">
           <label for="position"><spring:message code="label.unit.position" />:</label>
+          <a href="#" style="float: right" data-bind="click: function() {position.info(home.info())}">Set to home</a>
           <textarea id="position" name="position" rows="3" class="form-control" data-bind="value: position.info, css: {'form-changed': position.info.localChange}"></textarea>
         </div>
 

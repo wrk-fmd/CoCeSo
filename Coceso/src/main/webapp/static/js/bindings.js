@@ -223,6 +223,13 @@ ko.extenders.filtered = function(target, options) {
       }
       return false;
     } else {
+      if (typeof b === "boolean") {
+        if (a === "true") {
+          a = true;
+        } else if (a === "false") {
+          b = false;
+        }
+      }
       if (op === "not") {
         return (a !== b);
       }
