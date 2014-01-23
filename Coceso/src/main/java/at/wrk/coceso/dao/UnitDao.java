@@ -132,7 +132,7 @@ public class UnitDao extends CocesoDao<Unit> {
             if(!first) {
                 q += ",";
             }
-            q += " info = '?'";
+            q += " info = ?";
             info_given = true;
             first = false;
         }
