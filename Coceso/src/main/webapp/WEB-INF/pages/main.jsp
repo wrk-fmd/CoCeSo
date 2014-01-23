@@ -47,12 +47,16 @@
         Coceso.Conf.contentBase = "${pageContext.request.contextPath}/main/";
 
         Coceso.startup();
+        Coceso.UI.openUnits("<spring:message code='label.units' />", 'unit.html');
+        Coceso.UI.openIncidents("<spring:message code='label.main.incident.active' />", 'incident.html', {filter: ['overview', 'active']}, {
+          position: {at: "left+70% top"}
+        });
 
         setInterval('updateClock()', 1000);
       });
     </script>
   </head>
-  <body>
+  <body class="main">
     <header>
       <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
         <div class="navbar-header">
@@ -60,6 +64,20 @@
         </div>
 
         <ul class="nav navbar-nav">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Calltaker <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="#" title="<spring:message code='label.incident' /> / <spring:message code='label.add' />" onclick="return Coceso.UI.openIncident(this.title, 'incident_form.html');"><spring:message code="label.add" /></a></li>
+              <li><a href="#" title="<spring:message code='label.main.incident.new' />" onclick="return Coceso.UI.openIncidents(this.title, 'incident.html', {filter: ['overview', 'new'], showTabs: false});"><spring:message code="label.main.incident.new" /></a></li>
+            </ul>
+          </li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Disponent <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="#" title="<spring:message code='label.incident' /> / <spring:message code='label.add' />" onclick="return Coceso.UI.openIncident(this.title, 'incident_form.html');"><spring:message code="label.add" /></a></li>
+              <li><a href="#" title="<spring:message code='label.main.incident.new' />" onclick="return Coceso.UI.openIncidents(this.title, 'incident.html', {filter: ['overview', 'new'], showTabs: false});"><spring:message code="label.main.incident.new" /></a></li>
+            </ul>
+          </li>
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><spring:message code="label.units" /> <b class="caret"></b></a>
             <ul class="dropdown-menu">
@@ -79,18 +97,20 @@
           </li>
           <li><a href="#" title="<spring:message code='label.log' />" onclick="return Coceso.UI.openLogs(this.title, 'log.html');"><spring:message code="label.log" /></a></li>
           <li><a href="<c:url value="/edit/"/>" target="_blank"><spring:message code="label.nav.edit_concern" /></a></li>
-          <li><a href="<c:url value="/dashboard"/>" target="_blank"><spring:message code="label.nav.dashboard" /></a></li>
+          <li><a href="<c:url value="/dashboard"/>?concern=${concern.id}" target="_blank"><spring:message code="label.nav.dashboard" /></a></li>
           <li><a href="#" title="Debug" onclick="return Coceso.UI.openDebug(this.title, 'debug.html');">Debug</a></li>
         </ul>
-          <ul class="nav navbar-nav navbar-right">
-               <li><a id="clock" class="navbar-brand"></a></li>
-          </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a id="clock" class="navbar-brand"></a></li>
+        </ul>
       </nav>
     </header>
 
-    <noscript>
-    <div class="alert alert-danger"><strong>JavaScript required</strong><br/>Enable JavaScript to use this page.</div>
-    </noscript>
+    <div id="dialog_container">
+      <noscript>
+      <div class="alert alert-danger"><strong>JavaScript required</strong><br/>Enable JavaScript to use this page.</div>
+      </noscript>
+    </div>
 
     <footer>
       <ul id="taskbar"></ul>

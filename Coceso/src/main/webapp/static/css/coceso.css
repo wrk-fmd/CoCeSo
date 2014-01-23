@@ -7,10 +7,11 @@
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) 2013 Daniel Rohr
+ * @copyright     Copyright (c) 2014 Daniel Rohr
  * @link          https://sourceforge.net/projects/coceso/
  * @package       coceso.client.css
- * @since         Rev. 1
+ * @version       0.2
+ * @since         0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  *
  * Dependencies:
@@ -24,6 +25,7 @@
  */
 
 @import "bootstrap.css";
+@import "bootstrap-theme.css";
 @import "ui-bootstrap/jquery-ui-1.10.3.custom.css";
 @import "jquery.ui.winman.css";
 
@@ -31,9 +33,31 @@
  * Global settings
  */
 
+html, body {
+  height: 100%;
+}
+
 body {
+  padding: 10px;
+  margin: 0;
+}
+
+body.main {
   padding: 60px 10px 40px 10px;
   margin: 0;
+}
+
+body.login {
+    padding: 40px 10px;
+    background-color: #eee;
+}
+
+#dialog_container {
+  position: relative;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .navbar {
@@ -49,17 +73,6 @@ body {
 
 body > .ajax_content {
   display: none;
-}
-
-.key {
-  display: inline-block;
-  font-weight: bold;
-  margin-right: 0.3em;
-  min-width: 3em;
-}
-
-.key:after {
-  content: ":";
 }
 
 /**
@@ -128,6 +141,14 @@ label.ui-button {
   white-space: nowrap;
 }
 
+.ui-buttonset .ui-button:last-child {
+  margin-right: 0;
+}
+
+.ui-button:hover, .ui-button:focus {
+  z-index: 2;
+}
+
 .ui-buttonset.ui-tabs {
   background: none;
   padding: .2em .2em 0;
@@ -177,14 +198,31 @@ label.ui-button {
  * Overwrite/extend some Bootstrap defaults
  */
 
-.col-md-2, .col-md-6, .col-md-10, .col-md-12 {
+.col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, .col-sm-3, .col-md-3, .col-lg-3,
+.col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .col-sm-6, .col-md-6, .col-lg-6,
+.col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9,
+.col-xs-10, .col-sm-10, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .col-sm-12, .col-md-12, .col-lg-12 {
   /* TODO: Set this directly in bootstrap.css as default value with LESS */
-  padding-left: 5px;
   padding-right: 5px;
+  padding-left: 5px;
 }
 
 .ui-buttonset.col-md-10 {
   margin-right: 0;
+}
+
+button.btn.btn-sm, button.btn.btn-xs {
+  font-size: 12px;
+}
+
+.btn-default .glyphicon {
+  color: #666666;
+}
+
+.ui-dialog .dropdown-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
 }
 
 input[type="number"] {
@@ -216,13 +254,82 @@ input.form-control, textarea.form-control {
   border-color: #c09853;
 }
 
+.form-control.form-changed:focus {
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(192, 152, 83, 0.6);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(192, 152, 83, 0.6);
+}
+
 textarea.form-control {
   resize: vertical;
 }
 
-.ui-dialog p span {
-  white-space: pre-wrap;
+.popover {
+  position: fixed;
+  z-index: 2000;
 }
+
+.popover .arrow {
+  overflow: visible;
+}
+
+.popover .arrow:after{
+  left: initial;
+  top: initial;
+}
+
+/**
+ * Forms
+ */
+
+.assigned label.control-label {
+  padding-top: 4px;
+  text-align: right;
+}
+
+/**
+ * Login
+ */
+.login form {
+    width: 300px;
+    padding: 0;
+    margin: 0 auto;
+}
+
+.login h2,
+.login .checkbox {
+    margin-bottom: 10px;
+}
+
+.login .checkbox {
+    font-weight: normal;
+}
+
+.login .form-control {
+    position: relative;
+    font-size: 16px;
+    height: auto;
+    padding: 10px;
+}
+
+.login .form-control:focus {
+    z-index: 2;
+}
+
+.login input:first-of-type {
+    margin-bottom: -1px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.login input:last-of-type {
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+/**
+ * Incidents list view
+ */
 
 .filter {
   margin-bottom: 20px;
@@ -232,10 +339,6 @@ textarea.form-control {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
-
-/**
- * Incidents list view
- */
 
 .ui-accordion-header.incident_open {
   color: #cd0a0a;
@@ -274,13 +377,26 @@ span.incident_blue {
   font-weight: bold;
 }
 
-/**
- * Forms
- */
+.key {
+  display: inline-block;
+  font-weight: bold;
+  margin-right: 0.3em;
+  min-width: 3em;
+}
 
-.assigned label.control-label {
-  padding-top: 4px;
-  text-align: right;
+.key:after {
+  content: ":";
+}
+
+.ui-dialog p span {
+  white-space: pre-wrap;
+}
+
+/**
+ * Incident form
+ */
+.incident_form {
+  min-width: 432px;
 }
 
 /**
@@ -288,7 +404,7 @@ span.incident_blue {
  */
 
 .unit_list {
-  padding: 0 150px 285px 0;
+  padding: 0;
   margin: 0;
   list-style: none;
 }
@@ -303,55 +419,60 @@ span.incident_blue {
   white-space: nowrap;
 }
 
-.unit_state span {
+.unit_state > span {
   padding: 5px;
   display: inline-block;
   color: #555;
 }
 
-.unit_state_eb {
-  background-color: #70ff00;
-}
-
-.unit_state_neb {
-  background-color: #ff9999;
-}
-
-.unit_state_ad {
-  background-color: #dddddd;
-}
-
-.unit_state_task {
-  background-color: #9999ff;
-}
-
-.unit_state_task_blue {
-  background-color: #0000ff;
-  color: #ffffff;
-}
-
-.unit_state_relocation {
-  background-color: #cc99ff;
-}
-
-.unit_state_holdposition {
-  background-color: #cc00ff;
-}
-
-.unit_state_tohome {
-  background-color: #99ff99;
-}
-
-.unit_state_ishome {
+.unit_state .unit_state_eb {
   background-color: #33ff66;
 }
 
-.unit_state_standby {
-  background-color: #ff9933;
+.unit_state .unit_state_neb {
+  background-color: #ff9999;
 }
 
-.unit_state_free {
+.unit_state .unit_state_ad {
+  background-color: #dddddd;
+}
+
+.unit_state .unit_state_task {
+  background-color: #9999ff;
+}
+
+.unit_state .unit_state_task_blue {
+  background-color: #0064cd;
+  color: #ffffff;
+}
+
+.unit_state .unit_state_relocation {
+  background-color: #cc99ff;
+}
+
+.unit_state .unit_state_holdposition {
+  background-color: #d83cff;
+}
+
+.unit_state .unit_state_tohome {
+  background-color: #99ff99;
+}
+
+.unit_state .unit_state_ishome {
+  background-color: #33ff66;
+}
+
+.unit_state .unit_state_standby {
+  background-color: #ffb66c;
+}
+
+.unit_state .unit_state_free {
   background-color: #ff3333;
+  color: #ffffff;
+}
+
+.unit_state_multiple {
+  background-color: #dddddd;
 }
 
 /**

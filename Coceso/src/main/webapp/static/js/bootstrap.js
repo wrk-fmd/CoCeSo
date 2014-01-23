@@ -1558,6 +1558,7 @@ if (typeof jQuery === "undefined") { throw new Error("Bootstrap requires jQuery"
   $.fn.popover = function (option) {
     return this.each(function () {
       var $this   = $(this)
+      console.log($this);
       var data    = $this.data('bs.popover')
       var options = typeof option == 'object' && option
 

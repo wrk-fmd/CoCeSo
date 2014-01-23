@@ -33,16 +33,22 @@
     <div class="alert alert-danger"><spring:message code="label.main.error.no_direct_access" /></div>
 
     <div class="ajax_content">
-      <div class="filter" data-bind="accordion: {active: false, collapsible: true, heightStyle: 'content'}, visible: (disableFilter !== true)">
+      <div class="filter" data-bind="accordion: {active: false, collapsible: true, heightStyle: 'content'}, if: (disableFilter !== true)">
         <h3>Filter</h3>
         <div>
-          <div class="form-group" data-bind="visible: (disableFilter.type !== true)">
+          <div class="form-group">
             <label><spring:message code="label.incident.type" />:</label>
             <div class="clearfix">
               <div class="checkbox-inline">
                 <label>
                   <input type="checkbox" data-bind="value: Coceso.Constants.Incident.type.task, checked: filter.type" />
                   <spring:message code="label.incident.type.task" />
+                </label>
+              </div>
+              <div class="checkbox-inline">
+                <label>
+                  <input type="checkbox" data-bind="value: Coceso.Constants.Incident.type.transport, checked: filter.type" />
+                  <spring:message code="label.incident.type.transport" />
                 </label>
               </div>
               <div class="checkbox-inline">
@@ -90,7 +96,7 @@
                   <input type="checkbox" data-bind="value: Coceso.Constants.Incident.state.dispo, checked: filter.state" />
                   <spring:message code="label.incident.state.dispo" />
                 </label>
-              </div>
+              </div><br />
               <div class="checkbox-inline" data-bind="visible: (!disableFilter.state || disableFilter.state.working !== true)">
                 <label>
                   <input type="checkbox" data-bind="value: Coceso.Constants.Incident.state.working, checked: filter.state" />
@@ -144,13 +150,13 @@
             <p>
               <span class="key" data-bind="text: call"></span>
               <span data-bind="text: taskState"></span>
-              <button class="ui-button ui-state-default ui-corner-all ui-button-icon-only" data-bind="click: function() {nextState($parent.id())}">
-                <span class="ui-button-icon-primary ui-icon ui-icon-arrowthick-1-e"></span>
+              <button type="button" class="btn btn-xs btn-default" data-bind="click: function() {nextState($parent.id())}">
+                <span class="glyphicon glyphicon-forward"></span>
               </button>
             </p>
             <!-- /ko -->
 
-            <p><button class="ui-button ui-state-default ui-corner-all" data-bind="click: openForm"><spring:message code="label.edit" /></button></p>
+            <p><button class="btn btn-default" data-bind="click: openForm"><spring:message code="label.edit" /></button></p>
           </div>
         </li>
       </ul>

@@ -10,20 +10,20 @@
     <!-- Bootstrap -->
 
     <%-- For Autocomplete!! --%>
-    <link href="<c:url value="/static/css/ui-bootstrap/jquery-ui-1.10.3.custom.css" />" rel="stylesheet">
+    <link href="<c:url value='/static/css/ui-bootstrap/jquery-ui-1.10.3.custom.css' />" rel="stylesheet">
 
-    <link href="<c:url value="/static/css/bootstrap.css" />" rel="stylesheet">
+    <link href="<c:url value='/static/css/bootstrap.css' />" rel="stylesheet">
 
-    <link href="<c:url value="/static/css/bootstrap-theme.css" />" rel="stylesheet">
+    <link href="<c:url value='/static/css/bootstrap-theme.css' />" rel="stylesheet">
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 
-    <script src="<c:url value="/static/js/jquery.js" />"></script>
+    <script src="<c:url value='/static/js/jquery.js' />"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
 
-    <script src="<c:url value="/static/js/bootstrap.js" />"></script>
+    <script src="<c:url value='/static/js/bootstrap.js' />"></script>
 
-    <script src="<c:url value="/static/js/jquery.ui.js"/>"></script>
+    <script src="<c:url value='/static/js/jquery.ui.js' />"></script>
 
 
     <script>
@@ -116,7 +116,7 @@
         </h2>
     </div>
     <div class="row">
-        <form role="form" action="<c:url value="/edit/person/update"/>?" class="form-inline">
+        <form role="form" action="<c:url value='/edit/person/update'/>?" class="form-inline">
             <div class="col-lg-3 form-group">
                 <label for="person"><spring:message code="label.person.select"/>:</label>
                 <input type="text" id="person" class="form-control">
@@ -124,7 +124,7 @@
             </div>
             <div class="col-lg-2">
                     <input type="hidden" id="person-id" name="id" value="-1">
-                    <input type="submit" class="btn btn-success" value="<spring:message code="label.edit"/>">
+                    <input type="submit" class="btn btn-success" value="<spring:message code='label.edit'/>">
             </div>
         </form>
     </div>
@@ -139,7 +139,7 @@
             </h2>
         </div>
         <div class="row">
-            <form role="form" action="<c:url value="/edit/person/update"/>?" class="form-inline">
+            <form role="form" action="<c:url value='/edit/person/update'/>?" class="form-inline">
                 <div class="col-lg-3 form-group">
                     <label for="operator"><spring:message code="label.operator.select"/>:</label>
                     <input type="text" id="operator" class="form-control">
@@ -148,7 +148,7 @@
                 </div>
                 <div class="col-lg-2">
                     <input type="hidden" id="operator-id" name="id" value="-1">
-                    <input type="submit" class="btn btn-success" value="<spring:message code="label.edit"/>">
+                    <input type="submit" class="btn btn-success" value="<spring:message code='label.edit'/>">
                 </div>
             </form>
         </div>
@@ -161,23 +161,23 @@
         </h2>
     </div>
     <div class="row">
-        <form role="form" action="<c:url value="/edit/person/create"/>" class="form-inline" method="POST">
+        <form role="form" action="<c:url value='/edit/person/create'/>" class="form-inline" method="POST">
             <div class="col-lg-3 form-group">
                 <label>
-                    <input type="text" name="given_name" class="form-control" placeholder="<spring:message code="label.person.given_name"/>">
+                    <input type="text" name="given_name" class="form-control" placeholder="<spring:message code='label.person.given_name'/>">
                 </label>
             </div>
             <div class="col-lg-3 form-group">
                 <label>
-                    <input type="text" name="sur_name" class="form-control" placeholder="<spring:message code="label.person.sur_name"/>">
+                    <input type="text" name="sur_name" class="form-control" placeholder="<spring:message code='label.person.sur_name'/>">
                 </label>
             </div>
             <div class="col-lg-1">
-                <input class="form-control" placeholder="<spring:message code="label.person.dnr"/>" name="dNr">
+                <input class="form-control" placeholder="<spring:message code='label.person.dnr'/>" name="dNr">
             </div>
             <div class="col-lg-2">
                 <input type="hidden" id="new_id" name="id" value="-1">
-                <input type="submit" class="btn btn-success" value="<spring:message code="label.create"/>">
+                <input type="submit" class="btn btn-success" value="<spring:message code='label.create'/>">
             </div>
         </form>
     </div>

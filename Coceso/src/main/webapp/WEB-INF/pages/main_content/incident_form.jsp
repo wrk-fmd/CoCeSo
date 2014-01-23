@@ -32,16 +32,21 @@
   <body>
     <div class="alert alert-danger"><spring:message code="label.main.error.no_direct_access" /></div>
 
-    <div class="ajax_content" data-bind="droppable: {drop: assignUnitForm}">
+    <div class="ajax_content incident_form" data-bind="droppable: {drop: assignUnitForm}">
       <div class="alert alert-danger" id="error" style="display: none"><strong>Saving failed</strong><br/>Try again or see <em>Debug</em> for further information.</div>
 
       <div class="clearfix">
-        <div class="form-group col-md-6">
+        <div class="form-group col-md-8">
           <label class="sr-only"><spring:message code="label.incident.type" />:</label>
           <div class="ui-buttonset">
             <input id="type_task" type="radio" class="ui-helper-hidden-accessible" name="type" data-bind="checked: type, enable: enableTask, value: Coceso.Constants.Incident.type.task" />
             <label for="type_task" class="ui-button ui-widget ui-state-default ui-corner-left" data-bind="css: {'ui-state-active': isTask(), 'ui-state-disabled': !enableTask()}">
               <span class="ui-button-text"><spring:message code="label.incident.type.task" /></span>
+            </label>
+
+            <input id="type_transport" type="radio" class="ui-helper-hidden-accessible" name="type" data-bind="checked: type, enable: enableTransport, value: Coceso.Constants.Incident.type.transport" />
+            <label for="type_transport" class="ui-button ui-widget ui-state-default" data-bind="css: {'ui-state-active': isTransport(), 'ui-state-disabled': !enableTransport()}">
+              <span class="ui-button-text"><spring:message code="label.incident.type.transport" /></span>
             </label>
 
             <input id="type_relocation" type="radio" class="ui-helper-hidden-accessible" name="type" data-bind="checked: type, enable: enableRelocation, value: Coceso.Constants.Incident.type.relocation" />
@@ -51,7 +56,7 @@
           </div>
         </div>
 
-        <div class="form-group col-md-6">
+        <div class="form-group col-md-4 text-right">
           <input id="blue" type="checkbox" class="ui-helper-hidden-accessible" name="blue" data-bind="checked: blue" />
           <label for="blue" class="ui-button ui-widget ui-state-default ui-corner-all" data-bind="css: {'ui-state-active': blue()}">
             <span class="ui-button-text"><spring:message code="label.incident.blue" /></span>
@@ -61,18 +66,18 @@
 
       <div class="form-group col-md-12">
         <label for="caller" class="sr-only"><spring:message code="label.incident.caller" />:</label>
-        <input type="text" id="caller" name="caller" class="form-control" placeholder="<spring:message code='label.incident.caller' />" data-bind="value: caller, css: {'form-changed': caller.localChange}" />
+        <input type="text" id="caller" name="caller" class="form-control" placeholder="<spring:message code='label.incident.caller' />" data-bind="value: caller, css: {'form-changed': caller.localChange}, valueUpdate: 'afterkeydown'" />
       </div>
 
       <div class="clearfix">
         <div class="form-group col-md-6">
           <label for="bo" class="sr-only"><spring:message code="label.incident.bo" />:</label>
-          <textarea id="bo" name="bo" rows="3" class="form-control" placeholder="<spring:message code='label.incident.bo' />" data-bind="enable: enableBO, value: bo.info, css: {'form-changed': bo.info.localChange}"></textarea>
+          <textarea id="bo" name="bo" rows="3" class="form-control" placeholder="<spring:message code='label.incident.bo' />" data-bind="enable: enableBO, value: bo.info, css: {'form-changed': bo.info.localChange}, valueUpdate: 'afterkeydown'"></textarea>
         </div>
 
         <div class="form-group col-md-6">
           <label for="ao" class="sr-only"><spring:message code="label.incident.ao" />:</label>
-          <textarea id="ao" name="ao" rows="3" class="form-control" placeholder="<spring:message code='label.incident.ao' />" data-bind="value: ao.info, css: {'form-changed': ao.info.localChange}"></textarea>
+          <textarea id="ao" name="ao" rows="3" class="form-control" placeholder="<spring:message code='label.incident.ao' />" data-bind="value: ao.info, css: {'form-changed': ao.info.localChange}, valueUpdate: 'afterkeydown'"></textarea>
         </div>
       </div>
 
@@ -82,13 +87,13 @@
           Field has changed on server!<br>
           New Value: <a href="#" title="Apply new value" data-bind="text: info.serverChange, click: info.reset"></a>
         </div>
-        <textarea id="info" name="info" rows="3" class="form-control" placeholder="<spring:message code='label.incident.info' />" data-bind="value: info, css: {'form-changed': info.localChange}"></textarea>
+        <textarea id="info" name="info" rows="3" class="form-control" placeholder="<spring:message code='label.incident.info' />" data-bind="value: info, css: {'form-changed': info.localChange}, valueUpdate: 'afterkeydown'"></textarea>
       </div>
 
       <div class="clearfix">
         <div class="form-group col-md-6">
           <label for="casus" class="sr-only"><spring:message code="label.incident.casus" />:</label>
-          <input type="text" id="casus" name="casus" class="form-control" placeholder="<spring:message code='label.incident.casus' />" data-bind="value: casusNr, css: {'form-changed': casusNr.localChange}" />
+          <input type="text" id="casus" name="casus" class="form-control" placeholder="<spring:message code='label.incident.casus' />" data-bind="value: casusNr, css: {'form-changed': casusNr.localChange}, valueUpdate: 'afterkeydown'" />
         </div>
       </div>
 

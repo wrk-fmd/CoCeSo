@@ -37,6 +37,11 @@ Coceso.startup = function() {
   //Initialize window management
   $("#taskbar").winman();
 
+  $(document).on("show.bs.dropdown", ".ui-dialog .dropdown", function(event) {
+    $(event.target).find(".dropdown-menu").css({top: 0, left: 0}).position({at: "left bottom", my: "left top", of: $(event.target).find(".dropdown-toggle").first()});
+    return true;
+  });
+
   //Preload incidents and units
   Coceso.Ajax.getAll("incidents");
   Coceso.Ajax.getAll("units");
@@ -70,6 +75,7 @@ Coceso.Constants = {
     type: {
       holdposition: "HoldPosition",
       relocation: "Relocation",
+      transport: "Transport",
       tohome: "ToHome",
       standby: "Standby",
       task: "Task"
@@ -106,7 +112,7 @@ Coceso.Models = {
    */
   Incident: {
     id: null,
-    state: Coceso.Constants.Incident.state.new,
+    state: Coceso.Constants.Incident.state.new ,
     priority: 0,
     blue: false,
     units: {},
@@ -167,8 +173,8 @@ Coceso.UI = {
    * @param {ViewModel} viewmodel The viewmodel to bind with
    * @return {void}
    */
-  openWindow: function(title, src, viewmodel) {
-    var id = $("#taskbar").winman("addWindow", title, src, function(el, id) {
+  openWindow: function(title, src, viewmodel, options) {
+    var id = $("#taskbar").winman("addWindow", title, src, options, function(el, id) {
       viewmodel.ui = id;
       ko.applyBindings(viewmodel, el);
     }, function(el, id) {
@@ -188,8 +194,8 @@ Coceso.UI = {
    * @param {Object} options
    * @return {void}
    */
-  openIncidents: function(title, src, options) {
-    this.openWindow(title, Coceso.Conf.contentBase + src, new Coceso.ViewModels.Incidents({}, options || {}));
+  openIncidents: function(title, src, options, dialog) {
+    this.openWindow(title, Coceso.Conf.contentBase + src, new Coceso.ViewModels.Incidents({}, options || {}), dialog);
     return false;
   },
   /**
@@ -212,8 +218,8 @@ Coceso.UI = {
    * @param {Object} options
    * @return {void}
    */
-  openUnits: function(title, src, options) {
-    this.openWindow(title, Coceso.Conf.contentBase + src, new Coceso.ViewModels.Units({}, options || {}));
+  openUnits: function(title, src, options, dialog) {
+    this.openWindow(title, Coceso.Conf.contentBase + src, new Coceso.ViewModels.Units({}, options || {}), dialog);
     return false;
   },
   /**
@@ -846,7 +852,7 @@ Coceso.ViewModels.Incidents = function(data, options) {
   var filters = {
     overview: {
       filter: {
-        type: {val: [Coceso.Constants.Incident.type.task, Coceso.Constants.Incident.type.relocation]}
+        type: {val: [Coceso.Constants.Incident.type.task, Coceso.Constants.Incident.type.transport, Coceso.Constants.Incident.type.relocation]}
       }
     },
     active: {
@@ -1007,6 +1013,17 @@ Coceso.ViewModels.Incident = function(data, options) {
   }, this);
 
   /**
+   * Incident is of type "Relocation"
+   *
+   * @function
+   * @type ko.computed
+   * @return {boolean}
+   */
+  this.isTransport = ko.computed(function() {
+    return (this.type() === Coceso.Constants.Incident.type.transport);
+  }, this);
+
+  /**
    * Incident is of type "ToHome"
    *
    * @function
@@ -1117,6 +1134,17 @@ Coceso.ViewModels.Incident = function(data, options) {
   }, this);
 
   /**
+   * Enable the "Transport" type button
+   *
+   * @function
+   * @type ko.computed
+   * @return {boolean}
+   */
+  this.enableTransport = ko.computed(function() {
+    return (this.getOption("writeable") && (!this.id() || this.isTransport()));
+  }, this);
+
+  /**
    * Enable BO field
    *
    * @function
@@ -1183,6 +1211,9 @@ Coceso.ViewModels.Incident = function(data, options) {
     if (this.isTask()) {
       return this.blue() ? "E" : "A";
     }
+    if (this.isTransport()) {
+      return "T";
+    }
     if (this.isRelocation()) {
       return "V";
     }
@@ -1190,10 +1221,10 @@ Coceso.ViewModels.Incident = function(data, options) {
       return "Einr";
     }
     if (this.isStandby()) {
-      return "B";
+      return "<span class='glyphicon glyphicon-pause'></span>";
     }
     if (this.isHoldPosition()) {
-      return "S";
+      return "<span class='glyphicon glyphicon-record'></span>";
     }
     return "";
   }, this);
@@ -1505,14 +1536,14 @@ Coceso.ViewModels.Unit = function(data, options) {
       return "";
     }
     if (this.incidentCount() > 1) {
-      return "*";
+      return "<span class='glyphicon glyphicon-plus'></span>";
     }
     if (this.incidentCount() === 0) {
-      return (this.isHome()) ? "Home" : "Free";
+      return "<span class='glyphicon glyphicon-" + (this.isHome() ? "home" : "exclamation-sign") + "'></span>";
     }
 
     var incident = this.incidents.incidentlist()[0];
-    if (incident.isTask() || incident.isRelocation() || incident.isToHome()) {
+    if (incident.isTask() || incident.isTransport() || incident.isRelocation() || incident.isToHome()) {
       return incident.typeString() + ": " + incident.taskState();
     }
 
@@ -1535,7 +1566,7 @@ Coceso.ViewModels.Unit = function(data, options) {
     }
 
     var incident = this.incidents.incidentlist()[0];
-    if (incident.isTask()) {
+    if (incident.isTask() || incident.isTransport()) {
       return (incident.blue()) ? "unit_state_task_blue" : "unit_state_task";
     }
     if (incident.isRelocation()) {
@@ -1595,7 +1626,10 @@ Coceso.ViewModels.Unit = function(data, options) {
    * @return {string} The CSS class
    */
   this.stateCss = ko.computed(function() {
-    return this.state() ? "unit_state_" + this.state().toLowerCase() : "unit_state_ad";
+    if (this.isEB()) {
+      return ((this.incidentCount() === 1) && (this.incidents.incidentlist()[0].isStandby())) ? "unit_state_standby" : "unit_state_eb";
+    }
+    return this.isNEB() ? "unit_state_neb" : "unit_state_ad";
   }, this);
 
   /**
@@ -1613,6 +1647,18 @@ Coceso.ViewModels.Unit = function(data, options) {
     return (ko.utils.arrayFirst(this.incidents.incidents(), function(incident) {
       return incident.isAssigned();
     }) !== null);
+  }, this);
+
+  this.popover = ko.computed(function() {
+    var content = "Home: " + this.home.info() + "<br /><br />Position: " + this.position.info();
+    return {
+      trigger: 'hover focus',
+      placement: 'auto top',
+      html: true,
+      container: 'body',
+      title: this.call(),
+      content: content
+    };
   }, this);
 
   /**
@@ -1650,9 +1696,20 @@ Coceso.ViewModels.Unit = function(data, options) {
         return (incident.id() === incid);
       });
       if (assigned === null) {
-        self.incidents.incidentlist.push(new Coceso.ViewModels.Incident({id: incid, taskState: "Assigned"}, self.getOption(["children", "children"], {assigned: false, writeable: false})));
+        self.incidents.incidentlist.push(new Coceso.ViewModels.Incident({id: incid, taskState: Coceso.Constants.TaskState.assigned}, self.getOption(["children", "children"], {assigned: false, writeable: false})));
       }
     }
+  };
+
+  /**
+   * Open incident form
+   *
+   * @return {void}
+   */
+  this.addIncident = function() {
+    options = {caller: self.call(), units: {}};
+    options.units[self.id()] = null;
+    Coceso.UI.openIncident("Add Incident", "incident_form.html", options);
   };
 
   /**

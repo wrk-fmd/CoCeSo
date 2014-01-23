@@ -98,6 +98,13 @@ ko.bindingHandlers.draggable = uiBindingHandler("draggable");
 ko.bindingHandlers.droppable = uiBindingHandler("droppable");
 
 /**
+ * Generate Popover from element
+ *
+ * @type {BindingHandler}
+ */
+ko.bindingHandlers.popover = uiBindingHandler("popover");
+
+/**
  * Force value to be an integer
  *
  * @param {ko.observable} target
@@ -227,7 +234,7 @@ ko.extenders.filtered = function(target, options) {
         if (a === "true") {
           a = true;
         } else if (a === "false") {
-          b = false;
+          a = false;
         }
       }
       if (op === "not") {

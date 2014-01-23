@@ -40,18 +40,13 @@
           <label for="call"><spring:message code="label.unit.call" />:</label>
           <input type="text" id="call" class="form-control" name="call" data-bind="value: call" readonly />
         </div>
-
-        <div class="form-group col-md-6">
-          <label for="ani"><spring:message code="label.unit.ani" />:</label>
-          <input type="text" id="ani" class="form-control" name="ani" data-bind="value: ani" readonly />
-        </div>
       </div>
 
       <div class="clearfix">
         <div class="form-group col-md-6">
           <label for="position"><spring:message code="label.unit.position" />:</label>
           <a href="#" style="float: right" data-bind="click: function() {position.info(home.info())}">Set to home</a>
-          <textarea id="position" name="position" rows="3" class="form-control" data-bind="value: position.info, css: {'form-changed': position.info.localChange}"></textarea>
+          <textarea id="position" name="position" rows="3" class="form-control" data-bind="value: position.info, css: {'form-changed': position.info.localChange}, valueUpdate: 'afterkeydown'"></textarea>
         </div>
 
         <div class="form-group col-md-6">
@@ -66,7 +61,7 @@
           Field has changed on server!<br>
           New Value: <a href="#" title="Apply new value" data-bind="text: info.serverChange, click: info.reset"></a>
         </div>
-        <textarea id="info" name="info" rows="3" class="form-control" placeholder="<spring:message code='label.unit.info' />" data-bind="value: info, css: {'form-changed': info.localChange}"></textarea>
+        <textarea id="info" name="info" rows="3" class="form-control" placeholder="<spring:message code='label.unit.info' />" data-bind="value: info, css: {'form-changed': info.localChange}, valueUpdate: 'afterkeydown'"></textarea>
       </div>
 
       <div class="clearfix">

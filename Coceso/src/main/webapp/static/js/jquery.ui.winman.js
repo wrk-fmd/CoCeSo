@@ -101,7 +101,7 @@ $.widget("ui.winman", {
     this.index = 0;
   },
   // Add a window
-  addWindow: function(title, src, create, destroy) {
+  addWindow: function(title, src, options, create, destroy) {
     var self = this;
 
     var id = "ui-id-" + this.uuid + "-" + (++this.index);
@@ -123,11 +123,11 @@ $.widget("ui.winman", {
       self.toggle.call(self, id);
     });
 
-    this.windows[id].dialog({
+    options = $.extend(true, {}, {
       closeOnEscape: false,
       width: "auto",
       height: "auto",
-      position: {my: "top+10", of: "body"},
+      position: {my: "left top", at: "left top", of: "#dialog_container", within: "#dialog_container", collision: "fit"},
       autoOpen: true,
       focus: function(event, ui) {
         self._focus.call(self, event, ui);
@@ -141,7 +141,9 @@ $.widget("ui.winman", {
           destroy(el.get(0), id);
         }
       }
-    }).css("maxHeight", window.innerHeight - 150).data("ui-dialog").uiDialog.draggable("option", "containment", $("body"));
+    }, options);
+
+    this.windows[id].dialog(options).css("maxHeight", window.innerHeight - 150).data("ui-dialog").uiDialog.draggable("option", "containment", $("#dialog_container"));
     this.element.append(this.buttons[id]);
 
     return id;
