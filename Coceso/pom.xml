@@ -4,7 +4,7 @@
     <groupId>at.wrk</groupId>
     <artifactId>coceso</artifactId>
     <packaging>war</packaging>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.2</version>
     <name>Coceso</name>
 
     <properties>
@@ -152,5 +152,12 @@
             </plugin>
 
         </plugins>
+
+        <resources>
+            <resource>
+                <directory>src/main/webapp/WEB-INF/classes</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
     </build>
 </project>
