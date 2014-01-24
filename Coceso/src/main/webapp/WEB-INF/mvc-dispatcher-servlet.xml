@@ -23,7 +23,7 @@
     </bean>
 
 
-    <context:property-placeholder location="/WEB-INF/classes/coceso.properties, /WEB-INF/classes/security.properties" />
+    <context:property-placeholder location="/WEB-INF/classes/coceso.properties, /WEB-INF/classes/security.properties, /META-INF/maven/at.wrk/coceso/pom.properties" />
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.SingleConnectionDataSource">
         <property name="driverClassName" value="${jdbc.driverClassName}"/>
