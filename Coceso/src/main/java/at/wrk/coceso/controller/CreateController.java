@@ -80,9 +80,10 @@ public class CreateController {
         UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
         Operator user = (Operator) token.getPrincipal();
 
-        Unit unit = new Unit();
-        unit.setConcern(case_id);
-        unit.setId(Integer.parseInt(request.getParameter("id")));
+
+
+        Unit unit = unitService.getById(Integer.parseInt(request.getParameter("id")));
+
         unit.setCall(request.getParameter("call"));
         unit.setAni(request.getParameter("ani"));
         unit.setInfo(request.getParameter("info"));

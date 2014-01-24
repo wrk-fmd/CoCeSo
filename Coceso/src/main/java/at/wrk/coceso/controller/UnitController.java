@@ -11,6 +11,8 @@ import at.wrk.coceso.service.TaskService;
 import at.wrk.coceso.service.UnitService;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -108,56 +110,51 @@ public class UnitController implements IEntityController<Unit> {
         return "{\"success\": " + unitService.update(unit, user) + ", \"new\": false}";
     }
 
-    //TODO move logic to UnitService
-    @RequestMapping(value = "sendHome/{id}", produces = "application/json", method = RequestMethod.GET)
+    @RequestMapping(value = "sendHome", produces = "application/json", method = RequestMethod.POST)
     @ResponseBody
-    public Unit sendHome(@CookieValue(value="active_case", defaultValue = "0") String case_id,
-                         @PathVariable("id") int unitId, Principal principal) {
+    public ResponseEntity<String> sendHomeByPost(@CookieValue(value="active_case", defaultValue = "0") String case_id,
+                         @RequestParam("id") int unitId, Principal principal)
+    {
         UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
         Operator user = (Operator) token.getPrincipal();
 
         int activeCase = Integer.parseInt(case_id);
 
-        List<Incident> list = taskDao.getAllByUnitIdWithType(unitId);
-
-        // If active Task != Standby or HoldPosition is present, don't send home
-        for(Incident i : list) {
-            if(i.getType() != IncidentType.HoldPosition && i.getType() != IncidentType.Standby)
-                return null;
+        if(unitService.sendHome(activeCase, unitId, user)) {
+            return new ResponseEntity<String>("{\"success\":false}", HttpStatus.BAD_REQUEST);
         }
-
-        Unit unit = unitService.getById(unitId);
-
-        // Detach from all HoldPosition and Standby Incidents
-        for(Incident i : list) {
-            i.setState(IncidentState.Done);
-            //log.logWithIDs(user.id, LogText.SEND_HOME_AUTO_DETACH, activeCase, unitId, i.id, true);
-            incidentService.update(i, user);
-            taskDao.remove(i.getId(), unitId);
-        }
-
-        Incident toHome = new Incident();
-        toHome.setState(IncidentState.Dispo);
-        toHome.setConcern(activeCase);
-        toHome.setAo(unit.getHome());
-        toHome.setBo(unit.getPosition()); // TODO useful?
-        toHome.setType(IncidentType.ToHome);
-        toHome.setCaller(user.getUsername()); // TODO useful?
-
-        toHome.setId(incidentService.add(toHome, user));
-        //log.logFull(user, LogText.SEND_HOME_ASSIGN, activeCase, unit, toHome, true);
-        taskService.changeState(toHome.getId(), unitId, TaskState.Assigned, user);
-
-        unit.getIncidents().put(toHome.getId(), TaskState.Assigned);
-
-        return unit;
+        return new ResponseEntity<String>("{\"success\":true}", HttpStatus.OK);
     }
 
-    @RequestMapping(value = "sendHome", produces = "application/json", method = RequestMethod.POST)
+    @RequestMapping(value = "holdPosition", produces = "application/json", method = RequestMethod.POST)
     @ResponseBody
-    public Unit sendHomeByPost(@CookieValue(value="active_case", defaultValue = "0") String case_id,
-                         @RequestParam("id") int unitId, Principal principal)
+    public ResponseEntity<String> holdPosition(@CookieValue(value="active_case", defaultValue = "0") String case_id,
+                                                 @RequestParam("id") int unitId, Principal principal)
     {
-        return sendHome(case_id, unitId, principal);
+        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
+        Operator user = (Operator) token.getPrincipal();
+
+        int activeCase = Integer.parseInt(case_id);
+
+        if(unitService.holdPosition(activeCase, unitId, user)) {
+            return new ResponseEntity<String>("{\"success\":false}", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<String>("{\"success\":true}", HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "standby", produces = "application/json", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<String> standby(@CookieValue(value="active_case", defaultValue = "0") String case_id,
+                                               @RequestParam("id") int unitId, Principal principal)
+    {
+        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
+        Operator user = (Operator) token.getPrincipal();
+
+        int activeCase = Integer.parseInt(case_id);
+
+        if(unitService.standby(activeCase, unitId, user)) {
+            return new ResponseEntity<String>("{\"success\":false}", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<String>("{\"success\":true}", HttpStatus.OK);
     }
 }
