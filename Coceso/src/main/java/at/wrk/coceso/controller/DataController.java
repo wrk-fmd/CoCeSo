@@ -10,6 +10,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 @Controller
@@ -39,5 +42,15 @@ public class DataController {
                              Principal principal)
     {
         return assignUnit(incident_id, unit_id, principal);
+    }
+
+    @ResponseBody
+    @RequestMapping(value="timestamp", method = RequestMethod.GET, produces = "application/json")
+    public String timestamp()
+    {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssXXX");
+
+        Date date = new Date();
+        return "{\"date\":\"" + dateFormat.format(date) + "\"}";
     }
 }
