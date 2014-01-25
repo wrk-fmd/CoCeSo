@@ -101,6 +101,7 @@
           <li><a href="#" title="Debug" onclick="return Coceso.UI.openDebug(this.title, 'debug.html');">Debug</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
+          <li><a class="navbar-brand"><strong>${concern.name}</strong></a></li>
           <li><a id="clock" class="navbar-brand"></a></li>
         </ul>
       </nav>

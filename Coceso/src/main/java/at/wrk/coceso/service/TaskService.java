@@ -6,6 +6,7 @@ import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.utils.LogText;
+import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,8 +31,23 @@ public class TaskService {
         Unit u = unitService.getById(unit_id);
 
         // Not in same Concern; HoldPosition and Standby can't be assigned to multiple Units
-        if(!i.getConcern().equals(u.getConcern()) || i.getType().isSingleUnit()) {
+        if(!i.getConcern().equals(u.getConcern())) {
             return false;
+        }
+
+        if(i.getType().isSingleUnit() && i.getUnits().size() > 0) {
+                Logger.debug("TaskService: Tried to assign multiple Units to Single Unit Incident");
+                return false;
+        }
+
+        // Auto-Detach from all SingleUnit Incidents
+        for(Integer incId : u.getIncidents().keySet()) {
+            Incident inc = incidentService.getById(incId);
+            if(inc.getType().isSingleUnit()) {
+                inc.setState(IncidentState.Done);
+                incidentService.update(inc, user);
+                taskDao.remove(inc.getId(), u.getId());
+            }
         }
 
         if(user != null) {
@@ -113,10 +129,12 @@ public class TaskService {
                 break;
             case AAO:
                 // Set Position of Unit to AO
-                Unit writeUnit2 = u.slimCopy();
-                writeUnit2.setPosition(i.getAo());
-                log.logFull(user, LogText.UNIT_AUTOSET_POSITION, i.getConcern(), writeUnit2, i, true);
-                unitService.update(writeUnit2);
+                // Full Write Needed For Send Home with Home == NULL
+                /*Unit writeUnit2 = u.slimCopy();
+                writeUnit2.setPosition(i.getAo());*/
+                u.setPosition(i.getAo());
+                log.logFull(user, LogText.UNIT_AUTOSET_POSITION, i.getConcern(), u, i, true);
+                unitService.updateFull(u);
 
                 // If Relocation and at AO -> Change to HoldPosition
                 if(i.getType() == IncidentType.Relocation) {
@@ -133,6 +151,9 @@ public class TaskService {
 
                 }
 
+                if(i.getType() == IncidentType.ToHome) {
+                    state = TaskState.Detached;
+                }
                 break;
             case Detached:
                 if(i.getType().isSingleUnit()) {

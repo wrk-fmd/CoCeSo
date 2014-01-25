@@ -1,12 +1,19 @@
 package at.wrk.coceso.service;
 
+import at.wrk.coceso.dao.TaskDao;
 import at.wrk.coceso.dao.UnitDao;
+import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.Operator;
 import at.wrk.coceso.entity.Unit;
+import at.wrk.coceso.entity.enums.IncidentState;
+import at.wrk.coceso.entity.enums.IncidentType;
+import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.utils.LogText;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -17,6 +24,15 @@ public class UnitService {
 
     @Autowired
     UnitDao unitDao;
+
+    @Autowired
+    TaskDao taskDao;
+
+    @Autowired
+    IncidentService incidentService;
+
+    @Autowired
+    TaskService taskService;
 
     public Unit getById(int id) {
         return unitDao.getById(id);
@@ -68,5 +84,92 @@ public class UnitService {
             return false;
         logService.logFull(operator, LogText.UNIT_DELETE+": "+unit.getCall(), unit.getConcern(), unit, null, true);
         return remove(unit);
+    }
+
+    private boolean detachAllGivenTypes(int unitId, IncidentType... types) {
+        List<Incident> list = taskDao.getAllByUnitIdWithType(unitId);
+
+        List<IncidentType> lTypes = Arrays.asList(types);
+
+        for(Incident i : list) {
+            if(!lTypes.contains(i.getType()))
+                return false;
+        }
+
+        Unit unit = getById(unitId);
+
+        for(Incident i : list) {
+            i.setState(IncidentState.Done);
+
+            incidentService.update(i);
+            taskDao.remove(i.getId(), unitId);
+        }
+        return true;
+    }
+
+    private Incident createSingleUnitIncident(Unit unit, IncidentType type, int activeCase, Operator user) {
+        Incident ret = new Incident();
+
+        ret.setState(IncidentState.Dispo);
+        ret.setConcern(activeCase);
+        ret.setType(type);
+        ret.setCaller(user.getUsername());
+
+        return ret;
+    }
+
+    public boolean sendHome(int activeCase, int unitId, Operator user) {
+        if(!detachAllGivenTypes(unitId, IncidentType.Standby, IncidentType.HoldPosition))
+            return false;
+
+        Unit unit = getById(unitId);
+
+        Incident toHome = createSingleUnitIncident(unit, IncidentType.ToHome, activeCase, user);
+
+        toHome.setAo(unit.getHome());
+        toHome.setBo(unit.getPosition()); // TODO useful?
+
+
+        toHome.setId(incidentService.add(toHome, user));
+        //log.logFull(user, LogText.SEND_HOME_ASSIGN, activeCase, unit, toHome, true);
+        taskService.changeState(toHome.getId(), unitId, TaskState.Assigned, user);
+
+        return true;
+    }
+
+    public boolean holdPosition(int activeCase, int unitId, Operator user) {
+        //TODO HoldPosition only possible, if no other Incident assigned.
+        if(!detachAllGivenTypes(unitId))
+            return false;
+
+        Unit unit = getById(unitId);
+
+        Incident inc = createSingleUnitIncident(unit, IncidentType.HoldPosition, activeCase, user);
+
+        inc.setAo(unit.getPosition());
+
+        inc.setId(incidentService.add(inc, user));
+        //log.logFull(user, LogText.SEND_HOME_ASSIGN, activeCase, unit, toHome, true);
+        taskService.changeState(inc.getId(), unitId, TaskState.Assigned, user);
+
+        return true;
+    }
+
+    public boolean standby(int activeCase, int unitId, Operator user) {
+        //TODO Standby only possible, if no other Incident assigned, except for ToHome
+        if(!detachAllGivenTypes(unitId, IncidentType.ToHome))
+            return false;
+
+        Unit unit = getById(unitId);
+
+        Incident inc = createSingleUnitIncident(unit, IncidentType.Standby, activeCase, user);
+
+        inc.setAo(unit.getPosition());
+
+        inc.setId(incidentService.add(inc, user));
+        //log.logFull(user, LogText.SEND_HOME_ASSIGN, activeCase, unit, toHome, true);
+        taskService.changeState(inc.getId(), unitId, TaskState.Assigned, user);
+
+        return true;
     }
 }

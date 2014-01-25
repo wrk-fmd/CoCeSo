@@ -1932,7 +1932,7 @@ Coceso.ViewModels.Unit.prototype = Object.create(Coceso.ViewModels.ViewModelSing
   standby: {
     value: function() {
       if (this.id()) {
-        Coceso.Ajax.save({id: this.id()}, "unit/sendHome.json");
+        Coceso.Ajax.save({id: this.id()}, "unit/standby.json");
       }
     }
   },
@@ -1945,7 +1945,7 @@ Coceso.ViewModels.Unit.prototype = Object.create(Coceso.ViewModels.ViewModelSing
   holdPosition: {
     value: function() {
       if (this.id()) {
-        Coceso.Ajax.save({id: this.id()}, "unit/sendHome.json");
+        Coceso.Ajax.save({id: this.id()}, "unit/holdPosition.json");
       }
     }
   }

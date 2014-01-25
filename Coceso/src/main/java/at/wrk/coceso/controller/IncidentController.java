@@ -8,6 +8,8 @@ import at.wrk.coceso.service.IncidentService;
 import at.wrk.coceso.service.TaskService;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -132,7 +134,7 @@ public class IncidentController implements IEntityController<Incident> {
 
     @RequestMapping(value = "nextState/{incident_id}/{unit_id}", produces = "application/json", method = RequestMethod.GET)
     @ResponseBody
-    public Incident nextState(@PathVariable("incident_id") int incident_id,
+    public ResponseEntity<String> nextState(@PathVariable("incident_id") int incident_id,
                               @PathVariable("unit_id") int unit_id,
                               Principal principal)
     {
@@ -142,17 +144,26 @@ public class IncidentController implements IEntityController<Incident> {
         Incident incident = incidentService.getById(incident_id);
         TaskState newState = incident.nextState(unit_id);
 
+        // Don't set State to ZAO if no AO is present. Except for SingleUnit Incidents (TODO Home can be null)
+        if(newState == TaskState.ZAO && !incident.getType().isSingleUnit() && incident.getAo() == null) {
+            return new ResponseEntity<String>("{\"success\":false," +
+                    " \"message\":\"No AO in Incident given\"}",
+                    HttpStatus.BAD_REQUEST);
+        }
+
         if(newState == null)
-            return null;
+            return new ResponseEntity<String>("{\"success\":false," +
+                    " \"message\":\"Next State not possible, no Next State defined\"}",
+                    HttpStatus.BAD_REQUEST);
 
         taskService.changeState(incident_id, unit_id, newState, user);
 
-        return incidentService.getById(incident_id);
+        return new ResponseEntity<String>("{\"success\":true}", HttpStatus.OK);
     }
 
     @RequestMapping(value = "nextState", produces = "application/json", method = RequestMethod.POST)
     @ResponseBody
-    public Incident nextStateByPost(@RequestParam("incident_id") int incident_id,
+    public ResponseEntity<String> nextStateByPost(@RequestParam("incident_id") int incident_id,
                               @RequestParam("unit_id") int unit_id,
                               Principal principal)
     {
@@ -162,7 +173,7 @@ public class IncidentController implements IEntityController<Incident> {
     @RequestMapping(value = "setToState/{incident_id}/{unit_id}/{state}",
             produces = "application/json", method = RequestMethod.GET)
     @ResponseBody
-    public Incident setToState(@PathVariable("incident_id") int incident_id,
+    public ResponseEntity<String> setToState(@PathVariable("incident_id") int incident_id,
                                @PathVariable("unit_id") int unit_id,
                                @PathVariable("state") String s_state,
                                Principal principal)
@@ -175,17 +186,17 @@ public class IncidentController implements IEntityController<Incident> {
         try {
             state = TaskState.valueOf(s_state);
         } catch (IllegalArgumentException e) {
-            return null;
+            return new ResponseEntity<String>("{\"success\":false}", HttpStatus.BAD_REQUEST);
         }
 
         taskService.changeState(incident_id, unit_id, state, user);
 
-        return incidentService.getById(incident_id);
+        return new ResponseEntity<String>("{\"success\":true}", HttpStatus.OK);
     }
 
     @RequestMapping(value = "setToState", produces = "application/json", method = RequestMethod.POST)
     @ResponseBody
-    public Incident setToStateByPost(@RequestParam("incident_id") int incident_id,
+    public ResponseEntity<String> setToStateByPost(@RequestParam("incident_id") int incident_id,
                                @RequestParam("unit_id") int unit_id,
                                @RequestParam("state") String s_state,
                                Principal principal)
