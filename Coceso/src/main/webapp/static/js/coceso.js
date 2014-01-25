@@ -1521,6 +1521,17 @@ Coceso.ViewModels.Unit = function(data, options) {
   }, this);
 
   /**
+   * Home is set
+   *
+   * @function
+   * @type ko.computed
+   * @return {boolean}
+   */
+  this.hasHome = ko.computed(function() {
+    return (this.home.info() !== "");
+  }, this);
+
+  /**
    * Last known position is home
    *
    * @function
@@ -1528,62 +1539,9 @@ Coceso.ViewModels.Unit = function(data, options) {
    * @return {boolean}
    */
   this.isHome = ko.computed(function() {
-    return (this.position.info() === this.home.info());
+    return (this.hasHome() && this.position.info() === this.home.info());
   }, this);
 
-  this.taskText = ko.computed(function() {
-    if (this.incidentCount() < 0) {
-      return "";
-    }
-    if (this.incidentCount() > 1) {
-      return "<span class='glyphicon glyphicon-plus'></span>";
-    }
-    if (this.incidentCount() === 0) {
-      return "<span class='glyphicon glyphicon-" + (this.isHome() ? "home" : "exclamation-sign") + "'></span>";
-    }
-
-    var incident = this.incidents.incidentlist()[0];
-    if (incident.isTask() || incident.isTransport() || incident.isRelocation() || incident.isToHome()) {
-      return incident.typeString() + ": " + incident.taskState();
-    }
-
-    if (incident.isStandby() || incident.isHoldPosition()) {
-      return incident.typeString();
-    }
-
-    return "";
-  }, this);
-
-  this.taskCss = ko.computed(function() {
-    if (this.incidentCount() < 0) {
-      return "";
-    }
-    if (this.incidentCount() > 1) {
-      return "unit_state_multiple";
-    }
-    if (this.incidentCount() === 0) {
-      return (this.isHome()) ? "unit_state_ishome" : "unit_state_free";
-    }
-
-    var incident = this.incidents.incidentlist()[0];
-    if (incident.isTask() || incident.isTransport()) {
-      return (incident.blue()) ? "unit_state_task_blue" : "unit_state_task";
-    }
-    if (incident.isRelocation()) {
-      return "unit_state_relocation";
-    }
-    if (incident.isHoldPosition()) {
-      return "unit_state_holdposition";
-    }
-    if (incident.isToHome()) {
-      return "unit_state_tohome";
-    }
-    if (incident.isStandby()) {
-      return "unit_state_standby";
-    }
-
-    return "";
-  }, this);
 
   /**
    * Unit has state "AD"
@@ -1619,6 +1577,23 @@ Coceso.ViewModels.Unit = function(data, options) {
   }, this);
 
   /**
+   * Unit has incident with TaskState "Assigned"
+   *
+   * @function
+   * @type ko.computed
+   * @return {boolean}
+   */
+  this.hasAssigned = ko.computed(function() {
+    if (!this.incidentCount() <= 0) {
+      return false;
+    }
+
+    return (ko.utils.arrayFirst(this.incidents.incidentlist(), function(incident) {
+      return incident.isAssigned();
+    }) !== null);
+  }, this);
+
+  /**
    * CSS class based on the unit's state
    *
    * @function
@@ -1627,28 +1602,86 @@ Coceso.ViewModels.Unit = function(data, options) {
    */
   this.stateCss = ko.computed(function() {
     if (this.isEB()) {
-      return ((this.incidentCount() === 1) && (this.incidents.incidentlist()[0].isStandby())) ? "unit_state_standby" : "unit_state_eb";
+      return (this.incidentCount() === 1 && this.incidents.incidentlist()[0].isStandby()) ? "unit_state_standby" : "unit_state_eb";
     }
     return this.isNEB() ? "unit_state_neb" : "unit_state_ad";
   }, this);
 
   /**
-   * Unit has incident with TaskState "Assigned"
+   * Text based on the unit's assigned tasks
    *
    * @function
    * @type ko.computed
-   * @return {boolean}
+   * @return {string} The text
    */
-  this.hasAssigned = ko.computed(function() {
-    if (!this.incidents || !this.incidents.incidents) {
-      return false;
+  this.taskText = ko.computed(function() {
+    if (this.incidentCount() < 0) {
+      return "";
+    }
+    if (this.incidentCount() > 1) {
+      return "<span class='glyphicon glyphicon-plus'></span>";
+    }
+    if (this.incidentCount() === 0) {
+      return "<span class='glyphicon glyphicon-" + (this.hasHome() ? (this.isHome() ? "home" : "exclamation-sign") : "ok-sign") + "'></span>";
     }
 
-    return (ko.utils.arrayFirst(this.incidents.incidents(), function(incident) {
-      return incident.isAssigned();
-    }) !== null);
+    var incident = this.incidents.incidentlist()[0];
+    if (incident.isTask() || incident.isTransport() || incident.isRelocation() || incident.isToHome()) {
+      return incident.typeString() + ": " + incident.taskState();
+    }
+
+    if (incident.isStandby() || incident.isHoldPosition()) {
+      return incident.typeString();
+    }
+
+    return "";
   }, this);
 
+  /**
+   * CSS class based on the unit's task
+   *
+   * @function
+   * @type ko.computed
+   * @return {string} The CSS class
+   */
+  this.taskCss = ko.computed(function() {
+    if (this.incidentCount() < 0) {
+      return "";
+    }
+    if (this.incidentCount() > 1) {
+      return "unit_state_multiple";
+    }
+    if (this.incidentCount() === 0) {
+      return (!this.hasHome() || this.isHome()) ? this.stateCss() : "unit_state_free";
+    }
+
+    var incident = this.incidents.incidentlist()[0];
+    if (incident.isTask() || incident.isTransport()) {
+      return (incident.blue()) ? "unit_state_task_blue" : "unit_state_task";
+    }
+    if (incident.isRelocation()) {
+      return "unit_state_relocation";
+    }
+    if (incident.isHoldPosition()) {
+      return "unit_state_holdposition";
+    }
+    if (incident.isToHome()) {
+      return "unit_state_tohome";
+    }
+    if (incident.isStandby()) {
+      return "unit_state_standby";
+    }
+
+    return "";
+  }, this);
+
+  /**
+   * Options for the tooltip
+   *
+   * @function
+   * @type ko.computed
+   * @return {Object} The popover options
+   */
   this.popover = ko.computed(function() {
     var content = "Home: " + this.home.info() + "<br /><br />Position: " + this.position.info();
     return {
@@ -1743,7 +1776,7 @@ Coceso.ViewModels.Unit = function(data, options) {
       self.id(data.unit_id);
     }
 
-    if (self.id() && (typeof self.incidents.incidentlist !== "undefined")) {
+    if (self.id() && self.incidentCount() > 0) {
       ko.utils.arrayForEach(self.incidents.incidentlist(), function(inc) {
         if (inc.taskState.localChange()) {
           if (inc.taskState.orig() === null) {
