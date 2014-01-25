@@ -120,7 +120,7 @@ public class UnitController implements IEntityController<Unit> {
 
         int activeCase = Integer.parseInt(case_id);
 
-        if(unitService.sendHome(activeCase, unitId, user)) {
+        if(!unitService.sendHome(activeCase, unitId, user)) {
             return new ResponseEntity<String>("{\"success\":false}", HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<String>("{\"success\":true}", HttpStatus.OK);
@@ -136,7 +136,7 @@ public class UnitController implements IEntityController<Unit> {
 
         int activeCase = Integer.parseInt(case_id);
 
-        if(unitService.holdPosition(activeCase, unitId, user)) {
+        if(!unitService.holdPosition(activeCase, unitId, user)) {
             return new ResponseEntity<String>("{\"success\":false}", HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<String>("{\"success\":true}", HttpStatus.OK);
@@ -152,7 +152,7 @@ public class UnitController implements IEntityController<Unit> {
 
         int activeCase = Integer.parseInt(case_id);
 
-        if(unitService.standby(activeCase, unitId, user)) {
+        if(!unitService.standby(activeCase, unitId, user)) {
             return new ResponseEntity<String>("{\"success\":false}", HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<String>("{\"success\":true}", HttpStatus.OK);
