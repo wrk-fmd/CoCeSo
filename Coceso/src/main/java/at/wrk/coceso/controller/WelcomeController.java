@@ -2,6 +2,7 @@ package at.wrk.coceso.controller;
 
 import at.wrk.coceso.dao.*;
 import at.wrk.coceso.entity.*;
+import at.wrk.coceso.entity.enums.CocesoAuthority;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.service.IncidentService;
 import at.wrk.coceso.service.TaskService;
@@ -94,7 +95,10 @@ public class WelcomeController {
         map.addAttribute("concern_list", concern_list);
         map.addAttribute("closed_concern_list", closed_concern_list);
 
-        Logger.debug("CaseList: size="+ concern_list.size());
+        if(user.getInternalAuthorities().contains(CocesoAuthority.Root))
+            map.addAttribute("authorized", true);
+
+        Logger.debug("CaseList: size=" + concern_list.size());
 
         return "welcome";
     }
