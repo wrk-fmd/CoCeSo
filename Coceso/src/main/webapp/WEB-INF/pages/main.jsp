@@ -76,7 +76,7 @@
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">Disponent <b class="caret"></b></a>
             <ul class="dropdown-menu">
               <li><a href="#" title="<spring:message code='label.incident' /> / <spring:message code='label.add' />" onclick="return Coceso.UI.openIncident(this.title, 'incident_form.html');"><spring:message code="label.add" /></a></li>
-              <li><a href="#" title="<spring:message code='label.main.incident.new' />" onclick="return Coceso.UI.openIncidents(this.title, 'incident.html', {filter: ['overview', 'new'], showTabs: false});"><spring:message code="label.main.incident.new" /></a></li>
+              <li><a href="#" title="<spring:message code='label.main.incident.open' />" onclick="return Coceso.UI.openIncidents(this.title, 'incident.html', {filter: ['overview', 'open'], showTabs: false});"><spring:message code="label.main.incident.open" /></a></li>
             </ul>
           </li>
           <li class="dropdown">

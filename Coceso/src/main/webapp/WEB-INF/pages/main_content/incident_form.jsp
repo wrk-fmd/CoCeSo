@@ -180,7 +180,8 @@
 
       <div class="clearfix">
         <div class="form-group col-md-offset-2 col-md-10">
-          <input type="button" class="btn btn-success" value="<spring:message code='label.save' />" data-bind="enable: localChange, click: save" />
+          <input type="button" class="btn btn-success" value="<spring:message code='label.ok' />" data-bind="enable: localChange, click: ok" />
+          <input type="button" class="btn btn-primary" value="<spring:message code='label.save' />" data-bind="enable: localChange, click: save" />
           <input type="button" class="btn btn-warning" value="Reset" data-bind="enable: localChange, click: reset" />
         </div>
       </div>

@@ -31,7 +31,10 @@
         <intercept-url pattern="/**" access="hasAnyRole(${roles.superuser})" />
 
         <logout delete-cookies="true" invalidate-session="true" logout-url="/logout" logout-success-url="/" />
-        <form-login login-page="/login" default-target-url="/welcome" authentication-failure-url="/loginfailed" />
+
+        <!-- TODO 'always-use-default-target' is set to true, because of buggy behaviour with left open windows -->
+        <form-login login-page="/login" default-target-url="/welcome" authentication-failure-url="/loginfailed"
+                    always-use-default-target="true"/>
     </http>
 
     <authentication-manager>

@@ -806,6 +806,21 @@ Coceso.ViewModels.ViewModelSingle.prototype = Object.create(Coceso.ViewModels.Vi
     }
   },
   /**
+   * Save modified data and close the window
+   *
+   * @function
+   * @return {boolean}
+   */
+  ok: {
+    value: function() {
+      var result = this.save();
+      if (result) {
+        $("#"+this.ui).dialog("destroy");
+      }
+      return result;
+    }
+  },
+  /**
    * Replace null values with empty objects
    *
    * @function
