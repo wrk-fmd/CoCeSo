@@ -43,7 +43,14 @@ public class CreateController {
     }
 
     @RequestMapping("")
-    public String edit(@CookieValue("active_case") int id, ModelMap map) {
+    public String edit(@CookieValue(value = "active_case", defaultValue = "0") String c_id, ModelMap map) {
+
+        int id = Integer.parseInt(c_id);
+
+        if(id == 0) {
+            //TODO Show Error Message
+            return "redirect:/welcome";
+        }
 
         Concern caze = concernDao.getById(id);
         List<Unit> unit_list = unitService.getAll(id);

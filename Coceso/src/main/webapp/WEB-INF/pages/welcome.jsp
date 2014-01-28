@@ -22,10 +22,16 @@
     <%@include file="parts/navbar.jsp"%>
 
 
-    <div class="alert alert-success">
+    <div class="alert alert-info">
             <strong><spring:message code="label.operator"/>:</strong> ${user.given_name} ${user.sur_name} (${user.username})<br>
             Roles: <c:forEach items="${user.authorities}" var="role">${role} - </c:forEach>
     </div>
+    <c:if test="${not empty activeConcern}">
+        <div class="alert alert-success">
+            <strong><spring:message code="label.concern.lastActive" />:</strong>&nbsp;${activeConcern.name}
+            <a href="<c:url value="/main/"/>" class="btn btn-success"><spring:message code="label.start" /></a>
+        </div>
+    </c:if>
     <div class="page-header">
         <h2>
             <spring:message code="label.concerns"/>
@@ -37,7 +43,7 @@
                 <div class="col-lg-2">
                     &nbsp;
                 </div>
-                <div class="col-lg-5">
+                <div class="col-lg-6">
                     <select name="case_id" size="10" class="form-control">
                         <c:forEach var="caze" items="${concern_list}">
                             <option value="${caze.id}">${caze.name}</option>

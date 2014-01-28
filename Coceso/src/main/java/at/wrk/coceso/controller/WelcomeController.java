@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -49,7 +50,7 @@ public class WelcomeController {
     }
 
     @RequestMapping("/login")
-    public String login(ModelMap model) {
+    public String login() {
 
         return "login";
     }
@@ -59,18 +60,39 @@ public class WelcomeController {
         model.addAttribute("error", "true");
         return "login";
     }
+
     @RequestMapping(value = "/welcome", method = RequestMethod.GET)
-    public String showWelcome(ModelMap map, Principal principal) {
+    public String showWelcome(ModelMap map, Principal principal, HttpServletResponse response) {
 
         UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
         Operator user = (Operator) token.getPrincipal();
 
         user = operatorDao.getById(user.getId());
 
+        Concern active = user.getActiveConcern();
+        if(active != null && !active.isClosed()) {
+            response.addCookie(new Cookie("active_case", active.getId()+""));
+            map.addAttribute("activeConcern", active);
+        } else{
+            response.addCookie(new Cookie("active_case", null));
+        }
+
         map.addAttribute("user", user);
 
-        List<Concern> concern_list = concernDao.getAll();
+        List<Concern> concern_list = new LinkedList<Concern>();
+        List<Concern> closed_concern_list = new LinkedList<Concern>();
+
+        for(Concern concern : concernDao.getAll()) {
+            if(concern.isClosed()) {
+                closed_concern_list.add(concern);
+            }
+            else {
+                concern_list.add(concern);
+            }
+        }
+
         map.addAttribute("concern_list", concern_list);
+        map.addAttribute("closed_concern_list", closed_concern_list);
 
         Logger.debug("CaseList: size="+ concern_list.size());
 
@@ -78,7 +100,13 @@ public class WelcomeController {
     }
 
     @RequestMapping(value = "/welcome", method = RequestMethod.POST)
-    public String welcomeRedirect(HttpServletRequest request, HttpServletResponse response) {
+    public String welcomeRedirect(HttpServletRequest request, HttpServletResponse response, Principal principal) {
+
+        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
+        Operator user = (Operator) token.getPrincipal();
+
+        user = operatorDao.getById(user.getId());
+
         int case_id;
         try {
             case_id = Integer.parseInt(request.getParameter("case_id"));
@@ -86,12 +114,19 @@ public class WelcomeController {
             return "redirect:/welcome";
         }
 
-        response.addCookie(new Cookie("active_case", case_id+""));
+        Concern active = concernDao.getById(case_id);
 
-        if(request.getParameter("start") != null)
-            return "redirect:/main";
-        if(request.getParameter("edit") != null)
-            return "redirect:/edit";
+        if(active != null) {
+            user.setActiveConcern(active);
+            operatorDao.update(user);
+
+            response.addCookie(new Cookie("active_case", case_id+""));
+
+            if(request.getParameter("start") != null)
+                return "redirect:/main";
+            if(request.getParameter("edit") != null)
+                return "redirect:/edit";
+        }
 
         return "redirect:/welcome";
     }
