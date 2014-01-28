@@ -32,7 +32,7 @@
   <body>
     <div class="alert alert-danger"><spring:message code="label.main.error.no_direct_access" /></div>
 
-    <div class="ajax_content" data-bind="droppable: {drop: assignIncidentForm}">
+    <div class="ajax_content unit_form" data-bind="droppable: {drop: assignIncidentForm}">
       <div class="alert alert-danger" id="error" style="display: none"><strong>Saving failed</strong><br/>Try again or see <em>Debug</em> for further information.</div>
 
       <div class="clearfix">
@@ -69,17 +69,17 @@
           <label class="sr-only"><spring:message code="label.unit.state" />:</label>
           <div class="ui-buttonset">
             <input id="state_eb" type="radio" class="ui-helper-hidden-accessible" name="state" data-bind="checked: state, value: Coceso.Constants.Unit.state.eb" />
-            <label for="state_eb" class="ui-button ui-widget ui-state-default ui-corner-left" data-bind="css: {'ui-state-active': isEB()}">
+            <label for="state_eb" class="ui-button ui-widget ui-state-default ui-corner-left" data-bind="css: {'ui-state-active': isEB}">
               <span class="ui-button-text"><spring:message code="label.unit.state.eb" /></span>
             </label>
 
             <input id="state_neb" type="radio" class="ui-helper-hidden-accessible" name="state" data-bind="checked: state, value: Coceso.Constants.Unit.state.neb" />
-            <label for="state_neb" class="ui-button ui-widget ui-state-default" data-bind="css: {'ui-state-active': isNEB()}">
+            <label for="state_neb" class="ui-button ui-widget ui-state-default" data-bind="css: {'ui-state-active': isNEB}">
               <span class="ui-button-text"><spring:message code="label.unit.state.neb" /></span>
             </label>
 
             <input id="state_ad" type="radio" class="ui-helper-hidden-accessible" name="state" data-bind="checked: state, value: Coceso.Constants.Unit.state.ad" />
-            <label for="state_ad" class="ui-button ui-widget ui-state-default ui-corner-right" data-bind="css: {'ui-state-active': isAD()}">
+            <label for="state_ad" class="ui-button ui-widget ui-state-default ui-corner-right" data-bind="css: {'ui-state-active': isAD}">
               <span class="ui-button-text"><spring:message code="label.unit.state.ad" /></span>
             </label>
           </div>
@@ -88,47 +88,47 @@
 
       <div class="assigned" data-bind="foreach: incidents.incidentlist">
         <div class="form-group clearfix">
-          <label class="col-md-2 control-label" data-bind="text: id"></label>
+          <label class="col-md-2 control-label" data-bind="html: assignedTitle"></label>
           <div class="col-md-10 ui-buttonset">
             <input type="radio" class="ui-helper-hidden-accessible"
-                   data-bind="checked: taskState, attr: {id: $root.ui + '-taskState_assigned_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.assigned" />
+                   data-bind="checked: taskState, disable: disableAssigned, attr: {id: $root.ui + '-taskState_assigned_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.assigned" />
             <label class="ui-button ui-widget ui-state-default ui-corner-left"
-                   data-bind="attr: {for: $root.ui + '-taskState_assigned_' + $index()}, css: {'ui-state-active': isAssigned()}">
+                   data-bind="attr: {for: $root.ui + '-taskState_assigned_' + $index()}, css: {'ui-state-active': isAssigned, 'ui-state-disabled': disableAssigned}">
               <span class="ui-button-text"><spring:message code="label.task.state.assigned" /></span>
             </label>
 
             <input type="radio" class="ui-helper-hidden-accessible"
-                   data-bind="checked: taskState, enable: enableBO, attr: {id: $root.ui + '-taskState_zbo_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.zbo" />
+                   data-bind="checked: taskState, disable: disableBO, attr: {id: $root.ui + '-taskState_zbo_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.zbo" />
             <label class="ui-button ui-widget ui-state-default"
-                   data-bind="attr: {for: $root.ui + '-taskState_zbo_' + $index()}, css: {'ui-state-active': isZBO(), 'ui-state-disabled': !enableBO()}">
+                   data-bind="attr: {for: $root.ui + '-taskState_zbo_' + $index()}, css: {'ui-state-active': isZBO, 'ui-state-disabled': disableBO}">
               <span class="ui-button-text"><spring:message code="label.task.state.zbo" /></span>
             </label>
 
             <input type="radio" class="ui-helper-hidden-accessible"
-                   data-bind="checked: taskState, enable: enableBO, attr: {id: $root.ui + '-taskState_abo_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.abo" />
+                   data-bind="checked: taskState, disable: disableBO, attr: {id: $root.ui + '-taskState_abo_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.abo" />
             <label class="ui-button ui-widget ui-state-default"
-                   data-bind="attr: {for: $root.ui + '-taskState_abo_' + $index()}, css: {'ui-state-active': isABO(), 'ui-state-disabled': !enableBO()}">
+                   data-bind="attr: {for: $root.ui + '-taskState_abo_' + $index()}, css: {'ui-state-active': isABO, 'ui-state-disabled': disableBO}">
               <span class="ui-button-text"><spring:message code="label.task.state.abo" /></span>
             </label>
 
             <input type="radio" class="ui-helper-hidden-accessible"
-                   data-bind="checked: taskState, attr: {id: $root.ui + '-taskState_zao_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.zao" />
+                   data-bind="checked: taskState, disable: disableZAO, attr: {id: $root.ui + '-taskState_zao_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.zao" />
             <label class="ui-button ui-widget ui-state-default"
-                   data-bind="attr: {for: $root.ui + '-taskState_zao_' + $index()}, css: {'ui-state-active': isZAO()}">
+                   data-bind="attr: {for: $root.ui + '-taskState_zao_' + $index()}, css: {'ui-state-active': isZAO, 'ui-state-disabled': disableZAO}">
               <span class="ui-button-text"><spring:message code="label.task.state.zao" /></span>
             </label>
 
             <input type="radio" class="ui-helper-hidden-accessible"
-                   data-bind="checked: taskState, attr: {id: $root.ui + '-taskState_aao_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.aao" />
+                   data-bind="checked: taskState, disable: disableAAO, attr: {id: $root.ui + '-taskState_aao_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.aao" />
             <label class="ui-button ui-widget ui-state-default"
-                   data-bind="attr: {for: $root.ui + '-taskState_aao_' + $index()}, css: {'ui-state-active': isAAO()}">
+                   data-bind="attr: {for: $root.ui + '-taskState_aao_' + $index()}, css: {'ui-state-active': isAAO, 'ui-state-disabled': disableAAO}">
               <span class="ui-button-text"><spring:message code="label.task.state.aao" /></span>
             </label>
 
             <input type="radio" class="ui-helper-hidden-accessible"
                    data-bind="checked: taskState, attr: {id: $root.ui + '-taskState_det_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.detached" />
             <label class="ui-button ui-widget ui-state-default ui-corner-right"
-                   data-bind="attr: {for: $root.ui + '-taskState_det_' + $index()}, css: {'ui-state-active': isDetached()}">
+                   data-bind="attr: {for: $root.ui + '-taskState_det_' + $index()}, css: {'ui-state-active': isDetached}">
               <span class="ui-button-text"><spring:message code="label.task.state.detached" /></span>
             </label>
           </div>

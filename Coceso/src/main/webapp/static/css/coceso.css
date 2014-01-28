@@ -394,10 +394,10 @@ span.incident_blue {
 }
 
 /**
- * Incident form
+ * Forms
  */
-.incident_form {
-  min-width: 432px;
+.incident_form, .unit_form {
+  min-width: 444px;
 }
 
 /**

@@ -56,9 +56,9 @@
             <!-- ko if: portable -->
             <li class="divider"></li>
             <li class="dropdown-header"><spring:message code="label.actions" /></li>
-            <li><a href="#" title="<spring:message code="label.unit.send_home" />" data-bind="click: sendHome"><spring:message code="label.unit.send_home" /></a></li>
-            <li><a href="#" title="<spring:message code="label.incident.type.standby" />" data-bind="click: standby"><spring:message code="label.incident.type.standby" /></a></li>
-            <li><a href="#" title="<spring:message code="label.incident.type.hold_position" />" data-bind="click: holdPosition"><spring:message code="label.incident.type.hold_position" /></a></li>
+            <li data-bind="css: {disabled: disableSendHome}"><a href="#" title="<spring:message code="label.unit.send_home" />" data-bind="click: sendHome"><spring:message code="label.unit.send_home" /></a></li>
+            <li data-bind="css: {disabled: disableStandby}"><a href="#" title="<spring:message code="label.incident.type.standby" />" data-bind="click: standby"><spring:message code="label.incident.type.standby" /></a></li>
+            <li data-bind="css: {disabled: disableHoldPosition}"><a href="#" title="<spring:message code="label.incident.type.hold_position" />" data-bind="click: holdPosition"><spring:message code="label.incident.type.hold_position" /></a></li>
             <!-- /ko -->
 
             <li class="divider"></li>

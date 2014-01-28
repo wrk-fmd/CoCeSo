@@ -34,6 +34,7 @@
     <script src="<c:url value="/static/js/jquery.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/jquery.ui.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/jquery.ui.winman.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/static/js/jquery.i18n.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/util.js" />"></script>
     <script src="<c:url value="/static/js/knockout.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/knockout.mapping.js"/>" type="text/javascript"></script>

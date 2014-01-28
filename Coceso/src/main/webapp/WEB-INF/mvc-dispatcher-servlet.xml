@@ -15,6 +15,7 @@
     <context:component-scan base-package="at.wrk.coceso"/>
     <mvc:annotation-driven />
 
+    <mvc:resources mapping="/static/i18n/**" location="classpath:i18n" />
     <mvc:resources mapping="/static/**" location="/static/" />
 
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -45,7 +46,7 @@
     </bean>
 
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-        <property name="basename" value="classpath:messages" />
+        <property name="basename" value="classpath:i18n/messages" />
         <property name="defaultEncoding" value="UTF-8"/>
     </bean>
 

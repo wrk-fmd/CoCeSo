@@ -119,8 +119,8 @@
           <h3 class="clearfix" data-bind="css: {incident_open: isNew() || isOpen()}">
             <span class="incident_priority" data-bind="text: typeString, css: {incident_blue: blue}"></span>
 
-            <span data-bind="text: enableBO() ? (bo.info() ? bo.info() : 'No BO') : (ao.info() ? ao.info() : 'No AO') "></span>
-            <span class="incident_ao clearfix" data-bind="visible: enableBO() && ao.info()">
+            <span data-bind="text: title"></span>
+            <span class="incident_ao clearfix" data-bind="visible: !disableBO() && !disableAAO()">
               <span class="ui-icon ui-icon-arrowthick-1-e"></span>
               <span data-bind="text: ao.info"></span>
             </span>
@@ -131,7 +131,7 @@
               <span data-bind="text: bo.info"></span>
             </p>
 
-            <p data-bind="visible: ao.info">
+            <p data-bind="visible: !disableAAO()">
               <span class="key"><spring:message code="label.incident.ao" /></span>
               <span data-bind="text: ao.info"></span>
             </p>

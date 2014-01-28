@@ -20,6 +20,8 @@
  *	coceso.client.winman
  */
 
+var _ = $.i18n.prop;
+
 /**
  * Object containing the main code
  *
@@ -34,6 +36,14 @@ var Coceso = {};
  * @return {void}
  */
 Coceso.startup = function() {
+  //Initialize localization
+  $.i18n.properties({
+    name: 'messages',
+    path: 'static/i18n/',
+    mode: 'map',
+    cache: true
+  });
+
   //Initialize window management
   $("#taskbar").winman();
 
@@ -1112,92 +1122,139 @@ Coceso.ViewModels.Incident = function(data, options) {
   }, this);
 
   /**
-   * Enable the "Task" type button
+   * Disable the "Task" type button
    *
    * @function
    * @type ko.computed
    * @return {boolean}
    */
-  this.enableTask = ko.computed(function() {
-    return (this.getOption("writeable") && (!this.id() || this.isTask()));
+  this.disableTask = ko.computed(function() {
+    return (!this.getOption("writeable") || (this.id() && !this.isTask()));
   }, this);
 
   /**
-   * Enable the "Relocation" type button
+   * Disable the "Relocation" type button
    *
    * @function
    * @type ko.computed
    * @return {boolean}
    */
-  this.enableRelocation = ko.computed(function() {
-    return (this.getOption("writeable") && (!this.id() || this.isRelocation()));
+  this.disableRelocation = ko.computed(function() {
+    return (!this.getOption("writeable") || (this.id() && !this.isRelocation()));
   }, this);
 
   /**
-   * Enable the "Transport" type button
+   * Disable the "Transport" type button
    *
    * @function
    * @type ko.computed
    * @return {boolean}
    */
-  this.enableTransport = ko.computed(function() {
-    return (this.getOption("writeable") && (!this.id() || this.isTransport()));
+  this.disableTransport = ko.computed(function() {
+    return (!this.getOption("writeable") || (this.id() && !this.isTransport()));
   }, this);
 
   /**
-   * Enable BO field
+   * Disable BO field
    *
    * @function
    * @type ko.computed
    * @return {boolean}
    */
-  this.enableBO = ko.computed(function() {
-    return !this.isRelocation();
+  this.disableBO = ko.computed(function() {
+    return (!this.isTask() && !this.isTransport());
   }, this);
 
   /**
-   * Allow IncidentState New
+   * Disable "Assigned" state
    *
    * @function
    * @type ko.computed
    * @return {boolean}
    */
-  this.enableNew = ko.computed(function() {
-    return (this.getOption("writeable") && (!this.id() || (this.state.orig() === Coceso.Constants.Incident.state.new )));
+  this.disableAssigned = ko.computed(function() {
+    return (this.isStandby() || this.isHoldPosition());
   }, this);
 
   /**
-   * Allow IncidentState Dispo
+   * Disable "AAO" state
    *
    * @function
    * @type ko.computed
    * @return {boolean}
    */
-  this.enableDispo = ko.computed(function() {
+  this.disableAAO = ko.computed(function() {
+    return (this.ao.info() === "");
+  }, this);
+
+  /**
+   * Disable "ZAO" state
+   *
+   * @function
+   * @type ko.computed
+   * @return {boolean}
+   */
+  this.disableZAO = ko.computed(function() {
+    return (this.isStandby() || this.isHoldPosition() || this.ao.info() === "");
+  }, this);
+
+  /**
+   * Disable IncidentState New
+   *
+   * @function
+   * @type ko.computed
+   * @return {boolean}
+   */
+  this.disableNew = ko.computed(function() {
+    return (!this.getOption("writeable") || (this.id() && this.state.orig() !== Coceso.Constants.Incident.state.new ));
+  }, this);
+
+  /**
+   * Disable IncidentState Dispo
+   *
+   * @function
+   * @type ko.computed
+   * @return {boolean}
+   */
+  this.disableDispo = ko.computed(function() {
     if (!this.getOption("writeable") || !this.units.unitlist) {
-      return false;
+      return true;
     }
 
     return (ko.utils.arrayFirst(this.units.unitlist(), function(unit) {
       return (unit.isAssigned() || unit.isZBO());
-    }) !== null);
+    }) === null);
   }, this);
 
   /**
-   * Allow IncidentState Working
+   * Disable IncidentState Working
    *
    * @function
    * @type ko.computed
    * @return {boolean}
    */
-  this.enableWorking = ko.computed(function() {
+  this.disableWorking = ko.computed(function() {
     if (!this.getOption("writeable") || !this.units.unitlist) {
-      return false;
+      return true;
     }
 
     return (ko.utils.arrayFirst(this.units.unitlist(), function(unit) {
       return (unit.isABO() || unit.isZAO() || unit.isAAO());
-    }) !== null);
+    }) === null);
+  }, this);
+
+  /**
+   * Return the title string
+   *
+   * @function
+   * @type ko.computed
+   * @return {String}
+   */
+  this.title = ko.computed(function() {
+    if (!this.disableBO()) {
+      return (this.bo.info() === "") ? "No BO" : this.bo.info();
+    }
+    return (this.ao.info() === "") ? "No AO" : this.ao.info();
   }, this);
 
   /**
@@ -1227,6 +1284,23 @@ Coceso.ViewModels.Incident = function(data, options) {
       return "<span class='glyphicon glyphicon-record'></span>";
     }
     return "";
+  }, this);
+
+  /**
+   * Title for unit form
+   *
+   * @function
+   * @type ko.computed
+   * @return {String}
+   */
+  this.assignedTitle = ko.computed(function() {
+    if (this.isTask() || this.isTransport() || this.isRelocation()) {
+      return this.typeString() + ": " + this.title().split("\n")[0];
+    }
+    if (this.isToHome() || this.isStandby() || this.isHoldPosition()) {
+      return this.typeString();
+    }
+    return this.title();
   }, this);
 
   /**
@@ -1594,6 +1668,54 @@ Coceso.ViewModels.Unit = function(data, options) {
   }, this);
 
   /**
+   * Disable the send home method
+   *
+   * @function
+   * @type ko.computed
+   * @return {boolean}
+   */
+  this.disableSendHome = ko.computed(function() {
+    if (!this.hasHome() || this.isHome() || (this.incidentCount() > 1)) {
+      return true;
+    }
+    if (this.incidentCount() <= 0) {
+      return false;
+    }
+    return (!this.incidents.incidentlist()[0].isHoldPosition() && !this.incidents.incidentlist()[0].isStandby());
+  }, this);
+
+  /**
+   * Disable the standby method
+   *
+   * @function
+   * @type ko.computed
+   * @return {boolean}
+   */
+  this.disableStandby = ko.computed(function() {
+    if (this.incidentCount() === 1) {
+      return !this.incidents.incidentlist()[0].isHoldPosition();
+    }
+    return (this.incidentCount() > 1);
+  }, this);
+
+  /**
+   * Disable the hold position method
+   *
+   * @function
+   * @type ko.computed
+   * @return {boolean}
+   */
+  this.disableHoldPosition = ko.computed(function() {
+    if (this.isHome() || (this.position.info() === "") || (this.incidentCount() > 1)) {
+      return true;
+    }
+    if (this.incidentCount() <= 0) {
+      return false;
+    }
+    return !this.incidents.incidentlist()[0].isStandby();
+  }, this);
+
+  /**
    * CSS class based on the unit's state
    *
    * @function
@@ -1627,7 +1749,7 @@ Coceso.ViewModels.Unit = function(data, options) {
 
     var incident = this.incidents.incidentlist()[0];
     if (incident.isTask() || incident.isTransport() || incident.isRelocation() || incident.isToHome()) {
-      return incident.typeString() + ": " + incident.taskState();
+      return incident.typeString() + ": " + _("label.task.state." + incident.taskState().toLowerCase());
     }
 
     if (incident.isStandby() || incident.isHoldPosition()) {
@@ -1683,7 +1805,7 @@ Coceso.ViewModels.Unit = function(data, options) {
    * @return {Object} The popover options
    */
   this.popover = ko.computed(function() {
-    var content = "Home: " + this.home.info() + "<br /><br />Position: " + this.position.info();
+    var content = _("label.unit.home") + ": " + this.home.info() + "<br /><br />" + _("label.unit.position") + ": " + this.position.info();
     return {
       trigger: 'hover focus',
       placement: 'auto top',
@@ -1918,7 +2040,7 @@ Coceso.ViewModels.Unit.prototype = Object.create(Coceso.ViewModels.ViewModelSing
    */
   sendHome: {
     value: function() {
-      if (this.id()) {
+      if (this.id() && !this.disableSendHome()) {
         Coceso.Ajax.save({id: this.id()}, "unit/sendHome.json");
       }
     }
@@ -1931,7 +2053,7 @@ Coceso.ViewModels.Unit.prototype = Object.create(Coceso.ViewModels.ViewModelSing
    */
   standby: {
     value: function() {
-      if (this.id()) {
+      if (this.id() && !this.disableStandby()) {
         Coceso.Ajax.save({id: this.id()}, "unit/standby.json");
       }
     }
@@ -1944,7 +2066,7 @@ Coceso.ViewModels.Unit.prototype = Object.create(Coceso.ViewModels.ViewModelSing
    */
   holdPosition: {
     value: function() {
-      if (this.id()) {
+      if (this.id() && !this.disableHoldPosition()) {
         Coceso.Ajax.save({id: this.id()}, "unit/holdPosition.json");
       }
     }
