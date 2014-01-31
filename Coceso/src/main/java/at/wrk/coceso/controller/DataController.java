@@ -48,9 +48,6 @@ public class DataController {
     @RequestMapping(value="timestamp", method = RequestMethod.GET, produces = "application/json")
     public String timestamp()
     {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssXXX");
-
-        Date date = new Date();
-        return "{\"date\":\"" + dateFormat.format(date) + "\"}";
+        return "{\"time\":\"" + System.currentTimeMillis() + "\"}";
     }
 }

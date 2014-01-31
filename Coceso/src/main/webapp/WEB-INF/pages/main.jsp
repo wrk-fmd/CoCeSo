@@ -35,7 +35,6 @@
     <script src="<c:url value="/static/js/jquery.ui.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/jquery.ui.winman.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/jquery.i18n.js"/>" type="text/javascript"></script>
-    <script src="<c:url value="/static/js/util.js" />"></script>
     <script src="<c:url value="/static/js/knockout.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/knockout.mapping.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/bootstrap.dropdown.js"/>" type="text/javascript"></script>
@@ -46,14 +45,13 @@
       $(document).ready(function() {
         Coceso.Conf.jsonBase = "${pageContext.request.contextPath}/data/";
         Coceso.Conf.contentBase = "${pageContext.request.contextPath}/main/";
+        Coceso.Conf.langBase = "${pageContext.request.contextPath}/static/i18n/";
 
         Coceso.startup();
         Coceso.UI.openUnits("<spring:message code='label.units' />", 'unit.html');
         Coceso.UI.openIncidents("<spring:message code='label.main.incident.active' />", 'incident.html', {filter: ['overview', 'active']}, {
           position: {at: "left+70% top"}
         });
-
-        setInterval('updateClock()', 1000);
       });
     </script>
   </head>

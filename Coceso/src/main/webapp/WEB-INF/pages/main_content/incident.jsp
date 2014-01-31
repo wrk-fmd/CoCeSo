@@ -126,7 +126,7 @@
             </span>
           </h3>
           <div>
-            <p data-bind="visible: bo.info() && enableBO()">
+            <p data-bind="visible: bo.info() && !disableBO()">
               <span class="key"><spring:message code="label.incident.bo" /></span>
               <span data-bind="text: bo.info"></span>
             </p>

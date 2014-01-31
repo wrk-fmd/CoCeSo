@@ -38,11 +38,14 @@ var Coceso = {};
 Coceso.startup = function() {
   //Initialize localization
   $.i18n.properties({
-    name: 'messages',
-    path: 'static/i18n/',
-    mode: 'map',
+    name: "messages",
+    path: Coceso.Conf.langBase,
+    mode: "map",
     cache: true
   });
+
+  //Initialize clock
+  Coceso.Clock.start();
 
   //Initialize window management
   $("#taskbar").winman();
@@ -58,14 +61,43 @@ Coceso.startup = function() {
 };
 
 /**
+ * Clock functions
+ *
+ * @type Object
+ */
+Coceso.Clock = {
+  offset: 0,
+  start: function() {
+    $.get(Coceso.Conf.jsonBase + "timestamp", function(data) {
+      if (data.time) {
+        Coceso.Clock.offset = new Date() - data.time;
+      }
+    });
+    setInterval(Coceso.Clock.update, 1000);
+  },
+  update: function() {
+    var currentTime = new Date(new Date() - Coceso.Clock.offset);
+    var currentHours = currentTime.getHours( );
+    var currentMinutes = currentTime.getMinutes( );
+    var currentSeconds = currentTime.getSeconds( );
+
+    currentMinutes = (currentMinutes < 10 ? "0" : "") + currentMinutes;
+    currentSeconds = (currentSeconds < 10 ? "0" : "") + currentSeconds;
+
+    $("#clock").html(currentHours + ":" + currentMinutes + ":" + currentSeconds);
+  }
+};
+
+/**
  * Some global settings
  *
  * @type Object
  */
 Coceso.Conf = {
   interval: 10000,
-  contentBase: "content/",
-  jsonBase: "data/"
+  contentBase: "",
+  jsonBase: "",
+  langBase: ""
 };
 
 /**
@@ -181,6 +213,7 @@ Coceso.UI = {
    * @param {String} title The title of the window
    * @param {String} src The source to load the HTML from
    * @param {ViewModel} viewmodel The viewmodel to bind with
+   * @param {Object} options
    * @return {void}
    */
   openWindow: function(title, src, viewmodel, options) {
@@ -202,6 +235,7 @@ Coceso.UI = {
    * @param {String} title
    * @param {String} src
    * @param {Object} options
+   * @param {Object} dialog Dialog options
    * @return {void}
    */
   openIncidents: function(title, src, options, dialog) {
@@ -226,6 +260,7 @@ Coceso.UI = {
    * @param {String} title
    * @param {String} src
    * @param {Object} options
+   * @param {Object} dialog Dialog options
    * @return {void}
    */
   openUnits: function(title, src, options, dialog) {
@@ -815,7 +850,7 @@ Coceso.ViewModels.ViewModelSingle.prototype = Object.create(Coceso.ViewModels.Vi
     value: function() {
       var result = this.save();
       if (result) {
-        $("#"+this.ui).dialog("destroy");
+        $("#" + this.ui).dialog("destroy");
       }
       return result;
     }
@@ -1820,10 +1855,21 @@ Coceso.ViewModels.Unit = function(data, options) {
    * @return {Object} The popover options
    */
   this.popover = ko.computed(function() {
-    var content = _("label.unit.home") + ": " + this.home.info() + "<br /><br />" + _("label.unit.position") + ": " + this.position.info();
+    var content = "";
+    if (this.hasHome()) {
+      content += "<p><span class='key'>" + _("label.unit.home") + "</span><span>" + this.home.info() + "</span></p>";
+    }
+    content += "<p><span class='key'>" + _("label.unit.position") + "</span><span>" + this.position.info() + "</span></p>";
+
+    if (this.incidentCount() > 0) {
+      ko.utils.arrayForEach(this.incidents.incidentlist(), function(inc) {
+        content += "<p><span class='key'>" + inc.assignedTitle() + "</span><span>" + _("label.task.state." + inc.taskState().toLowerCase()) + "</span></p>";
+      });
+    }
+
     return {
       trigger: 'hover focus',
-      placement: 'auto top',
+      placement: 'auto right',
       html: true,
       container: 'body',
       title: this.call(),
