@@ -94,7 +94,12 @@
               <li><a href="#" title="<spring:message code='label.main.incident.complete' />" onclick="return Coceso.UI.openIncidents(this.title, 'incident.html', {filter: ['overview', 'completed']});"><spring:message code="label.main.incident.complete" /></a></li>
             </ul>
           </li>
-          <li><a href="#" title="<spring:message code='label.log' />" onclick="return Coceso.UI.openLogs(this.title, 'log.html');"><spring:message code="label.log" /></a></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><spring:message code="label.main.windows" /> <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="#" title="<spring:message code='label.log' />" onclick="return Coceso.UI.openLogs(this.title, 'log.html');"><spring:message code="label.log" /></a></li>
+            </ul>
+          </li>
           <li><a href="<c:url value="/edit/"/>" target="_blank"><spring:message code="label.nav.edit_concern" /></a></li>
           <li><a href="<c:url value="/dashboard"/>?concern=${concern.id}" target="_blank"><spring:message code="label.nav.dashboard" /></a></li>
           <li><a href="#" title="Debug" onclick="return Coceso.UI.openDebug(this.title, 'debug.html');">Debug</a></li>
