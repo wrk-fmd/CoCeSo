@@ -1542,16 +1542,21 @@ Coceso.ViewModels.Units = function(data, options) {
    * @type Object
    */
   var filters = {
-    option: {
-      radio: {
-        filter: {
-          hasAssigned: true
-        }
+    radio: {
+      filter: {
+        hasAssigned: true
       }
     }
   };
 
   var filterOption = this.getOption("filter", []);
+
+  /**
+   * The selected filters
+   *
+   * @type Object
+   */
+  this.filter = {};
 
   /**
    * Generate a list of active filters
@@ -1563,10 +1568,22 @@ Coceso.ViewModels.Units = function(data, options) {
   this.activeFilters = ko.computed(function() {
     var activeFilters = {filter: []};
 
-    var i;
+    //Filters selected in user interface
+    var i, filter = {};
+    for (i in this.filter) {
+      var unwrapped = ko.utils.unwrapObservable(this.filter[i]);
+      if (unwrapped.length) {
+        filter[i] = {val: unwrapped};
+      }
+    }
+    activeFilters.filter.push({
+      filter: filter
+    });
+
+    //Filters from options
     for (i in filterOption) {
-      if (filters.option[filterOption[i]]) {
-        activeFilters.filter.push(filters.option[filterOption[i]]);
+      if (filters[filterOption[i]]) {
+        activeFilters.filter.push(filters[filterOption[i]]);
       }
     }
 
@@ -1708,7 +1725,7 @@ Coceso.ViewModels.Unit = function(data, options) {
    * @return {boolean}
    */
   this.hasAssigned = ko.computed(function() {
-    if (!this.incidentCount() <= 0) {
+    if (this.incidentCount() <= 0) {
       return false;
     }
 
