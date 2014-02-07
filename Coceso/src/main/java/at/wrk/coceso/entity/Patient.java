@@ -1,7 +1,7 @@
 package at.wrk.coceso.entity;
 
 public class Patient {
-    private int id;
+    private Incident incident;
 
     private String given_name;
     private String sur_name;
@@ -9,7 +9,7 @@ public class Patient {
     private String insurance_number;
 
     private String diagnosis;
-    private String typeOfER; //TODO find a better name...
+    private String erType; //TODO find a better name...
 
     private String info;
 

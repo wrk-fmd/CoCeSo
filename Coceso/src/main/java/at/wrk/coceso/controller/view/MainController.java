@@ -18,8 +18,8 @@ public class MainController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String showMain(ModelMap model, @CookieValue("active_case") int concern_id) {
         Concern c = concernDao.getById(concern_id);
-        if(c == null)
-            return "redirect:/welcome";
+        if(c == null || c.isClosed())
+            return "redirect:/welcome?error=1";
 
         model.addAttribute("concern", c);
 

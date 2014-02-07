@@ -10,21 +10,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 public class WelcomeController {
 
     // TODO Authority to Close and Reopen Concerns
     private static final CocesoAuthority CLOSE_AUTHORITY = CocesoAuthority.Root;
+
+    private static Set<Integer> allowedErrors;
+
+    static {
+        allowedErrors = new HashSet<Integer>();
+        allowedErrors.add(1);
+    }
 
     @Autowired
     ConcernDao concernDao;
@@ -50,10 +61,16 @@ public class WelcomeController {
     }
 
     @RequestMapping(value = "/welcome", method = RequestMethod.GET)
-    public String showWelcome(ModelMap map, Principal principal, HttpServletResponse response) {
+    public String showWelcome(ModelMap map, Principal principal, HttpServletResponse response,
+                              @RequestParam(value = "error", required = false) Integer id) {
 
         UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
         Operator user = (Operator) token.getPrincipal();
+
+        // Write Error Code to ModelMap
+        if(id != null && allowedErrors.contains(id)) {
+            map.addAttribute("error", id);
+        }
 
         user = operatorDao.getById(user.getId());
 
@@ -66,6 +83,9 @@ public class WelcomeController {
         } else{
             // Delete Cookie
             response.addCookie(new Cookie("active_case", null));
+            // Delete Active Case Reference
+            user.setActiveConcern(null);
+            operatorDao.update(user);
         }
 
         // Add Userdetails to Model
@@ -144,7 +164,7 @@ public class WelcomeController {
         }
         else {
             if(request.getParameter("print") != null)
-                return "redirect:/finalReport/print?id="+currentConcern.getId();
+                return "redirect:/finalReport/report.pdf?id="+currentConcern.getId();
 
             if(request.getParameter("reopen") != null)  {
                 if(user.getInternalAuthorities().contains(CLOSE_AUTHORITY)){
@@ -160,6 +180,4 @@ public class WelcomeController {
 
         return "redirect:/welcome";
     }
-
-
 }

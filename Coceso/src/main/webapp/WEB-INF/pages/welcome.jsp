@@ -21,17 +21,28 @@
     <c:set value="active" var="nav_home" />
     <%@include file="parts/navbar.jsp"%>
 
+    <%-- Show Error Message --%>
+    <c:if test="${not empty error}">
+        <div class="alert alert-danger">
+            <strong><spring:message code="label.error" />:</strong> <spring:message code="label.error.${error}" />
+        </div>
+    </c:if>
 
+    <%-- Userdetails -- DEBUG --%>
     <div class="alert alert-info">
-            <strong><spring:message code="label.operator"/>:</strong> ${user.given_name} ${user.sur_name} (${user.username})<br>
+            <strong><spring:message code="label.operator"/>:</strong> ${user.given_name} ${user.sur_name} (${user.username})&nbsp;&nbsp;
             Roles: <c:forEach items="${user.authorities}" var="role">${role} - </c:forEach>
     </div>
+
+    <%-- Last Active Concern --%>
     <c:if test="${not empty activeConcern}">
         <div class="alert alert-success">
             <strong><spring:message code="label.concern.lastActive" />:</strong>&nbsp;${activeConcern.name}
             <a href="<c:url value="/main/"/>" class="btn btn-success"><spring:message code="label.start" /></a>
         </div>
     </c:if>
+
+    <%-- Active Concerns --%>
     <div class="page-header">
         <h2>
             <spring:message code="label.concerns"/>
@@ -71,6 +82,7 @@
         </form>
     </div>
 
+    <%-- Closed Concerns --%>
     <div class="page-header">
         <h2>
             <spring:message code="label.concern.closed"/>
@@ -108,6 +120,7 @@
         </form>
     </div>
 
+    <%-- Create new Concern --%>
     <div class="page-header">
         <h2>
             <spring:message code="label.concern.create"/>
@@ -137,7 +150,8 @@
 
         </form>
     </div>
-    <!-- TODO REMOVE IN RELEASE!!! ###################-->
+
+    <!-- TODO REMOVE IN RELEASE!!! #%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#-->
     <div class="page-header">
         <h2>
             Debugging
@@ -163,6 +177,7 @@
 
     </div>
     <!--##############-->
+
 </div>
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->

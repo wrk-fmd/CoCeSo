@@ -75,7 +75,15 @@ public class UnitController implements IEntityController<Unit> {
         UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
         Operator user = (Operator) token.getPrincipal();
 
-        int caseId = Integer.parseInt(case_id);
+        int caseId;
+
+        try {
+            caseId = Integer.parseInt(case_id);
+        } catch(NumberFormatException e) {
+            Logger.warning("UnitController: update: "+e);
+            return "{\"success\": false, \"info\":\"No active Concern. Cookies enabled?\"}";
+        }
+
 
         if(result.hasErrors()) {
             return "{\"success\": false, description: \"Binding Error\"}";

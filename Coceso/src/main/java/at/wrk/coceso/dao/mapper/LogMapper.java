@@ -3,6 +3,7 @@ package at.wrk.coceso.dao.mapper;
 import at.wrk.coceso.dao.IncidentDao;
 import at.wrk.coceso.dao.UnitDao;
 import at.wrk.coceso.entity.*;
+import at.wrk.coceso.entity.enums.LogEntryType;
 import at.wrk.coceso.entity.enums.TaskState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
@@ -35,6 +36,13 @@ public class LogMapper implements RowMapper<LogEntry> {
         }
         catch(NullPointerException e) {
             l.setState(null);
+        }
+
+        try{
+            l.setType(LogEntryType.valueOf(rs.getString("type")));
+        }
+        catch(NullPointerException e) {
+            l.setType(null);
         }
 
 
