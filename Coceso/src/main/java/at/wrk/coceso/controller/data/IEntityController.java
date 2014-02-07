@@ -1,4 +1,4 @@
-package at.wrk.coceso.controller;
+package at.wrk.coceso.controller.data;
 
 import org.springframework.validation.BindingResult;
 

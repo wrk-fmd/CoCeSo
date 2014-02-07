@@ -1,11 +1,8 @@
 
-package at.wrk.coceso.controller;
+package at.wrk.coceso.controller.data;
 
 import at.wrk.coceso.dao.TaskDao;
 import at.wrk.coceso.entity.*;
-import at.wrk.coceso.entity.enums.IncidentState;
-import at.wrk.coceso.entity.enums.IncidentType;
-import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.service.IncidentService;
 import at.wrk.coceso.service.TaskService;
 import at.wrk.coceso.service.UnitService;

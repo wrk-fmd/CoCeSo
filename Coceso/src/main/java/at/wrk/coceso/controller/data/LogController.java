@@ -1,5 +1,5 @@
 
-package at.wrk.coceso.controller;
+package at.wrk.coceso.controller.data;
 
 import at.wrk.coceso.dao.LogDao;
 import at.wrk.coceso.entity.LogEntry;

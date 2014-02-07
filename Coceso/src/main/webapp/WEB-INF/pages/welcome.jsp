@@ -78,13 +78,13 @@
     </div>
 
     <div>
-        <form <%--action="${pageContext.request.contextPath}/welcome" method="post"--%> role="form">
+        <form action="${pageContext.request.contextPath}/welcome" method="post" role="form">
             <div class="row">
                 <div class="col-lg-2">
                     &nbsp;
                 </div>
                 <div class="col-lg-6">
-                    <select name="closed_case_id" size="10" class="form-control">
+                    <select name="case_id" size="10" class="form-control">
                         <c:forEach var="caze" items="${closed_concern_list}">
                             <option value="${caze.id}">${caze.name}</option>
                         </c:forEach>
@@ -97,11 +97,11 @@
                     &nbsp;
                 </div>
                 <div class="col-lg-2 text-center">
-                    <input type="submit" value="<spring:message code="label.print"/>" name="reopen" class="btn btn-success">
+                    <input type="submit" value="<spring:message code="label.print"/>" name="print" class="btn btn-success">
                 </div>
                 <c:if test="${not empty authorized}">
                     <div class="col-lg-2 text-center">
-                        <input type="submit" value="<spring:message code="label.reopen"/>" name="close" class="btn btn-danger">
+                        <input type="submit" value="<spring:message code="label.reopen"/>" name="reopen" class="btn btn-danger">
                     </div>
                 </c:if>
             </div>

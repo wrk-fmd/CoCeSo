@@ -1,4 +1,4 @@
-package at.wrk.coceso.controller;
+package at.wrk.coceso.controller.view;
 
 import at.wrk.coceso.dao.ConcernDao;
 import at.wrk.coceso.entity.Concern;

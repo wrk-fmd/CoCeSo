@@ -1,4 +1,4 @@
-package at.wrk.coceso.controller;
+package at.wrk.coceso.controller.data;
 
 import at.wrk.coceso.entity.Operator;
 import at.wrk.coceso.entity.enums.TaskState;

@@ -1,4 +1,4 @@
-package at.wrk.coceso.controller;
+package at.wrk.coceso.controller.view;
 
 import at.wrk.coceso.dao.ConcernDao;
 import at.wrk.coceso.entity.Concern;
@@ -19,7 +19,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/edit")
-public class CreateController {
+public class ConcernEditController {
 
     @Autowired
     ConcernDao concernDao;
@@ -43,13 +43,21 @@ public class CreateController {
     }
 
     @RequestMapping("")
-    public String edit(@CookieValue(value = "active_case", defaultValue = "0") String c_id, ModelMap map) {
+    public String edit(@CookieValue(value = "active_case") String c_id, ModelMap map) {
 
-        int id = Integer.parseInt(c_id);
+        final String return_address_error = "redirect:/welcome";
 
-        if(id == 0) {
+        if(c_id == null || c_id.isEmpty()) {
             //TODO Show Error Message
-            return "redirect:/welcome";
+            return return_address_error;
+        }
+
+        int id;
+        try {
+            id = Integer.parseInt(c_id);
+        } catch(NumberFormatException nfe) {
+            Logger.debug("ConcernEditController: "+nfe.getMessage());
+            return return_address_error;
         }
 
         Concern caze = concernDao.getById(id);
@@ -81,8 +89,7 @@ public class CreateController {
 
 
     @RequestMapping(value = "updateUnit", method = RequestMethod.POST)
-    public String updateUnit(HttpServletRequest request,
-                         @CookieValue("active_case") int case_id, Principal principal)
+    public String updateUnit(HttpServletRequest request, Principal principal)
     {
         UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
         Operator user = (Operator) token.getPrincipal();
@@ -110,7 +117,7 @@ public class CreateController {
             unitService.remove(unit, user);
         }
         else {
-            Logger.error("CreateController:updateUnit wrong submit button");
+            Logger.error("CreateController: updateUnit wrong submit button");
         }
 
         return "redirect:/edit";

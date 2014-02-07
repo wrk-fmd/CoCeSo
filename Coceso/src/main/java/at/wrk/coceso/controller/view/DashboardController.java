@@ -1,140 +1,40 @@
-package at.wrk.coceso.controller;
+package at.wrk.coceso.controller.view;
 
-import at.wrk.coceso.dao.*;
-import at.wrk.coceso.entity.*;
-import at.wrk.coceso.entity.enums.CocesoAuthority;
+import at.wrk.coceso.dao.ConcernDao;
+import at.wrk.coceso.dao.LogDao;
+import at.wrk.coceso.entity.Incident;
+import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.service.IncidentService;
 import at.wrk.coceso.service.TaskService;
 import at.wrk.coceso.service.UnitService;
-import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.security.Principal;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 @Controller
-public class WelcomeController {
+public class DashboardController {
 
+    // TODO Change to Service
     @Autowired
     ConcernDao concernDao;
 
-    // Read Only use, TODO change to Service
     @Autowired
     LogDao logDao;
-
-    @Autowired
-    OperatorDao operatorDao;
-
-    @Autowired
-    IncidentService incidentService;
 
     @Autowired
     UnitService unitService;
 
     @Autowired
+    IncidentService incidentService;
+
+    @Autowired
     TaskService taskService;
-
-    @RequestMapping("/")
-    public String showIndex() {
-        return "index";
-    }
-
-    @RequestMapping("/login")
-    public String login() {
-
-        return "login";
-    }
-
-    @RequestMapping("/loginfailed")
-    public String loginFailed(ModelMap model) {
-        model.addAttribute("error", "true");
-        return "login";
-    }
-
-    @RequestMapping(value = "/welcome", method = RequestMethod.GET)
-    public String showWelcome(ModelMap map, Principal principal, HttpServletResponse response) {
-
-        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
-        Operator user = (Operator) token.getPrincipal();
-
-        user = operatorDao.getById(user.getId());
-
-        Concern active = user.getActiveConcern();
-        if(active != null && !active.isClosed()) {
-            response.addCookie(new Cookie("active_case", active.getId()+""));
-            map.addAttribute("activeConcern", active);
-        } else{
-            response.addCookie(new Cookie("active_case", null));
-        }
-
-        map.addAttribute("user", user);
-
-        List<Concern> concern_list = new LinkedList<Concern>();
-        List<Concern> closed_concern_list = new LinkedList<Concern>();
-
-        for(Concern concern : concernDao.getAll()) {
-            if(concern.isClosed()) {
-                closed_concern_list.add(concern);
-            }
-            else {
-                concern_list.add(concern);
-            }
-        }
-
-        map.addAttribute("concern_list", concern_list);
-        map.addAttribute("closed_concern_list", closed_concern_list);
-
-        if(user.getInternalAuthorities().contains(CocesoAuthority.Root))
-            map.addAttribute("authorized", true);
-
-        Logger.debug("CaseList: size=" + concern_list.size());
-
-        return "welcome";
-    }
-
-    @RequestMapping(value = "/welcome", method = RequestMethod.POST)
-    public String welcomeRedirect(HttpServletRequest request, HttpServletResponse response, Principal principal) {
-
-        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
-        Operator user = (Operator) token.getPrincipal();
-
-        user = operatorDao.getById(user.getId());
-
-        int case_id;
-        try {
-            case_id = Integer.parseInt(request.getParameter("case_id"));
-        } catch (NumberFormatException e) {
-            return "redirect:/welcome";
-        }
-
-        Concern active = concernDao.getById(case_id);
-
-        if(active != null) {
-            user.setActiveConcern(active);
-            operatorDao.update(user);
-
-            response.addCookie(new Cookie("active_case", case_id+""));
-
-            if(request.getParameter("start") != null)
-                return "redirect:/main";
-            if(request.getParameter("edit") != null)
-                return "redirect:/edit";
-        }
-
-        return "redirect:/welcome";
-    }
-
 
     @RequestMapping("/dashboard")
     public String showDashboard(@RequestParam(value = "sub", defaultValue = "Log") String s_sub,
