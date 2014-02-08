@@ -2,9 +2,9 @@ package at.wrk.coceso.service;
 
 import at.wrk.coceso.dao.IncidentDao;
 import at.wrk.coceso.entity.Incident;
-import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.Operator;
-import at.wrk.coceso.utils.LogText;
+import at.wrk.coceso.entity.enums.IncidentState;
+import at.wrk.coceso.entity.enums.LogEntryType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,7 +42,7 @@ public class IncidentService {
 
     public boolean update(Incident incident, Operator operator) {
         boolean ret = update(incident);
-        logService.logFull(operator, LogText.INCIDENT_UPDATE, incident.getConcern(), null, incident, true);
+        logService.logFull(operator, LogEntryType.INCIDENT_UPDATE, incident.getConcern(), null, incident, true);
         return ret;
     }
 
@@ -52,7 +52,7 @@ public class IncidentService {
 
     public int add(Incident incident, Operator operator) {
         incident.setId(add(incident));
-        logService.logFull(operator, LogText.INCIDENT_NEW, incident.getConcern(), null, incident, true);
+        logService.logFull(operator, LogEntryType.INCIDENT_CREATE, incident.getConcern(), null, incident, true);
         return incident.getId();
     }
 
@@ -61,7 +61,7 @@ public class IncidentService {
     }
 
     public boolean remove(Incident incident, Operator operator) {
-        logService.logFull(operator, LogText.INCIDENT_DELETE, incident.getConcern(), null, incident, true);
+        logService.logFull(operator, LogEntryType.INCIDENT_DELETE, incident.getConcern(), null, incident, true);
         return remove(incident);
     }
 }

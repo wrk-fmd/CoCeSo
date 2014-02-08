@@ -7,12 +7,11 @@ import at.wrk.coceso.entity.Operator;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.enums.IncidentType;
+import at.wrk.coceso.entity.enums.LogEntryType;
 import at.wrk.coceso.entity.enums.TaskState;
-import at.wrk.coceso.utils.LogText;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -50,7 +49,7 @@ public class UnitService {
 
     public boolean update(Unit unit, Operator operator) {
         boolean ret = update(unit);
-        logService.logFull(operator, LogText.UNIT_UPDATE, unit.getConcern(), unit, null, true);
+        logService.logFull(operator, LogEntryType.UNIT_UPDATE, unit.getConcern(), unit, null, true);
         return ret;
     }
 
@@ -60,7 +59,7 @@ public class UnitService {
 
     public boolean updateFull(Unit unit, Operator operator) {
         boolean ret = updateFull(unit);
-        logService.logFull(operator, LogText.UNIT_UPDATE+": "+unit.getCall(), unit.getConcern(), unit, null, true);
+        logService.logFull(operator, LogEntryType.UNIT_UPDATE, unit.getConcern(), unit, null, true);
         return ret;
     }
 
@@ -71,7 +70,7 @@ public class UnitService {
     public int add(Unit unit, Operator operator) {
 
         unit.setId(add(unit));
-        logService.logFull(operator, LogText.UNIT_NEW+": "+unit.getCall(), unit.getConcern(), unit, null, true);
+        logService.logFull(operator, LogEntryType.UNIT_CREATE, unit.getConcern(), unit, null, true);
         return unit.getId();
     }
 
@@ -82,7 +81,7 @@ public class UnitService {
     public boolean remove(Unit unit, Operator operator) {
         if(unit == null)
             return false;
-        logService.logFull(operator, LogText.UNIT_DELETE+": "+unit.getCall(), unit.getConcern(), unit, null, true);
+        logService.logFull(operator, LogEntryType.UNIT_DELETE, unit.getConcern(), unit, null, true);
         return remove(unit);
     }
 
@@ -107,7 +106,7 @@ public class UnitService {
         return true;
     }
 
-    private Incident createSingleUnitIncident(Unit unit, IncidentType type, int activeCase, Operator user) {
+    private Incident createSingleUnitIncident(IncidentType type, int activeCase, Operator user) {
         Incident ret = new Incident();
 
         ret.setState(IncidentState.Dispo);
@@ -124,7 +123,7 @@ public class UnitService {
 
         Unit unit = getById(unitId);
 
-        Incident toHome = createSingleUnitIncident(unit, IncidentType.ToHome, activeCase, user);
+        Incident toHome = createSingleUnitIncident(IncidentType.ToHome, activeCase, user);
 
         toHome.setAo(unit.getHome());
         toHome.setBo(unit.getPosition()); // TODO useful?
@@ -144,7 +143,7 @@ public class UnitService {
 
         Unit unit = getById(unitId);
 
-        Incident inc = createSingleUnitIncident(unit, IncidentType.HoldPosition, activeCase, user);
+        Incident inc = createSingleUnitIncident(IncidentType.HoldPosition, activeCase, user);
 
         inc.setAo(unit.getPosition());
 
@@ -162,7 +161,7 @@ public class UnitService {
 
         Unit unit = getById(unitId);
 
-        Incident inc = createSingleUnitIncident(unit, IncidentType.Standby, activeCase, user);
+        Incident inc = createSingleUnitIncident(IncidentType.Standby, activeCase, user);
 
         inc.setAo(unit.getPosition());
 

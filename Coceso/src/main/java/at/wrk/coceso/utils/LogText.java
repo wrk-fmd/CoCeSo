@@ -3,6 +3,7 @@ package at.wrk.coceso.utils;
 /**
  * Strings to be written automatically to Log
  */
+@Deprecated
 public class LogText {
     public static final String UNIT = "Unit";
     public static final String UNIT_ASSIGN = UNIT+" assigned";

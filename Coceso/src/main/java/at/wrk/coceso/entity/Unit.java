@@ -85,7 +85,15 @@ public class Unit {
     }
 
     public Point getPosition() {
-        return position;
+        // TODO Temporary Bugfix
+        return position == null ? dummyPoint() : position;
+    }
+
+    private Point dummyPoint() {
+        Point ret = new Point();
+        ret.setId(-1);
+        ret.setInfo("");
+        return ret;
     }
 
     public Map<Integer, TaskState> getIncidents() {

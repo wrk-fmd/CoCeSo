@@ -2205,7 +2205,8 @@ Coceso.ViewModels.Logs = function(data, options) {
   };
 
   if (this.getOption("initial")) {
-    this.load(this.getOption("url", "log/getAll"), this.getOption("autoload") ? Coceso.Conf.interval : false);
+      //TODO Set Limit of Log dynamically
+    this.load(this.getOption("url", "log/getLast/30"), this.getOption("autoload") ? Coceso.Conf.interval : false);
   }
 
 };

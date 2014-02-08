@@ -1,11 +1,13 @@
 package at.wrk.coceso.service;
 
 import at.wrk.coceso.dao.TaskDao;
-import at.wrk.coceso.entity.*;
+import at.wrk.coceso.entity.Incident;
+import at.wrk.coceso.entity.Operator;
+import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.enums.IncidentType;
+import at.wrk.coceso.entity.enums.LogEntryType;
 import at.wrk.coceso.entity.enums.TaskState;
-import at.wrk.coceso.utils.LogText;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -51,7 +53,7 @@ public class TaskService {
         }
 
         if(user != null) {
-            log.logFull(user, LogText.UNIT_ASSIGN, u.getConcern(), u, i, true);
+            log.logFull(user, LogEntryType.UNIT_ASSIGN, u.getConcern(), u, i, true);
         }
 
         return taskDao.add(incident_id, unit_id, state);
@@ -71,7 +73,7 @@ public class TaskService {
         }
 
         if(user != null) {
-            log.logFull(user, LogText.UNIT_DETACH, i.getConcern(), u, i, true);
+            log.logFull(user, LogEntryType.UNIT_DETACH, i.getConcern(), u, i, true);
         }
 
         taskDao.remove(incident_id, unit_id);
@@ -100,7 +102,7 @@ public class TaskService {
 
 
         if(user != null) {
-            log.logFull(user, LogText.UNIT_TASKSTATE_CHANGED, i.getConcern(), u, i, true);
+            log.logFull(user, LogEntryType.TASKSTATE_CHANGED, i.getConcern(), u, i, true);
         }
 
         switch (state) {
@@ -108,7 +110,7 @@ public class TaskService {
                 if(i.getState() == IncidentState.New) {
                     Incident wIncident = i.slimCopy();
                     wIncident.setState(IncidentState.Dispo);
-                    log.logFull(user, LogText.INCIDENT_AUTO_STATE, i.getConcern(), u, wIncident, true);
+                    log.logFull(user, LogEntryType.INCIDENT_AUTO_STATE, i.getConcern(), u, wIncident, true);
                     incidentService.update(wIncident);
                 }
                 break;
@@ -116,14 +118,14 @@ public class TaskService {
                 // Set Position of Unit to BO
                 Unit writeUnit = u.slimCopy();
                 writeUnit.setPosition(i.getBo());
-                log.logFull(user, LogText.UNIT_AUTOSET_POSITION, i.getConcern(), writeUnit, i, true);
+                log.logFull(user, LogEntryType.UNIT_AUTOSET_POSITION, i.getConcern(), writeUnit, i, true);
                 unitService.update(writeUnit);
                 break;
             case ZAO:
                 if(i.getType().isSingleUnit()) {
                     Incident writeIncident = i.slimCopy();
                     writeIncident.setState(IncidentState.Working);
-                    log.logFull(user, LogText.INCIDENT_AUTO_STATE, i.getConcern(), u, writeIncident, true);
+                    log.logFull(user, LogEntryType.INCIDENT_AUTO_STATE, i.getConcern(), u, writeIncident, true);
                     incidentService.update(writeIncident);
                 }
                 break;
@@ -133,7 +135,7 @@ public class TaskService {
                 /*Unit writeUnit2 = u.slimCopy();
                 writeUnit2.setPosition(i.getAo());*/
                 u.setPosition(i.getAo());
-                log.logFull(user, LogText.UNIT_AUTOSET_POSITION, i.getConcern(), u, i, true);
+                log.logFull(user, LogEntryType.UNIT_AUTOSET_POSITION, i.getConcern(), u, i, true);
                 unitService.updateFull(u);
 
                 // If Relocation and at AO -> Change to HoldPosition
@@ -159,7 +161,7 @@ public class TaskService {
                 if(i.getType().isSingleUnit()) {
                     Incident wInc = i.slimCopy();
                     wInc.setState(IncidentState.Done);
-                    log.logFull(user, LogText.INCIDENT_AUTO_STATE, i.getConcern(), u, wInc, true);
+                    log.logFull(user, LogEntryType.INCIDENT_AUTO_STATE, i.getConcern(), u, wInc, true);
                     incidentService.update(wInc);
                 }
                 break;
@@ -182,13 +184,13 @@ public class TaskService {
 
         for(Integer unitId : i.getUnits().keySet()) {
             if(i.getState() == IncidentState.Done) {
-                log.logWithIDs(user.getId(), LogText.UNIT_AUTO_DETACH, i.getConcern(), unitId, i.getId(), true);
+                log.logWithIDs(user.getId(), LogEntryType.UNIT_AUTO_DETACH, i.getConcern(), unitId, i.getId(), true);
                 detachUnit(i.getId(), unitId, null);
                 i.getUnits().remove(unitId);
             } else {
                 TaskState state = i.getUnits().get(unitId);
                 if(state == TaskState.Detached) {
-                    log.logWithIDs(user.getId(), LogText.UNIT_AUTO_DETACH, i.getConcern(), unitId, i.getId(), true);
+                    log.logWithIDs(user.getId(), LogEntryType.UNIT_AUTO_DETACH, i.getConcern(), unitId, i.getId(), true);
                     detachUnit(i.getId(), unitId, null);
                     i.getUnits().remove(unitId);
                 }
@@ -202,7 +204,7 @@ public class TaskService {
         if(i.getUnits().isEmpty() && i.getState() != IncidentState.Done) {
             Incident write = i.slimCopy();
             write.setState(IncidentState.Done);
-            log.logFull(user, LogText.INCIDENT_NO_UNIT_ATTACHED, i.getConcern(), null, write, true);
+            log.logFull(user, LogEntryType.INCIDENT_AUTO_DONE, i.getConcern(), null, write, true);
             incidentService.update(write);
         }
     }
