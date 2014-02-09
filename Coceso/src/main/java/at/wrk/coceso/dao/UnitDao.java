@@ -184,9 +184,16 @@ public class UnitDao extends CocesoDao<Unit> {
                 "portable = ?, transportvehicle = ?, info = ?, position_point_fk = ?, home_point_fk = ? WHERE id = ?";
 
         try {
-            jdbc.update(q, unit.getState() == null ? UnitState.AD.name() : unit.getState().name(), unit.getCall(), unit.getAni(), unit.isWithDoc(), unit.isPortable(), unit.isTransportVehicle(),
-                    unit.getInfo(), unit.getPosition() == null ? null : unit.getPosition().getId(),
-                    unit.getHome() == null ? null : unit.getHome().getId(), unit.getId());
+            jdbc.update(q,
+                    unit.getState() == null ? UnitState.AD.name() : unit.getState().name(),
+                    unit.getCall(),
+                    unit.getAni(),
+                    unit.isWithDoc(),
+                    unit.isPortable(),
+                    unit.isTransportVehicle(),
+                    unit.getInfo(),
+                    unit.getPosition() == null || unit.getPosition().getId() <= 0 ? null : unit.getPosition().getId(),
+                    unit.getHome() == null || unit.getHome().getId() <= 0 ? null : unit.getHome().getId(), unit.getId());
         }
         catch(DataAccessException dae) {
             Logger.error("UnitDao.updateFull(Unit): DataAccessException: " + dae.getMessage());
@@ -236,12 +243,12 @@ public class UnitDao extends CocesoDao<Unit> {
                     ps.setBoolean(6, unit.isPortable());
                     ps.setBoolean(7, unit.isTransportVehicle());
                     ps.setString(8, unit.getInfo());
-                    if(unit.getPosition() == null)
+                    if(unit.getPosition() == null || unit.getPosition().getId() <= 0)
                         ps.setObject(9,  null);
                     else
                         ps.setInt(9, unit.getPosition().getId());
 
-                    if(unit.getHome() == null)
+                    if(unit.getHome() == null || unit.getHome().getId() <= 0)
                         ps.setObject(10,  null);
                     else
                         ps.setInt(10, unit.getHome().getId());
