@@ -303,7 +303,7 @@ public class UnitDao extends CocesoDao<Unit> {
 
     public Set<Integer> getNonDeletable(int caseId) {
         String q = "SELECT DISTINCT u.id FROM unit u, log l WHERE u.id = l.unit_fk AND l.concern_fk = ? " +
-                "AND l.type != 'UNIT_CREATE'";
+                "AND (l.type != 'UNIT_CREATE' OR l.type IS NULL)";
 
         SqlRowSet rs = jdbc.queryForRowSet(q, caseId);
 
