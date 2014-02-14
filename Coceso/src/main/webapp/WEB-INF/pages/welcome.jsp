@@ -6,6 +6,9 @@
     <title><spring:message code="label.coceso"/> - <spring:message code="label.nav.home"/></title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="icon" href="<c:url value="/static/favicon.ico"/>" type="image/x-icon">
+
     <!-- Bootstrap -->
     <c:url var="bootstrap" value="/static/css/bootstrap.css" />
     <link href="${bootstrap}" rel="stylesheet">

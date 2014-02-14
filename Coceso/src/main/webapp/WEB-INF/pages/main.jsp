@@ -29,6 +29,8 @@
     <meta charset="utf-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
+    <link rel="icon" href="<c:url value="/static/favicon.ico"/>" type="image/x-icon">
+
     <link rel="stylesheet" href="<c:url value="/static/css/coceso.css" />" type="text/css" />
 
     <script src="<c:url value="/static/js/jquery.js"/>" type="text/javascript"></script>
