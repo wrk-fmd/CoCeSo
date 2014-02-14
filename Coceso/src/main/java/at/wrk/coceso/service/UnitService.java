@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class UnitService {
@@ -59,7 +60,8 @@ public class UnitService {
 
     public boolean updateFull(Unit unit, Operator operator) {
         boolean ret = updateFull(unit);
-        logService.logFull(operator, LogEntryType.UNIT_UPDATE, unit.getConcern(), unit, null, true);
+        // UNIT_CREATE for difference in Log -> so it can be deleted, if Unit is only updated via Edit Page
+        logService.logFull(operator, LogEntryType.UNIT_CREATE, unit.getConcern(), unit, null, true);
         return ret;
     }
 
@@ -81,7 +83,8 @@ public class UnitService {
     public boolean remove(Unit unit, Operator operator) {
         if(unit == null)
             return false;
-        logService.logFull(operator, LogEntryType.UNIT_DELETE, unit.getConcern(), unit, null, true);
+        // Changed to REMOVED Flag on Create-Entry
+        //logService.logFull(operator, LogEntryType.UNIT_DELETE, unit.getConcern(), unit, null, true);
         return remove(unit);
     }
 
@@ -170,5 +173,9 @@ public class UnitService {
         taskService.changeState(inc.getId(), unitId, TaskState.Assigned, user);
 
         return true;
+    }
+
+    public Set<Integer> getNonDeletable(int caseId) {
+        return unitDao.getNonDeletable(caseId);
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -19,7 +20,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.List;
+import java.util.*;
 
 @Repository
 public class UnitDao extends CocesoDao<Unit> {
@@ -32,6 +33,9 @@ public class UnitDao extends CocesoDao<Unit> {
 
     @Autowired
     PointDao pointDao;
+
+    @Autowired
+    LogDao logDao;
 
     @Autowired
     public UnitDao(DataSource dataSource) {
@@ -280,15 +284,35 @@ public class UnitDao extends CocesoDao<Unit> {
             Logger.error("UnitDao.remove(Unit): invalid id: " + unit.getId() + ", call: " + unit.getCall());
             return false;
         }
+        if(getNonDeletable(unit.getConcern()).contains(unit.getId())) {
+            return false;
+        }
+        logDao.updateForRemoval(unit.getId());
+
         String q = "delete from unit where id = ?";
         try {
             jdbc.update(q, unit.getId());
         }
         catch (DataAccessException dae) {
-            Logger.error("UnitDao.remove(Unit): id: "+ unit.getId() +"; DataAccessException: "+dae.getMessage());
+            Logger.debug("UnitDao.remove(Unit): id: " + unit.getId() + "; DataAccessException: " + dae.getMessage());
             return false;
         }
 
         return true;
+    }
+
+    public Set<Integer> getNonDeletable(int caseId) {
+        String q = "SELECT DISTINCT u.id FROM unit u, log l WHERE u.id = l.unit_fk AND l.concern_fk = ? " +
+                "AND l.type != 'UNIT_CREATE'";
+
+        SqlRowSet rs = jdbc.queryForRowSet(q, caseId);
+
+        Set<Integer> ret = new HashSet<Integer>();
+
+        while(rs.next()) {
+            ret.add(rs.getInt("id"));
+        }
+
+        return ret;
     }
 }

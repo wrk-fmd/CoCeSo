@@ -144,8 +144,8 @@ public class IncidentController implements IEntityController<Incident> {
         Incident incident = incidentService.getById(incident_id);
         TaskState newState = incident.nextState(unit_id);
 
-        // Don't set State to ZAO if no AO is present. Except for SingleUnit Incidents (TODO Home can be null)
-        if(newState == TaskState.ZAO && !incident.getType().isSingleUnit() && incident.getAo() == null) {
+        // Don't set State to ZAO if no AO is present. Except for SingleUnit Incidents (TODO Home can be null, remove middle statement if not)
+        if(newState == TaskState.ZAO && !incident.getType().isSingleUnit() && Point.isEmpty(incident.getAo())) {
             return new ResponseEntity<String>("{\"success\":false," +
                     " \"message\":\"No AO in Incident given\"}",
                     HttpStatus.BAD_REQUEST);

@@ -11,11 +11,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/edit")
@@ -62,11 +67,19 @@ public class ConcernEditController {
 
         Concern caze = concernDao.getById(id);
         List<Unit> unit_list = unitService.getAll(id);
+        Set<Integer> nonDeletables = unitService.getNonDeletable(id);
 
         Logger.debug("unit_list.size(): "+unit_list.size());
 
         map.addAttribute("caze", caze);
         map.addAttribute("unit_list", unit_list);
+
+        HashMap<Integer, Boolean> locked = new HashMap<Integer, Boolean>();
+        for(Unit u : unit_list) {
+            locked.put(u.getId(), nonDeletables.contains(u.getId()));
+        }
+
+        map.addAttribute("locked", locked);
 
         return "edit";
     }

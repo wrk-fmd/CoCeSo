@@ -170,7 +170,14 @@
                                 <input type="submit" name="update" value="<spring:message code="label.update"/>" class="btn btn-success formupdate-${unit.id}" disabled>
                             </td>
                             <td>
-                                <input type="submit" name="remove" value="<spring:message code="label.remove"/>" class="btn btn-danger">
+                                <c:choose>
+                                    <c:when test="${locked[unit.id]}">
+                                        <input type="submit" name="remove" value="<spring:message code="label.remove"/>" class="btn btn-danger" disabled>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <input type="submit" name="remove" value="<spring:message code="label.remove"/>" class="btn btn-danger">
+                                    </c:otherwise>
+                                </c:choose>
                             </td>
                         </tr>
                     </form>
