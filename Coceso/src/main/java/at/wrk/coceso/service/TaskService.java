@@ -79,7 +79,7 @@ public class TaskService {
         taskDao.remove(incident_id, unit_id);
     }
 
-    public boolean changeState(int incident_id, int unit_id, TaskState state, Operator user) {
+    public synchronized boolean changeState(int incident_id, int unit_id, TaskState state, Operator user) {
         Incident i = incidentService.getById(incident_id);
         Unit u = unitService.getById(unit_id);
 

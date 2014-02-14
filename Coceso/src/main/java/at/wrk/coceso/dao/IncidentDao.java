@@ -28,10 +28,10 @@ public class IncidentDao extends CocesoDao<Incident> {
     private IncidentMapper incidentMapper;
 
     @Autowired
-    PointDao pointDao;
+    private PointDao pointDao;
 
     @Autowired
-    UnitDao unitDao;
+    private UnitDao unitDao;
 
     @Autowired
     public IncidentDao(DataSource dataSource) {

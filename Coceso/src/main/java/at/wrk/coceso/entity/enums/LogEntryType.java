@@ -2,6 +2,11 @@ package at.wrk.coceso.entity.enums;
 
 
 public enum LogEntryType {
+    CONCERN_CREATE("Concern created"),
+
+    PATIENT_CREATE("Patient created"),
+    PATIENT_UPDATE("Patient updated"),
+
     UNIT_CREATE("Unit created"),
     UNIT_UPDATE("Unit updated"),
     UNIT_DELETE("Unit deleted"),

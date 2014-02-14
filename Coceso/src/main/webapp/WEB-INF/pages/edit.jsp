@@ -13,6 +13,44 @@
     <c:url var="bootstrap_theme" value="/static/css/bootstrap-theme.css" />
     <link href="${bootstrap_theme}" rel="stylesheet">
 
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="<c:url value="/static/js/jquery.js" />"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="<c:url value="/static/js/bootstrap.js" />"></script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+
+            $("[class^='formpart-']").change(function() {
+                var id = $(this).attr('class').split(/[- ]/)[1];
+                checkUpdateButton(id);
+            }).keyup(function() {
+                var id = $(this).attr('class').split(/[- ]/)[1];
+                checkUpdateButton(id);
+            });
+            function checkUpdateButton(id) {
+                var updateButton =$(".formupdate-"+id);
+
+                var elems = document.getElementsByClassName("formpart-"+id);
+                for(var i = 0; i < elems.length; i++) {
+                    if(elems[i].type === 'checkbox') {
+                        if(elems[i].checked != elems[i].defaultChecked) {
+                            updateButton.removeAttr('disabled');
+                            return;
+                        }
+                    }
+                    else if(elems[i].defaultValue != elems[i].value) {
+
+                        updateButton.removeAttr('disabled');
+                        return;
+                    }
+                }
+                updateButton.attr('disabled', 'disabled');
+            };
+        });
+
+    </script>
 </head>
 
 <body>
@@ -65,11 +103,11 @@
                         <tr>
                             <td style="display: none;"><input type="hidden" name="id" value="${unit.id}"></td>
                             <td>
-                                <input type="text" name="call" value="${unit.call}" maxlength="64" class="form-control"
+                                <input type="text" name="call" value="${unit.call}" maxlength="64" class="formpart-${unit.id} form-control"
                                         placeholder="${call}">
                             </td>
                             <td>
-                                <input type="text" name="ani" value="${unit.ani}" maxlength="16" class="form-control"
+                                <input type="text" name="ani" value="${unit.ani}" maxlength="16" class="formpart-${unit.id} form-control"
                                         placeholder="${ani}">
                             </td>
                             <td>
@@ -77,11 +115,11 @@
                                     <c:choose>
                                         <c:when test="${unit.withDoc}">
                                             <label class="btn btn-default active">
-                                            <input type="checkbox" name="withDoc" checked>${withDoc}
+                                            <input type="checkbox" name="withDoc" class="formpart-${unit.id}" checked>${withDoc}
                                         </c:when>
                                         <c:otherwise>
                                             <label class="btn btn-default">
-                                            <input type="checkbox" name="withDoc">${withDoc}
+                                            <input type="checkbox" class="formpart-${unit.id}" name="withDoc">${withDoc}
                                         </c:otherwise>
                                     </c:choose>
 
@@ -93,11 +131,11 @@
                                     <c:choose>
                                         <c:when test="${unit.transportVehicle}">
                                             <label class="btn btn-default active">
-                                            <input type="checkbox" name="transportVehicle" checked>${transportVehicle}
+                                            <input type="checkbox" class="formpart-${unit.id}" name="transportVehicle" checked>${transportVehicle}
                                         </c:when>
                                         <c:otherwise>
                                             <label class="btn btn-default">
-                                            <input type="checkbox" name="transportVehicle">${transportVehicle}
+                                            <input type="checkbox" class="formpart-${unit.id}" name="transportVehicle">${transportVehicle}
                                         </c:otherwise>
                                     </c:choose>
                                     </label>
@@ -108,26 +146,26 @@
                                         <c:choose>
                                             <c:when test="${unit.portable}">
                                                 <label class="btn btn-default active">
-                                                <input type="checkbox" name="portable" checked>${portable}
+                                                <input type="checkbox" class="formpart-${unit.id}" name="portable" checked>${portable}
                                             </c:when>
                                             <c:otherwise>
                                                 <label class="btn btn-default">
-                                                <input type="checkbox" name="portable">${portable}
+                                                <input type="checkbox" class="formpart-${unit.id}" name="portable">${portable}
                                             </c:otherwise>
                                         </c:choose>
                                     </label>
                                 </div>
                             </td>
                             <td>
-                                <input type="text" name="info" value="${unit.info}" maxlength="128" class="form-control"
+                                <input type="text" name="info" value="${unit.info}" maxlength="128" class="formpart-${unit.id} form-control"
                                         placeholder="${info}">
                             </td>
                             <td>
-                                <input type="text" name="home" value="${unit.home}" class="form-control"
+                                <input type="text" name="home" value="${unit.home}" class="formpart-${unit.id} form-control"
                                         placeholder="${home}">
                             </td>
                             <td>
-                                <input type="submit" name="update" value="<spring:message code="label.update"/>" class="btn btn-success">
+                                <input type="submit" name="update" value="<spring:message code="label.update"/>" class="btn btn-success formupdate-${unit.id}" disabled>
                             </td>
                             <td>
                                 <input type="submit" name="remove" value="<spring:message code="label.remove"/>" class="btn btn-danger">
@@ -311,13 +349,6 @@
 
 </div>
 
-
-<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<c:url var="jquery" value="/static/js/jquery.js" />
-<script src="${jquery}"></script>
-<!-- Include all compiled plugins (below), or include individual files as needed -->
-<c:url var="bootstrap_js" value="/static/js/bootstrap.js" />
-<script src="${bootstrap_js}"></script>
 
 </body>
 </html>
