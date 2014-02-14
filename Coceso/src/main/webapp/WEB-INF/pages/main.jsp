@@ -40,8 +40,9 @@
     <script src="<c:url value="/static/js/bootstrap.dropdown.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/bindings.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/coceso.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/static/js/jquery.ui.touch-punch.js"/>" type="text/javascript"></script>
 
-    <script type="text/javascript">
+      <script type="text/javascript">
       $(document).ready(function() {
         Coceso.Conf.jsonBase = "${pageContext.request.contextPath}/data/";
         Coceso.Conf.contentBase = "${pageContext.request.contextPath}/main/";
