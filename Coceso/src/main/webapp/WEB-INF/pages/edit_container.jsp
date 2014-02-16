@@ -22,14 +22,21 @@
 
     <script src="<c:url value="/static/js/container.js"/>" type="text/javascript"></script>
 
+    <style type="text/css">
+        .unit_list {
+            background: #eeeeee;
+            padding: 10px 5px;
+        }
+        .unit_state_ad {
+            background: #aaaaaa;
+        }
+    </style>
 
     <script type="text/javascript">
 
         $(document).ready(function() {
             jsonBase = "${pageContext.request.contextPath}/data/";
             model.load();
-
-            ko.bindingHandlers.sortable.options = {placeholder: "highlight"};
 
             ko.applyBindings(model);
         });
@@ -54,8 +61,8 @@
         <script type="text/html" id="container-template">
             <div class="list-group-item">
                 <%-- HEADER --%>
-                <span data-bind="text: name() == '' ? '---' : name(), click: select, visible: !selected()"></span>
-                <form data-bind="submit: update" style="display: inline;"><input type="text" data-bind="value: name, event: {blur: update}, visibleAndSelect: selected" /></form>
+                <strong data-bind="text: name() == '' ? '---' : name(), click: select, visible: !selected()"></strong>
+                <form data-bind="submit: triggerBlur" style="display: inline;"><input type="text" data-bind="value: name, event: {blur: update}, visibleAndSelect: selected" /></form>
                 <button class="btn btn-danger" data-bind="click: remove, visible: id != head()"><span class="glyphicon glyphicon-minus-sign"></span></button>
                 <%-- /HEADER --%>
 
@@ -70,7 +77,7 @@
                 <%-- /UNITS --%>
 
                 <%-- Sub Container --%>
-                <div class="unit_container list-group" data-bind="sortable: {template: 'container-template', data: subContainer, connectClass: 'unit_container', afterMove: drop}"></div>
+                <div class="unit_container list-group" data-bind="sortable: {template: 'container-template', data: subContainer, connectClass: 'unit_container', afterMove: drop, options: {placeholder: 'highlight'}}"></div>
                 <button class="btn btn-success" data-bind="click: addContainer"><span class="glyphicon glyphicon-plus-sign"></span></button>
                 <%-- /Sub Container --%>
 

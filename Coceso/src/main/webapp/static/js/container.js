@@ -30,6 +30,10 @@ function Container(data) {
         cont.selected(true);
     };
 
+    cont.triggerBlur = function() {
+        cont.selected(false);
+    };
+
     cont.updateUnit = function(arg) {
         arg.item.ordering(cont.computeOrdering(arg.targetParent(), arg.item));
         $.post(jsonBase+"unitContainer/updateUnit/"+cont.id+"/"+arg.item.id+"/"+arg.item.ordering());
