@@ -192,4 +192,30 @@ public class ConcernEditController {
 
         return "redirect:/edit";
     }
+
+    @RequestMapping("container")
+    public String editContainer(@CookieValue(value = "active_case") String c_id, ModelMap map) {
+
+        final String return_address_error = "redirect:/welcome";
+
+        if(c_id == null || c_id.isEmpty()) {
+            //TODO Show Error Message
+            return return_address_error;
+        }
+
+        int id;
+        try {
+            id = Integer.parseInt(c_id);
+        } catch(NumberFormatException nfe) {
+            Logger.debug("ConcernEditController: "+nfe.getMessage());
+            return return_address_error;
+        }
+
+        Concern concern = concernDao.getById(id);
+
+        map.addAttribute("concern", concern);
+
+        return "edit_container";
+    }
+
 }

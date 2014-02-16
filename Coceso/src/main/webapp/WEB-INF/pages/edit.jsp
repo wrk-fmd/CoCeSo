@@ -80,7 +80,7 @@
 
     <!--##### TABLE -->
     <div class="page-header">
-        <h2><spring:message code="label.concern.edit.unit"/></h2>
+        <h2><spring:message code="label.concern.edit.unit"/> <a href="<c:url value="/edit/container"/>" class="btn btn-default"><spring:message code="label.container.edit" /></a></h2>
     </div>
     <div>
         <table class="table table-striped">

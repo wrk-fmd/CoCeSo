@@ -5,6 +5,7 @@ CREATE SEQUENCE incident_id_seq;
 CREATE SEQUENCE point_id_seq;
 CREATE SEQUENCE concern_id_seq;
 CREATE SEQUENCE role_id_seq;
+CREATE SEQUENCE container_id_seq;
 
 
 CREATE SEQUENCE hibernate_sequence
@@ -144,4 +145,24 @@ CREATE TABLE patient (
   external_id VARCHAR (40) NOT NULL DEFAULT '',
   PRIMARY KEY (incident_fk),
   FOREIGN KEY (incident_fk) REFERENCES incident ON DELETE CASCADE
+);
+
+CREATE TABLE container (
+  id INTEGER NOT NULL DEFAULT nextval('container_id_seq'),
+  concern_fk INTEGER NOT NULL,
+  head INTEGER NOT NULL,
+  name VARCHAR (60) NOT NULL,
+  ordering DOUBLE PRECISION NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (concern_fk) REFERENCES concern(id) ON DELETE CASCADE,
+  FOREIGN KEY (head) REFERENCES container(id) ON DELETE CASCADE
+);
+
+CREATE TABLE unit_in_container (
+  container_fk INTEGER NOT NULL,
+  unit_fk INTEGER NOT NULL,
+  ordering DOUBLE PRECISION NOT NULL,
+  PRIMARY KEY (unit_fk),
+  FOREIGN KEY (container_fk) REFERENCES container(id) ON DELETE CASCADE,
+  FOREIGN KEY (unit_fk) REFERENCES unit(id) ON DELETE CASCADE
 );

@@ -415,6 +415,7 @@ span.incident_blue {
   padding: 0;
   margin: 0;
   list-style: none;
+    min-height: 25px;
 }
 
 .unit_list > li {
@@ -481,6 +482,27 @@ span.incident_blue {
 
 .unit_state_multiple {
   background-color: #dddddd;
+}
+
+/**
+ *
+ */
+.unit_container {
+    display: block;
+    margin: 5px;
+    padding: 5px;
+    min-height: 25px;
+    border: solid 1px #888888;
+}
+
+.highlight {
+    min-height: 40px;
+    min-width: 40px;
+    background-color: #ff4444;
+}
+
+.list-group-item {
+    border: solid 1px #888888;
 }
 
 /**
