@@ -182,6 +182,7 @@ public class TaskService {
 
         checkEmpty(i, user);
 
+        // TODO Avoid Concurrent...Exception (Delete from i.getUnits() on Detach)
         for(Integer unitId : i.getUnits().keySet()) {
             if(i.getState() == IncidentState.Done) {
                 log.logWithIDs(user.getId(), LogEntryType.UNIT_AUTO_DETACH, i.getConcern(), unitId, i.getId(), true);
