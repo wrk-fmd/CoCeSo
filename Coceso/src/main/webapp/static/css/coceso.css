@@ -232,6 +232,12 @@ button.btn.btn-sm, button.btn.btn-xs {
   top: 0;
   left: 0;
 }
+/**
+ * Overflow has to be visible for Dropdown Menu in Unit List
+ */
+ul.dropdown-menu {
+    overflow: visible;
+}
 
 input[type="number"] {
   display: inline-block;
@@ -403,7 +409,7 @@ span.incident_blue {
 /**
  * Forms
  */
-.incident_form, .unit_form {
+.incident_form, .unit_form .patient_form {
   min-width: 444px;
 }
 
@@ -490,7 +496,7 @@ span.incident_blue {
     display: block;
     margin: 5px;
     padding: 10px 5px;
-    border: solid 1px #888888;
+    /*border: solid 1px #888888;*/
 }
 
 .highlight {
@@ -498,8 +504,8 @@ span.incident_blue {
     background-color: #ff4444;
 }
 
-.list-group-item {
-    border: solid 1px #888888;
+.panel {
+    margin-bottom: 0;
 }
 
 /**

@@ -267,8 +267,20 @@ Coceso.UI = {
     this.openWindow(title, Coceso.Conf.contentBase + src, new Coceso.ViewModels.Units({}, options || {}), dialog);
     return false;
   },
+    /**
+     * Open the units overview with hierarchical View
+     *
+     */
+        // TODO Integrate in ViewModels of this original file....
+    openHierarchyUnits: function(title, src, options, dialog) {
+        var sUnits = new Coceso.ViewModels.Units({}, options || {});
+        var contVM = new ContainerViewModel(sUnits.filtered);
+        contVM.load();
+        this.openWindow(title, Coceso.Conf.contentBase + src, contVM, dialog);
+        return false;
+    },
   /**
-   * Open the units overview
+   * Open the unit edit Window
    *
    * @param {String} title
    * @param {String} src
@@ -2343,5 +2355,45 @@ Coceso.UI.Debug = new function() {
   };
 };
 
+/**
+ * Model and ViewModel for hierarchical View in Unit Window
+ */
+function Container(data, filtered) {
+    var cont = this;
+
+    cont.name = ko.observable(data.name);
+
+    cont.subContainer = ko.observableArray($.map(data.subContainer, function(u) { return new Container(u, filtered)}));
+    cont.unitIds = ko.observableArray(data.unitIds);
+
+    cont.filtered = filtered;
+
+    // Contain all Units (Full Object) from filtered, that id is in unitIds
+    cont.units = ko.computed(function() {
+        return ko.utils.arrayFilter(cont.filtered(), function(unit) {
+            return cont.unitIds().indexOf(unit.id()) >= 0;
+        });
+    });
+
+}
+
+function ContainerViewModel(filtered) {
+    var self = this;
+
+    self.filtered = filtered;
+    self.top = ko.observable(new Container({name: "Loading...", unitIds:[], subContainer: []}, ko.observableArray([])));
+
+    self.load = function() {
+        $.getJSON(Coceso.Conf.jsonBase+"unitContainer/getSlim", function(topContainer) {
+            self.top(new Container(topContainer, self.filtered));
+
+            // Bind Toggle after data loading
+            $('.unit-view-toggle').click(function(){
+                //TODO Change this definition if another element is used for toggle
+                $(this).parent('.panel').children('.panel-body').slideToggle();
+            });
+        });
+    };
+}
 
 

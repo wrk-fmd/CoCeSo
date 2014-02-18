@@ -2,6 +2,7 @@ package at.wrk.coceso.controller.data;
 
 import at.wrk.coceso.dao.UnitContainerDao;
 import at.wrk.coceso.entity.helper.SlimUnit;
+import at.wrk.coceso.entity.helper.SlimUnitContainer;
 import at.wrk.coceso.entity.helper.UnitContainer;
 import at.wrk.coceso.service.ContainerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,17 @@ public class UnitContainerController {
         } catch(NumberFormatException e) {
             return null;
         }
+    }
+
+    /**
+     * Full Hierarchy,
+     * @param concernId Cookie with active Concern
+     * @return Top Slim Container with full Hierarchy, WITH Spare Units
+     */
+    @RequestMapping(value = "getSlim", produces = "application/json")
+    @ResponseBody
+    public SlimUnitContainer getSlim(@CookieValue(value = "active_case", defaultValue = "0") String concernId){
+        return new SlimUnitContainer(getWithSpare(concernId));
     }
 
 

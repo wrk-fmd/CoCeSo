@@ -20,7 +20,7 @@
     <script src="<c:url value="/static/js/knockout-sortable.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/jquery.ui.touch-punch.js"/>" type="text/javascript"></script>
 
-    <script src="<c:url value="/static/js/container.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/static/js/container.edit.js"/>" type="text/javascript"></script>
 
     <style type="text/css">
         .unit_list {
@@ -56,33 +56,41 @@
 
     <div>
 
-        <div class="unit_container list-group" data-bind="template: {name: 'container-template', data: top}"></div>
+        <div class="unit_container" data-bind="template: {name: 'container-template', data: top}"></div>
 
         <script type="text/html" id="container-template">
-            <div class="list-group-item">
-                <%-- HEADER --%>
-                <strong data-bind="text: name() == '' ? '---' : name(), click: select, visible: !selected()"></strong>
-                <form data-bind="submit: triggerBlur" style="display: inline;"><input type="text" data-bind="value: name, event: {blur: update}, visibleAndSelect: selected" /></form>
-                <button class="btn btn-danger" data-bind="click: remove, visible: id != head()"><span class="glyphicon glyphicon-minus-sign"></span></button>
-                <%-- /HEADER --%>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <%-- HEADER --%>
+                        <span data-bind="text: name() == '' ? '---' : name(), click: select, visible: !selected()"></span>
+                        <form data-bind="submit: triggerBlur" style="display: inline;"><input type="text" data-bind="value: name, event: {blur: update}, visibleAndSelect: selected" /></form>
 
-                <%-- UNITS --%>
-                <ul class="unit_list" data-bind="sortable: {data: units, connectClass: 'unit_list', afterMove: updateUnit}">
-                    <li>
-                        <a href="#" class="unit_state">
-                            <span class="ui-corner-all unit_state_ad" data-bind="text: call"></span>
-                        </a>
-                    </li>
-                </ul>
-                <%-- /UNITS --%>
+                        <button class="btn btn-danger" data-bind="click: remove, visible: id != head()"><span class="glyphicon glyphicon-minus-sign"></span></button>
+                        <%-- /HEADER --%>
+                    </div>
+                </div>
 
-                <%-- Sub Container --%>
-                <div class="unit_container list-group" data-bind="sortable: {template: 'container-template', data: subContainer, connectClass: 'unit_container', afterMove: drop, options: {placeholder: 'highlight'}}"></div>
-                <button class="btn btn-success" data-bind="click: addContainer"><span class="glyphicon glyphicon-plus-sign"></span></button>
-                <%-- /Sub Container --%>
+                <div class="panel-body">
+                    <%-- UNITS --%>
+                    <ul class="unit_list" data-bind="sortable: {data: units, connectClass: 'unit_list', afterMove: updateUnit}">
+                        <li>
+                            <a href="#" class="unit_state">
+                                <span class="ui-corner-all unit_state_ad" data-bind="text: call"></span>
+                            </a>
+                        </li>
+                    </ul>
+                    <%-- /UNITS --%>
+
+                    <%-- Sub Container --%>
+                    <div class="unit_container" data-bind="sortable: {template: 'container-template', data: subContainer, connectClass: 'unit_container', afterMove: drop, options: {placeholder: 'highlight'}}"></div>
+                    <button class="btn btn-success" data-bind="click: addContainer"><span class="glyphicon glyphicon-plus-sign"></span></button>
+                    <%-- /Sub Container --%>
 
 
+                </div>
             </div>
+
         </script>
 
         <div id="spare">

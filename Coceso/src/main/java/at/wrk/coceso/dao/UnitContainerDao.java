@@ -1,6 +1,7 @@
 package at.wrk.coceso.dao;
 
 import at.wrk.coceso.entity.helper.SlimUnit;
+import at.wrk.coceso.entity.helper.SlimUnitContainer;
 import at.wrk.coceso.entity.helper.UnitContainer;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

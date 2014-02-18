@@ -32,6 +32,12 @@ public class MainController {
         return "main_content/unit";
     }
 
+    @RequestMapping(value = "unit_hierarchy.html", method = RequestMethod.GET)
+    public String unitHierarchy() {
+
+        return "main_content/unit_hierarchy";
+    }
+
     @RequestMapping(value = "unit_form.html", method = RequestMethod.GET)
     public String unitForm() {
 

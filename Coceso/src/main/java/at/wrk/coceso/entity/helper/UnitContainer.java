@@ -3,6 +3,10 @@ package at.wrk.coceso.entity.helper;
 
 import java.util.List;
 
+/**
+ * Full Version of Container
+ * List <code>units</code> contains Objects of <code>SlimUnit</code>
+ */
 public class UnitContainer {
     private int id;
     private int concernId;

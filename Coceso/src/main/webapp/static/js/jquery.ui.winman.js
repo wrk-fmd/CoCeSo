@@ -108,6 +108,10 @@ $.widget("ui.winman", {
     var el = $("<div class='dialog_window' id='" + id + "' title='" + title + "'></div>");
     el.load(src + " .ajax_content", function(response, status, request) {
       el.find("*").each(function(i, child) {
+          // !!! Templates otherwise not usable !!!
+          if($(child).is("script")) {
+              return;
+          }
         $(child).prependAttr("id", id + "-");
         $(child).prependAttr("for", id + "-");
         $(child).prependAttr("name", id + "-");
