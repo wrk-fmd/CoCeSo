@@ -49,7 +49,9 @@
             Coceso.Conf.jsonBase = "${pageContext.request.contextPath}/data/";
             Coceso.Conf.contentBase = "${pageContext.request.contextPath}/main/";
             Coceso.Conf.langBase = "${pageContext.request.contextPath}/static/i18n/";
+            Coceso.Conf.language = "<spring:message code="this.languageCode" />";
             Coceso.Conf.keyboardControl = false;
+            Coceso.Conf.debug = true;
 
             Coceso.startup();
 
@@ -64,9 +66,7 @@
                         Coceso.UI.openIncident("<spring:message code='label.incident' /> / <spring:message code='label.add' />", 'incident_form.html');
                     }
                 });
-                // TODO Prevent new Incident Window on Keydown in Input Tags
-                $( "input" ).unbind("keydown");
-                $( "textarea" ).unbind("keydown");
+                // TODO !! Prevent new Incident Window on Keydown in Input Tags
             }
 
 
@@ -81,8 +81,9 @@
         </div>
 
         <ul class="nav navbar-nav">
+            <%-- CALLTAKER --%>
             <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Calltaker <b class="caret"></b></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><spring:message code="label.calltaker" /> <b class="caret"></b></a>
                 <ul class="dropdown-menu">
                     <li>
                         <a href="#"
@@ -99,8 +100,9 @@
                     </li>
                 </ul>
             </li>
+            <%-- DISPONENT --%>
             <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Disponent <b class="caret"></b></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><spring:message code="label.dispatcher" /> <b class="caret"></b></a>
                 <ul class="dropdown-menu">
                     <li>
                         <a href="#"
@@ -115,6 +117,25 @@
                     </li>
                 </ul>
             </li>
+            <%-- RADIO OPERATOR --%>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><spring:message code="label.radio_operator" /> <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a href="#"
+                           title="<spring:message code='label.incident' /> / <spring:message code='label.add' />"
+                           onclick="return Coceso.UI.openIncident(this.title, 'incident_form.html');"><spring:message
+                                code="label.incident.add"/></a>
+                    </li>
+                    <li>
+                        <a href="#" title="<spring:message code='label.main.unit.assigned' />"
+                           onclick="return Coceso.UI.openUnits(this.title, 'unit.html', {filter: ['radio']});">
+                            <spring:message code="label.main.unit.assigned"/>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <%-- UNITS --%>
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown"><spring:message code="label.units"/> <b
                         class="caret"></b></a>
@@ -139,6 +160,7 @@
                     </li>
                 </ul>
             </li>
+            <%-- INCIDENTS --%>
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                     <spring:message code="label.incidents"/>
@@ -173,23 +195,61 @@
                     </li>
                 </ul>
             </li>
+            <%-- WINDOWS --%>
             <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><spring:message code="label.main.windows"/>
-                    <b class="caret"></b></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <spring:message code="label.main.windows"/>
+                    <b class="caret"></b>
+                </a>
                 <ul class="dropdown-menu">
-                    <li><a href="#" title="<spring:message code='label.log' />"
-                           onclick="return Coceso.UI.openLogs(this.title, 'log.html');"><spring:message
-                            code="label.log"/></a></li>
+                    <li>
+                        <a href="#" title="<spring:message code='label.log' />"
+                           onclick="return Coceso.UI.openLogs(this.title, 'log.html');">
+                            <spring:message code="label.log"/>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" title="<spring:message code="label.debug" />" onclick="return Coceso.UI.openDebug(this.title, 'debug.html');">
+                            <spring:message code="label.debug" />
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" title="<spring:message code="label.main.license" />" onclick="return Coceso.UI.openExternalStatic(this.title, '<c:url value="/static/license.html" />');">
+                            <spring:message code="label.main.license" />
+                        </a>
+                    </li>
+                    <li data-bind="visible: Coceso.Conf.debug">
+                        <a href="#" title="STATIC! NOT WORKING - <spring:message code="label.patient" />" onclick="return Coceso.UI.openStatic(this.title, 'patient_form.html');">
+                            TESTING ONLY: <spring:message code="label.patient" />
+                        </a>
+                    </li>
                 </ul>
             </li>
-            <li><a href="<c:url value="/edit/"/>" target="_blank"><spring:message code="label.nav.edit_concern"/></a>
+            <%-- External (of Main Program) Links --%>
+            <li>
+                <a href="<c:url value="/edit/"/>" target="_blank"><spring:message code="label.nav.edit_concern"/></a>
             </li>
-            <li><a href="<c:url value="/dashboard"/>?concern=${concern.id}" target="_blank"><spring:message
-                    code="label.nav.dashboard"/></a></li>
-            <li><a href="#" title="Debug" onclick="return Coceso.UI.openDebug(this.title, 'debug.html');">Debug</a></li>
+            <li>
+                <a href="<c:url value="/dashboard"/>?concern=${concern.id}" target="_blank">
+                    <spring:message code="label.nav.dashboard"/>
+                </a>
+            </li>
         </ul>
-        <ul class="nav navbar-nav navbar-right">
-            <li><a href="<c:url value="/welcome" />" class="navbar-brand"><strong>${concern.name}</strong></a></li>
+        <%-- Notifications, Concern Name, Clock --%>
+        <ul id="nav-notifications" class="nav navbar-nav navbar-right">
+            <li data-bind="visible: Coceso.Conf.debug"><!-- TODO Remove in Realease -->
+                <a href="#" title="<spring:message code="label.main.unit.assigned" />">
+                    <span class="glyphicon glyphicon-earphone"></span>
+                    <span class="badge">42</span><!-- TODO data-bind -->
+                </a>
+            </li>
+            <li data-bind="visible: Coceso.Conf.debug"><!-- TODO Remove in Realease -->
+                <a href="#" title="<spring:message code="label.main.unit.free" />">
+                    <span class="glyphicon glyphicon-exclamation-sign"></span>
+                    <span class="badge">1</span><!-- TODO data-bind -->
+                </a>
+            </li>
+            <li><a href="<c:url value="/welcome" />" class="navbar-brand" target="_blank"><strong>${concern.name}</strong></a></li>
             <li><span id="clock" class="navbar-brand"></span></li>
         </ul>
     </nav>

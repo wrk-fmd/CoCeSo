@@ -11,6 +11,7 @@
 
     <link href="<c:url value="/static/css/bootstrap.css" />" rel="stylesheet">
     <link href="<c:url value="/static/css/bootstrap-theme.css" />" rel="stylesheet">
+    <link href="<c:url value="/static/css/flags.css"/>" rel="stylesheet" />
     <link href="<c:url value="/static/css/coceso.css"/>" rel="stylesheet">
 
     <script src="<c:url value="/static/js/jquery.js"/>" type="text/javascript"></script>

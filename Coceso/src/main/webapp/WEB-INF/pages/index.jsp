@@ -9,31 +9,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="icon" href="<c:url value="/static/favicon.ico"/>" type="image/x-icon">
-    <!-- Bootstrap -->
-    <c:url var="bootstrap" value="/static/css/bootstrap.css" />
-    <link href="${bootstrap}" rel="stylesheet">
 
-    <c:url var="bootstrap_theme" value="/static/css/bootstrap-theme.css" />
-    <link href="${bootstrap_theme}" rel="stylesheet">
+    <link href="<c:url value="/static/css/bootstrap.css" />" rel="stylesheet">
+    <link href="<c:url value="/static/css/bootstrap-theme.css" />" rel="stylesheet">
+    <link href="<c:url value="/static/css/flags.css"/>" rel="stylesheet" />
 
 </head>
 <body>
 
     <div class="container">
         <div class="page-header">
-            <h1 class="h1"><spring:message code="label.welcome"/></h1>
+            <h3 class="h1"><spring:message code="label.welcome"/></h3>
         </div>
         <div>
-            This will be filled with information....
+            <spring:message code="text.welcome"/>
         </div>
-        <div class="page-header">
-            <h2><spring:message code="label.nav.main"/></h2>
-        </div>
-        <div>
 
+
+        <div class="page-header">
+            <h3>
+                <spring:message code="label.getting_started" />
+            </h3>
+        </div>
+        <div>
+            <spring:message code="text.getting_started" />
+        </div>
+
+
+        <div class="page-header">
+            <h3><spring:message code="label.nav.main"/></h3>
+        </div>
+        <div>
             <a href="<c:url value="/welcome" />" class="btn-lg btn-success"><spring:message code="label.nav.login"/></a>
         </div>
 
+
+        <div class="page-header">
+            <h3>
+                <spring:message code="label.main.license" />
+            </h3>
+        </div>
+        <div>
+            <a href="<c:url value="/static/license.html"/>"><spring:message code="text.license" /></a>
+        </div>
     </div>
 
 

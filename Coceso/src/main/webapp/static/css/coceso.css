@@ -508,6 +508,10 @@ span.incident_blue {
     margin-bottom: 0;
 }
 
+.panel-heading {
+    padding: 5px 15px;
+}
+
 /**
  * License
  */

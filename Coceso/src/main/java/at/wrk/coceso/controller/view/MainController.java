@@ -56,11 +56,11 @@ public class MainController {
         return "main_content/incident_form";
     }
 
-    @RequestMapping(value = "license.html", method = RequestMethod.GET)
+    /*@RequestMapping(value = "license.html", method = RequestMethod.GET)
     public String license() {
 
         return "main_content/license";
-    }
+    }*/
 
     @RequestMapping(value = "log.html", method = RequestMethod.GET)
     public String log() {
@@ -72,5 +72,11 @@ public class MainController {
     public String debug() {
 
         return "main_content/debug";
+    }
+
+    @RequestMapping(value = "patient_form.html", method = RequestMethod.GET)
+    public String patientForm() {
+
+        return "main_content/patient_form";
     }
 }

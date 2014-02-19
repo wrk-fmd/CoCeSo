@@ -41,7 +41,9 @@ Coceso.startup = function() {
         name: "messages",
         path: Coceso.Conf.langBase,
         mode: "map",
-        cache: true
+        cache: true,
+        // Load Language from spring:message instead of browser
+        language: Coceso.Conf.language
     });
 
     //Initialize clock
@@ -103,6 +105,8 @@ Coceso.Conf = {
   contentBase: "",
   jsonBase: "",
   langBase: "",
+  language: "en",
+  debug: false,
   keyboardControl: false,
   openIncidentKey: 32
 };
@@ -331,6 +335,10 @@ Coceso.UI = {
    */
   openStatic: function(title, src) {
     this.openWindow(title, Coceso.Conf.contentBase + src, {});
+    return false;
+  },
+  openExternalStatic: function(title, src) {
+    this.openWindow(title, src, {});
     return false;
   }
 };

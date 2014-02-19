@@ -13,9 +13,9 @@
     <%-- For Autocomplete!! --%>
     <link href="<c:url value='/static/css/ui-bootstrap/jquery-ui-1.10.3.custom.css' />" rel="stylesheet">
 
-    <link href="<c:url value='/static/css/bootstrap.css' />" rel="stylesheet">
-
-    <link href="<c:url value='/static/css/bootstrap-theme.css' />" rel="stylesheet">
+    <link href="<c:url value="/static/css/bootstrap.css" />" rel="stylesheet">
+    <link href="<c:url value="/static/css/bootstrap-theme.css" />" rel="stylesheet">
+    <link href="<c:url value="/static/css/flags.css"/>" rel="stylesheet" />
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 

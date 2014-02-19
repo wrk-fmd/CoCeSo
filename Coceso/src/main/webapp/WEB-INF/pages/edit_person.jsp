@@ -14,12 +14,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="icon" href="<c:url value="/static/favicon.ico"/>" type="image/x-icon">
-    <!-- Bootstrap -->
-    <c:url var="bootstrap" value="/static/css/bootstrap.css" />
-    <link href="${bootstrap}" rel="stylesheet">
 
-    <c:url var="bootstrap_theme" value="/static/css/bootstrap-theme.css" />
-    <link href="${bootstrap_theme}" rel="stylesheet">
+    <link href="<c:url value="/static/css/bootstrap.css" />" rel="stylesheet">
+    <link href="<c:url value="/static/css/bootstrap-theme.css" />" rel="stylesheet">
+    <link href="<c:url value="/static/css/flags.css"/>" rel="stylesheet" />
 
 </head>
 <body>

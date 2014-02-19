@@ -24,8 +24,18 @@
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown"><spring:message code="label.language"/> <b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                    <li><a href="?lang=en"><spring:message code="label.language.en"/></a></li>
-                    <li><a href="?lang=de"><spring:message code="label.language.de"/></a></li>
+                    <li>
+                        <a href="?lang=en">
+                            <img src="<c:url value="/static/imgs/blank.gif"/>" class="flag flag-us" alt="<spring:message code="label.language.en"/>" />
+                            <spring:message code="label.language.en"/>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="?lang=de">
+                            <img src="<c:url value="/static/imgs/blank.gif"/>" class="flag flag-at" alt="<spring:message code="label.language.de"/>" />
+                            <spring:message code="label.language.de"/>
+                        </a>
+                    </li>
                 </ul>
             </li>
             <li><a href="<c:url value="/logout"/>"><spring:message code="label.nav.logout"/></a></li>
