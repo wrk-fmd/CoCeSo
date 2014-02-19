@@ -49,12 +49,26 @@
             Coceso.Conf.jsonBase = "${pageContext.request.contextPath}/data/";
             Coceso.Conf.contentBase = "${pageContext.request.contextPath}/main/";
             Coceso.Conf.langBase = "${pageContext.request.contextPath}/static/i18n/";
+            Coceso.Conf.keyboardControl = false;
 
             Coceso.startup();
-            Coceso.UI.openHierarchyUnits("<spring:message code="label.main.unit.hierarchy"/>", "unit_hierarchy.html");
+
+            Coceso.UI.openHierarchyUnits("<spring:message code="label.units"/>: <spring:message code="label.main.unit.hierarchy"/>", "unit_hierarchy.html");
             Coceso.UI.openIncidents("<spring:message code='label.main.incident.active' />", 'incident.html', {filter: ['overview', 'active']}, {
                 position: {at: "left+70% top"}
             });
+
+            if(Coceso.Conf.keyboardControl) {
+                $( "body" ).keydown(function( event ) {
+                    if(event.which == Coceso.Conf.openIncidentKey) {
+                        Coceso.UI.openIncident("<spring:message code='label.incident' /> / <spring:message code='label.add' />", 'incident_form.html');
+                    }
+                });
+                // TODO Prevent new Incident Window on Keydown in Input Tags
+                $( "input" ).unbind("keydown");
+                $( "textarea" ).unbind("keydown");
+            }
+
 
         });
     </script>

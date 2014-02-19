@@ -37,27 +37,32 @@ var Coceso = {};
  */
 Coceso.startup = function() {
   //Initialize localization
-  $.i18n.properties({
-    name: "messages",
-    path: Coceso.Conf.langBase,
-    mode: "map",
-    cache: true
-  });
+    $.i18n.properties({
+        name: "messages",
+        path: Coceso.Conf.langBase,
+        mode: "map",
+        cache: true
+    });
 
-  //Initialize clock
-  Coceso.Clock.start();
+    //Initialize clock
+    Coceso.Clock.start();
 
-  //Initialize window management
-  $("#taskbar").winman();
+    //Initialize window management
+    $("#taskbar").winman();
 
-  $(document).on("show.bs.dropdown", ".ui-dialog .dropdown", function(event) {
-    $(event.target).find(".dropdown-menu").css({top: 0, left: 0}).position({at: "left bottom", my: "left top", of: $(event.target).find(".dropdown-toggle").first()});
-    return true;
-  });
+    $(document).on("show.bs.dropdown", ".ui-dialog .dropdown", function(event) {
+        $(event.target).find(".dropdown-menu").css({top: 0, left: 0}).position({at: "left bottom", my: "left top", of: $(event.target).find(".dropdown-toggle").first()});
+        return true;
+    });
 
-  //Preload incidents and units
-  Coceso.Ajax.getAll("incidents");
-  Coceso.Ajax.getAll("units");
+    //Preload incidents and units
+    Coceso.Ajax.getAll("incidents");
+    Coceso.Ajax.getAll("units");
+
+
+    $( "#other" ).click(function() {
+        $( "#target" ).keypress();
+    });
 };
 
 /**
@@ -97,7 +102,9 @@ Coceso.Conf = {
   interval: 10000,
   contentBase: "",
   jsonBase: "",
-  langBase: ""
+  langBase: "",
+  keyboardControl: false,
+  openIncidentKey: 32
 };
 
 /**
@@ -163,7 +170,7 @@ Coceso.Models = {
     casusNr: "",
     info: "",
     caller: "",
-    type: null,
+    type: Coceso.Constants.Incident.type.task,
     taskState: null
   },
   /**
@@ -1947,15 +1954,26 @@ Coceso.ViewModels.Unit = function(data, options) {
   };
 
   /**
-   * Open incident form
+   * Open incident form with Unit attached
    *
    * @return {void}
    */
   this.addIncident = function() {
-    options = {caller: self.call(), units: {}};
+    options = {units: {}};
     options.units[self.id()] = null;
     Coceso.UI.openIncident("Add Incident", "incident_form.html", options);
   };
+
+    /**
+     * Open incident form with Unit as caller
+     * BO is set to Position of Unit, BlueLight is true by default
+     *
+     * @return {void}
+     */
+    this.reportIncident = function() {
+        options = {caller: self.call(), bo: self.position, blue: true};
+        Coceso.UI.openIncident("Add Incident", "incident_form.html", options);
+    };
 
   /**
    * Open in a form
@@ -1967,7 +1985,7 @@ Coceso.ViewModels.Unit = function(data, options) {
   };
 
   /**
-   * Open in a form
+   * Open Log of this Unit
    *
    * @return {void}
    */

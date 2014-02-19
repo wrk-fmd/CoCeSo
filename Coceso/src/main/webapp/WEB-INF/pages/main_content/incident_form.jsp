@@ -72,7 +72,12 @@
       <div class="clearfix">
         <div class="form-group col-md-6">
           <label for="bo" class="sr-only"><spring:message code="label.incident.bo" />:</label>
-          <textarea id="bo" name="bo" rows="3" class="form-control" placeholder="<spring:message code='label.incident.bo' />" data-bind="disable: disableBO, value: bo.info, css: {'form-changed': bo.info.localChange}, valueUpdate: 'afterkeydown'"></textarea>
+          <textarea id="bo" name="bo" rows="3" class="form-control"
+                    placeholder="<spring:message code='label.incident.bo' />"
+                    data-bind="disable: disableBO, value: bo.info, css: {'form-changed': bo.info.localChange}, valueUpdate: 'afterkeydown'"
+                    autofocus>
+
+          </textarea>
         </div>
 
         <div class="form-group col-md-6">

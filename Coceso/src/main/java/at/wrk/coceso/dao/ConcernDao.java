@@ -14,7 +14,7 @@ import java.util.List;
 @Repository
 public class ConcernDao extends CocesoDao<Concern> {
 
-    private final String prefix = "select * from concern ";
+    private final String prefix = "SELECT * FROM concern ";
 
     @Autowired
     ConcernMapper concernMapper;
@@ -27,23 +27,23 @@ public class ConcernDao extends CocesoDao<Concern> {
     @Override
     public Concern getById(int id) {
         if(id < 1) {
-            Logger.error("CaseDao.getById(int): Invalid ID: " + id);
+            //Logger.debug("CaseDao.getById(int): Invalid ID: " + id);
             return null;
         }
 
-        String q = prefix+"where id = ?";
+        String q = prefix+"WHERE id = ?";
         Concern caze;
 
         try {
             caze = jdbc.queryForObject(q, new Integer[] {id}, concernMapper);
         }
         catch(IncorrectResultSizeDataAccessException e) {
-            Logger.error("CaseDao.getById(int): requested id: "+id
+            Logger.debug("ConcernDao.getById(int): requested id: "+id
                     +"; IncorrectResultSizeDataAccessException: "+e.getMessage());
             return null;
         }
         catch(DataAccessException dae) {
-            Logger.error("CaseDao.getById(int): requested id: "+id+"; DataAccessException: "+dae.getMessage());
+            Logger.warning("CaseDao.getById(int): requested id: "+id+"; DataAccessException: "+dae.getMessage());
             return null;
         }
 

@@ -63,10 +63,11 @@
 
             <li class="divider"></li>
             <!-- ko if: portable -->
-            <li><a href="#" title="New Incident>" data-bind="click: addIncident">New Incident</a></li>
+            <li><a href="#" title="<spring:message code="label.unit.new_incident" />" data-bind="click: addIncident"><spring:message code="label.unit.new_incident" /></a></li>
             <!-- /ko -->
+            <li><a href="#" title="<spring:message code="label.unit.report_incident" />" data-bind="click: reportIncident"><spring:message code="label.unit.report_incident" /></a></li>
             <li><a href="#" title="<spring:message code="label.unit.edit" />" data-bind="click: openForm"><spring:message code="label.unit.edit" /></a></li>
-            <li><a href="#" title="Log" data-bind="click: openLog">View Log</a></li>
+            <li><a href="#" title="<spring:message code="label.log.view" />" data-bind="click: openLog"><spring:message code="label.log.view" /></a></li>
           </ul>
         </li>
       </ul>
