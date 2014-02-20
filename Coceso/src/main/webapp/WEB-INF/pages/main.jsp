@@ -133,7 +133,7 @@
                     <li>
                         <a href="#" title="<spring:message code='label.main.unit.for_dispo' />"
                            onclick="return Coceso.UI.openUnits(this.title, 'unit.html', {filter: ['radio']});">
-                            <span class="glyphicon glyphicon-tasks"></span> <spring:message code="label.main.unit.assigned"/>
+                            <span class="glyphicon glyphicon-tasks"></span> <spring:message code="label.main.unit.for_dispo"/>
                         </a>
                     </li>
                 </ul>
@@ -163,7 +163,7 @@
                     </li>
                     <li>
                         <a href="#" title="<spring:message code='label.main.unit.available' />"
-                           onclick="return Coceso.UI.openUnits(this.title, 'unit.html', {filter: ['available']});">
+                           onclick="return Coceso.UI.openUnits(this.title, 'unit.html', {filter: ['available']}, { position: {at: 'left+40% bottom'}});">
                             <span class="glyphicon glyphicon-tasks"></span> <spring:message code="label.main.unit.available"/>
                         </a>
                     </li>
@@ -263,14 +263,14 @@
             </li>
             <li>
                 <a href="#" title="<spring:message code="label.main.unit.for_dispo" />"
-                   onclick="return Coceso.UI.openUnits(this.title, 'unit.html', {filter: ['radio']}, {});">
+                   onclick="return Coceso.UI.openUnits(this.title, 'unit.html', {filter: ['radio']}, { position: {at: 'left+30% bottom'}});">
                     <span class="glyphicon glyphicon-earphone"></span>
                     <span class="badge" data-bind="text: radioCounter, css: cssRadio"></span>
                 </a>
             </li>
             <li>
                 <a href="#" title="<spring:message code="label.main.unit.free" />"
-                   onclick="return Coceso.UI.openUnits(this.title, 'unit.html', {filter: ['free']}, {});">
+                   onclick="return Coceso.UI.openUnits(this.title, 'unit.html', {filter: ['free']}, { position: {at: 'left bottom'}});">
                     <span class="glyphicon glyphicon-exclamation-sign"></span>
                     <span class="badge" data-bind="text: freeCounter, css: cssFree"></span>
                 </a>

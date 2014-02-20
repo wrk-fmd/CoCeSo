@@ -254,7 +254,7 @@ Coceso.UI = {
    * @return {boolean}
    */
   openIncidents: function(title, src, options, dialog) {
-    this.openWindow(title, Coceso.Conf.contentBase + src, new Coceso.ViewModels.Incidents({}, options || {}), $.extend({ position: {at: "left+70% center"}}, dialog));
+    this.openWindow(title, Coceso.Conf.contentBase + src, new Coceso.ViewModels.Incidents({}, options || {}), $.extend({ position: {at: "left+70% top+30%"}}, dialog));
     return false;
   },
   /**
@@ -266,7 +266,7 @@ Coceso.UI = {
    * @return {boolean}
    */
   openIncident: function(title, src, data) {
-    this.openWindow(title, Coceso.Conf.contentBase + src, new Coceso.ViewModels.Incident( data || {} ), { position: {at: "left+30% top"}});
+    this.openWindow(title, Coceso.Conf.contentBase + src, new Coceso.ViewModels.Incident( data || {} ), { position: {at: "left+30% top+10%"}});
     return false;
   },
   /**
@@ -302,7 +302,7 @@ Coceso.UI = {
    * @return {boolean}
    */
   openUnit: function(title, src, data) {
-    this.openWindow(title, Coceso.Conf.contentBase + src, new Coceso.ViewModels.Unit(data || {}), { position: {at: "left+10% center"}});
+    this.openWindow(title, Coceso.Conf.contentBase + src, new Coceso.ViewModels.Unit(data || {}), { position: {at: "left+10% top+20%"}});
     return false;
   },
   /**
@@ -314,7 +314,7 @@ Coceso.UI = {
    * @return {boolean}
    */
   openLogs: function(title, src, options) {
-    this.openWindow(title, Coceso.Conf.contentBase + src, new Coceso.ViewModels.Logs({}, options || {}), { position: {at: "right bottom"}});
+    this.openWindow(title, Coceso.Conf.contentBase + src, new Coceso.ViewModels.Logs({}, options || {}), { position: {at: "left+30% center"}});
     return false;
   },
   /**
@@ -326,7 +326,7 @@ Coceso.UI = {
    * @return {boolean}
    */
   openDebug: function(title, src, options) {
-    this.openWindow(title, Coceso.Conf.contentBase + src, this.Debug, { position: {at: "right bottom"}});
+    this.openWindow(title, Coceso.Conf.contentBase + src, this.Debug, { position: {at: "left+30% center"}});
     return false;
   },
   /**
@@ -337,14 +337,14 @@ Coceso.UI = {
    * @return {boolean}
    */
   openStatic: function(title, src) {
-    this.openWindow(title, Coceso.Conf.contentBase + src, {}, { position: {at: "right bottom"}});
+    this.openWindow(title, Coceso.Conf.contentBase + src, {}, { position: {at: "left+30% center"}});
     return false;
   },
     /*
      * src has to be a full URL!
      */
   openExternalStatic: function(title, src) {
-    this.openWindow(title, src, {}, { position: {at: "right bottom"}});
+    this.openWindow(title, src, {}, { position: {at: "left+30% center"}});
     return false;
   }
 };
