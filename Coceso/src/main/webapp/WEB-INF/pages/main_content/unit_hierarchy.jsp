@@ -79,7 +79,13 @@
         <div data-bind="foreach: subContainer">
             <div class="panel panel-default">
                 <div class="panel-heading unit-view-toggle">
-                    <h3 class="panel-title" data-bind="text: name"></h3>
+                    <h3 class="panel-title">
+                        <span data-bind="text: name"></span>
+                        <span class="pull-right">
+                            <span class="badge notification-ok" data-bind="text: availableCounter"></span>
+                            <span class="badge" data-bind="text: totalCounter"></span>
+                        </span>
+                    </h3>
                 </div>
                 <div class="panel-body">
 

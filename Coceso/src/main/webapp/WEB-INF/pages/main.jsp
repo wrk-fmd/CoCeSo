@@ -161,6 +161,12 @@
                             <spring:message code="label.main.unit.assigned"/>
                         </a>
                     </li>
+                    <li>
+                        <a href="#" title="<spring:message code='label.main.unit.available' />"
+                           onclick="return Coceso.UI.openUnits(this.title, 'unit.html', {filter: ['available']});">
+                            <spring:message code="label.main.unit.available"/>
+                        </a>
+                    </li>
                 </ul>
             </li>
             <%-- INCIDENTS --%>

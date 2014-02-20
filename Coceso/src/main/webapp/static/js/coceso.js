@@ -1207,6 +1207,13 @@ Coceso.ViewModels.Incident = function(data, options) {
     return (this.state() === Coceso.Constants.Incident.state.done);
   }, this);
 
+    /*
+     * True, if current Incident will be cancelled on next assign
+     */
+    this.isInterruptible = ko.computed(function() {
+        return (this.isStandby() || this.isToHome() || this.isHoldPosition() || this.isRelocation());
+    }, this);
+
   /**
    * Disable the "Task" type button
    *
@@ -1594,6 +1601,11 @@ Coceso.ViewModels.Units = function(data, options) {
       filter: {
         isFree: true
       }
+    },
+    available: {
+      filter: {
+        isAvailable: true
+      }
     }
   };
 
@@ -1738,6 +1750,7 @@ Coceso.ViewModels.Unit = function(data, options) {
     return (this.incidentCount() <= 0) && this.hasHome() && !this.isHome();
   }, this);
 
+
   /**
    * Unit has state "AD"
    *
@@ -1788,7 +1801,15 @@ Coceso.ViewModels.Unit = function(data, options) {
     }) !== null);
   }, this);
 
-  /**
+    /**
+     * Unit is available for a new Incident and 'EB'
+     * @type {boolean}
+     */
+    this.isAvailable = ko.computed(function() {
+        return (this.isEB() && (this.incidentCount() <= 0 || this.incidents.incidentlist()[0].isInterruptible()));
+    }, this);
+
+    /**
    * Disable the send home method
    *
    * @function
@@ -2473,6 +2494,23 @@ function Container(data, filtered) {
         });
     });
 
+    cont.availableCounter = ko.computed(function() {
+        var count = ko.utils.arrayFilter(cont.units(), function(unit) {
+            return unit.isAvailable();
+        }).length;
+        for(var i = 0; i < cont.subContainer().length; i++) {
+            count += cont.subContainer()[i].availableCounter();
+        }
+        return count;
+    });
+
+    cont.totalCounter = ko.computed(function() {
+        var count = cont.units().length;
+        for(var i = 0; i < cont.subContainer().length; i++) {
+            count += cont.subContainer()[i].totalCounter();
+        }
+        return count;
+    });
 }
 
 function ContainerViewModel(filtered) {

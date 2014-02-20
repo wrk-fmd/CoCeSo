@@ -42,10 +42,10 @@ public class TaskService {
                 return false;
         }
 
-        // Auto-Detach from all SingleUnit Incidents
+        // Auto-Detach from all SingleUnit Incidents and Relocation
         for(Integer incId : u.getIncidents().keySet()) {
             Incident inc = incidentService.getById(incId);
-            if(inc.getType().isSingleUnit()) {
+            if(inc.getType().isSingleUnit() || inc.getType() == IncidentType.Relocation) {
                 inc.setState(IncidentState.Done);
                 incidentService.update(inc, user);
                 taskDao.remove(inc.getId(), u.getId());
