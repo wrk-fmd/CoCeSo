@@ -105,6 +105,7 @@ Coceso.Clock = {
  */
 Coceso.Conf = {
   interval: 10000,
+  logEntryLimit: 30,
   contentBase: "",
   jsonBase: "",
   langBase: "",
@@ -226,7 +227,7 @@ Coceso.UI = {
    *
    * @param {String} title The title of the window
    * @param {String} src The source to load the HTML from
-   * @param {ViewModel} viewmodel The viewmodel to bind with
+   * @param {Object} viewmodel The viewmodel to bind with
    * @param {Object} options
    * @return {void}
    */
@@ -250,10 +251,10 @@ Coceso.UI = {
    * @param {String} src
    * @param {Object} options
    * @param {Object} dialog Dialog options
-   * @return {void}
+   * @return {boolean}
    */
   openIncidents: function(title, src, options, dialog) {
-    this.openWindow(title, Coceso.Conf.contentBase + src, new Coceso.ViewModels.Incidents({}, options || {}), dialog);
+    this.openWindow(title, Coceso.Conf.contentBase + src, new Coceso.ViewModels.Incidents({}, options || {}), $.extend({ position: {at: "left+70% center"}}, dialog));
     return false;
   },
   /**
@@ -262,10 +263,10 @@ Coceso.UI = {
    * @param {String} title
    * @param {String} src
    * @param {Object} data Additional incident data
-   * @return {void}
+   * @return {boolean}
    */
   openIncident: function(title, src, data) {
-    this.openWindow(title, Coceso.Conf.contentBase + src, new Coceso.ViewModels.Incident(data || {}));
+    this.openWindow(title, Coceso.Conf.contentBase + src, new Coceso.ViewModels.Incident( data || {} ), { position: {at: "left+30% top"}});
     return false;
   },
   /**
@@ -275,22 +276,21 @@ Coceso.UI = {
    * @param {String} src
    * @param {Object} options
    * @param {Object} dialog Dialog options
-   * @return {void}
+   * @return {boolean}
    */
   openUnits: function(title, src, options, dialog) {
-    this.openWindow(title, Coceso.Conf.contentBase + src, new Coceso.ViewModels.Units({}, options || {}), dialog);
+    this.openWindow(title, Coceso.Conf.contentBase + src, new Coceso.ViewModels.Units({}, options || {}), $.extend({ position: {at: "left+20% bottom"}}, dialog));
     return false;
   },
     /**
      * Open the units overview with hierarchical View
      *
      */
-        // TODO Integrate in ViewModels of this original file....
     openHierarchyUnits: function(title, src, options, dialog) {
         var sUnits = new Coceso.ViewModels.Units({}, options || {});
         var contVM = new ContainerViewModel(sUnits.filtered);
         contVM.load();
-        this.openWindow(title, Coceso.Conf.contentBase + src, contVM, dialog);
+        this.openWindow(title, Coceso.Conf.contentBase + src, contVM, $.extend({ position: {at: "left top"}}, dialog));
         return false;
     },
   /**
@@ -299,10 +299,10 @@ Coceso.UI = {
    * @param {String} title
    * @param {String} src
    * @param {Object} data
-   * @return {void}
+   * @return {boolean}
    */
   openUnit: function(title, src, data) {
-    this.openWindow(title, Coceso.Conf.contentBase + src, new Coceso.ViewModels.Unit(data || {}));
+    this.openWindow(title, Coceso.Conf.contentBase + src, new Coceso.ViewModels.Unit(data || {}), { position: {at: "left+10% center"}});
     return false;
   },
   /**
@@ -311,10 +311,10 @@ Coceso.UI = {
    * @param {String} title
    * @param {String} src
    * @param {Object} options
-   * @return {void}
+   * @return {boolean}
    */
   openLogs: function(title, src, options) {
-    this.openWindow(title, Coceso.Conf.contentBase + src, new Coceso.ViewModels.Logs({}, options || {}));
+    this.openWindow(title, Coceso.Conf.contentBase + src, new Coceso.ViewModels.Logs({}, options || {}), { position: {at: "right bottom"}});
     return false;
   },
   /**
@@ -323,10 +323,10 @@ Coceso.UI = {
    * @param {String} title
    * @param {String} src
    * @param {Object} options
-   * @return {void}
+   * @return {boolean}
    */
   openDebug: function(title, src, options) {
-    this.openWindow(title, Coceso.Conf.contentBase + src, this.Debug);
+    this.openWindow(title, Coceso.Conf.contentBase + src, this.Debug, { position: {at: "right bottom"}});
     return false;
   },
   /**
@@ -334,14 +334,17 @@ Coceso.UI = {
    *
    * @param {String} title
    * @param {String} src
-   * @return {void}
+   * @return {boolean}
    */
   openStatic: function(title, src) {
-    this.openWindow(title, Coceso.Conf.contentBase + src, {});
+    this.openWindow(title, Coceso.Conf.contentBase + src, {}, { position: {at: "right bottom"}});
     return false;
   },
+    /*
+     * src has to be a full URL!
+     */
   openExternalStatic: function(title, src) {
-    this.openWindow(title, src, {});
+    this.openWindow(title, src, {}, { position: {at: "right bottom"}});
     return false;
   }
 };
@@ -578,8 +581,8 @@ Coceso.ViewModels.ViewModel.prototype = Object.create({}, /** @lends Coceso.View
    *
    * @function
    * @param {String|Array} key The option to get
-   * @param {mixed} val The default value
-   * @return {mixed}
+   * @param {Object} val The default value
+   * @return {Object}
    */
   getOption: {
     value: function(key, val) {
@@ -2291,8 +2294,7 @@ Coceso.ViewModels.Logs = function(data, options) {
   };
 
   if (this.getOption("initial")) {
-      //TODO Set Limit of Log dynamically
-    this.load(this.getOption("url", "log/getLast/30"), this.getOption("autoload") ? Coceso.Conf.interval : false);
+    this.load(this.getOption("url", "log/getLast/"+Coceso.Conf.logEntryLimit), this.getOption("autoload") ? Coceso.Conf.interval : false);
   }
 
 };

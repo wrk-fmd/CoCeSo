@@ -10,7 +10,7 @@ public class Patient {
     private String insurance_number;
 
     private String diagnosis;
-    private String erType; //TODO find a better name...
+    private String erType;
 
     private String info;
 

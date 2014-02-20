@@ -147,6 +147,7 @@ $.widget("ui.winman", {
       }
     }, options);
 
+      //TODO Max-Height to option in Dialog-options?
     this.windows[id].dialog(options).css("maxHeight", window.innerHeight - 150).data("ui-dialog").uiDialog.draggable("option", "containment", $("#dialog_container"));
     this.element.append(this.buttons[id]);
 
