@@ -1747,7 +1747,7 @@ Coceso.ViewModels.Unit = function(data, options) {
    * Unit is 'free' (not at home, no Incident assigned
    */
   this.isFree = ko.computed(function() {
-    return (this.incidentCount() <= 0) && this.hasHome() && !this.isHome();
+    return (this.incidentCount() <= 0) && this.hasHome() && !this.isHome() && this.portable();
   }, this);
 
 
@@ -1806,7 +1806,7 @@ Coceso.ViewModels.Unit = function(data, options) {
      * @type {boolean}
      */
     this.isAvailable = ko.computed(function() {
-        return (this.isEB() && (this.incidentCount() <= 0 || this.incidents.incidentlist()[0].isInterruptible()));
+        return (this.portable() && this.isEB() && (this.incidentCount() <= 0 || this.incidents.incidentlist()[0].isInterruptible()));
     }, this);
 
     /**
