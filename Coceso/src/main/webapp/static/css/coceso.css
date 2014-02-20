@@ -490,7 +490,7 @@ span.incident_blue {
 }
 
 /**
- *
+ *   Unit Container definitions
  */
 .unit_container {
     display: block;
@@ -510,6 +510,17 @@ span.incident_blue {
 
 .panel-heading {
     padding: 5px 15px;
+}
+
+/**
+ * Notifications
+ */
+.notification-highlight {
+    background-color: #dd0000;
+}
+
+.notification-ok {
+    background-color: #00dd00;
 }
 
 /**

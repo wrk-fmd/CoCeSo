@@ -65,6 +65,9 @@ Coceso.startup = function() {
     $( "#other" ).click(function() {
         $( "#target" ).keypress();
     });
+
+    //Load Bindings for Notifications
+    ko.applyBindings(new Coceso.ViewModels.Notifications(), $("#nav-notifications").get(0));
 };
 
 /**
@@ -960,6 +963,12 @@ Coceso.ViewModels.Incidents = function(data, options) {
         state: Coceso.Constants.Incident.state.open
       }
     },
+    new_or_open: {
+        disable: {state: true},
+        filter: {
+            state: {val: [Coceso.Constants.Incident.state.new, Coceso.Constants.Incident.state.open]}
+        }
+    },
     completed: {
       disable: {state: true},
       filter: {
@@ -969,11 +978,11 @@ Coceso.ViewModels.Incidents = function(data, options) {
   };
 
   var filterOption = this.getOption("filter", []);
-
+  // TODO Working??
   this.disableFilter = {};
   for (var i in filterOption) {
     if (filters[filterOption[i]] && filters[filterOption[i]].disable) {
-      $.extend(true, this.disable, filters[filterOption[i]].disable);
+      this.disableFilter = $.extend(true, this.disable, filters[filterOption[i]].disable);
     }
   }
 
@@ -1220,6 +1229,13 @@ Coceso.ViewModels.Incident = function(data, options) {
     return (!this.getOption("writeable") || (this.id() && !this.isRelocation()));
   }, this);
 
+  /**
+   * If true, Incident is marked red and counted in the Notification Area
+   * @type {boolean}
+   */
+  self.notifyOpen = ko.computed(function() {
+      return (self.isOpen() || self.isNew());
+  });
   /**
    * Disable the "Transport" type button
    *
@@ -1573,6 +1589,11 @@ Coceso.ViewModels.Units = function(data, options) {
       filter: {
         hasAssigned: true
       }
+    },
+    free: {
+      filter: {
+        isFree: true
+      }
     }
   };
 
@@ -1710,6 +1731,12 @@ Coceso.ViewModels.Unit = function(data, options) {
     return (this.hasHome() && this.position.info() === this.home.info());
   }, this);
 
+  /**
+   * Unit is 'free' (not at home, no Incident assigned
+   */
+  this.isFree = ko.computed(function() {
+    return (this.incidentCount() <= 0) && this.hasHome() && !this.isHome();
+  }, this);
 
   /**
    * Unit has state "AD"
@@ -1868,7 +1895,7 @@ Coceso.ViewModels.Unit = function(data, options) {
       return "unit_state_multiple";
     }
     if (this.incidentCount() === 0) {
-      return (!this.hasHome() || this.isHome()) ? this.stateCss() : "unit_state_free";
+      return this.isFree() ? "unit_state_free" : this.stateCss() ;
     }
 
     var incident = this.incidents.incidentlist()[0];
@@ -2379,6 +2406,51 @@ Coceso.UI.Debug = new function() {
       data: data
     });
   };
+};
+
+/**
+ * ViewModel for Notifications
+ */
+Coceso.ViewModels.Notifications = function() {
+    var self = this;
+
+    self.incidents = new Coceso.ViewModels.Incidents({},{filter: ['overview', 'new_or_open']});
+    self.openIncidentCounter = ko.computed(function() {
+        return self.incidents.filtered().length;
+    });
+    self.openTransportCounter = ko.computed(function() {
+        var openTransports = ko.utils.arrayFilter(self.incidents.filtered(), function(inc) {
+            return inc.type() === Coceso.Constants.Incident.type.transport;
+        });
+        return openTransports.length;
+    });
+
+    self.radioUnits = new Coceso.ViewModels.Units({}, {filter: ['radio']});
+    self.radioCounter = ko.computed(function() {
+        return self.radioUnits.filtered().length;
+    });
+
+    self.freeUnits = new Coceso.ViewModels.Units({}, {filter: ['free']});
+    self.freeCounter = ko.computed(function() {
+        return self.freeUnits.filtered().length;
+    });
+
+    self.getCss = function(count) {
+        return count >= 1 ? "notification-highlight" : "notification-ok";
+    };
+
+    self.cssOpen = ko.computed(function() {
+        return self.getCss(self.openIncidentCounter());
+    });
+    self.cssTransport = ko.computed(function() {
+        return self.getCss(self.openTransportCounter());
+    });
+    self.cssRadio = ko.computed(function() {
+        return self.getCss(self.radioCounter());
+    });
+    self.cssFree = ko.computed(function() {
+        return self.getCss(self.freeCounter());
+    });
 };
 
 /**
