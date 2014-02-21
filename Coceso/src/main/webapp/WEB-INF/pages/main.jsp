@@ -248,6 +248,11 @@
         <%-- Notifications --%>
         <ul id="nav-notifications" class="nav navbar-nav navbar-right">
             <li>
+                <a href="#" title="<spring:message code="label.connection_status" />" onclick="return false;">
+                    <span class="glyphicon glyphicon-signal" data-bind="css: cssError"></span>
+                </a>
+            </li>
+            <li>
                 <a href="#" title="<spring:message code="label.main.incident.new_or_open" />"
                    onclick="return Coceso.UI.openIncidents(this.title, 'incident.html', {filter: ['overview', 'new_or_open'], showTabs: false}, {});">
                     <span class="glyphicon glyphicon-time"></span>

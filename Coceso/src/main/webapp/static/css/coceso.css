@@ -523,6 +523,15 @@ span.incident_blue {
     background-color: #00dd00;
 }
 
+.connection-error {
+    color: #dd0000;
+    font-size: larger;
+}
+.connection-ok {
+    color: #00dd00;
+    font-size: larger;
+}
+
 /**
  * License
  */

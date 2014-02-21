@@ -31,6 +31,13 @@ var _ = $.i18n.prop;
 var Coceso = {};
 
 /**
+ * Global vars
+ */
+Coceso.Global = {
+    notificationViewModel: {}
+};
+
+/**
  * Initialize the application
  *
  * @return {void}
@@ -45,6 +52,9 @@ Coceso.startup = function() {
         // Load Language from spring:message instead of browser
         language: Coceso.Conf.language
     });
+
+    //Set global Notification View Model
+    Coceso.Global.notificationViewModel = new Coceso.ViewModels.Notifications();
 
     //Initialize clock
     Coceso.Clock.start();
@@ -67,7 +77,7 @@ Coceso.startup = function() {
     });
 
     //Load Bindings for Notifications
-    ko.applyBindings(new Coceso.ViewModels.Notifications(), $("#nav-notifications").get(0));
+    ko.applyBindings(Coceso.Global.notificationViewModel, $("#nav-notifications").get(0));
 };
 
 /**
@@ -200,6 +210,19 @@ Coceso.Models = {
     home: {info: ""},
     incidents: {},
     taskState: null
+  },
+  /*
+   * Patient dummy
+   */
+  Patient: {
+    incident_id: null,
+    given_name: "",
+    sur_name: "",
+    insurance_number: "",
+    diagnosis: "",
+    erType: "",
+    info: "",
+    externalId: ""
   }
 };
 
@@ -421,10 +444,17 @@ Coceso.Ajax = {
             }
           });
         }
+        Coceso.Global.notificationViewModel.connectionError(false);
       },
       complete: function() {
         if (options.interval) {
           options.id = window.setTimeout(Coceso.Ajax.getAll, options.interval, type);
+        }
+      },
+      error: function(xhr) {
+        // 404: not found, 0: no connection to server, 200: error is thrown, because response is not a json (not authenticated)
+        if(xhr.status === 404 || xhr.status === 0 || xhr.status === 200) {
+          Coceso.Global.notificationViewModel.connectionError(true);
         }
       }
     });
@@ -2437,6 +2467,8 @@ Coceso.UI.Debug = new function() {
 Coceso.ViewModels.Notifications = function() {
     var self = this;
 
+    self.connectionError = ko.observable(false);
+
     self.incidents = new Coceso.ViewModels.Incidents({},{filter: ['overview', 'new_or_open']});
     self.openIncidentCounter = ko.computed(function() {
         return self.incidents.filtered().length;
@@ -2473,6 +2505,9 @@ Coceso.ViewModels.Notifications = function() {
     });
     self.cssFree = ko.computed(function() {
         return self.getCss(self.freeCounter());
+    });
+    self.cssError = ko.computed(function() {
+        return self.connectionError() ? "connection-error" : "connection-ok";
     });
 };
 

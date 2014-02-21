@@ -266,10 +266,7 @@
                 <c:forEach items="${logs}" var="logEntry">
                     <tr>
                         <td>
-                            ${logEntry.timestamp.day}. ${logEntry.timestamp.month}. ${logEntry.timestamp.year}
-                            <fmt:formatNumber minIntegerDigits="2" value="${logEntry.timestamp.hours}" />:<fmt:formatNumber
-                                minIntegerDigits="2" value="${logEntry.timestamp.minutes}" />:<fmt:formatNumber
-                                minIntegerDigits="2" value="${logEntry.timestamp.seconds}" />
+                            <fmt:formatDate type="both" dateStyle="short" timeStyle="short" value="${logEntry.timestamp}" />
                         </td>
                         <td>
                             ${logEntry.user.username}

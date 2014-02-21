@@ -22,6 +22,7 @@
     <script type="text/javascript">
         $(document).ready(function() {
 
+            // Watcher for changes in edit table for single units
             $("[class^='formpart-']").change(function() {
                 var id = $(this).attr('class').split(/[- ]/)[1];
                 checkUpdateButton(id);
@@ -48,8 +49,18 @@
                 }
                 updateButton.attr('disabled', 'disabled');
             };
-        });
 
+            // Activate help tooltip
+            $(".tooltipped").tooltip();
+        });
+    </script>
+    <script type="text/css">
+        .tooltip {
+            white-space: normal;
+        }
+        th {
+            white-space: nowrap;
+        }
     </script>
 </head>
 
@@ -86,14 +97,35 @@
             <tr>
                 <th style="display: none;">ID</th>
                 <th>${call}</th>
-                <th>${ani}</th>
-                <th>${withDoc}</th>
-                <th>${transportVehicle}</th>
-                <th>${portable}</th>
+                <th>
+                    ${ani}
+                    <span class="glyphicon glyphicon-question-sign tooltipped" title="<spring:message code="text.unit.ani"/>"
+                          data-toggle="tooltip" data-placement="top"></span>
+                </th>
+                <th>
+                    ${withDoc}
+                    <span class="glyphicon glyphicon-question-sign tooltipped" title="<spring:message code="text.unit.withdoc"/>"
+                                     data-toggle="tooltip" data-placement="top"></span>
+                </th>
+                <th>
+                    ${transportVehicle}
+                    <span class="glyphicon glyphicon-question-sign tooltipped" title="<spring:message code="text.unit.vehicle"/>"
+                                              data-toggle="tooltip" data-placement="top"></span>
+                </th>
+                <th>
+                    ${portable}
+                    <span class="glyphicon glyphicon-question-sign tooltipped" title="<spring:message code="text.unit.portable"/>"
+                                      data-toggle="tooltip" data-placement="top"></span>
+                </th>
                 <th>${info}</th>
-                <th>${home}</th>
+                <th>
+                    ${home}
+                    <span class="glyphicon glyphicon-question-sign tooltipped" title="<spring:message code="text.unit.home"/>"
+                          data-toggle="tooltip" data-placement="top"></span>
+                </th>
                 <th></th>
-                <th></th>
+                <th class="text-center"><span class="glyphicon glyphicon-question-sign tooltipped" title="<spring:message code="text.unit.remove_locked"/>"
+                          data-toggle="tooltip" data-placement="top"></span></th>
             </tr>
             </thead>
             <tbody>
