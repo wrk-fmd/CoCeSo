@@ -74,6 +74,12 @@ public class MainController {
         return "main_content/debug";
     }
 
+    @RequestMapping(value = "key.html", method = RequestMethod.GET)
+    public String key() {
+
+        return "main_content/key";
+    }
+
     @RequestMapping(value = "patient_form.html", method = RequestMethod.GET)
     public String patientForm() {
 

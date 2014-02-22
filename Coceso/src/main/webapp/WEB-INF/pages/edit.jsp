@@ -4,6 +4,8 @@
 <html>
 <head>
     <title><spring:message code="label.coceso"/> - <spring:message code="label.concern.edit"/>: ${caze.name}</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -54,14 +56,14 @@
             $(".tooltipped").tooltip();
         });
     </script>
-    <script type="text/css">
+    <style type="text/css">
         .tooltip {
             white-space: normal;
         }
         th {
             white-space: nowrap;
         }
-    </script>
+    </style>
 </head>
 
 <body>
@@ -275,7 +277,7 @@
 
     <div>
         <c:url value="/edit/update" var="update" />
-        <form action="${update}" method="post" role="form">
+        <form action="${update}" method="post" role="form" accept-charset="UTF-8">
             <input type="hidden" name="id" value="${caze.id}">
 
             <div class="row">

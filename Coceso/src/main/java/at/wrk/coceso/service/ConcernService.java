@@ -4,6 +4,8 @@ package at.wrk.coceso.service;
 import at.wrk.coceso.dao.CocesoDao;
 import at.wrk.coceso.dao.ConcernDao;
 import at.wrk.coceso.entity.Concern;
+import at.wrk.coceso.entity.Operator;
+import at.wrk.coceso.entity.enums.LogEntryType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,9 @@ public class ConcernService {
     @Autowired
     private ConcernDao concernDao;
 
+    @Autowired
+    private LogService logService;
+
     public Concern getById(int id) {
         return concernDao.getById(id);
     }
@@ -23,15 +28,21 @@ public class ConcernService {
         return concernDao.getAll();
     }
 
-    public boolean update(Concern concern) {
+    public boolean update(Concern concern, Operator user) {
+        logService.logFull(user, LogEntryType.CONCERN_UPDATE, concern.getId(), null, null, true);
         return concernDao.update(concern);
     }
 
-    public int add(Concern concern) {
-        return concernDao.add(concern);
+    public int add(Concern concern, Operator user) {
+        concern.setId(concernDao.add(concern));
+        logService.logFull(user, LogEntryType.CONCERN_CREATE, concern.getId(), null, null, true);
+        return concern.getId();
     }
 
-    public boolean remove(Concern concern) {
+    // TODO if used anywhere, fix foreign key problem on delete
+    @Deprecated
+    public boolean remove(Concern concern, Operator user) {
+        logService.logFull(user, LogEntryType.CONCERN_REMOVE, concern.getId(), null, null, true);
         return concernDao.remove(concern);
     }
 }

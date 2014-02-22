@@ -5,6 +5,7 @@ import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Operator;
 import at.wrk.coceso.entity.Point;
 import at.wrk.coceso.entity.Unit;
+import at.wrk.coceso.service.ConcernService;
 import at.wrk.coceso.service.UnitService;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,8 @@ import java.util.Set;
 public class ConcernEditController {
 
     @Autowired
-    ConcernDao concernDao;
+    //ConcernDao concernDao;
+    ConcernService concernService;
 
     //@Autowired
     //LogService logService;
@@ -36,13 +38,16 @@ public class ConcernEditController {
     UnitService unitService;
 
     @RequestMapping(value = "create", method = RequestMethod.POST)
-    public String create(HttpServletRequest request) {
+    public String create(HttpServletRequest request, Principal principal)
+    {
+        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
+        Operator user = (Operator) token.getPrincipal();
 
-        Concern caze = new Concern();
-        caze.setName(request.getParameter("name"));
-        caze.setInfo(request.getParameter("info"));
+        Concern concern = new Concern();
+        concern.setName(request.getParameter("name"));
+        concern.setInfo(request.getParameter("info"));
 
-        concernDao.add(caze);
+        concernService.add(concern, user);
 
         return "redirect:/welcome";
     }
@@ -65,11 +70,11 @@ public class ConcernEditController {
             return return_address_error;
         }
 
-        Concern caze = concernDao.getById(id);
+        Concern caze = concernService.getById(id);
         List<Unit> unit_list = unitService.getAll(id);
         Set<Integer> nonDeletables = unitService.getNonDeletable(id);
 
-        Logger.debug("unit_list.size(): "+unit_list.size());
+        //Logger.debug("unit_list.size(): "+unit_list.size());
 
         map.addAttribute("caze", caze);
         map.addAttribute("unit_list", unit_list);
@@ -87,15 +92,18 @@ public class ConcernEditController {
     @RequestMapping(value = "update", method = RequestMethod.POST)
     public String updateCase(@RequestParam("id") int id, @RequestParam("name") String name,
                          @RequestParam("info") String info,
-                         @RequestParam("pax") int pax) {
+                         @RequestParam("pax") int pax, Principal principal)
+    {
+        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
+        Operator user = (Operator) token.getPrincipal();
 
-        Concern caze = new Concern();
-        caze.setId(id);
-        caze.setName(name);
-        caze.setPax(pax);
-        caze.setInfo(info);
+        Concern concern = new Concern();
+        concern.setId(id);
+        concern.setName(name);
+        concern.setPax(pax);
+        concern.setInfo(info);
 
-        concernDao.update(caze);
+        concernService.update(concern, user);
 
         return "redirect:/edit";
     }
@@ -211,7 +219,7 @@ public class ConcernEditController {
             return return_address_error;
         }
 
-        Concern concern = concernDao.getById(id);
+        Concern concern = concernService.getById(id);
 
         map.addAttribute("concern", concern);
 

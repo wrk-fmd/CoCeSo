@@ -83,7 +83,7 @@ public class UnitService {
     public boolean remove(Unit unit, Operator operator) {
         if(unit == null)
             return false;
-        // Changed to REMOVED Flag on Create-Entry
+        // Changed to REMOVED Flag on LogEntry:Create
         //logService.logFull(operator, LogEntryType.UNIT_DELETE, unit.getConcern(), unit, null, true);
         return remove(unit);
     }
@@ -129,7 +129,7 @@ public class UnitService {
         Incident toHome = createSingleUnitIncident(IncidentType.ToHome, activeCase, user);
 
         toHome.setAo(unit.getHome());
-        toHome.setBo(unit.getPosition()); // TODO useful?
+        toHome.setBo(unit.getPosition());
 
 
         toHome.setId(incidentService.add(toHome, user));
@@ -140,7 +140,7 @@ public class UnitService {
     }
 
     public boolean holdPosition(int activeCase, int unitId, Operator user) {
-        //TODO HoldPosition only possible, if no other Incident assigned.
+        // HoldPosition only possible, if no other Incident assigned.
         if(!detachAllGivenTypes(unitId))
             return false;
 
@@ -158,7 +158,7 @@ public class UnitService {
     }
 
     public boolean standby(int activeCase, int unitId, Operator user) {
-        //TODO Standby only possible, if no other Incident assigned, except for ToHome
+        // Standby only possible, if no other Incident assigned, except for ToHome
         if(!detachAllGivenTypes(unitId, IncidentType.ToHome))
             return false;
 

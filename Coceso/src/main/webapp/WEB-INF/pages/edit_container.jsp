@@ -6,6 +6,8 @@
     <title><spring:message code="label.coceso"/> - <spring:message code="label.concern.edit"/>: ${concern.name}</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
     <link rel="icon" href="<c:url value="/static/favicon.ico"/>" type="image/x-icon">
 
@@ -16,6 +18,7 @@
 
     <script src="<c:url value="/static/js/jquery.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/jquery.ui.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/static/js/bootstrap.js" />"></script>
     <script src="<c:url value="/static/js/knockout.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/knockout.mapping.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/knockout-sortable.js"/>" type="text/javascript"></script>

@@ -118,7 +118,7 @@ public class IncidentController implements IEntityController<Incident> {
         if(incident.getId() < 1) {
             incident.setId(0);
 
-            incident.setId(incidentService.add(incident));
+            incident.setId(incidentService.add(incident, user));
             //log.logFull(user, "Incident created", caseId, null, incident, true);
             return "{\"success\": " + (incident.getId() != -1) + ", \"new\": true, \"incident_id\":"+incident.getId()+"}";
         }

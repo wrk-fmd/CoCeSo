@@ -2049,7 +2049,7 @@ Coceso.ViewModels.Unit = function(data, options) {
    */
   this.addIncident = function() {
     options = {units: {}};
-    options.units[self.id()] = null;
+    options.units[self.id()] = Coceso.Constants.TaskState.assigned;
     Coceso.UI.openIncident("Add Incident", "incident_form.html", options);
   };
 
@@ -2060,7 +2060,11 @@ Coceso.ViewModels.Unit = function(data, options) {
      * @return {void}
      */
     this.reportIncident = function() {
-        options = {caller: self.call(), bo: self.position, blue: true};
+        options = {caller: self.call()};
+        if(self.portable()) {
+            options = $.extend(options, { bo: self.position(), blue: true, units: {} });
+            options.units[self.id()] = Coceso.Constants.TaskState.abo;
+        }
         Coceso.UI.openIncident("Add Incident", "incident_form.html", options);
     };
 
@@ -2528,12 +2532,15 @@ function Container(data, filtered) {
     cont.units = ko.computed(function() {
         return ko.utils.arrayFilter(cont.filtered(), function(unit) {
             return cont.unitIds().indexOf(unit.id()) >= 0;
+        }).sort(function(a,b) {
+            var t = cont.unitIds();
+            return t.indexOf(a.id()) === t.indexOf(b.id()) ? 0 : (t.indexOf(a.id()) < t.indexOf(b.id()) ? -1 : 1);
         });
     });
 
     cont.availableCounter = ko.computed(function() {
         var count = ko.utils.arrayFilter(cont.units(), function(unit) {
-            return unit.isAvailable();
+            return unit.isAvailable() || (!unit.portable() && unit.isEB());
         }).length;
         for(var i = 0; i < cont.subContainer().length; i++) {
             count += cont.subContainer()[i].availableCounter();

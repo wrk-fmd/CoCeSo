@@ -5,6 +5,8 @@
 <html>
 <head>
     <title><spring:message code="label.coceso" /> - <spring:message code="label.person.mgmt" /></title>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="<c:url value="/static/favicon.ico"/>" type="image/x-icon">

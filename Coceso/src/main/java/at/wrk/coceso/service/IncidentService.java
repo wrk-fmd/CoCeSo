@@ -46,7 +46,7 @@ public class IncidentService {
         return ret;
     }
 
-    public int add(Incident incident) {
+    int add(Incident incident) {
         return incidentDao.add(incident);
     }
 
@@ -56,7 +56,7 @@ public class IncidentService {
         return incident.getId();
     }
 
-    public boolean remove(Incident incident) {
+    boolean remove(Incident incident) {
         return incidentDao.remove(incident);
     }
 

@@ -85,6 +85,7 @@ public class UnitDao extends CocesoDao<Unit> {
         if(dummy == null)
             return null;
 
+        // If the id already exists, return Point from Database
         if(dummy.getId() > 0) {
             Point p = pointDao.getById(dummy.getId());
             if(p != null)

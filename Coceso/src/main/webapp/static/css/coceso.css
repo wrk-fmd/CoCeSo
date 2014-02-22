@@ -515,6 +515,10 @@ span.incident_blue {
 /**
  * Notifications
  */
+.notification-icon {
+    font-size: larger;
+}
+
 .notification-highlight {
     background-color: #dd0000;
 }
@@ -525,11 +529,9 @@ span.incident_blue {
 
 .connection-error {
     color: #dd0000;
-    font-size: larger;
 }
 .connection-ok {
     color: #00dd00;
-    font-size: larger;
 }
 
 /**
@@ -543,4 +545,8 @@ td.license_icon {
 .license_icon img {
   max-height: 16px;
   max-width: 16px;
+}
+
+table[id*='keytable'] > tbody > tr > td:nth-child(2) {
+    text-align: center;
 }

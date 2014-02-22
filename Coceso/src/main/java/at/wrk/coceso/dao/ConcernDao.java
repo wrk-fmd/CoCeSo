@@ -6,9 +6,16 @@ import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 @Repository
@@ -88,16 +95,37 @@ public class ConcernDao extends CocesoDao<Concern> {
 
 
     @Override
-    public int add(Concern caze) {
-        if(caze == null) return -1;
+    public int add(final Concern concern) {
+        if(concern == null) return -1;
 
-        caze.prepareNotNull();
+        concern.prepareNotNull();
 
-        String q = "INSERT INTO concern (name, point_fk, info, pax) VALUES (?, ?, ?, ?)";
+        final String q = "INSERT INTO concern (name, point_fk, info, pax) VALUES (?, ?, ?, ?)";
 
         try {
-            jdbc.update(q, caze.getName(), caze.getPlace() == null ? null : caze.getPlace().getId(), caze.getInfo(), caze.getPax());
-            return 0;
+            KeyHolder holder = new GeneratedKeyHolder();
+
+            jdbc.update(new PreparedStatementCreator() {
+
+                @Override
+                public PreparedStatement createPreparedStatement(Connection connection)
+                        throws SQLException {
+                    PreparedStatement ps = connection.prepareStatement(q, Statement.RETURN_GENERATED_KEYS);
+
+                    ps.setString(1, concern.getName());
+
+                    if(concern.getPlace() == null)
+                        ps.setObject(2, null);
+                    else
+                        ps.setInt(2, concern.getPlace().getId());
+
+                    ps.setString(3, concern.getInfo());
+                    ps.setInt(4, concern.getPax());
+                    return ps;
+                }
+            }, holder);
+
+            return (Integer) holder.getKeys().get("id");
         }
         catch (DataAccessException dae) {
             return -1;

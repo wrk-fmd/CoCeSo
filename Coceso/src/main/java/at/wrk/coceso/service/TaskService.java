@@ -93,7 +93,9 @@ public class TaskService {
         TaskState tmp = (i.getUnits() != null) ?
                 i.getUnits().get(u.getId()) : null;
 
-        if(tmp == null && state == TaskState.Assigned)  // Not Assigned
+        // Assign Unit if TaskState is Assigned or ABO (default options of Unit->addIncident and Unit->reportIncident
+        // in coceso.js
+        if(tmp == null && (state == TaskState.Assigned || state == TaskState.ABO))  // Not Assigned
             assignUnit(incident_id, unit_id, user);
         else if(tmp == null)
             return false;

@@ -3,6 +3,8 @@ package at.wrk.coceso.entity.enums;
 
 public enum LogEntryType {
     CONCERN_CREATE("Concern created"),
+    CONCERN_UPDATE("Concern updated"),
+    CONCERN_REMOVE("Concern removed"),
     CONCERN_CLOSE("Concern closed"),
     CONCERN_REOPEN("Concern reopened"),
 

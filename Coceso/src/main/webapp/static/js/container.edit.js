@@ -41,18 +41,17 @@ function Container(data) {
 
     cont.computeOrdering = function(array, item) {
         var i = array.indexOf(item);
-        if(i == -1) return 0.0;
+        if(!array || i == -1) return 0.0;
         if(i == 0) {
             if(array.length > 1){
-                return array[1].ordering()/2.0;
+                return array[1].ordering()/2.0;  // At first position, and other elements in array
             }
-            return 10.0;
+            return 10.0; // Only element in array
         }
         if(i == array.length-1) {
-            console.error(array);
-            return array[array.length-2].ordering()+10.0;
+            return array[array.length-2].ordering()+10.0; // At last position, other elements in array
         }
-        return (array[i-1].ordering()+array[i+1].ordering())/2;
+        return (array[i-1].ordering()+array[i+1].ordering())/2; // Between other elements
     };
 
     cont.addContainer = function()  {
@@ -74,6 +73,7 @@ function Container(data) {
         $(element).find("input").focus().select();
     };
 
+    // update name of container
     cont.update = function() {
         $.ajax(jsonBase+"unitContainer/updateContainer", {
             data: ko.toJSON(cont, function(key, value){if(key == "selected") { return;} return value;}),
@@ -85,6 +85,7 @@ function Container(data) {
         cont.selected(false);
     };
 
+    // compute new ordering and update
     cont.drop = function(arg) {
         arg.item.head(cont.id);
         arg.item.ordering(cont.computeOrdering(arg.targetParent(), arg.item));
@@ -123,6 +124,7 @@ function ViewModel() {
         });
     };
 
+    // if dropped to this model, unit becomes "spare" -> remove
     self.updateUnit = function(arg) {
         $.post(jsonBase+"unitContainer/updateUnit/0/"+arg.item.id+"/-2");
     };

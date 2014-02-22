@@ -228,7 +228,7 @@ public class UnitContainerDao {
                     container.getOrdering(),
                     container.getHead(),
                     container.getId());
-            Logger.debug("container updated: "+container);
+            //Logger.debug("container updated: "+container);
             return true;
         } catch (DataAccessException dae) {
             Logger.error(dae.getMessage());
