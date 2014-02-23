@@ -328,6 +328,13 @@ Coceso.UI = {
     this.openWindow(title, Coceso.Conf.contentBase + src, new Coceso.ViewModels.Unit(data || {}), { position: {at: "left+10% top+20%"}});
     return false;
   },
+    /**
+     * Open Add-Log Window
+     */
+    openLogAdd: function(title, src, data) {
+        this.openWindow(title, Coceso.Conf.contentBase + src, new Coceso.ViewModels.CustomLogEntry(data || {}), { position: {at: "left+20% top+20%"}});
+        return false;
+    },
   /**
    * Open a list of log entries
    *
@@ -1011,7 +1018,7 @@ Coceso.ViewModels.Incidents = function(data, options) {
   };
 
   var filterOption = this.getOption("filter", []);
-  // TODO Working??
+
   this.disableFilter = {};
   for (var i in filterOption) {
     if (filters[filterOption[i]] && filters[filterOption[i]].disable) {
@@ -2294,11 +2301,11 @@ Coceso.ViewModels.Logs = function(data, options) {
    */
   this.loglist = ko.observableArray();
 //options.assigned = false;
-  var start = Date.now();
+  //var start = Date.now();
   Coceso.ViewModels.ViewModelList.call(this, data, options);
-  var end = Date.now();
+  //var end = Date.now();
 
-  console.log(end - start);
+  //console.log(end - start);
 
   /**
    * Load the specified data
@@ -2513,6 +2520,37 @@ Coceso.ViewModels.Notifications = function() {
     self.cssError = ko.computed(function() {
         return self.connectionError() ? "connection-error" : "connection-ok";
     });
+};
+
+/**
+ * ViewModel for Custom Log Entry (only used to create a new one)
+ */
+Coceso.ViewModels.CustomLogEntry = function(options) {
+    var self = this;
+
+    var defOptions = {
+        text: "",
+        unit: 0
+    };
+    options = $.extend({}, defOptions, options);
+    self.text = ko.observable(options.text);
+    self.unit = ko.observable(options.unit);
+    self.error = ko.observable(false);
+
+    self.ok = function() {
+        Coceso.Ajax.save(ko.toJSON($.extend({id: 0, unit: null, incident: null},self), function(key, value){
+            if(key === "error" || key === "ui") { return;} if(key === "unit") { return value === 0 ? null : {id: value} } return value;
+        }),
+            "log/add.json", self.afterSave, self.saveError, self.saveError);
+    };
+
+    self.saveError = function() {
+        self.error(true);
+    };
+
+    self.afterSave = function() {
+        $("#" + self.ui).dialog("destroy");
+    };
 };
 
 /**

@@ -184,6 +184,11 @@
                     </li>
                     <li class="divider"></li>
                     <li>
+                        <a href="#" title="<spring:message code='label.main.incident.overview' />"
+                           onclick="return Coceso.UI.openIncidents(this.title, 'incident.html', {filter: ['overview']});">
+                            <span class="glyphicon glyphicon-list-alt"></span> <spring:message code="label.main.incident.overview"/></a>
+                    </li>
+                    <li>
                         <a href="#" title="<spring:message code='label.main.incident.active' />"
                            onclick="return Coceso.UI.openIncidents(this.title, 'incident.html', {filter: ['overview', 'active']});">
                             <span class="glyphicon glyphicon-list-alt"></span> <spring:message code="label.main.incident.active"/></a>
@@ -219,6 +224,12 @@
                         </a>
                     </li>
                     <li>
+                        <a href="#" title="<spring:message code='label.log.custom' />"
+                           onclick="return Coceso.UI.openLogs(this.title, 'log.html', {url: 'log/getCustom', autoload: true});">
+                            <span class="glyphicon glyphicon-info-sign"></span> <spring:message code="label.log.custom"/>
+                        </a>
+                    </li>
+                    <li>
                         <a href="#" title="<spring:message code="label.debug" />" onclick="return Coceso.UI.openDebug(this.title, 'debug.html');">
                             <span class="glyphicon glyphicon-warning-sign"></span> <spring:message code="label.debug" />
                         </a>
@@ -232,6 +243,12 @@
                         <a href="#" title="<spring:message code="label.main.key" />" onclick="return Coceso.UI.openStatic(this.title, 'key.html');">
                             <span class="glyphicon glyphicon-question-sign"></span>
                             <spring:message code="label.main.key" />
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" title="<spring:message code="label.log.add" />" onclick="return Coceso.UI.openLogAdd(this.title, 'log_add.html');">
+                            <span class="glyphicon glyphicon-book"></span>
+                            <spring:message code="label.log.add" />
                         </a>
                     </li>
                     <li data-bind="visible: Coceso.Conf.debug">

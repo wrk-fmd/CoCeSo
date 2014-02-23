@@ -48,16 +48,11 @@
         <tr>
             <td data-bind="text: time"></td>
             <td data-bind="text: user.username"></td>
-            <td data-bind="text: text"></td>
+            <td data-bind="text: text" style="white-space: pre-line"></td>
             <td><a href="#" data-bind="text: unit.call, click: unit.openForm"></a></td>
             <td><a href="#"  data-bind="text: incident.id, click: incident.openForm"></a></td>
             <td data-bind="text: state"></td>
         </tr>
-        <%--tr>
-            <td colspan="6">
-                <span data-bind="text: json.unit.call"></span>
-            </td>
-        </tr--%>
         <!-- /ko -->
     </table>
 </div>

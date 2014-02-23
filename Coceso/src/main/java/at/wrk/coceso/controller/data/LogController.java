@@ -14,6 +14,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.LinkedList;
 import java.util.List;
 
 @Controller
@@ -34,9 +35,22 @@ public class LogController {
             case_id = Integer.parseInt(caze);
         }catch (NumberFormatException e) {
             Logger.debug(e.getMessage());
-            return null;
+            return new LinkedList<LogEntry>();
         }
         return dao.getAll(case_id);
+    }
+
+    @RequestMapping(value = "getCustom", produces = "application/json")
+    @ResponseBody
+    public List<LogEntry> getCustom(@CookieValue(value = "active_case", defaultValue = "0") String caze) {
+        int case_id;
+        try {
+            case_id = Integer.parseInt(caze);
+        }catch (NumberFormatException e) {
+            Logger.debug(e.getMessage());
+            return new LinkedList<LogEntry>();
+        }
+        return dao.getCustom(case_id);
     }
 
     @RequestMapping(value = "getAll/{case_id}", produces = "application/json")
@@ -80,10 +94,7 @@ public class LogController {
     public Object addEntry(@RequestBody LogEntry logEntry, BindingResult bindingResult,
                            @CookieValue(value = "active_case", defaultValue = "0") String case_id, Principal principal) {
         if(bindingResult.hasErrors()) {
-            return new Object() {
-                boolean success = false;
-                String error = "Binding Error";
-            };
+            return "{\"success\":false, \"error\":\"Binding Error\"}";
         }
 
         UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;

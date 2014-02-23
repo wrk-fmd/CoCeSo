@@ -85,4 +85,10 @@ public class MainController {
 
         return "main_content/patient_form";
     }
+
+    @RequestMapping(value = "log_add.html", method = RequestMethod.GET)
+    public String logAdd() {
+
+        return "main_content/log_add";
+    }
 }

@@ -137,4 +137,11 @@ public class LogDao extends CocesoDao<LogEntry> {
         return jdbc.query(q, new Object[] {case_id, count}, logMapper);
     }
 
+    public List<LogEntry> getCustom(int concernId) {
+        if(concernId <= 0) return null;
+
+        String q = getPrefix + "WHERE type = 'CUSTOM' AND l.concern_fk = ?" + sortSuffix;
+
+        return jdbc.query(q, new Object[] {concernId}, logMapper);
+    }
 }
