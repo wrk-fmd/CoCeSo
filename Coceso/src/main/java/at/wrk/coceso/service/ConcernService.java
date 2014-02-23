@@ -6,6 +6,7 @@ import at.wrk.coceso.dao.ConcernDao;
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Operator;
 import at.wrk.coceso.entity.enums.LogEntryType;
+import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +35,10 @@ public class ConcernService {
     }
 
     public int add(Concern concern, Operator user) {
+        if(concern == null || concern.getName() == null || concern.getName().isEmpty()) {
+            Logger.debug("ConcernService.add(): Invalid Concern given (empty name?)");
+            return -1;
+        }
         concern.setId(concernDao.add(concern));
         logService.logFull(user, LogEntryType.CONCERN_CREATE, concern.getId(), null, null, true);
         return concern.getId();

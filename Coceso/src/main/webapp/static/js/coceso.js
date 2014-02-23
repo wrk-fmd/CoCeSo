@@ -1987,7 +1987,8 @@ Coceso.ViewModels.Unit = function(data, options) {
    * @return {Object} The popover options
    */
   this.popover = ko.computed(function() {
-    var content = "";
+    // Bugfix orphaned Popovers (Ticket #17)
+    var content = "<div onmouseout=\"$('.popover').remove();\">";
     if (this.hasHome()) {
       content += "<p><span class='key'>" + _("label.unit.home") + "</span><span>" + this.home.info() + "</span></p>";
     }
@@ -1998,6 +1999,7 @@ Coceso.ViewModels.Unit = function(data, options) {
         content += "<p><span class='key'>" + inc.assignedTitle() + "</span><span>" + _("label.task.state." + inc.taskState().toLowerCase()) + "</span></p>";
       });
     }
+    content += "</div>";
 
     return {
       trigger: 'hover focus',
