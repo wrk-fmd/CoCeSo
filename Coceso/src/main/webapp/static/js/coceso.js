@@ -70,11 +70,14 @@ Coceso.startup = function() {
     //Preload incidents and units
     Coceso.Ajax.getAll("incidents");
     Coceso.Ajax.getAll("units");
+    Coceso.Ajax.getAll("patients");
 
 
-    $( "#other" ).click(function() {
-        $( "#target" ).keypress();
-    });
+    //$( "#other" ).click(function() {
+    //    $( "#target" ).keypress();
+    //});
+
+    Coceso.Helper.initializeModalKeyHandler('next-state-confirm');
 
     //Load Bindings for Notifications
     ko.applyBindings(Coceso.Global.notificationViewModel, $("#nav-notifications").get(0));
@@ -122,7 +125,12 @@ Coceso.Conf = {
   language: "en",
   debug: false,
   keyboardControl: false,
-  openIncidentKey: 32
+  keyMapping: {
+      openIncidentKey: 32 // 32: Space
+      ,yesKey: 89 // 89: Y, 74: J
+      ,noKey: 78 // 78: N
+  }
+  ,confirmStatusUpdate: true
 };
 
 /**
@@ -254,6 +262,16 @@ Coceso.Helper = {
         modal.on('hidden.bs.modal', function (e) {
             $("#" + elementID + "-yes").unbind('click', yesHandler);
         })
+    }
+    ,initializeModalKeyHandler: function(elementID) {
+        $("#" + elementID).keyup(function(event) {
+            if(event.which === Coceso.Conf.keyMapping.noKey) {
+                $("#" + elementID + "-no").click();
+            }
+            if(event.which === Coceso.Conf.keyMapping.yesKey) {
+                $("#" + elementID + "-yes").click();
+            }
+        });
     }
 };
 
@@ -433,8 +451,9 @@ Coceso.Ajax = {
    * @type Object
    */
   data: {
-    incidents: {incidentlist: []},
-    units: {unitlist: []}
+    incidents: {incidentlist: []}
+    ,units: {unitlist: []}
+    ,patients: {patientlist: []}
   },
   /**
    * Subscriptions to data loading
@@ -443,7 +462,8 @@ Coceso.Ajax = {
    */
   subscriptions: {
     incidents: [],
-    units: []
+    units: [],
+    patients: []
   },
   loadOptions: {
     units: {
@@ -455,6 +475,12 @@ Coceso.Ajax = {
     incidents: {
       list: "incidentlist",
       url: "incident/getAll.json",
+      interval: null,
+      id: null
+    }
+    ,patients: {
+      list: "patientlist",
+      url: "patient/getAll.json",
       interval: null,
       id: null
     }
@@ -582,7 +608,6 @@ Coceso.Ajax = {
   /**
    * Load a single item into a viewmodel
    *
-   * NOT USED
    *
    * @param {ViewModel} viewmodel
    * @param {String} url The URL to load from
@@ -1492,11 +1517,15 @@ Coceso.ViewModels.Incident = function(data, options) {
    */
   this.nextState = function(unitid) {
       if (unitid && self.id()) {
-          console.error("conf-debug-1");
-          Coceso.Helper.confirmationDialog('next-state-confirm', function() {
+          var save = function() {
               Coceso.Ajax.save({incident_id: self.id(), unit_id: unitid}, "incident/nextState.json");
-              console.error("conf-debug-2");
-          });
+          };
+
+          if(Coceso.Conf.confirmStatusUpdate) {
+              Coceso.Helper.confirmationDialog('next-state-confirm', save);
+          } else {
+              save();
+          }
       }
   };
 
@@ -2068,11 +2097,15 @@ Coceso.ViewModels.Unit = function(data, options) {
     }
 
     if (incid && self.id()) {
-        console.error("conf-debug-10");
-        Coceso.Helper.confirmationDialog('next-state-confirm', function() {
+        var save = function() {
             Coceso.Ajax.save({incident_id: incid, unit_id: self.id()}, "incident/nextState.json");
-            console.error("conf-debug-11");
-        });
+        };
+
+        if(Coceso.Conf.confirmStatusUpdate) {
+            Coceso.Helper.confirmationDialog('next-state-confirm', save);
+        } else {
+            save();
+        }
     }
   };
 
@@ -2495,6 +2528,136 @@ Coceso.ViewModels.Log.prototype = Object.create(Coceso.ViewModels.ViewModelSingl
       }
     }
   }
+});
+
+/**
+ * List of Patients
+ *
+ * @constructor
+ * @extends Coceso.ViewModels.ViewModelList
+ * @param {Object} data
+ * @param {Object} options
+ */
+Coceso.ViewModels.Patients = function(data, options) {
+    //Call super constructor
+    Coceso.ViewModels.ViewModelList.call(this, data, options);
+
+
+    /**
+     * Available filters
+     *
+     * @type Object
+     */
+    var filters = {};
+
+    var filterOption = this.getOption("filter", []);
+
+    /**
+     * The selected filters
+     *
+     * @type Object
+     */
+    this.filter = {};
+
+    /**
+     * Generate a list of active filters
+     *
+     * @function
+     * @type ko.computed
+     * @return {Object}
+     */
+    this.activeFilters = ko.computed(function() {
+        var activeFilters = {filter: []};
+
+        //Filters selected in user interface
+        var i, filter = {};
+        for (i in this.filter) {
+            var unwrapped = ko.utils.unwrapObservable(this.filter[i]);
+            if (unwrapped.length) {
+                filter[i] = {val: unwrapped};
+            }
+        }
+        activeFilters.filter.push({
+            filter: filter
+        });
+
+        //Filters from options
+        for (i in filterOption) {
+            if (filters[filterOption[i]]) {
+                activeFilters.filter.push(filters[filterOption[i]]);
+            }
+        }
+
+        return activeFilters;
+    }, this);
+
+    /**
+     * Filtered view of the incidents array
+     *
+     * @function
+     * @type ko.computed
+     * @return {Array}
+     */
+    this.filtered = this.patientlist.extend({filtered: {filters: this.activeFilters}});
+};
+Coceso.ViewModels.Patients.prototype = Object.create(Coceso.ViewModels.ViewModelList.prototype, /** @lends Coceso.ViewModels.Incidents.prototype */ {
+    /**
+     * @see Coceso.ViewModels.ViewModel#dataType
+     * @override
+     */
+    dataType: {value: "patients"},
+    /**
+     * @see Coceso.ViewModels.ViewModel#mappingOptions
+     * @override
+     */
+    mappingOptions: {
+        value: {
+            patientlist: {
+                key: function(data) {
+                    return ko.utils.unwrapObservable(data.incident_id);
+                },
+                create: function(options) {
+                    return new Coceso.ViewModels.Patient(options.data, options.parent.getOption("children", {}));
+                },
+                update: function(options) {
+                    options.target.setData(options.data);
+                    return options.target;
+                }
+            }
+        }
+    }
+});
+
+/**
+ * Single Patient
+ *
+ * @constructor
+ * @extends Coceso.ViewModels.ViewModelSingle
+ * @param {Object} data
+ * @param {Object} options
+ */
+Coceso.ViewModels.Patient = function(data, options) {
+    Coceso.ViewModels.ViewModelSingle.call(this, data, options);
+
+};
+Coceso.ViewModels.Patient.prototype = Object.create(Coceso.ViewModels.ViewModelSingle.prototype, /** @lends Coceso.ViewModels.Log.prototype */ {
+    /**
+     * @see Coceso.ViewModels.ViewModelSingle#model
+     * @override
+     */
+    model: {value: Coceso.Models.Patient},
+    /**
+     * @see Coceso.ViewModels.ViewModelSingle#saveUrl
+     * @override
+     */
+    saveUrl: {value: "patient/update.json"},
+    /**
+     * @see Coceso.ViewModels.ViewModel#mappingOptions
+     * @override
+     */
+    mappingOptions: {
+        value: {}
+    }
 });
 
 /**

@@ -78,7 +78,7 @@
                 <spring:message code="text.confirmation"/>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" autofocus><spring:message code="label.confirmation.no" /></button>
+                <button type="button" id="next-state-confirm-no" class="btn btn-danger btn-lg" data-dismiss="modal" autofocus><spring:message code="label.confirmation.no" /></button>
                 <button type="button" id="next-state-confirm-yes" class="btn btn-success btn-lg"><spring:message code="label.confirmation.yes" /></button>
             </div>
         </div>

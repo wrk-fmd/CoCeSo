@@ -63,7 +63,7 @@
 
             if(Coceso.Conf.keyboardControl) {
                 $( "body" ).keydown(function( event ) {
-                    if(event.which == Coceso.Conf.openIncidentKey) {
+                    if(event.which == Coceso.Conf.keyMapping.openIncidentKey) {
                         Coceso.UI.openIncident("<spring:message code='label.incident' /> / <spring:message code='label.add' />", 'incident_form.html');
                     }
                 });
