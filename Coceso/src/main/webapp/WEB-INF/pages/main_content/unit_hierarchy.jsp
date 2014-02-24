@@ -32,7 +32,6 @@
 
     <div data-bind="template: { name: 'container-template', data: top }"></div>
 
-    <%@include file="templates.jsp"%>
 </div>
 
 
