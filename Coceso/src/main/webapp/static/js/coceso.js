@@ -292,6 +292,16 @@ Coceso.UI = {
     this.openWindow(title, Coceso.Conf.contentBase + src, new Coceso.ViewModels.Incident( data || {} ), { position: {at: "left+30% top+10%"}});
     return false;
   },
+    /**
+     * For internal usage with given model
+     * @param title
+     * @param src
+     * @param model
+     */
+    openIncidentInternally: function(title, src, model) {
+        this.openWindow(title, Coceso.Conf.contentBase + src, model, { position: {at: "left+30% top+10%"}});
+        return false;
+    },
   /**
    * Open the units overview
    *
@@ -1499,7 +1509,7 @@ Coceso.ViewModels.Incident = function(data, options) {
    * @return {void}
    */
   this.openForm = function() {
-    Coceso.UI.openIncident("Edit Incident", "incident_form.html", {id: self.id()});
+    Coceso.UI.openIncident(_("label.incident.edit"), "incident_form.html", {id: self.id()});
   };
 
   /**
@@ -2058,8 +2068,11 @@ Coceso.ViewModels.Unit = function(data, options) {
    */
   this.addIncident = function() {
     options = {units: {}};
-    options.units[self.id()] = Coceso.Constants.TaskState.assigned;
-    Coceso.UI.openIncident("Add Incident", "incident_form.html", options);
+      var model = new Coceso.ViewModels.Incident(options);
+      if(model.units.unitlist) {
+          model.units.unitlist.push(new Coceso.ViewModels.Unit({id: self.id(), taskState: "Assigned"}, self.getOption(["children", "children"], {assigned: false, writeable: false})));
+      }
+      Coceso.UI.openIncidentInternally(_("label.unit.new_incident"), "incident_form.html", model);
   };
 
     /**
@@ -2071,10 +2084,13 @@ Coceso.ViewModels.Unit = function(data, options) {
     this.reportIncident = function() {
         options = {caller: self.call()};
         if(self.portable()) {
-            options = $.extend(options, { bo: self.position(), blue: true, units: {} });
-            options.units[self.id()] = Coceso.Constants.TaskState.abo;
+            options = $.extend(options, { bo: self.position, blue: true, units: {} });
         }
-        Coceso.UI.openIncident("Add Incident", "incident_form.html", options);
+        var model = new Coceso.ViewModels.Incident(options);
+        if(self.portable() && model.units.unitlist) {
+            model.units.unitlist.push(new Coceso.ViewModels.Unit({id: self.id(), taskState: "ABO"}, self.getOption(["children", "children"], {assigned: false, writeable: false})));
+        }
+        Coceso.UI.openIncidentInternally(_("label.unit.report_incident"), "incident_form.html", model);
     };
 
   /**
@@ -2083,7 +2099,7 @@ Coceso.ViewModels.Unit = function(data, options) {
    * @return {void}
    */
   this.openForm = function() {
-    Coceso.UI.openUnit("Edit Unit", "unit_form.html", {id: self.id()});
+    Coceso.UI.openUnit(_("label.unit.edit"), "unit_form.html", {id: self.id()});
   };
 
   /**
