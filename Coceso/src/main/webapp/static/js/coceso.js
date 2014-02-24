@@ -226,6 +226,37 @@ Coceso.Models = {
   }
 };
 
+// Little Helper go in here
+Coceso.Helper = {
+    confirmationDialog: function(elementID, yes) {
+        if(!elementID) {
+            return;
+        }
+
+        var modal = $("#" + elementID);
+
+        modal.modal({
+            backdrop: true
+            ,keyboard: true
+            ,show: true
+        });
+
+        var yesHandler = function() {
+            $("#" + elementID).modal('hide');
+            if(typeof yes === 'function') {
+                yes();
+            }
+        };
+
+
+        $("#" + elementID + "-yes").bind('click', yesHandler);
+
+        modal.on('hidden.bs.modal', function (e) {
+            $("#" + elementID + "-yes").unbind('click', yesHandler);
+        })
+    }
+};
+
 /**
  * Contains UI related functions and data
  *
@@ -1460,9 +1491,13 @@ Coceso.ViewModels.Incident = function(data, options) {
    * @return {void}
    */
   this.nextState = function(unitid) {
-    if (unitid && self.id()) {
-      Coceso.Ajax.save({incident_id: self.id(), unit_id: unitid}, "incident/nextState.json");
-    }
+      if (unitid && self.id()) {
+          console.error("conf-debug-1");
+          Coceso.Helper.confirmationDialog('next-state-confirm', function() {
+              Coceso.Ajax.save({incident_id: self.id(), unit_id: unitid}, "incident/nextState.json");
+              console.error("conf-debug-2");
+          });
+      }
   };
 
   /**
@@ -2033,7 +2068,11 @@ Coceso.ViewModels.Unit = function(data, options) {
     }
 
     if (incid && self.id()) {
-      Coceso.Ajax.save({incident_id: incid, unit_id: self.id()}, "incident/nextState.json");
+        console.error("conf-debug-10");
+        Coceso.Helper.confirmationDialog('next-state-confirm', function() {
+            Coceso.Ajax.save({incident_id: incid, unit_id: self.id()}, "incident/nextState.json");
+            console.error("conf-debug-11");
+        });
     }
   };
 

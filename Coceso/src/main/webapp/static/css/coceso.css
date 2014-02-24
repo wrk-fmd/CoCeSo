@@ -550,3 +550,17 @@ td.license_icon {
 table[id*='keytable'] > tbody > tr > td:nth-child(2) {
     text-align: center;
 }
+
+/**
+ * Fix to lay backdrop over windows
+ */
+.modal-backdrop {
+    z-index: 1530;
+}
+.modal {
+    z-index: 1540;
+}
+.modal-dialog {
+    margin-top: 80px;
+    z-index: 1550;
+}

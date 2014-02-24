@@ -39,7 +39,7 @@
     <ul class="unit_list" data-bind="template: {name: 'unit-list-entry-template', foreach: filtered}"></ul>
 
 
-    <%@include file="templates.jsp"%>
+
 </div>
 </body>
 </html>

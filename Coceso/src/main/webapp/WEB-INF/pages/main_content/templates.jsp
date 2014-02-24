@@ -66,3 +66,21 @@
     </div>
 </script>
 <%-- END TEMPLATE DEFINITIONs --%>
+
+<div id="next-state-confirm" class="modal" tabindex="-1" role="dialog" aria-labelledby="nextStateConfirmLabel" aria-hidden="true" style="display: none">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="nextStateConfirmLabel"><spring:message code="text.confirmation.title" /></h4>
+            </div>
+            <div class="modal-body">
+                <spring:message code="text.confirmation"/>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" autofocus><spring:message code="label.confirmation.no" /></button>
+                <button type="button" id="next-state-confirm-yes" class="btn btn-success btn-lg"><spring:message code="label.confirmation.yes" /></button>
+            </div>
+        </div>
+    </div>
+</div>

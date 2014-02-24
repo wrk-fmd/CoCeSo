@@ -40,6 +40,7 @@
     <script src="<c:url value="/static/js/knockout.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/knockout.mapping.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/bootstrap.dropdown.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/static/js/bootstrap.modals.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/bindings.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/coceso.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/jquery.ui.touch-punch.js"/>" type="text/javascript"></script>
@@ -335,6 +336,8 @@
         </div>
     </noscript>
 </div>
+
+<%@include file="main_content/templates.jsp"%>
 
 <footer>
     <ul id="taskbar"></ul>
