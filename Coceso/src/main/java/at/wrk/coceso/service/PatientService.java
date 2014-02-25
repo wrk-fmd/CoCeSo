@@ -37,14 +37,14 @@ public class PatientService {
         if(ret <= 0) {
             return ret;
         }
-        logService.logWithIDs(user.getId(), LogEntryType.PATIENT_CREATE, caseId, 0, patient.getIncident_id(), true);
+        logService.logWithIDs(user.getId(), LogEntryType.PATIENT_CREATE, caseId, 0, patient.getId(), true);
         return ret;
     }
 
     public boolean update(Patient patient, Operator user, int caseId) {
 
         if(patientDao.update(patient)) {
-            logService.logWithIDs(user.getId(), LogEntryType.PATIENT_UPDATE, caseId, 0, patient.getIncident_id(), true);
+            logService.logWithIDs(user.getId(), LogEntryType.PATIENT_UPDATE, caseId, 0, patient.getId(), true);
             return true;
         }
         return false;

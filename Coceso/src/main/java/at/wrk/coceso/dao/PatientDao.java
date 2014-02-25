@@ -113,7 +113,7 @@ public class PatientDao extends CocesoDao<Patient> {
             // comma = true;
         }
 
-        parameters.add(patient.getIncident_id());
+        parameters.add(patient.getId());
 
         q += suf_q;
 
@@ -129,7 +129,7 @@ public class PatientDao extends CocesoDao<Patient> {
 
     @Override
     public int add(Patient patient) {
-        if(patient == null || patient.getIncident_id() < 1) {
+        if(patient == null || patient.getId() < 1) {
             Logger.debug("PatientDao.add(): Invalid Parameter patient");
             return -1;
         }
@@ -138,7 +138,7 @@ public class PatientDao extends CocesoDao<Patient> {
 
         try {
             jdbc.update(q,
-                    patient.getIncident_id(),
+                    patient.getId(),
                     patient.getInfo(),
                     patient.getGiven_name(),
                     patient.getSur_name(),
@@ -150,7 +150,7 @@ public class PatientDao extends CocesoDao<Patient> {
             Logger.debug("TaskDao add: "+e);
             return -1;
         }
-        return patient.getIncident_id();
+        return patient.getId();
     }
 
     @Override
@@ -159,7 +159,7 @@ public class PatientDao extends CocesoDao<Patient> {
         String q = "DELETE FROM patient WHERE incident_fk = ?";
 
         try {
-            jdbc.update(q, patient.getIncident_id());
+            jdbc.update(q, patient.getId());
         } catch (DataAccessException dae) {
             Logger.warning("PatientDao.remove(): "+ dae.getMessage());
             return false;

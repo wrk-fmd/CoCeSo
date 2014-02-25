@@ -225,12 +225,6 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" title="<spring:message code='label.log.custom' />"
-                           onclick="return Coceso.UI.openLogs(this.title, 'log.html', {url: 'log/getCustom', autoload: true});">
-                            <span class="glyphicon glyphicon-info-sign"></span> <spring:message code="label.log.custom"/>
-                        </a>
-                    </li>
-                    <li>
                         <a href="#" title="<spring:message code="label.debug" />" onclick="return Coceso.UI.openDebug(this.title, 'debug.html');">
                             <span class="glyphicon glyphicon-warning-sign"></span> <spring:message code="label.debug" />
                         </a>
@@ -247,14 +241,15 @@
                         </a>
                     </li>
                     <li>
+                        <a href="#" title="<spring:message code='label.log.custom' />"
+                           onclick="return Coceso.UI.openLogs(this.title, 'log.html', {url: 'log/getCustom', autoload: true});">
+                            <span class="glyphicon glyphicon-info-sign"></span> <spring:message code="label.log.custom"/>
+                        </a>
+                    </li>
+                    <li>
                         <a href="#" title="<spring:message code="label.log.add" />" onclick="return Coceso.UI.openLogAdd(this.title, 'log_add.html');">
                             <span class="glyphicon glyphicon-book"></span>
                             <spring:message code="label.log.add" />
-                        </a>
-                    </li>
-                    <li data-bind="visible: Coceso.Conf.debug">
-                        <a href="#" title="STATIC! NOT WORKING - <spring:message code="label.patient" />" onclick="return Coceso.UI.openStatic(this.title, 'patient_form.html');">
-                            TESTING ONLY: <spring:message code="label.patient" />
                         </a>
                     </li>
                     <%-- External (of Main Program) Links --%>

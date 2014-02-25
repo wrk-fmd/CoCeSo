@@ -2,7 +2,7 @@ package at.wrk.coceso.entity;
 
 public class Patient {
 
-    private int incident_id;
+    private int id;
 
     private String given_name;
     private String sur_name;
@@ -16,12 +16,12 @@ public class Patient {
 
     private String externalID;
 
-    public int getIncident_id() {
-        return incident_id;
+    public int getId() {
+        return id;
     }
 
-    public void setIncident_id(int incident_id) {
-        this.incident_id = incident_id;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getGiven_name() {

@@ -35,6 +35,7 @@ var Coceso = {};
  */
 Coceso.Global = {
     notificationViewModel: {}
+    ,patients: {}
 };
 
 /**
@@ -72,6 +73,8 @@ Coceso.startup = function() {
     Coceso.Ajax.getAll("units");
     Coceso.Ajax.getAll("patients");
 
+    //Load Global Patient List
+    Coceso.Global.patients = new Coceso.ViewModels.Patients({},{});
 
     //$( "#other" ).click(function() {
     //    $( "#target" ).keypress();
@@ -223,14 +226,14 @@ Coceso.Models = {
    * Patient dummy
    */
   Patient: {
-    incident_id: null,
+    id: null,
     given_name: "",
     sur_name: "",
     insurance_number: "",
     diagnosis: "",
     erType: "",
     info: "",
-    externalId: ""
+    externalID: ""
   }
 };
 
@@ -404,6 +407,10 @@ Coceso.UI = {
    */
   openLogs: function(title, src, options) {
     this.openWindow(title, Coceso.Conf.contentBase + src, new Coceso.ViewModels.Logs({}, options || {}), { position: {at: "left+30% center"}});
+    return false;
+  },
+  openPatient: function(title, src, data) {
+    this.openWindow(title, Coceso.Conf.contentBase + src, new Coceso.ViewModels.Patient(data || {}), { position: {at: "left+40% top+30%"}});
     return false;
   },
   /**
@@ -1470,6 +1477,7 @@ Coceso.ViewModels.Incident = function(data, options) {
    * @type ko.computed
    * @return {String}
    */
+  // TODO Move Definitions to Conf
   this.typeString = ko.computed(function() {
     if (this.isTask()) {
       return this.blue() ? "E" : "A";
@@ -1586,6 +1594,21 @@ Coceso.ViewModels.Incident = function(data, options) {
       Coceso.UI.openLogs("Incident-Log", "log.html", {url: "log/getByIncident/" + self.id()});
     }
   };
+
+    self.patient = ko.computed(function() {
+        return ko.utils.arrayFirst(Coceso.Global.patients.filtered(), function(item) {
+            return self.id() === item.id();
+        });
+    });
+
+    self.openPatient = function() {
+        // If Patient doesn't exist, open Window for new Patient with ID from Incident given
+        // Otherwise existing Patient will be loaded
+        if(self.id()) {
+            Coceso.UI.openPatient(_("label.patient.edit"), "patient_form.html", {id: self.id()});
+        }
+
+    };
 
   /**
    * Callback after saving
@@ -2614,7 +2637,7 @@ Coceso.ViewModels.Patients.prototype = Object.create(Coceso.ViewModels.ViewModel
         value: {
             patientlist: {
                 key: function(data) {
-                    return ko.utils.unwrapObservable(data.incident_id);
+                    return ko.utils.unwrapObservable(data.id);
                 },
                 create: function(options) {
                     return new Coceso.ViewModels.Patient(options.data, options.parent.getOption("children", {}));
@@ -2639,8 +2662,22 @@ Coceso.ViewModels.Patients.prototype = Object.create(Coceso.ViewModels.ViewModel
 Coceso.ViewModels.Patient = function(data, options) {
     Coceso.ViewModels.ViewModelSingle.call(this, data, options);
 
+    //Detect changes
+    this.dependencies.push(this.given_name, this.sur_name, this.insurance_number, this.externalID, this.diagnosis,
+                            this.erType, this.info);
+
 };
 Coceso.ViewModels.Patient.prototype = Object.create(Coceso.ViewModels.ViewModelSingle.prototype, /** @lends Coceso.ViewModels.Log.prototype */ {
+    /**
+     * @see Coceso.ViewModels.ViewModel#dataType
+     * @override
+     */
+    dataType: {value: "patients"},
+    /**
+     * @see Coceso.ViewModels.ViewModel#dataList
+     * @override
+     */
+    dataList: {value: "patientlist"},
     /**
      * @see Coceso.ViewModels.ViewModelSingle#model
      * @override
@@ -2656,7 +2693,11 @@ Coceso.ViewModels.Patient.prototype = Object.create(Coceso.ViewModels.ViewModelS
      * @override
      */
     mappingOptions: {
-        value: {}
+        value: {
+            keepChanges: {
+                info: true
+            }
+        }
     }
 });
 
@@ -2755,11 +2796,19 @@ Coceso.ViewModels.CustomLogEntry = function(options) {
     options = $.extend({}, defOptions, options);
     self.text = ko.observable(options.text);
     self.unit = ko.observable(options.unit);
+
+    // No auto-update needed
+    //TODO self.unitList = ko.observableArray(Coceso.Ajax.data.unitlist);
     self.error = ko.observable(false);
 
     self.ok = function() {
         Coceso.Ajax.save(ko.toJSON($.extend({id: 0, unit: null, incident: null},self), function(key, value){
-            if(key === "error" || key === "ui") { return;} if(key === "unit") { return value === 0 ? null : {id: value} } return value;
+            // Filter field error and ui
+            if(key === "error" || key === "ui" || key === "unitList") { return;}
+            // If unit id is given, create anonymous object
+            if(key === "unit") { return value === 0 ? null : {id: value} }
+            // All other elements return by default
+            return value;
         }),
             "log/add.json", self.afterSave, self.saveError, self.saveError);
     };

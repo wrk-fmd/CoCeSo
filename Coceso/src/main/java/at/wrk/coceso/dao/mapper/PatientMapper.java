@@ -13,7 +13,7 @@ public class PatientMapper implements RowMapper<Patient> {
     public Patient mapRow(ResultSet rs, int i) throws SQLException {
         Patient p = new Patient();
 
-        p.setIncident_id(rs.getInt("incident_fk"));
+        p.setId(rs.getInt("incident_fk"));
         p.setInfo(rs.getString("info"));
         p.setDiagnosis(rs.getString("diagnosis"));
         p.setErType(rs.getString("er_type"));

@@ -73,13 +73,13 @@ public class PatientController implements IEntityController<Patient> {
         }
 
 
-        Incident incident = incidentService.getById(patient.getIncident_id());
+        Incident incident = incidentService.getById(patient.getId());
         if(incident == null)
             return "{\"success\": false, \"info\":\"Invalid ID\"}";
         if(incident.getConcern() != caseId)
             return "{\"success\": false, \"info\":\"Active Concern not valid\"}";
 
-        if(patientService.getById(patient.getIncident_id()) == null) {
+        if(patientService.getById(patient.getId()) == null) {
 
             int ret = patientService.add(patient, user, caseId);
 

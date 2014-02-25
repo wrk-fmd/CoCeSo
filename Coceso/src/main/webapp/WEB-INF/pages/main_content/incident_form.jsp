@@ -74,7 +74,7 @@
             </textarea>
         </div>
 
-        <div class="btn-group-vertical col-md-4">
+        <div class="form-group btn-group-vertical col-md-4">
             <!-- TODO data-bind -->
             <button type="button" class="btn btn-default" disabled><spring:message code="label.addressbook" /></button>
             <button type="button" class="btn btn-default" disabled><spring:message code="label.hospitals" /></button>
@@ -103,9 +103,12 @@
                       placeholder="<spring:message code='label.incident.ao' />"
                       data-bind="value: ao.info, css: {'form-changed': ao.info.localChange}, valueUpdate: 'afterkeydown'">
             </textarea>
+            <!-- ko if: patient -->
+            <strong><spring:message code="text.patient.needs" /></strong>: <span data-bind="text: patient().erType"></span>
+            <!-- /ko -->
         </div>
 
-        <div class="btn-group-vertical col-md-4">
+        <div class="form-group btn-group-vertical col-md-4">
             <!-- TODO data-bind -->
             <button type="button" class="btn btn-default" disabled><spring:message code="label.addressbook" /></button>
             <button type="button" class="btn btn-default" disabled><spring:message code="label.hospitals" /></button>
@@ -119,6 +122,14 @@
             <input type="text" id="casus" name="casus" class="form-control"
                    placeholder="<spring:message code='label.incident.casus' />"
                    data-bind="value: casusNr, css: {'form-changed': casusNr.localChange}, valueUpdate: 'afterkeydown'" />
+        </div>
+        <div class="form-group col-md-6">
+            <!-- ko if: patient -->
+            <button type="button" class="btn btn-primary" data-bind="click: openPatient"><spring:message code="label.patient.edit"/></button>
+            <!-- /ko -->
+            <!-- ko ifnot: patient -->
+            <button type="button" class="btn btn-danger" data-bind="click: openPatient"><spring:message code="label.patient.add"/></button>
+            <!-- /ko -->
         </div>
     </div>
 
