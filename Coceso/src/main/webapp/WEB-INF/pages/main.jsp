@@ -268,6 +268,12 @@
                             <spring:message code="label.nav.dashboard"/>
                         </a>
                     </li>
+                    <li>
+                        <a href="<c:url value="/search/patient/"/>${concern.id}" target="_blank">
+                            <span class="glyphicon glyphicon-link"></span>
+                            <spring:message code="label.patient.search"/>
+                        </a>
+                    </li>
                 </ul>
             </li>
 

@@ -19,13 +19,9 @@
     <link href="<c:url value="/static/css/bootstrap-theme.css" />" rel="stylesheet">
     <link href="<c:url value="/static/css/flags.css"/>" rel="stylesheet" />
 
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 
     <script src="<c:url value='/static/js/jquery.js' />"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-
     <script src="<c:url value='/static/js/bootstrap.js' />"></script>
-
     <script src="<c:url value='/static/js/jquery.ui.js' />"></script>
 
 

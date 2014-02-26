@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -63,5 +64,12 @@ public class LogService {
             return null;
         }
         return logDao.getLast(case_id, count);
+    }
+
+    public List<LogEntry> getByIncidentId(int inc_id) {
+        if(inc_id < 1) {
+            return null;
+        }
+        return logDao.getByIncidentId(inc_id);
     }
 }
