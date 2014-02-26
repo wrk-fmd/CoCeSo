@@ -1013,8 +1013,8 @@ Coceso.ViewModels.ViewModelSingle.prototype = Object.create(Coceso.ViewModels.Vi
 
       var i;
       for (i in data) {
-        if ((data[i] === null) && (typeof this.model[i] === "object")) {
-          data[i] = this.model[i];
+        if ((data[i] === null) && (typeof this.model[i] === "object") && (this.model[i] !== null)) {
+          data[i] = $.extend(true, {}, this.model[i]);
         }
       }
       return data;
@@ -2799,14 +2799,19 @@ Coceso.ViewModels.CustomLogEntry = function(options) {
 
     // No auto-update needed
     //TODO self.unitList = ko.observableArray(Coceso.Ajax.data.unitlist);
+
     self.error = ko.observable(false);
 
     self.ok = function() {
         Coceso.Ajax.save(ko.toJSON($.extend({id: 0, unit: null, incident: null},self), function(key, value){
             // Filter field error and ui
-            if(key === "error" || key === "ui" || key === "unitList") { return;}
+            if(key === "error" || key === "ui" || key === "unitList") {
+                return;
+            }
             // If unit id is given, create anonymous object
-            if(key === "unit") { return value === 0 ? null : {id: value} }
+            if(key === "unit") {
+                return value === 0 ? null : {id: value}
+            }
             // All other elements return by default
             return value;
         }),
