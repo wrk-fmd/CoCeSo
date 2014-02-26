@@ -56,6 +56,18 @@ public class IncidentController implements IEntityController<Incident> {
         }
     }
 
+    @RequestMapping(value = "getAllRelevant", produces = "application/json")
+    @ResponseBody
+    public List<Incident> getAllRelevant(@CookieValue(value = "active_case", defaultValue = "0") String case_id) {
+
+        try {
+            return incidentService.getAllRelevant(Integer.parseInt(case_id));
+        } catch(NumberFormatException e) {
+            Logger.warning("IncidentController: getAll: " + e);
+            return null;
+        }
+    }
+
     @RequestMapping(value = "getAllByState/{state}", produces = "application/json")
     @ResponseBody
     public List<Incident> getAllByState(@CookieValue(value = "active_case", defaultValue = "0") String case_id,

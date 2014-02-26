@@ -134,6 +134,11 @@ Coceso.Conf = {
       ,noKey: 78 // 78: N
   }
   ,confirmStatusUpdate: true
+  ,listURLs : {
+    units: "unit/getAll.json"
+    ,incidents: "incident/getAllRelevant.json" // Reduce Load by filtering Incident that are 'Done' && singleUnit
+    ,patients: "patient/getAll.json"
+  }
 };
 
 /**
@@ -475,19 +480,19 @@ Coceso.Ajax = {
   loadOptions: {
     units: {
       list: "unitlist",
-      url: "unit/getAll.json",
+      url: Coceso.Conf.listURLs.units,
       interval: null,
       id: null
     },
     incidents: {
       list: "incidentlist",
-      url: "incident/getAll.json",
+      url: Coceso.Conf.listURLs.incidents,
       interval: null,
       id: null
     }
     ,patients: {
       list: "patientlist",
-      url: "patient/getAll.json",
+      url: Coceso.Conf.listURLs.patients,
       interval: null,
       id: null
     }

@@ -74,6 +74,24 @@ public class IncidentDao extends CocesoDao<Incident> {
         return jdbc.query(q, new Object[] {case_id}, incidentMapper);
     }
 
+    /**
+     * Doesn't return Incidents with state='Done' && SingleUnit-Incident
+     * @param case_id
+     * @return
+     */
+    public List<Incident> getAllRelevant(int case_id) {
+        if(case_id <= 0) {
+            return null;
+        }
+
+        String q = "SELECT * FROM incident " +
+                "WHERE concern_fk = ? AND (state != 'Done' OR " +
+                "(type != 'ToHome' AND type != 'Standby' AND type != 'HoldPosition' AND type != 'Relocation' )) " +
+                "ORDER BY id ASC";
+
+        return jdbc.query(q, new Object[] {case_id}, incidentMapper);
+    }
+
     public List<Incident> getAllActive(int case_id) {
         if(case_id <= 0) {
             return null;

@@ -28,6 +28,10 @@ public class IncidentService {
         return incidentDao.getAll(case_id);
     }
 
+    public List<Incident> getAllRelevant(int case_id) {
+        return incidentDao.getAllRelevant(case_id);
+    }
+
     public List<Incident> getAllActive(int id) {
         return incidentDao.getAllActive(id);
     }
