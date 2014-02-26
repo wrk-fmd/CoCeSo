@@ -33,11 +33,13 @@
 
     <link rel="stylesheet" href="<c:url value="/static/css/coceso.css" />" type="text/css"/>
 
-    <script src="<c:url value="/static/js/jquery.js"/>" type="text/javascript"></script>
-    <script src="<c:url value="/static/js/jquery.ui.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/static/js/jquery-1.11.0.js"/>" type="text/javascript"></script>
+    <%-- See Bug #9166 of JQuery UI: http://bugs.jqueryui.com/ticket/9166 --%>
+    <script src="<c:url value="/static/js/jquery-ui-1.9.2.custom.js"/>" type="text/javascript"></script>
+
     <script src="<c:url value="/static/js/jquery.ui.winman.js"/>" type="text/javascript"></script>
-    <script src="<c:url value="/static/js/jquery.i18n.js"/>" type="text/javascript"></script>
-    <script src="<c:url value="/static/js/knockout.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/static/js/jquery.i18n.min.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/static/js/knockout.min.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/knockout.mapping.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/bootstrap.dropdown.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/bootstrap.modals.js"/>" type="text/javascript"></script>
