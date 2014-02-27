@@ -5,10 +5,7 @@ import at.wrk.coceso.entity.LogEntry;
 import at.wrk.coceso.entity.Patient;
 import at.wrk.coceso.entity.enums.LogEntryType;
 import at.wrk.coceso.entity.enums.TaskState;
-import at.wrk.coceso.service.IncidentService;
-import at.wrk.coceso.service.LogService;
-import at.wrk.coceso.service.PatientService;
-import at.wrk.coceso.service.UnitService;
+import at.wrk.coceso.service.*;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -38,8 +35,13 @@ public class SearchPatientController {
     @Autowired
     UnitService unitService;
 
+    @Autowired
+    ConcernService concernService;
+
     @RequestMapping("")
-    public String index_() {
+    public String index_(ModelMap map) {
+        // Concern List for <select>
+        map.addAttribute("concerns", concernService.getAllActive());
         return "search/patient";
     }
 
@@ -52,6 +54,9 @@ public class SearchPatientController {
         } catch (NumberFormatException ne) {
             return "redirect:/search/patient";
         }
+
+        // Concern List for <select>
+        map.addAttribute("concerns", concernService.getAllActive());
         return "search/patient";
     }
 

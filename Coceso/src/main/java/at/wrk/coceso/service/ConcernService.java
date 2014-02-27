@@ -50,4 +50,9 @@ public class ConcernService {
         logService.logFull(user, LogEntryType.CONCERN_REMOVE, concern.getId(), null, null, true);
         return concernDao.remove(concern);
     }
+
+    public List<Concern> getAllActive() {
+
+        return concernDao.getAllActive();
+    }
 }

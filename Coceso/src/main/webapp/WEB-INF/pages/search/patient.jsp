@@ -10,28 +10,59 @@
     <link rel="stylesheet" href="<c:url value="/static/css/coceso.css" />" type="text/css"/>
 
     <script src="<c:url value="/static/js/jquery-1.11.0.min.js"/>" type="text/javascript"></script>
-    <%-- See Bug #9166 of JQuery UI: http://bugs.jqueryui.com/ticket/9166 --%>
     <script src="<c:url value="/static/js/jquery.ui.min.js"/>" type="text/javascript"></script>
 
     <script src="<c:url value="/static/js/knockout.min.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/static/js/bindings.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/bootstrap.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/jquery.ui.touch-punch.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/search.patient.js"/>" type="text/javascript"></script>
 
     <script type="text/javascript">
+        var model;
         $(document).ready(function() {
-            ko.applyBindings(new SearchViewModel({concernID: ${ not empty active ? active : 0}}));
+            model = new SearchViewModel({
+                concernID: ${ not empty active ? active : 0}
+                ,urlprefix: "${pageContext.request.contextPath}/"
+                ,concerns: [
+                    {id: 0, name: "<spring:message code="label.select" />"}
+                    <c:forEach var="concern" items="${concerns}">,{ id: ${concern.id}, name: "${concern.name}" }</c:forEach>
+                ]
+            });
+            ko.applyBindings(model);
+
         });
     </script>
+    <style type="text/css">
+        /* Hide title bar of popover */
+        .popover-title {
+            display: none;
+        }
+    </style>
 </head>
 <body>
 
 <div class="container">
-    <div>
-           <input type="text" class="form-control" data-bind="value: query, valueUpdate: 'keyup'" autocomplete="off" autofocus>
+    <div class="page-title">
+        <h2>
+            <spring:message code="label.patient.search" />
+        </h2>
+    </div>
+    <div class="page-header">
+        <h4>
+            <spring:message code="label.concern" />
+        </h4>
+    </div>
+    <div class="page-header">
+        <select class="form-control" data-bind="options: opts.concerns, optionsText: 'name', optionsValue: 'id', value: concernID"></select>
+    </div>
+    <div class="page-header">
+        <input type="text" class="form-control" data-bind="value: query, valueUpdate: 'keyup'" autocomplete="off"
+               placeholder="<spring:message code="label.search" />" autofocus>
+
     </div>
     <div>
-        <table class="table table-striped">
+        <table class="table table-striped text-center">
             <thead>
             <tr>
                 <th>
@@ -110,8 +141,8 @@
                     <span data-bind="text: ao"></span>
                 </td>
                 <td>
-                    <span class="glyphicon glyphicon-info-sign" style="font-size: x-large" data-toggle="tooltip"
-                          data-placement="auto rigth" data-bind="title: textTooltip"></span>
+                    <span class="glyphicon glyphicon-info-sign" style="font-size: x-large"
+                          data-bind="popover: $root.tooltip($data)"></span>
                 </td>
             </tr>
             </tbody>

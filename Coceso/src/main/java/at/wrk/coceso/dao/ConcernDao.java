@@ -9,6 +9,7 @@ import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -137,6 +138,7 @@ public class ConcernDao extends CocesoDao<Concern> {
      * USE WITH CAUTION, CASCADING IS ENABLED!
      */
     @Override
+    @PreAuthorize("denyAll") // TODO Change Right Management if used
     public boolean remove(Concern caze) {
         if(caze == null) return false;
 
@@ -144,5 +146,17 @@ public class ConcernDao extends CocesoDao<Concern> {
 
         jdbc.update(q, caze.getId());
         return false;
+    }
+
+    public List<Concern> getAllActive() {
+        String q = prefix + " WHERE closed = false";
+
+        try {
+            return jdbc.query(q, concernMapper);
+        }
+        catch(DataAccessException dae) {
+            Logger.error("UnitDao.getAll: DataAccessException: "+dae.getMessage());
+            return null;
+        }
     }
 }
