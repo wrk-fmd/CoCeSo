@@ -128,7 +128,7 @@
             <button type="button" class="btn btn-primary" data-bind="click: openPatient"><spring:message code="label.patient.edit"/></button>
             <!-- /ko -->
             <!-- ko ifnot: patient -->
-            <button type="button" class="btn btn-danger" data-bind="click: openPatient"><spring:message code="label.patient.add"/></button>
+            <button type="button" class="btn btn-danger" data-bind="click: openPatient, enable: id"><spring:message code="label.patient.add"/></button>
             <!-- /ko -->
         </div>
     </div>
@@ -169,7 +169,12 @@
     <%-- Assigned Units --%>
     <div class="assigned" data-bind="foreach: units.unitlist">
         <div class="form-group clearfix">
-            <label class="col-md-2 control-label" data-bind="text: call"></label>
+            <label class="col-md-2 control-label">
+                <!-- ko if: $parent.unitCount() > 1 -->
+                <span class="glyphicon glyphicon-plus-sign" data-bind="click: function() { $parent.duplicate($data)}"></span>
+                <!-- /ko -->
+                <span data-bind="text: call"></span>
+            </label>
             <div class="col-md-10 ui-buttonset">
                 <input type="radio" class="ui-helper-hidden-accessible"
                        data-bind="checked: taskState, disable: $parent.disableAssigned, attr: {id: $root.ui + '-taskState_assigned_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.assigned" />

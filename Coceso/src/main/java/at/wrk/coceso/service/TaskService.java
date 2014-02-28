@@ -133,26 +133,26 @@ public class TaskService {
                 break;
             case AAO:
                 // Set Position of Unit to AO
-                // Full Write Needed For Send Home with Home == NULL
-                /*Unit writeUnit2 = u.slimCopy();
-                writeUnit2.setPosition(i.getAo());*/
-                u.setPosition(i.getAo());
-                log.logFull(user, LogEntryType.UNIT_AUTOSET_POSITION, i.getConcern(), u, i, true);
+                Unit writeUnit2 = u.slimCopy();
+                writeUnit2.setPosition(i.getAo());
+                log.logFull(user, LogEntryType.UNIT_AUTOSET_POSITION, i.getConcern(), writeUnit2, i, true);
                 unitService.updateFull(u);
 
                 // If Relocation and at AO -> Change to HoldPosition
                 if(i.getType() == IncidentType.Relocation) {
                     state = TaskState.Detached;
 
-                    Incident hold = new Incident();
-                    hold.setType(IncidentType.HoldPosition);
-                    hold.setAo(i.getAo());
-                    hold.setConcern(i.getConcern());
-                    hold.setState(IncidentState.Working);
+                    // If Relocation goes to unit.home -> just detach, so unit is marked as 'at Home'
+                    if(i.getAo() != u.getHome()) {
+                        Incident hold = new Incident();
+                        hold.setType(IncidentType.HoldPosition);
+                        hold.setAo(i.getAo());
+                        hold.setConcern(i.getConcern());
+                        hold.setState(IncidentState.Working);
 
-                    hold.setId(incidentService.add(hold));
-                    assignUnit(hold.getId(), unit_id, TaskState.AAO, user);
-
+                        hold.setId(incidentService.add(hold));
+                        assignUnit(hold.getId(), unit_id, TaskState.AAO, user);
+                    }
                 }
 
                 if(i.getType() == IncidentType.ToHome) {
@@ -184,7 +184,7 @@ public class TaskService {
 
         checkEmpty(i, user);
 
-        // TODO Avoid Concurrent...Exception (Delete from i.getUnits() on Detach)
+        // TODO Avoid ConcurrentModificationException (Delete from i.getUnits() on Detach)
         for(Integer unitId : i.getUnits().keySet()) {
             if(i.getState() == IncidentState.Done) {
                 log.logWithIDs(user.getId(), LogEntryType.UNIT_AUTO_DETACH, i.getConcern(), unitId, i.getId(), true);
