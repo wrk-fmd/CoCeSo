@@ -54,11 +54,29 @@
         </h4>
     </div>
     <div class="page-header">
-        <select class="form-control" data-bind="options: opts.concerns, optionsText: 'name', optionsValue: 'id', value: concernID"></select>
+        <div class="row">
+            <div class="col-md-6">
+                <select class="form-control" data-bind="options: opts.concerns, optionsText: 'name', optionsValue: 'id', value: concernID"></select>
+            </div>
+            <div class="col-md-2">
+                <button type="button" class="btn btn-lg btn-default" data-bind="click: fetch">
+                    <span class="glyphicon glyphicon-refresh"></span>
+                </button>
+            </div>
+        </div>
     </div>
     <div class="page-header">
-        <input type="text" class="form-control" data-bind="value: query, valueUpdate: 'keyup'" autocomplete="off"
-               placeholder="<spring:message code="label.search" />" autofocus>
+        <div class="row">
+            <div class="col-md-6">
+                <input type="text" class="form-control" data-bind="value: query, valueUpdate: 'keyup'" autocomplete="off"
+                       placeholder="<spring:message code="label.search" />" autofocus>
+            </div>
+            <div class="col-md-2">
+                <button type="button" class="btn btn-lg btn-default" data-bind="click: clearQuery">
+                    <span class="glyphicon glyphicon-remove"></span>
+                </button>
+            </div>
+        </div>
 
     </div>
     <div>

@@ -42,9 +42,9 @@
 
 <script type="text/html" id="container-template">
 
-    <!-- UNIT LIST -->
+    <%-- UNIT LIST --%>
     <ul class="unit_list" data-bind="template: {name: 'unit-list-entry-template', foreach: units}"></ul>
-    <!-- /UNIT LIST -->
+    <%-- /UNIT LIST --%>
 
     <div data-bind="foreach: subContainer">
         <div class="panel panel-default">
@@ -75,7 +75,12 @@
                 <h4 class="modal-title" id="nextStateConfirmLabel"><spring:message code="text.confirmation.title" /></h4>
             </div>
             <div class="modal-body">
-                <spring:message code="text.confirmation"/>
+                <p>
+                    <spring:message code="text.confirmation"/>
+                </p>
+                <%--p>
+                    <strong data-bind="text: call"></strong>: <span data-bind="text: current_state"></span> -> <span data-bind="text: new_state"></span>
+                </p--%>
             </div>
             <div class="modal-footer">
                 <button type="button" id="next-state-confirm-no" class="btn btn-danger btn-lg" data-dismiss="modal" autofocus><spring:message code="label.confirmation.no" /></button>

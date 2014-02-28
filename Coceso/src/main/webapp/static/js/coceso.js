@@ -139,6 +139,13 @@ Coceso.Conf = {
     ,incidents: "incident/getAllRelevant.json" // Reduce Load by filtering Incident that are 'Done' && singleUnit
     ,patients: "patient/getAll.json"
   }
+  ,incidentText: {
+    task_blue: "E"
+    ,task_non_blue: "A"
+    ,transport: "T"
+    ,relocation: "V"
+    ,tohome: "Einr"
+  }
 };
 
 /**
@@ -1482,19 +1489,18 @@ Coceso.ViewModels.Incident = function(data, options) {
    * @type ko.computed
    * @return {String}
    */
-  // TODO Move Definitions to Conf
   this.typeString = ko.computed(function() {
     if (this.isTask()) {
-      return this.blue() ? "E" : "A";
+      return this.blue() ? Coceso.Conf.incidentText.task_blue : Coceso.Conf.incidentText.task_non_blue;
     }
     if (this.isTransport()) {
-      return "T";
+      return Coceso.Conf.incidentText.transport;
     }
     if (this.isRelocation()) {
-      return "V";
+      return Coceso.Conf.incidentText.relocation;
     }
     if (this.isToHome()) {
-      return "Einr";
+      return Coceso.Conf.incidentText.tohome;
     }
     if (this.isStandby()) {
       return "<span class='glyphicon glyphicon-pause'></span>";
@@ -1565,6 +1571,17 @@ Coceso.ViewModels.Incident = function(data, options) {
     }
   };
 
+    self.duplicate = function(unit) {
+        options = {caller: self.caller(), bo: {info: self.bo.info()}, ao: {info: self.ao.info()}, info: self.info(), blue: self.blue(), type: self.type()};
+        var model = new Coceso.ViewModels.Incident(options);
+        if(unit && model.units.unitlist) {
+            model.units.unitlist.push(new Coceso.ViewModels.Unit({id: unit.id(), taskState: unit.taskState()}, self.getOption(["children", "children"], {assigned: false, writeable: false})));
+            unit.taskState(Coceso.Constants.TaskState.detached);
+        }
+        Coceso.UI.openIncidentInternally(_("label.incident"), "incident_form.html", model);
+        model.save();
+        self.save();
+    };
   /**
    * Assign a unit to an incident in the list
    *
@@ -1588,6 +1605,14 @@ Coceso.ViewModels.Incident = function(data, options) {
   this.openForm = function() {
     Coceso.UI.openIncident(_("label.incident.edit"), "incident_form.html", {id: self.id()});
   };
+
+    this.unitCount = ko.computed(function() {
+        if (!this.units || !this.units.unitlist) {
+            return -1;
+        }
+
+        return this.units.unitlist().length;
+    }, this);
 
   /**
    * Open log
@@ -2028,7 +2053,7 @@ Coceso.ViewModels.Unit = function(data, options) {
       return "<span class='glyphicon glyphicon-plus'></span>";
     }
     if (this.incidentCount() === 0) {
-      return "<span class='glyphicon glyphicon-" + (this.hasHome() ? (this.isHome() ? "home" : "exclamation-sign") : "ok-sign") + "'></span>";
+      return "<span class='glyphicon glyphicon-" + (this.isHome() ? "home" : "exclamation-sign") + "'></span>";
     }
 
     var incident = this.incidents.incidentlist()[0];
@@ -2116,7 +2141,7 @@ Coceso.ViewModels.Unit = function(data, options) {
   /**
    * Set TaskState to next state
    *
-   * @param {Integer} incid
+   * @param {int} incid
    * @return {void}
    */
   this.nextState = function(incid) {
@@ -2125,6 +2150,14 @@ Coceso.ViewModels.Unit = function(data, options) {
     }
 
     if (incid && self.id()) {
+        if(self.incidentCount() === 1) {
+            var incident = self.incidents.incidentlist()[0];
+            // Return if AO not given and Action is "set to ZAO"
+            if(incident.ao.info() === "" && incident.taskState() === Coceso.Constants.TaskState.abo) {
+                Coceso.UI.openIncident(_("label.incident.edit"), "incident_form.html", {id: incident.id()});
+                return;
+            }
+        }
         var save = function() {
             Coceso.Ajax.save({incident_id: incid, unit_id: self.id()}, "incident/nextState.json");
         };

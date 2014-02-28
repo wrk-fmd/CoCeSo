@@ -19,6 +19,7 @@ function SearchViewModel(options) {
     self.patients = ko.observableArray();
 
     self.fetch = function() {
+        console.log("fetching: "+self.concernID());
         if(self.concernID() === 0) {
             self.patients([]);
             return;
@@ -27,6 +28,10 @@ function SearchViewModel(options) {
         $.ajax(self.opts.urlprefix + self.opts.dataURL + self.concernID(), {
             success: self.patients
         })
+    };
+
+    self.clearQuery = function() {
+        self.query("");
     };
 
     ko.computed(self.fetch);
@@ -48,13 +53,14 @@ function SearchViewModel(options) {
 
     self.tooltip = function(patient) {
 
-        var content = "<div onmouseout=\"$('.tooltip').remove();\"><table class=\"table table-striped\">";
+        var content = "<div onmouseout=\"$('.popover').remove();\"><table class=\"table table-striped\">";
 
         var h = patient.history;
         for(var i in h) {
             if(h[i]) {
-                var date = new Date(h[i].timestamp * 1000);
-                var time = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+                var date = new Date(h[i].timestamp);
+                var time = date.getHours() + ":" + (date.getMinutes() < 10 ? "0" : "") + date.getMinutes() + ":"
+                    + (date.getSeconds() < 10 ? "0" : "") + date.getSeconds();
                 content += "<tr><td>" + time + "</td><td>" + h[i].unit_call + "</td><td>" + h[i].state + "</td></tr>";
             }
 

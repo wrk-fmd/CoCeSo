@@ -65,13 +65,13 @@
               <div class="checkbox-inline">
                 <label>
                   <input type="checkbox" value="true" data-bind="checked: filter.blue" />
-                  Yes
+                  <spring:message code="label.yes"/>
                 </label>
               </div>
               <div class="checkbox-inline">
                 <label>
                   <input type="checkbox" value="false" data-bind="checked: filter.blue" />
-                  No
+                  <spring:message code="label.no"/>
                 </label>
               </div>
             </div>

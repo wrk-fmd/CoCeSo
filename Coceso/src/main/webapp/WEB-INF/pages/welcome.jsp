@@ -152,33 +152,9 @@
 
         </form>
     </div>
-
-    <!-- TODO REMOVE IN RELEASE!!! #%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#-->
     <div class="page-header">
-        <h2>
-            Debugging
-        </h2>
+        &nbsp; <%--Just for a nicer view --%>
     </div>
-    <div class="alert alert-danger text-center">
-        <strong>Only for Developing!</strong><br />
-        You have to set the Cookie first (Open once Edit-Page of Case)
-    </div>
-    <div>
-        <c:url var="debug0" value="/data/incident/getAll" />
-        <a href="${debug0}" class="active btn btn-primary">All Incidents</a>
-
-        <c:url var="debug1" value="/data/incident/getAllActive" />
-        <a href="${debug1}" class="active btn btn-primary">All Active Incidents</a>
-
-        <c:url var="debug2" value="/data/unit/getAll" />
-        <a href="${debug2}" class="active btn btn-primary">All Units</a>
-
-        <c:url var="debug3" value="/data/log/getAll" />
-        <a href="${debug3}" class="active btn btn-primary">Full Log</a>
-
-
-    </div>
-    <!--##############-->
 
 </div>
 

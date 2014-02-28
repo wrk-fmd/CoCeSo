@@ -1,7 +1,9 @@
 package at.wrk.coceso.controller.view;
 
-import at.wrk.coceso.dao.ConcernDao;
 import at.wrk.coceso.entity.Concern;
+import at.wrk.coceso.service.ConcernService;
+import at.wrk.coceso.service.IncidentService;
+import at.wrk.coceso.service.UnitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -9,15 +11,23 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.util.Date;
+
 @Controller
 @RequestMapping("/main")
 public class MainController {
     @Autowired
-    ConcernDao concernDao;
+    ConcernService concernService;
+
+    @Autowired
+    UnitService unitService;
+
+    @Autowired
+    IncidentService incidentService;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String showMain(ModelMap model, @CookieValue("active_case") int concern_id) {
-        Concern c = concernDao.getById(concern_id);
+        Concern c = concernService.getById(concern_id);
         if(c == null || c.isClosed())
             return "redirect:/welcome?error=1";
 
@@ -90,5 +100,19 @@ public class MainController {
     public String logAdd() {
 
         return "main_content/log_add";
+    }
+
+    @RequestMapping(value = "dump.html", method = RequestMethod.GET)
+    public String dump(ModelMap map, @CookieValue("active_case") int concern_id) {
+        Concern c = concernService.getById(concern_id);
+        if(c == null || c.isClosed())
+            return "redirect:/welcome?error=1";
+
+        map.addAttribute("concern", c);
+        map.addAttribute("units", unitService.getAll(concern_id));
+        map.addAttribute("incidents", incidentService.getAllActive(concern_id));
+        map.addAttribute("date", new Date());
+
+        return "main_content/dump";
     }
 }

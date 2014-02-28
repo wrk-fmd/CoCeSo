@@ -89,6 +89,15 @@
                     <spring:message code="label.incident.type.hold_position" />: <spring:message code="text.unit.hold_position" />
                 </td>
             </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <span class="glyphicon glyphicon-pause"></span>
+                </td>
+                <td>
+                    <spring:message code="label.incident.type.standby" />: <spring:message code="text.unit.standby" />
+                </td>
+            </tr>
         </tbody>
     </table>
 </div>

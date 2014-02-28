@@ -28,7 +28,7 @@ import java.util.Set;
 public class ConcernEditController {
 
     @Autowired
-    //ConcernDao concernDao;
+    //ConcernDao concernService;
     ConcernService concernService;
 
     //@Autowired
