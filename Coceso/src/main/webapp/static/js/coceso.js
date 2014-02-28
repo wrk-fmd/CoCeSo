@@ -2091,6 +2091,9 @@ Coceso.ViewModels.Unit = function(data, options) {
   this.popover = ko.computed(function() {
     // Bugfix orphaned Popovers (Ticket #17)
     var content = "<div onmouseout=\"$('.popover').remove();\">";
+    if( this.ani() && this.ani() !== "") {
+      content += "<p><span class='key'>" + _("label.unit.ani") + "</span><span>" + this.ani() + "</span></p>";
+    }
     if (this.hasHome()) {
       content += "<p><span class='key'>" + _("label.unit.home") + "</span><span>" + this.home.info() + "</span></p>";
     }
