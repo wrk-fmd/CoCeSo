@@ -265,12 +265,12 @@ input.form-control, textarea.form-control {
 }
 
 .form-control.form-changed {
-  border-color: #c09853;
+  border-color: #f3ea00;
 }
 
-.form-control.form-changed:focus {
-  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(192, 152, 83, 0.6);
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(192, 152, 83, 0.6);
+.form-control.form-changed {
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 10px rgba(243, 234, 0, 0.60);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 10px rgba(243, 234, 0, 0.60);
 }
 
 textarea.form-control {
@@ -563,4 +563,14 @@ table[id*='keytable'] > tbody > tr > td:nth-child(2) {
 .modal-dialog {
     margin-top: 80px;
     z-index: 1550;
+}
+
+/*
+ * Highlight Text Fields
+ */
+.form-highlight {
+    border-color: #e94136;
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 10px rgba(233, 65, 54, 0.60);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 10px rgba(233, 65, 54, 0.60);
 }

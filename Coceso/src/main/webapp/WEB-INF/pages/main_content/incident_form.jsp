@@ -69,7 +69,7 @@
             <label for="bo" class="sr-only"><spring:message code="label.incident.bo" />:</label>
             <textarea id="bo" name="bo" rows="3" class="form-control"
                       placeholder="<spring:message code='label.incident.bo' />"
-                      data-bind="disable: disableBO, value: bo.info, css: {'form-changed': bo.info.localChange}, valueUpdate: 'afterkeydown'"
+                      data-bind="disable: disableBO, value: bo.info, css: {'form-changed': bo.info.localChange, 'form-highlight': bo.info() === '' && !disableBO()}, valueUpdate: 'afterkeydown'"
                       autofocus>
             </textarea>
         </div>
@@ -84,7 +84,9 @@
 
     <div class="form-group col-md-12">
         <label for="caller" class="sr-only"><spring:message code="label.incident.caller" />:</label>
-        <input type="text" id="caller" name="caller" class="form-control" placeholder="<spring:message code='label.incident.caller' />" data-bind="value: caller, css: {'form-changed': caller.localChange}, valueUpdate: 'afterkeydown'" />
+        <input type="text" id="caller" name="caller" class="form-control"
+               placeholder="<spring:message code='label.incident.caller' />"
+               data-bind="value: caller, css: {'form-changed': caller.localChange, 'form-highlight': caller() === ''}, valueUpdate: 'afterkeydown'" />
     </div>
 
     <div class="form-group col-md-12">
@@ -101,7 +103,7 @@
             <label for="ao" class="sr-only"><spring:message code="label.incident.ao" />:</label>
             <textarea id="ao" name="ao" rows="3" class="form-control"
                       placeholder="<spring:message code='label.incident.ao' />"
-                      data-bind="value: ao.info, css: {'form-changed': ao.info.localChange}, valueUpdate: 'afterkeydown'">
+                      data-bind="value: ao.info, css: {'form-changed': ao.info.localChange, 'form-highlight': highlightAO}, valueUpdate: 'afterkeydown'">
             </textarea>
             <!-- ko if: patient -->
             <strong><spring:message code="text.patient.needs" /></strong>: <span data-bind="text: patient().erType"></span>
@@ -171,7 +173,7 @@
         <div class="form-group clearfix">
             <label class="col-md-2 control-label">
                 <!-- ko if: $parent.unitCount() > 1 -->
-                <span class="glyphicon glyphicon-plus-sign" data-bind="click: function() { $parent.duplicate($data)}"></span>
+                <span class="glyphicon glyphicon-share" data-bind="click: function() { $parent.duplicate($data)}"></span>
                 <!-- /ko -->
                 <span data-bind="text: call"></span>
             </label>
@@ -226,6 +228,7 @@
             <input type="button" class="btn btn-success" value="<spring:message code='label.ok' />" data-bind="enable: localChange, click: ok" />
             <input type="button" class="btn btn-primary" value="<spring:message code='label.save' />" data-bind="enable: localChange, click: save" />
             <input type="button" class="btn btn-warning" value="Reset" data-bind="enable: localChange, click: reset" />
+            <input type="button" class="btn btn-default" value="<spring:message code="label.incident.duplicate" />" data-bind="click: function() { duplicate() }" /> <%-- Force undefined on method param --%>
         </div>
     </div>
 </div>

@@ -331,7 +331,7 @@
                 <a href="#" title="<spring:message code="label.main.unit.for_dispo" />"
                    onclick="return Coceso.UI.openUnits('<spring:message code="label.main.unit.for_dispo" />', 'unit.html', {filter: ['radio']}, { position: {at: 'left+30% bottom'}});"
                    data-toggle="tooltip" data-placement="bottom" class="tooltipped">
-                    <span class="glyphicon glyphicon-earphone notification-icon"></span>
+                    <span class="glyphicon glyphicon-bullhorn notification-icon"></span>
                     <span class="badge" data-bind="text: radioCounter, css: cssRadio"></span>
                 </a>
             </li>

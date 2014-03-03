@@ -85,16 +85,16 @@ public class Unit {
     }
 
     public Point getPosition() {
-        // TODO Temporary Bugfix
-        return position == null ? dummyPoint() : position;
+        // Temporary Bugfix -- REMOVED
+        return position; // == null ? dummyPoint() : position;
     }
 
-    private Point dummyPoint() {
+    /*private Point dummyPoint() {
         Point ret = new Point();
         ret.setId(-1);
         ret.setInfo("");
         return ret;
-    }
+    } */
 
     public Map<Integer, TaskState> getIncidents() {
         return incidents;

@@ -55,7 +55,7 @@
             <tr>
                 <td></td>
                 <td>
-                    <span class="glyphicon glyphicon-earphone"></span>
+                    <span class="glyphicon glyphicon-bullhorn"></span>
                 </td>
                 <td>
                     <spring:message code="label.main.unit.for_dispo" />: <spring:message code="text.unit_for_dispo" />

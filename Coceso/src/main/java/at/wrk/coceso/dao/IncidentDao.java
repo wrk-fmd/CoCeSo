@@ -140,13 +140,13 @@ public class IncidentDao extends CocesoDao<Incident> {
         if(incident.getAo() != null) {
             if(comma) q+= ",";
             q += "ao_point_fk = ? ";
-            parameters.add(incident.getAo().getId());
+            parameters.add(incident.getAo().getId() == -2 ? null : incident.getAo().getId());
             comma = true;
         }
         if(incident.getBo() != null) {
             if(comma) q+= ",";
             q += "bo_point_fk = ? ";
-            parameters.add(incident.getBo().getId());
+            parameters.add(incident.getBo().getId() == -2 ? null : incident.getBo().getId());
             comma = true;
         }
         if(incident.getCasusNr() != null) {

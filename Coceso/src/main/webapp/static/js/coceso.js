@@ -363,7 +363,7 @@ Coceso.UI = {
      * @param model
      */
     openIncidentInternally: function(title, src, model) {
-        this.openWindow(title, Coceso.Conf.contentBase + src, model, { position: {at: "left+30% top+10%"}});
+        this.openWindow(title, Coceso.Conf.contentBase + src, model, { position: {at: "left+40% top+20%"}});
         return false;
     },
   /**
@@ -1579,7 +1579,10 @@ Coceso.ViewModels.Incident = function(data, options) {
             unit.taskState(Coceso.Constants.TaskState.detached);
         }
         Coceso.UI.openIncidentInternally(_("label.incident"), "incident_form.html", model);
-        model.save();
+        // If unit is duplicated, save new Form immediately to avoid Anomalies in Unit List
+        if(unit) {
+            model.save();
+        }
         self.save();
     };
   /**
@@ -1612,6 +1615,18 @@ Coceso.ViewModels.Incident = function(data, options) {
         }
 
         return this.units.unitlist().length;
+    }, this);
+
+    /**
+     * Highlight AO Field if empty an minimum of 1 Unit is ABO
+     */
+    this.highlightAO = ko.computed(function() {
+        if(this.unitCount() > 0) {
+            return this.ao.info() === "" && ko.utils.arrayFilter(this.units.unitlist(), function(unit) {
+                return unit.isABO();
+            }).length >= 1;
+        }
+        return false;
     }, this);
 
   /**
@@ -1734,9 +1749,18 @@ Coceso.ViewModels.Incident.prototype = Object.create(Coceso.ViewModels.ViewModel
    */
   beforeSave: {
     value: function(data) {
-      delete data.ao.id;
-      delete data.bo.id;
-
+      if(data.ao.info === "") {
+          data.ao.id = -2;
+      }
+      else {
+          delete data.ao.id;
+      }
+        if(data.bo.info === "") {
+            data.bo.id = -2;
+        }
+        else {
+            delete data.bo.id;
+        }
       return data;
     }
   }
@@ -1910,13 +1934,6 @@ Coceso.ViewModels.Unit = function(data, options) {
     return (this.hasHome() && this.position.info() === this.home.info());
   }, this);
 
-  /**
-   * Unit is 'free' (not at home, no Incident assigned
-   */
-  this.isFree = ko.computed(function() {
-    return (this.incidentCount() <= 0) && this.hasHome() && !this.isHome() && this.portable();
-  }, this);
-
 
   /**
    * Unit has state "AD"
@@ -1967,6 +1984,13 @@ Coceso.ViewModels.Unit = function(data, options) {
       return incident.isAssigned();
     }) !== null);
   }, this);
+
+    /**
+     * Unit is 'free' (not at home, no Incident assigned
+     */
+    this.isFree = ko.computed(function() {
+        return (this.incidentCount() <= 0) && !this.isHome() && this.portable() && !this.isAD();
+    }, this);
 
     /**
      * Unit is available for a new Incident and 'EB'
@@ -2062,7 +2086,7 @@ Coceso.ViewModels.Unit = function(data, options) {
     }
 
     if (incident.isStandby() || incident.isHoldPosition()) {
-      return incident.typeString();
+      return incident.typeString() + (incident.taskState() === Coceso.Constants.TaskState.assigned ? ": " + _("label.task.state.assigned") : "");
     }
 
     return "";

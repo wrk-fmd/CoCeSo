@@ -93,9 +93,8 @@ public class TaskService {
         TaskState tmp = (i.getUnits() != null) ?
                 i.getUnits().get(u.getId()) : null;
 
-        // Assign Unit if TaskState is Assigned or ABO (default options of Unit->addIncident and Unit->reportIncident
-        // in coceso.js
-        if(tmp == null && (state == TaskState.Assigned || state == TaskState.ABO))  // Not Assigned
+        // Assign Unit if TaskState is Assigned
+        if(tmp == null && (state == TaskState.Assigned))  // Not Assigned
             assignUnit(incident_id, unit_id, user);
         else if(tmp == null)
             return false;
@@ -136,14 +135,14 @@ public class TaskService {
                 Unit writeUnit2 = u.slimCopy();
                 writeUnit2.setPosition(i.getAo());
                 log.logFull(user, LogEntryType.UNIT_AUTOSET_POSITION, i.getConcern(), writeUnit2, i, true);
-                unitService.updateFull(u);
+                unitService.update(writeUnit2);
 
                 // If Relocation and at AO -> Change to HoldPosition
                 if(i.getType() == IncidentType.Relocation) {
                     state = TaskState.Detached;
 
                     // If Relocation goes to unit.home -> just detach, so unit is marked as 'at Home'
-                    if(i.getAo() != u.getHome()) {
+                    if(!i.getAo().equals(u.getHome())) {
                         Incident hold = new Incident();
                         hold.setType(IncidentType.HoldPosition);
                         hold.setAo(i.getAo());

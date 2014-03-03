@@ -63,4 +63,21 @@ public class Point {
         return point == null || point.getInfo() == null || point.getInfo().isEmpty();
 
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(! (obj instanceof Point) ){
+            return false;
+        }
+        Point that = (Point) obj;
+        boolean ret = true;
+        if(this.id > 0 && that.id > 0)
+            ret = this.id == that.id;
+
+        ret = ret && this.info.equals(that.info) &&
+                this.latitude == that.latitude &&
+                this.longitude == that.longitude;
+
+        return ret;
+    }
 }

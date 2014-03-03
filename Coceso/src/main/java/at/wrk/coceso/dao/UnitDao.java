@@ -49,7 +49,7 @@ public class UnitDao extends CocesoDao<Unit> {
             return null;
         }
 
-        String q = "select * from unit where id = ?";
+        String q = "SELECT * FROM unit WHERE id = ?";
         Unit unit;
 
         try {
@@ -85,6 +85,11 @@ public class UnitDao extends CocesoDao<Unit> {
         if(dummy == null)
             return null;
 
+        // Marker for deletion
+        if(dummy.getId() == -2) {
+            return dummy;
+        }
+
         // If the id already exists, return Point from Database
         if(dummy.getId() > 0) {
             Point p = pointDao.getById(dummy.getId());
@@ -102,7 +107,7 @@ public class UnitDao extends CocesoDao<Unit> {
     }
 
     /**
-     * Update Unit. Only Values state, info, position, home are changeable. All others are LOCKED!
+     * Update Unit. Only Values state, info, position are changeable. All others are LOCKED!
      * To change these, use updateFull(Unit).
      *
      * @param unit Unit to write to DB
@@ -141,20 +146,20 @@ public class UnitDao extends CocesoDao<Unit> {
             info_given = true;
             first = false;
         }
-        if(unit.getPosition() != null && unit.getPosition().getId() > 0) {
+        if(unit.getPosition() != null) {
             if(!first) {
                 q += ",";
             }
-            q += " position_point_fk = " + unit.getPosition().getId();
-            first = false;
+            q += " position_point_fk = " + (unit.getPosition().getId() == -2 ? "null" : unit.getPosition().getId());
+            //first = false;
         }
-        if(unit.getHome() != null && unit.getHome().getId() > 0) {
+        /*if(unit.getHome() != null) {
             if(!first) {
                 q += ",";
             }
-            q += " home_point_fk = " + unit.getHome().getId();
+            q += " home_point_fk = " + (unit.getHome().getId() == -2;
             // first = false;
-        }
+        }*/
         q += suf_q;
         try {
             if(info_given) {
@@ -198,7 +203,8 @@ public class UnitDao extends CocesoDao<Unit> {
                     unit.isTransportVehicle(),
                     unit.getInfo(),
                     unit.getPosition() == null || unit.getPosition().getId() <= 0 ? null : unit.getPosition().getId(),
-                    unit.getHome() == null || unit.getHome().getId() <= 0 ? null : unit.getHome().getId(), unit.getId());
+                    unit.getHome() == null || unit.getHome().getId() <= 0 ? null : unit.getHome().getId(),
+                    unit.getId());
         }
         catch(DataAccessException dae) {
             Logger.error("UnitDao.updateFull(Unit): DataAccessException: " + dae.getMessage());
