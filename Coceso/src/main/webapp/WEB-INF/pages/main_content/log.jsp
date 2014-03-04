@@ -49,8 +49,8 @@
             <td data-bind="text: time"></td>
             <td data-bind="text: user.username"></td>
             <td data-bind="text: text" style="white-space: pre-line"></td>
-            <td><a href="#" data-bind="text: unit.call, click: unit.openForm"></a></td>
-            <td><a href="#"  data-bind="text: incident.id, click: incident.openForm"></a></td>
+            <td><a href="#" data-bind="text: unit.call, click: openUnitForm"></a></td>
+            <td><a href="#"  data-bind="text: incident.id, click: openIncidentForm"></a></td>
             <td data-bind="text: state"></td>
         </tr>
         <!-- /ko -->

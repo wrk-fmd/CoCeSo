@@ -2546,6 +2546,7 @@ Coceso.ViewModels.Logs.prototype = Object.create(Coceso.ViewModels.ViewModelList
  */
 Coceso.ViewModels.Log = function(data, options) {
 
+    var self = this;
 
   options = $.extend({
     children: {
@@ -2569,6 +2570,19 @@ Coceso.ViewModels.Log = function(data, options) {
     var time = new Date(this.timestamp());
     return time.toLocaleString();
   }, this);
+
+  self.openUnitForm = function() {
+      if(self.unit && self.unit.id != null) {
+          Coceso.UI.openUnit(_("label.unit.edit"), "unit_form.html", {id: self.unit.id});
+      }
+  };
+
+  self.openIncidentForm = function() {
+    if(self.incident && self.incident.id != null ) {
+        Coceso.UI.openIncident(_("label.incident.edit"), "incident_form.html", {id: self.incident.id});
+    }
+  };
+
 };
 Coceso.ViewModels.Log.prototype = Object.create(Coceso.ViewModels.ViewModelSingle.prototype, /** @lends Coceso.ViewModels.Log.prototype */ {
   /**
@@ -2577,26 +2591,21 @@ Coceso.ViewModels.Log.prototype = Object.create(Coceso.ViewModels.ViewModelSingl
    */
   mappingOptions: {
     value: {
-      ignore: ["concern"],
+      ignore: ["concern", "json"],
       incident: {
         create: function(options) {
-          if (!options.parent.getOption("assigned")) {
-            return options.data;
-          }
-
-          return new Coceso.ViewModels.Incident(options.data, options.parent.getOption("children", {}));
+          return $.extend(true, {id: null}, options.data);
         }
       },
       unit: {
+        key: function(data) {
+          return ko.utils.unwrapObservable(data.id);
+        },
         create: function(options) {
-          if (!options.parent.getOption("assigned")) {
-            return options.data;
-          }
-
-          return new Coceso.ViewModels.Unit(options.data, options.parent.getOption("children", {}));
+          return $.extend(true, {id: null, call: null}, options.data);
         }
-      },
-      json: {
+      }
+      /*,json: {
         create: function(options) {
           var data = JSON.parse(options.data);
           //var data = null;
@@ -2613,7 +2622,7 @@ Coceso.ViewModels.Log.prototype = Object.create(Coceso.ViewModels.ViewModelSingl
             incident: new Coceso.ViewModels.Incident(data[1], options.parent.getOption("children", {}))
           };
         }
-      }
+      }*/
     }
   }
 });
