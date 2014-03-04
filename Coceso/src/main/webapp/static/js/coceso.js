@@ -2863,7 +2863,7 @@ Coceso.ViewModels.CustomLogEntry = function(options) {
     self.unit = ko.observable(options.unit);
 
     // No auto-update needed
-    //TODO self.unitList = ko.observableArray(Coceso.Ajax.data.unitlist);
+    self.unitList = ko.observableArray(Coceso.Ajax.data.units.unitlist);
 
     self.error = ko.observable(false);
 
@@ -2875,7 +2875,7 @@ Coceso.ViewModels.CustomLogEntry = function(options) {
             }
             // If unit id is given, create anonymous object
             if(key === "unit") {
-                return value === 0 ? null : {id: value}
+                return ( !value || value == null || value === 0 ) ? null : {id: value};
             }
             // All other elements return by default
             return value;
