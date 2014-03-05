@@ -47,6 +47,7 @@
     <script src="<c:url value="/static/js/knockout.mapping.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/bootstrap.dropdown.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/bootstrap.modals.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/static/js/bootstrap.collapse.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/bindings.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/coceso.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/jquery.ui.touch-punch.js"/>" type="text/javascript"></script>
@@ -84,276 +85,298 @@
 <header>
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
         <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
             <a href="<c:url value="/welcome" />" class="navbar-brand" target="_blank"><spring:message code="label.coceso"/></a>
         </div>
 
-        <ul class="nav navbar-nav">
-            <%-- CALLTAKER -->
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><spring:message code="label.calltaker" /> <b class="caret"></b></a>
-                <ul class="dropdown-menu">
+        <div class="collapse navbar-collapse" id="navbar-collapse-1">
+            <%-- Order of Elements has to be right - left - center ! Otherwise css produces bulls*!t --%>
+
+            <div class="navbar-hide-on-mobile">
+                <ul id="nav-notifications" class="nav navbar-nav navbar-right">
+
+                    <%-- Notifications
+                     !!! this.title doesn't work here, title attribute is deleted by $.tooltip() !!!--%>
                     <li>
-                        <a href="#"
-                           title="<spring:message code='label.incident' /> / <spring:message code='label.add' />"
-                           onclick="return Coceso.UI.openIncident(this.title, 'incident_form.html');">
-                            <span class="glyphicon glyphicon-plus"></span> <spring:message code="label.incident.add"/>
-                        </a>
-                    </li>
-                    <li class="divider"></li>
-                    <li>
-                        <a href="#" title="<spring:message code='label.main.incident.new' />"
-                           onclick="return Coceso.UI.openIncidents(this.title, 'incident.html', {filter: ['overview', 'new'], showTabs: false});">
-                            <span class="glyphicon glyphicon-list-alt"></span> <spring:message code="label.main.incident.new"/>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <-- DISPONENT -->
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><spring:message code="label.dispatcher" /> <b class="caret"></b></a>
-                <ul class="dropdown-menu">
-                    <li>
-                        <a href="#"
-                           title="<spring:message code='label.incident' /> / <spring:message code='label.add' />"
-                           onclick="return Coceso.UI.openIncident(this.title, 'incident_form.html');">
-                            <span class="glyphicon glyphicon-plus"></span> <spring:message code="label.incident.add"/></a>
-                    </li>
-                    <li class="divider"></li>
-                    <li>
-                        <a href="#" title="<spring:message code='label.main.incident.open' />"
-                           onclick="return Coceso.UI.openIncidents(this.title, 'incident.html', {filter: ['overview', 'open'], showTabs: false});">
-                            <span class="glyphicon glyphicon-list-alt"></span> <spring:message code="label.main.incident.open"/></a>
-                    </li>
-                </ul>
-            </li>
-            <-- RADIO OPERATOR -->
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><spring:message code="label.radio_operator" /> <b class="caret"></b></a>
-                <ul class="dropdown-menu">
-                    <li>
-                        <a href="#"
-                           title="<spring:message code='label.incident' /> / <spring:message code='label.add' />"
-                           onclick="return Coceso.UI.openIncident(this.title, 'incident_form.html');">
-                            <span class="glyphicon glyphicon-plus"></span> <spring:message code="label.incident.add"/></a>
-                    </li>
-                    <li class="divider"></li>
-                    <li>
-                        <a href="#" title="<spring:message code='label.main.unit.for_dispo' />"
-                           onclick="return Coceso.UI.openUnits(this.title, 'unit.html', {filter: ['radio']});">
-                            <span class="glyphicon glyphicon-tasks"></span> <spring:message code="label.main.unit.for_dispo"/>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <-- UNITS --%>
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><spring:message code="label.units"/> <b
-                        class="caret"></b></a>
-                <ul class="dropdown-menu">
-                    <li>
-                        <a href="#" title="<spring:message code='label.units' />"
-                           onclick="return Coceso.UI.openUnits(this.title, 'unit.html');">
-                            <span class="glyphicon glyphicon-tasks"></span> <spring:message code="label.main.unit.overview"/>
+                        <a href="#" title="<spring:message code="label.connection_status" />" onclick="return false;"
+                           data-toggle="tooltip" data-placement="bottom" class="tooltipped">
+                            <span class="glyphicon glyphicon-signal notification-icon" data-bind="css: cssError"></span>
                         </a>
                     </li>
                     <li>
-                        <a href="#" title="<spring:message code="label.main.unit.hierarchy"/>"
-                           onclick="return Coceso.UI.openHierarchyUnits(this.title, 'unit_hierarchy.html');">
-                            <span class="glyphicon glyphicon-tasks"></span> <spring:message code="label.main.unit.hierarchy"/>
+                        <a href="#" title="<spring:message code="label.main.incident.new_or_open" />"
+                           onclick="return Coceso.UI.openIncidents('<spring:message code="label.main.incident.new_or_open" />', 'incident.html', {filter: ['overview', 'new_or_open'], showTabs: false}, {});"
+                           data-toggle="tooltip" data-placement="bottom" class="tooltipped">
+                            <span class="glyphicon glyphicon-time notification-icon"></span>
+                            <span class="badge" data-bind="text: openIncidentCounter, css: cssOpen"></span>
                         </a>
                     </li>
                     <li>
-                        <a href="#" title="<spring:message code='label.main.unit.for_dispo' />"
-                           onclick="return Coceso.UI.openUnits(this.title, 'unit.html', {filter: ['radio']});">
-                            <span class="glyphicon glyphicon-tasks"></span> <spring:message code="label.main.unit.for_dispo"/>
+                        <a href="#" title="<spring:message code="label.incident.type.transport.open" />"
+                           onclick="return false;"
+                           data-toggle="tooltip" data-placement="bottom" class="tooltipped">
+                            <span class="glyphicon glyphicon-log-out notification-icon"></span>
+                            <span class="badge" data-bind="text: openTransportCounter, css: cssTransport"></span>
                         </a>
                     </li>
                     <li>
-                        <a href="#" title="<spring:message code='label.main.unit.available' />"
-                           onclick="return Coceso.UI.openUnits(this.title, 'unit.html', {filter: ['available']}, { position: {at: 'left+40% bottom'}});">
-                            <span class="glyphicon glyphicon-tasks"></span> <spring:message code="label.main.unit.available"/>
+                        <a href="#" title="<spring:message code="label.main.unit.for_dispo" />"
+                           onclick="return Coceso.UI.openUnits('<spring:message code="label.main.unit.for_dispo" />', 'unit.html', {filter: ['radio']}, { position: {at: 'left+30% bottom'}});"
+                           data-toggle="tooltip" data-placement="bottom" class="tooltipped">
+                            <span class="glyphicon glyphicon-bullhorn notification-icon"></span>
+                            <span class="badge" data-bind="text: radioCounter, css: cssRadio"></span>
                         </a>
                     </li>
                     <li>
-                        <a href="#" title="<spring:message code='label.main.unit.free' />"
-                           onclick="return Coceso.UI.openUnits(this.title, 'unit.html', {filter: ['free']}, { });">
-                            <span class="glyphicon glyphicon-tasks"></span> <spring:message code="label.main.unit.free"/>
+                        <a href="#" title="<spring:message code="label.main.unit.free" />"
+                           onclick="return Coceso.UI.openUnits('<spring:message code="label.main.unit.free" />', 'unit.html', {filter: ['free']}, { position: {at: 'left bottom'}});"
+                           data-toggle="tooltip" data-placement="bottom" class="tooltipped">
+                            <span class="glyphicon glyphicon-exclamation-sign notification-icon"></span>
+                            <span class="badge" data-bind="text: freeCounter, css: cssFree"></span>
                         </a>
                     </li>
-                </ul>
-            </li>
-            <%-- INCIDENTS --%>
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                    <spring:message code="label.incidents"/>
-                    <b class="caret"></b>
-                </a>
-                <ul class="dropdown-menu">
-                    <li>
-                        <a href="#"
-                           title="<spring:message code='label.incident.add' />"
-                           onclick="return Coceso.UI.openIncident(this.title, 'incident_form.html');">
-                            <span class="glyphicon glyphicon-plus"></span> <spring:message code="label.incident.add"/></a>
-                    </li>
-                    <li class="divider"></li>
-                    <li>
-                        <a href="#" title="<spring:message code='label.main.incident.overview' />"
-                           onclick="return Coceso.UI.openIncidents(this.title, 'incident.html', {filter: ['overview']});">
-                            <span class="glyphicon glyphicon-list-alt"></span> <spring:message code="label.main.incident.overview"/></a>
-                    </li>
-                    <li>
-                        <a href="#" title="<spring:message code='label.main.incident.active' />"
-                           onclick="return Coceso.UI.openIncidents(this.title, 'incident.html', {filter: ['overview', 'active']});">
-                            <span class="glyphicon glyphicon-list-alt"></span> <spring:message code="label.main.incident.active"/></a>
-                    </li>
-                    <li>
-                        <a href="#" title="<spring:message code='label.main.incident.new' />"
-                           onclick="return Coceso.UI.openIncidents(this.title, 'incident.html', {filter: ['overview', 'new'], showTabs: false});">
-                            <span class="glyphicon glyphicon-list-alt"></span> <spring:message code="label.main.incident.new"/></a>
-                    </li>
-                    <li>
-                        <a href="#" title="<spring:message code='label.main.incident.open' />"
-                           onclick="return Coceso.UI.openIncidents(this.title, 'incident.html', {filter: ['overview', 'open'], showTabs: false});">
-                            <span class="glyphicon glyphicon-list-alt"></span> <spring:message code="label.main.incident.open"/></a>
-                    </li>
-                    <li>
-                        <a href="#" title="<spring:message code='label.main.incident.complete' />"
-                           onclick="return Coceso.UI.openIncidents(this.title, 'incident.html', {filter: ['overview', 'completed']});">
-                            <span class="glyphicon glyphicon-list-alt"></span> <spring:message code="label.main.incident.complete"/></a>
-                    </li>
-                </ul>
-            </li>
-            <%-- WINDOWS --%>
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                    <spring:message code="label.main.windows"/>
-                    <b class="caret"></b>
-                </a>
-                <ul class="dropdown-menu">
-                    <li>
-                        <a href="#" title="<spring:message code='label.log.custom' />"
-                           onclick="return Coceso.UI.openLogs(this.title, 'log.html', {url: 'log/getCustom', autoload: true});">
-                            <span class="glyphicon glyphicon-info-sign"></span> <spring:message code="label.log.custom"/>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" title="<spring:message code="label.log.add" />" onclick="return Coceso.UI.openLogAdd(this.title, 'log_add.html');">
-                            <span class="glyphicon glyphicon-book"></span>
-                            <spring:message code="label.log.add" />
-                        </a>
-                    </li>
-                    <%-- External (of Main Program) Links --%>
-                    <li class="divider"></li>
-                    <li>
-                        <a href="<c:url value="/edit/"/>" target="_blank">
-                            <span class="glyphicon glyphicon-link"></span>
-                            <spring:message code="label.nav.edit_concern"/>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="<c:url value="/dashboard"/>?concern=${concern.id}" target="_blank">
-                            <span class="glyphicon glyphicon-link"></span>
-                            <spring:message code="label.nav.dashboard"/>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="<c:url value="/search/patient/"/>${concern.id}" target="_blank">
-                            <span class="glyphicon glyphicon-link"></span>
-                            <spring:message code="label.patient.search"/>
-                        </a>
-                    </li>
-                    <%-- Low Priority Links --%>
-                    <li class="divider"></li>
-                    <li>
-                        <a href="#" title="<spring:message code="label.main.key" />" onclick="return Coceso.UI.openStatic(this.title, 'key.html');">
-                            <span class="glyphicon glyphicon-question-sign"></span>
-                            <spring:message code="label.main.key" />
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" title="<spring:message code='label.log' />"
-                           onclick="return Coceso.UI.openLogs(this.title, 'log.html');">
-                            <span class="glyphicon glyphicon-info-sign"></span> <spring:message code="label.log"/>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" title="<spring:message code="label.debug" />" onclick="return Coceso.UI.openDebug(this.title, 'debug.html');">
-                            <span class="glyphicon glyphicon-warning-sign"></span> <spring:message code="label.debug" />
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" title="<spring:message code="label.main.license" />" onclick="return Coceso.UI.openExternalStatic(this.title, '<c:url value="/static/license.html" />');">
-                            <span class="glyphicon glyphicon-copyright-mark"></span> <spring:message code="label.main.license" />
-                        </a>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-        <ul id="nav-notifications" class="nav navbar-nav navbar-right">
-            <%-- Quicklinks --%>
-            <li>
-                <a href="#" title="<spring:message code='label.incident.add' />"
-                   onclick="return Coceso.UI.openIncident(this.title, 'incident_form.html');" style="background: blue;">
-                    <span class="glyphicon glyphicon-plus" style="color: white;"></span>
-                </a>
-            </li>
-            <li>
-                <a href="#" title="<spring:message code="label.log.add" />"
-                   onclick="return Coceso.UI.openLogAdd(this.title, 'log_add.html');" style="background: orange;">
-                    <span class="glyphicon glyphicon-book" style="color: white;"></span>
-                </a>
-            </li>
-            <%-- Notifications
-             !!! this.title doesn't work here, title attribute is deleted by $.tooltip() !!!--%>
-            <li>
-                <a href="#" title="<spring:message code="label.connection_status" />" onclick="return false;"
-                   data-toggle="tooltip" data-placement="bottom" class="tooltipped">
-                    <span class="glyphicon glyphicon-signal notification-icon" data-bind="css: cssError"></span>
-                </a>
-            </li>
-            <li>
-                <a href="#" title="<spring:message code="label.main.incident.new_or_open" />"
-                   onclick="return Coceso.UI.openIncidents('<spring:message code="label.main.incident.new_or_open" />', 'incident.html', {filter: ['overview', 'new_or_open'], showTabs: false}, {});"
-                   data-toggle="tooltip" data-placement="bottom" class="tooltipped">
-                    <span class="glyphicon glyphicon-time notification-icon"></span>
-                    <span class="badge" data-bind="text: openIncidentCounter, css: cssOpen"></span>
-                </a>
-            </li>
-            <li>
-                <a href="#" title="<spring:message code="label.incident.type.transport.open" />"
-                   onclick="return false;"
-                   data-toggle="tooltip" data-placement="bottom" class="tooltipped">
-                    <span class="glyphicon glyphicon-log-out notification-icon"></span>
-                    <span class="badge" data-bind="text: openTransportCounter, css: cssTransport"></span>
-                </a>
-            </li>
-            <li>
-                <a href="#" title="<spring:message code="label.main.unit.for_dispo" />"
-                   onclick="return Coceso.UI.openUnits('<spring:message code="label.main.unit.for_dispo" />', 'unit.html', {filter: ['radio']}, { position: {at: 'left+30% bottom'}});"
-                   data-toggle="tooltip" data-placement="bottom" class="tooltipped">
-                    <span class="glyphicon glyphicon-bullhorn notification-icon"></span>
-                    <span class="badge" data-bind="text: radioCounter, css: cssRadio"></span>
-                </a>
-            </li>
-            <li>
-                <a href="#" title="<spring:message code="label.main.unit.free" />"
-                   onclick="return Coceso.UI.openUnits('<spring:message code="label.main.unit.free" />', 'unit.html', {filter: ['free']}, { position: {at: 'left bottom'}});"
-                   data-toggle="tooltip" data-placement="bottom" class="tooltipped">
-                    <span class="glyphicon glyphicon-exclamation-sign notification-icon"></span>
-                    <span class="badge" data-bind="text: freeCounter, css: cssFree"></span>
-                </a>
-            </li>
 
 
-            <%-- Concern Name, Clock --%>
-            <li>
-                <a href="#" onclick="return false;">
-                    <span class="glyphicon glyphicon-info-sign tooltipped" title="<h5>${concern.name}</h5>"
-                          data-toggle="tooltip" data-html="true" style="font-size: large;" data-placement="bottom"></span>
-                </a>
-            </li>
-            <li><span id="clock" class="navbar-brand"></span></li>
-        </ul>
+                    <%-- Concern Name, Clock --%>
+                    <li>
+                        <a href="#" onclick="return false;">
+                            <span class="glyphicon glyphicon-info-sign tooltipped" title="<h5>${concern.name}</h5>"
+                                  data-toggle="tooltip" data-html="true" style="font-size: large;" data-placement="bottom"></span>
+                        </a>
+                    </li>
+                    <li>
+                        <%-- Initialization Value for auto-margin of centered element --%>
+                        <span id="clock" class="navbar-brand">24:00:00</span>
+                    </li>
+                </ul>
+            </div>
+
+            <ul class="nav navbar-nav">
+                <%-- CALLTAKER -->
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><spring:message code="label.calltaker" /> <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="#"
+                               title="<spring:message code='label.incident' /> / <spring:message code='label.add' />"
+                               onclick="return Coceso.UI.openIncident(this.title, 'incident_form.html');">
+                                <span class="glyphicon glyphicon-plus"></span> <spring:message code="label.incident.add"/>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#" title="<spring:message code='label.main.incident.new' />"
+                               onclick="return Coceso.UI.openIncidents(this.title, 'incident.html', {filter: ['overview', 'new'], showTabs: false});">
+                                <span class="glyphicon glyphicon-list-alt"></span> <spring:message code="label.main.incident.new"/>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <-- DISPONENT -->
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><spring:message code="label.dispatcher" /> <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="#"
+                               title="<spring:message code='label.incident' /> / <spring:message code='label.add' />"
+                               onclick="return Coceso.UI.openIncident(this.title, 'incident_form.html');">
+                                <span class="glyphicon glyphicon-plus"></span> <spring:message code="label.incident.add"/></a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#" title="<spring:message code='label.main.incident.open' />"
+                               onclick="return Coceso.UI.openIncidents(this.title, 'incident.html', {filter: ['overview', 'open'], showTabs: false});">
+                                <span class="glyphicon glyphicon-list-alt"></span> <spring:message code="label.main.incident.open"/></a>
+                        </li>
+                    </ul>
+                </li>
+                <-- RADIO OPERATOR -->
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><spring:message code="label.radio_operator" /> <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="#"
+                               title="<spring:message code='label.incident' /> / <spring:message code='label.add' />"
+                               onclick="return Coceso.UI.openIncident(this.title, 'incident_form.html');">
+                                <span class="glyphicon glyphicon-plus"></span> <spring:message code="label.incident.add"/></a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#" title="<spring:message code='label.main.unit.for_dispo' />"
+                               onclick="return Coceso.UI.openUnits(this.title, 'unit.html', {filter: ['radio']});">
+                                <span class="glyphicon glyphicon-tasks"></span> <spring:message code="label.main.unit.for_dispo"/>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <-- UNITS --%>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><spring:message code="label.units"/> <b
+                            class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="#" title="<spring:message code='label.units' />"
+                               onclick="return Coceso.UI.openUnits(this.title, 'unit.html');">
+                                <span class="glyphicon glyphicon-tasks"></span> <spring:message code="label.main.unit.overview"/>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" title="<spring:message code="label.main.unit.hierarchy"/>"
+                               onclick="return Coceso.UI.openHierarchyUnits(this.title, 'unit_hierarchy.html');">
+                                <span class="glyphicon glyphicon-tasks"></span> <spring:message code="label.main.unit.hierarchy"/>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" title="<spring:message code='label.main.unit.for_dispo' />"
+                               onclick="return Coceso.UI.openUnits(this.title, 'unit.html', {filter: ['radio']});">
+                                <span class="glyphicon glyphicon-tasks"></span> <spring:message code="label.main.unit.for_dispo"/>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" title="<spring:message code='label.main.unit.available' />"
+                               onclick="return Coceso.UI.openUnits(this.title, 'unit.html', {filter: ['available']}, { position: {at: 'left+40% bottom'}});">
+                                <span class="glyphicon glyphicon-tasks"></span> <spring:message code="label.main.unit.available"/>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" title="<spring:message code='label.main.unit.free' />"
+                               onclick="return Coceso.UI.openUnits(this.title, 'unit.html', {filter: ['free']}, { });">
+                                <span class="glyphicon glyphicon-tasks"></span> <spring:message code="label.main.unit.free"/>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <%-- INCIDENTS --%>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <spring:message code="label.incidents"/>
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="#"
+                               title="<spring:message code='label.incident.add' />"
+                               onclick="return Coceso.UI.openIncident(this.title, 'incident_form.html');">
+                                <span class="glyphicon glyphicon-plus"></span> <spring:message code="label.incident.add"/></a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#" title="<spring:message code='label.main.incident.overview' />"
+                               onclick="return Coceso.UI.openIncidents(this.title, 'incident.html', {filter: ['overview']});">
+                                <span class="glyphicon glyphicon-list-alt"></span> <spring:message code="label.main.incident.overview"/></a>
+                        </li>
+                        <li>
+                            <a href="#" title="<spring:message code='label.main.incident.active' />"
+                               onclick="return Coceso.UI.openIncidents(this.title, 'incident.html', {filter: ['overview', 'active']});">
+                                <span class="glyphicon glyphicon-list-alt"></span> <spring:message code="label.main.incident.active"/></a>
+                        </li>
+                        <li>
+                            <a href="#" title="<spring:message code='label.main.incident.new' />"
+                               onclick="return Coceso.UI.openIncidents(this.title, 'incident.html', {filter: ['overview', 'new'], showTabs: false});">
+                                <span class="glyphicon glyphicon-list-alt"></span> <spring:message code="label.main.incident.new"/></a>
+                        </li>
+                        <li>
+                            <a href="#" title="<spring:message code='label.main.incident.open' />"
+                               onclick="return Coceso.UI.openIncidents(this.title, 'incident.html', {filter: ['overview', 'open'], showTabs: false});">
+                                <span class="glyphicon glyphicon-list-alt"></span> <spring:message code="label.main.incident.open"/></a>
+                        </li>
+                        <li>
+                            <a href="#" title="<spring:message code='label.main.incident.complete' />"
+                               onclick="return Coceso.UI.openIncidents(this.title, 'incident.html', {filter: ['overview', 'completed']});">
+                                <span class="glyphicon glyphicon-list-alt"></span> <spring:message code="label.main.incident.complete"/></a>
+                        </li>
+                    </ul>
+                </li>
+                <%-- WINDOWS --%>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <spring:message code="label.main.windows"/>
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="#" title="<spring:message code='label.log.custom' />"
+                               onclick="return Coceso.UI.openLogs(this.title, 'log.html', {url: 'log/getCustom', autoload: true});">
+                                <span class="glyphicon glyphicon-info-sign"></span> <spring:message code="label.log.custom"/>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" title="<spring:message code="label.log.add" />" onclick="return Coceso.UI.openLogAdd(this.title, 'log_add.html');">
+                                <span class="glyphicon glyphicon-book"></span>
+                                <spring:message code="label.log.add" />
+                            </a>
+                        </li>
+                        <%-- External (of Main Program) Links --%>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="<c:url value="/edit/"/>" target="_blank">
+                                <span class="glyphicon glyphicon-link"></span>
+                                <spring:message code="label.nav.edit_concern"/>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="<c:url value="/dashboard"/>?concern=${concern.id}" target="_blank">
+                                <span class="glyphicon glyphicon-link"></span>
+                                <spring:message code="label.nav.dashboard"/>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="<c:url value="/search/patient/"/>${concern.id}" target="_blank">
+                                <span class="glyphicon glyphicon-link"></span>
+                                <spring:message code="label.patient.search"/>
+                            </a>
+                        </li>
+                        <%-- Low Priority Links --%>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#" title="<spring:message code="label.main.key" />" onclick="return Coceso.UI.openStatic(this.title, 'key.html');">
+                                <span class="glyphicon glyphicon-question-sign"></span>
+                                <spring:message code="label.main.key" />
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" title="<spring:message code='label.log' />"
+                               onclick="return Coceso.UI.openLogs(this.title, 'log.html');">
+                                <span class="glyphicon glyphicon-info-sign"></span> <spring:message code="label.log"/>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" title="<spring:message code="label.debug" />" onclick="return Coceso.UI.openDebug(this.title, 'debug.html');">
+                                <span class="glyphicon glyphicon-warning-sign"></span> <spring:message code="label.debug" />
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" title="<spring:message code="label.main.license" />" onclick="return Coceso.UI.openExternalStatic(this.title, '<c:url value="/static/license.html" />');">
+                                <span class="glyphicon glyphicon-copyright-mark"></span> <spring:message code="label.main.license" />
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            <div class="navbar-hide-on-1000px">
+                <ul class="nav navbar-nav navbar-center">
+                    <%-- Quicklinks --%>
+                    <li>
+                        <a href="#" title="<spring:message code='label.incident.add' />"
+                           onclick="return Coceso.UI.openIncident(this.title, 'incident_form.html');" style="background: blue;">
+                            <span class="glyphicon glyphicon-plus" style="color: white;"></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" title="<spring:message code="label.log.add" />"
+                           onclick="return Coceso.UI.openLogAdd(this.title, 'log_add.html');" style="background: orange;">
+                            <span class="glyphicon glyphicon-book" style="color: white;"></span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </nav>
 </header>
 

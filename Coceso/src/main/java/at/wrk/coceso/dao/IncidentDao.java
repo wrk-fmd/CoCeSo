@@ -222,12 +222,12 @@ public class IncidentDao extends CocesoDao<Incident> {
                 ps.setInt(4, incident.getPriority() == null ? 0 : incident.getPriority());
                 ps.setBoolean(5, incident.getBlue() == null ? false : incident.getBlue());
 
-                if(incident.getBo() != null)
+                if(incident.getBo() != null && incident.getBo().getId() > 0)
                     ps.setInt(6, incident.getBo().getId());
                 else
                     ps.setObject(6, null);
 
-                if(incident.getAo() != null)
+                if(incident.getAo() != null && incident.getAo().getId() > 0)
                     ps.setInt(7, incident.getAo().getId());
                 else
                     ps.setObject(7, null);

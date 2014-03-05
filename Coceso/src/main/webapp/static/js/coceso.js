@@ -1511,6 +1511,14 @@ Coceso.ViewModels.Incident = function(data, options) {
     return "";
   }, this);
 
+  self.dropdownTitle = ko.computed(function() {
+      var title = self.title();
+
+      if(title.length > 30) {
+          title = title.substring(0,30) + "...";
+      }
+      return self.typeString() + ": " + title.split("\n")[0];
+  });
   /**
    * Title for unit form
    *
@@ -1749,18 +1757,18 @@ Coceso.ViewModels.Incident.prototype = Object.create(Coceso.ViewModels.ViewModel
    */
   beforeSave: {
     value: function(data) {
-      if(data.ao.info === "") {
+      if(data.ao.info.localChange && data.ao.info === "") {
           data.ao.id = -2;
       }
       else {
           delete data.ao.id;
       }
-        if(data.bo.info === "") {
-            data.bo.id = -2;
-        }
-        else {
-            delete data.bo.id;
-        }
+      if(data.bo.info.localChange && data.bo.info === "") {
+        data.bo.id = -2;
+      }
+      else {
+        delete data.bo.id;
+      }
       return data;
     }
   }
@@ -1911,6 +1919,24 @@ Coceso.ViewModels.Unit = function(data, options) {
 
     return this.incidents.incidentlist().length;
   }, this);
+
+    self.dropdownIncidents = ko.computed(function() {
+        if (!self.incidents || !self.incidents.incidentlist) {
+            return [];
+        }
+
+        return ko.utils.arrayFilter(self.incidents.incidentlist(), function(i) {
+            return i.isTask() || i.isTransport() || i.isRelocation();
+        });
+    });
+
+    /**
+     * Returns true or false; If 1 or more incident of Type Task, Transport or Relocation is in incidentlist
+     * @type {*}
+     */
+    self.dropdownActive = ko.computed(function() {
+        return self.dropdownIncidents().length > 0;
+    });
 
   /**
    * Home is set
@@ -2144,9 +2170,12 @@ Coceso.ViewModels.Unit = function(data, options) {
       content += "<p><span class='key'>" + _("label.unit.ani") + "</span><span>" + this.ani() + "</span></p>";
     }
     if (this.hasHome()) {
-      content += "<p><span class='key'>" + _("label.unit.home") + "</span><span>" + this.home.info() + "</span></p>";
+      content += "<p><span class='key'> <span class='glyphicon glyphicon-home'></span> </span><span>" + this.home.info() + "</span></p>";
     }
-    content += "<p><span class='key'>" + _("label.unit.position") + "</span><span>" + this.position.info() + "</span></p>";
+    content += "<p><span class='key'> <span class='glyphicon glyphicon-map-marker'></span> </span><span>" +
+        ( this.position.info() === "" ? "N/A" : this.position.info() ) + "</span></p>";
+
+    content += "<hr>";
 
     if (this.incidentCount() > 0) {
       ko.utils.arrayForEach(this.incidents.incidentlist(), function(inc) {

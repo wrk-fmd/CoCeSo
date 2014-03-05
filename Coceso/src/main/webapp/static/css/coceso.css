@@ -574,3 +574,25 @@ table[id*='keytable'] > tbody > tr > td:nth-child(2) {
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 10px rgba(233, 65, 54, 0.60);
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 10px rgba(233, 65, 54, 0.60);
 }
+
+@media (min-width: 768px){
+    .navbar-center {
+        margin: 0 auto;
+        display: table;
+        table-layout: fixed;
+        float:none;
+    }
+}
+
+
+@media (max-width: 880px){
+    .navbar-hide-on-mobile {
+        display: none
+    }
+}
+
+@media (max-width: 999px){
+    .navbar-hide-on-1000px {
+        display: none
+    }
+}

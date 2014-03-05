@@ -17,16 +17,36 @@
         <!-- /ko -->
         <ul class="dropdown-menu">
             <li class="dropdown-header"><spring:message code="label.unit.state_set" /></li>
+            <!-- ko ifnot: isNEB -->
             <li data-bind="css: {disabled: isNEB}"><a href="#" title="<spring:message code="label.set" />: <spring:message code="label.unit.state.neb" />" data-bind="click: setNEB"><spring:message code="label.unit.state.neb" /></a></li>
+            <!-- /ko -->
+            <!-- ko ifnot: isEB -->
             <li data-bind="css: {disabled: isEB}"><a href="#" title="<spring:message code="label.set" />: <spring:message code="label.unit.state.eb" />" data-bind="click: setEB"><spring:message code="label.unit.state.eb" /></a></li>
+            <!-- /ko -->
+            <!-- ko ifnot: isAD -->
             <li data-bind="css: {disabled: isAD}"><a href="#" title="<spring:message code="label.set" />: <spring:message code="label.unit.state.ad" />" data-bind="click: setAD"><spring:message code="label.unit.state.ad" /></a></li>
+            <!-- /ko -->
 
-            <!-- ko if: portable -->
+            <!-- ko if: portable() && !( disableSendHome() && disableStandby() && disableHoldPosition() )  -->
             <li class="divider"></li>
             <li class="dropdown-header"><spring:message code="label.actions" /></li>
+            <!-- ko ifnot: disableSendHome -->
             <li data-bind="css: {disabled: disableSendHome}"><a href="#" title="<spring:message code="label.unit.send_home" />" data-bind="click: sendHome"><spring:message code="label.unit.send_home" /></a></li>
+            <!-- /ko -->
+            <!-- ko ifnot: disableStandby -->
             <li data-bind="css: {disabled: disableStandby}"><a href="#" title="<spring:message code="label.incident.type.standby" />" data-bind="click: standby"><spring:message code="label.incident.type.standby" /></a></li>
+            <!-- /ko -->
+            <!-- ko ifnot: disableHoldPosition -->
             <li data-bind="css: {disabled: disableHoldPosition}"><a href="#" title="<spring:message code="label.incident.type.hold_position" />" data-bind="click: holdPosition"><spring:message code="label.incident.type.hold_position" /></a></li>
+            <!-- /ko -->
+            <!-- /ko -->
+
+            <!-- ko if: portable() && dropdownActive()  -->
+            <li class="divider"></li>
+            <li class="dropdown-header"><spring:message code="label.incidents" /></li>
+            <!-- ko foreach: dropdownIncidents -->
+            <li><a href="#" title="<spring:message code="label.incident.edit" />" data-bind="click: openForm, html: dropdownTitle"></a></li>
+            <!-- /ko -->
             <!-- /ko -->
 
             <li class="divider"></li>

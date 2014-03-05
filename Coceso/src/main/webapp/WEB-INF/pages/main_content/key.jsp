@@ -83,6 +83,15 @@
             <tr>
                 <td></td>
                 <td>
+                    <span class="glyphicon glyphicon-map-marker"></span>
+                </td>
+                <td>
+                    <spring:message code="label.unit.position" />: <spring:message code="text.unit.position" />
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
                     <span class="glyphicon glyphicon-record"></span>
                 </td>
                 <td>
