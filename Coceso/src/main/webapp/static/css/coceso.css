@@ -385,6 +385,17 @@ span.incident_priority {
   float: right;
 }
 
+span.incident_type_text {
+    display: block;
+    text-align: center;
+    margin-left: 0.7em;
+    min-height: 1.4em;
+    min-width: 1.4em;
+    float: right;
+    border: solid 1px;
+    border-color: black;
+}
+
 span.incident_blue {
   background-color: #0064cd;
   color: #ffffff;

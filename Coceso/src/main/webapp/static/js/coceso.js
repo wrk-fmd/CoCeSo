@@ -1517,7 +1517,8 @@ Coceso.ViewModels.Incident = function(data, options) {
       if(title.length > 30) {
           title = title.substring(0,30) + "...";
       }
-      return self.typeString() + ": " + title.split("\n")[0];
+      return "<span class='incident_type_text" + ( self.blue() ? " incident_blue" : "" )
+          + "'>" + self.typeString() + "</span>" + title.split("\n")[0];
   });
   /**
    * Title for unit form
