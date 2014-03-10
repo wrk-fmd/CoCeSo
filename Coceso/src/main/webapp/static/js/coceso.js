@@ -1758,13 +1758,13 @@ Coceso.ViewModels.Incident.prototype = Object.create(Coceso.ViewModels.ViewModel
    */
   beforeSave: {
     value: function(data) {
-      if(data.ao.info.localChange && data.ao.info === "") {
+      if(data.ao.info === "") {
           data.ao.id = -2;
       }
       else {
           delete data.ao.id;
       }
-      if(data.bo.info.localChange && data.bo.info === "") {
+      if(data.bo.info === "") {
         data.bo.id = -2;
       }
       else {
