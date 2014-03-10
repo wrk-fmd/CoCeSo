@@ -4,6 +4,7 @@ package at.wrk.coceso.service;
 import at.wrk.coceso.dao.LogDao;
 import at.wrk.coceso.entity.*;
 import at.wrk.coceso.entity.enums.LogEntryType;
+import at.wrk.coceso.entity.helper.JsonContainer;
 import at.wrk.coceso.utils.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ public class LogService {
         ObjectMapper mapper = new ObjectMapper();
 
         try {
-            logEntry.setJson(mapper.writeValueAsString(new Object[] { unit, incident }));
+            logEntry.setJson(mapper.writeValueAsString(new JsonContainer(unit, incident)));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -71,5 +72,9 @@ public class LogService {
             return null;
         }
         return logDao.getByIncidentId(inc_id);
+    }
+
+    public List<LogEntry> getByUnitId(int id) {
+        return logDao.getByUnitId(id);
     }
 }

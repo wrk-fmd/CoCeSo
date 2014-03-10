@@ -1,16 +1,21 @@
 package at.wrk.coceso.controller.view;
 
 import at.wrk.coceso.dao.ConcernDao;
-import at.wrk.coceso.entity.Concern;
-import at.wrk.coceso.entity.Incident;
-import at.wrk.coceso.entity.Operator;
-import at.wrk.coceso.entity.Unit;
+import at.wrk.coceso.entity.*;
+import at.wrk.coceso.entity.enums.IncidentType;
+import at.wrk.coceso.entity.enums.LogEntryType;
+import at.wrk.coceso.entity.helper.JsonContainer;
 import at.wrk.coceso.service.IncidentService;
+import at.wrk.coceso.service.LogService;
 import at.wrk.coceso.service.UnitService;
 import at.wrk.coceso.utils.Logger;
 import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -20,10 +25,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.*;
 
 @Controller
 @RequestMapping("/finalReport")
 public class FinalReportController {
+
+    @Autowired
+    MessageSource messageSource;
 
     @Autowired
     ConcernDao concernDao;
@@ -34,43 +43,61 @@ public class FinalReportController {
     @Autowired
     IncidentService incidentService;
 
+    @Autowired
+    LogService logService;
+
     private Concern concern;
     private Operator user;
     private java.util.List<Unit> unitList;
     private java.util.List<Incident> incidentList;
 
+    private Locale locale;
+
+    private static String dateFormat = "HH:mm:ss";
+
     @RequestMapping(value = "report.pdf", produces = "application/pdf")
-    public void print(HttpServletResponse response, @RequestParam(value = "id") int id, Principal principal){
+    public void print(HttpServletResponse response,
+                      @RequestParam(value = "id") int id,
+                      @RequestParam(value = "fullDate", required = false) Boolean fullDate,
+                      Principal principal,
+                      Locale locale)
+    {
+
+        if(fullDate != null && fullDate) {
+            dateFormat = "dd.MM.yy HH:mm:ss";
+        }
 
         user = (Operator) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
 
-        /*int id;
-        try {
-            id = Integer.parseInt(s_id);
-        } catch (NumberFormatException e) {
-            throw new ConcernNotFoundException();
-        }  */
-
+        this.locale = locale;
 
         concern = concernDao.getById(id);
         if(concern == null) {
-            //TODO Error Handling
-            return;
+            throw new ConcernNotFoundException();
         }
 
 
         unitList = unitService.getAll(id);
+        Collections.sort(unitList, new Comparator<Unit>() {
+            @Override
+            public int compare(Unit o1, Unit o2) {
+                if(o1 == null || o1.getCall() == null) {
+                    return 1;
+                }
+                return o1.getCall().compareTo(o2.getCall());
+            }
+        });
         incidentList = incidentService.getAll(id);
 
-        Document document = new Document();
+        Document document = new Document(PageSize.A4.rotate());
 
-        //response.setContentType("application/pdf");
         try {
             PdfWriter.getInstance(document, response.getOutputStream());
             document.open();
 
             addMeta(document);
             addFrontPage(document);
+            addUnitStats(document);
         }
         catch(IOException e) {
             Logger.error("FinalReportController:print(): " + e.getMessage());
@@ -84,16 +111,18 @@ public class FinalReportController {
 
     }
 
-    private static Font titleFont = new Font(Font.FontFamily.TIMES_ROMAN, 24,
-            Font.BOLD);
-    private static Font subTitleFont = new Font(Font.FontFamily.TIMES_ROMAN, 18,
-            Font.NORMAL);
+    private static Font titleFont = new Font(Font.FontFamily.TIMES_ROMAN, 24, Font.BOLD);
+    private static Font subTitleFont = new Font(Font.FontFamily.TIMES_ROMAN, 18);
+
+    private static Font title2Font = new Font(Font.FontFamily.TIMES_ROMAN, 16, Font.BOLD);
+    private static Font descrFont = new Font(Font.FontFamily.TIMES_ROMAN, 12);
+
     private static Font defFont = new Font(Font.FontFamily.TIMES_ROMAN, 11);
 
     private void addMeta(Document document) throws DocumentException {
         document.addTitle("Abschlussbericht der Ambulanz " + concern.getName());
         document.addAuthor("CoCeSo");
-        document.addCreator("CoCeSo - "); //TODO User
+        document.addCreator("CoCeSo - " + user.getUsername());
     }
 
     private void addFrontPage(Document document) throws DocumentException {
@@ -123,10 +152,197 @@ public class FinalReportController {
 
     private void addUnitStats(Document document) throws DocumentException {
 
+        ObjectMapper mapper = new ObjectMapper();
+
+        for(Unit unit : unitList) {
+            java.util.List<LogEntry> logs = logService.getByUnitId(unit.getId());
+            Collections.reverse(logs);
+
+            Paragraph p = new Paragraph();
+
+            Paragraph h = new Paragraph(unit.getCall() + " - #" + unit.getId(), title2Font);
+
+            Paragraph s = new Paragraph((unit.getAni() == null || unit.getAni().isEmpty() ? "" : ("ANI: " + unit.getAni()) + "\n") +
+                    messageSource.getMessage("label.unit.home", null, locale) + ": " + unit.getHome());
+            p.add(h);
+            p.add(s);
+
+            PdfPTable table = new PdfPTable(new float[] {2, 3, 5, 1, 3, 4, 5, 1});
+            table.setWidthPercentage(100);
+
+            table.addCell(messageSource.getMessage("label.log.timestamp", null, locale));
+            table.addCell(messageSource.getMessage("label.operator", null, locale));
+            table.addCell(messageSource.getMessage("label.log.text", null, locale));
+            table.addCell(""); //messageSource.getMessage("label.unit.state", null, locale));
+            table.addCell(messageSource.getMessage("label.unit.position", null, locale));
+            table.addCell(messageSource.getMessage("label.unit.info", null, locale));
+            table.addCell(messageSource.getMessage("label.incident", null, locale));
+            table.addCell(""); //messageSource.getMessage("label.task.state", null, locale));
+
+            for(LogEntry log : logs) {
+                if(log.getJson() == null || log.getType() == LogEntryType.CUSTOM) {
+                    table.addCell(new java.text.SimpleDateFormat(dateFormat).format(log.getTimestamp()));
+                    table.addCell(log.getUser().getUsername());
+
+                    PdfPCell cell = new PdfPCell(new Phrase(log.getText()));
+                    cell.setColspan(4);
+                    table.addCell(cell);
+
+                    if(log.getIncident() == null) {
+                        table.addCell("");
+                        table.addCell("");
+                    } else {
+                        table.addCell(incidentTitle(log.getIncident()));
+                        table.addCell(log.getState() == null ? "-" : log.getState().name());
+                    }
+
+                    continue;
+                }
+
+                JsonContainer jsonContainer;
+                try {
+                    jsonContainer = mapper.readValue(log.getJson(), JsonContainer.class);
+                    Unit tUnit = jsonContainer.getUnit();
+                    Incident tIncident = jsonContainer.getIncident();
+
+                    if(tUnit == null) {
+                        Logger.debug("FinalReportController: Parsing Error???");
+                        continue;
+                    }
+
+
+                    table.addCell(new java.text.SimpleDateFormat(dateFormat).format(log.getTimestamp()));
+                    table.addCell(log.getUser().getUsername());
+                    table.addCell(messageSource.getMessage("descr."+log.getType().name(), null, locale));
+                    table.addCell(tUnit.getState() == null ? "" : tUnit.getState().name());
+                    table.addCell(tUnit.getPosition() == null ? "" : tUnit.getPosition().getInfo());
+                    table.addCell(tUnit.getInfo() == null ? "" : tUnit.getInfo());
+
+                    if(tIncident == null) {
+                        table.addCell("");
+                        table.addCell("");
+                    } else {
+                        table.addCell(incidentTitle(tIncident));
+                        table.addCell(log.getState() == null ? "-" : log.getState().name());
+                    }
+
+                } catch (IOException e) {
+                    Logger.warning(e.getMessage());
+                }
+
+
+            }
+
+            p.add(table);
+            document.add(p);
+        }
+
+    }
+
+    private String incidentTitle(Incident inc) {
+        String position;
+        String type;
+
+        if(inc == null)
+            return "null";
+
+        if(inc.getType() == null)
+            return "#" + inc.getId();
+
+        if(inc.getType() == IncidentType.ToHome || inc.getType() == IncidentType.HoldPosition ||
+                inc.getType() == IncidentType.Standby || inc.getType() == IncidentType.Relocation) {
+            position = formatPoint(inc.getAo());
+        } else {
+            position = formatPoint(inc.getBo());
+        }
+
+        if(inc.getType() == IncidentType.Task) {
+            if(inc.getBlue() == null || !inc.getBlue()) {
+                type = messageSource.getMessage("label.incident.type.task", null, locale);
+            } else {
+                type = messageSource.getMessage("label.incident.type.task.blue", null, locale);
+            }
+
+        } else {
+            type = messageSource.getMessage("label.incident.type." + inc.getType().name().toLowerCase(), null, locale);
+        }
+
+        return "#" + inc.getId() + " - " + type + "\n" + position ;
+    }
+
+    private String formatPoint(Point point) {
+        int maxLength = 30;
+
+        if(point == null || point.getInfo() == null || point.getInfo().isEmpty()) {
+            return "N/A";
+        }
+
+        String info = point.getInfo();
+        if(info.length() > maxLength) {
+            info = info.substring(0, 26) + "...";
+        }
+
+        return info.split("\n")[0];
     }
 
     private void addIncidentStats(Document document) throws DocumentException {
+        ObjectMapper mapper = new ObjectMapper();
 
+        for(Incident incident : incidentList) {
+            // Single Unit Incidents are fully logged by UnitStats
+            if(incident.getType().isSingleUnit())
+                continue;
+
+            java.util.List<LogEntry> logs = logService.getByIncidentId(incident.getId());
+            Paragraph p = new Paragraph();
+
+            Paragraph h = new Paragraph("#" + incident.getId(), title2Font);
+
+            Paragraph s = new Paragraph("BO: " + (incident.getBo() == null ? "N/A" : incident.getBo().getInfo()) + "\n" +
+                    "AO: " + (incident.getAo() == null ? "N/A" : incident.getAo().getInfo()), descrFont);
+            p.add(h);
+            p.add(s);
+
+            PdfPTable table = new PdfPTable(7);
+            table.setWidthPercentage(100);
+
+            /*for(LogEntry log : logs) {
+                JsonContainer jsonContainer;
+                try {
+                    jsonContainer = mapper.readValue(log.getJson(), JsonContainer.class);
+                    Unit tUnit = jsonContainer.getUnit();
+                    Incident tIncident = jsonContainer.getIncident();
+
+                    if(tIncident == null) {
+                        Logger.debug("FinalReportController: Parsing Error???");
+                        continue;
+                    }
+
+
+                    table.addCell(new java.text.SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(log.getTimestamp()));
+                    table.addCell(messageSource.getMessage("descr."+log.getType().name(), null, locale));
+                    table.addCell(t.getState() == null ? "" : tUnit.getState().name());
+                    table.addCell(tUnit.getPosition() == null ? "" : tUnit.getPosition().getInfo());
+                    table.addCell(tUnit.getInfo() == null ? "" : tUnit.getInfo());
+
+                    if(tUnit == null) {
+                        table.addCell("");
+                        table.addCell("");
+                    } else {
+                        table.addCell(tUnit.getCall());
+                        table.addCell(log.getState() == null ? "-" : log.getState().name());
+                    }
+
+                } catch (IOException e) {
+                    Logger.warning(e.getMessage());
+                }
+
+
+            }*/
+
+            p.add(table);
+            document.add(p);
+        }
     }
 
     private static void addEmptyLine(Paragraph paragraph, int number) {

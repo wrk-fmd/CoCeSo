@@ -95,7 +95,7 @@
                     <span class="glyphicon glyphicon-record"></span>
                 </td>
                 <td>
-                    <spring:message code="label.incident.type.hold_position" />: <spring:message code="text.unit.hold_position" />
+                    <spring:message code="label.incident.type.holdposition" />: <spring:message code="text.unit.holdposition" />
                 </td>
             </tr>
             <tr>

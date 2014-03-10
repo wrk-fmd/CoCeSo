@@ -31,13 +31,13 @@
             <li class="divider"></li>
             <li class="dropdown-header"><spring:message code="label.actions" /></li>
             <!-- ko ifnot: disableSendHome -->
-            <li data-bind="css: {disabled: disableSendHome}"><a href="#" title="<spring:message code="label.unit.send_home" />" data-bind="click: sendHome"><spring:message code="label.unit.send_home" /></a></li>
+            <li data-bind="css: {disabled: disableSendHome}"><a href="#" title="<spring:message code="label.unit.sendhome" />" data-bind="click: sendHome"><spring:message code="label.unit.sendhome" /></a></li>
             <!-- /ko -->
             <!-- ko ifnot: disableStandby -->
             <li data-bind="css: {disabled: disableStandby}"><a href="#" title="<spring:message code="label.incident.type.standby" />" data-bind="click: standby"><spring:message code="label.incident.type.standby" /></a></li>
             <!-- /ko -->
             <!-- ko ifnot: disableHoldPosition -->
-            <li data-bind="css: {disabled: disableHoldPosition}"><a href="#" title="<spring:message code="label.incident.type.hold_position" />" data-bind="click: holdPosition"><spring:message code="label.incident.type.hold_position" /></a></li>
+            <li data-bind="css: {disabled: disableHoldPosition}"><a href="#" title="<spring:message code="label.incident.type.holdposition" />" data-bind="click: holdPosition"><spring:message code="label.incident.type.holdposition" /></a></li>
             <!-- /ko -->
             <!-- /ko -->
 
