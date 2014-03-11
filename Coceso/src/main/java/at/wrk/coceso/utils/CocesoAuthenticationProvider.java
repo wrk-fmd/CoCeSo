@@ -108,7 +108,7 @@ public class CocesoAuthenticationProvider implements AuthenticationProvider {
         }
 
         if(returnCode == NOT_AUTHORIZED) {
-            Logger.debug("Online Authentication Failed");
+            Logger.debug("Online Authentication failed");
             throw new BadCredentialsException("Wrong Username/Password");
         }
         if(returnCode == SUCCESS) {
