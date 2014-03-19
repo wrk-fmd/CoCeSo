@@ -1,0 +1,19 @@
+   ______            ______           _____
+  / ____/  ____     / ____/  ___     / ___/   ____
+ / /      / __ \   / /      / _ \    \__ \   / __ \
+/ /___   / /_/ /  / /___   /  __/   ___/ /  / /_/ /
+\____/   \____/   \____/   \___/   /____/   \____/
+
+   Communication       Center      Software
+
+## v0.4.1b - Release Notes ##
+2014-03-19
+
+#### Additions ####
+- Error Messages on Homescreen (Concern closed, duplicate name)
+
+Final Report:
+- Incident Stats and Log
+
+#### Changes ####
+fixed Tickets #39, #40, #41, #42

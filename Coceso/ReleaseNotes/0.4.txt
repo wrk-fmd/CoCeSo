@@ -70,3 +70,9 @@ Main Program:
   * Connection Status: green - OK, red - disconnected or Error
   * Counter for New or Open Incidents, open Transports, Pending Alarms and Free Units (=forgotten)
   * Clock
+
+Final Report:
+- Title Page with placeholder
+- Unit Stats and Log
+- Incident Stats and Log
+- Still missing: Custom Log
