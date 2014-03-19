@@ -289,9 +289,6 @@
             <input type="hidden" name="id" value="${caze.id}">
 
             <div class="row">
-                <div class="col-lg-1">
-                    &nbsp;
-                </div>
                 <div class="col-lg-3">
                     <div class="form-group">
                         <label for="case_name"><spring:message code="label.concern.name"/></label>
