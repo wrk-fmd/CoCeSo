@@ -63,7 +63,7 @@
     <div class="clearfix">
         <div class="form-group col-md-6">
             <label for="diagnosis"><spring:message code="label.patient.diagnosis"/>:</label>
-            <input id="diagnosis" type="text" class="form-control" name="diagnosis" data-bind="value: diagnosis, valueUpdate: 'input'">
+            <input id="diagnosis" type="text" class="form-control" name="diagnosis" data-bind="value: diagnosis, valueUpdate: 'input'" disabled>
         </div>
 
         <div class="form-group col-md-6">

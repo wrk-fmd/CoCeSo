@@ -1,0 +1,72 @@
+   ______            ______           _____
+  / ____/  ____     / ____/  ___     / ___/   ____
+ / /      / __ \   / /      / _ \    \__ \   / __ \
+/ /___   / /_/ /  / /___   /  __/   ___/ /  / /_/ /
+\____/   \____/   \____/   \___/   /____/   \____/
+
+   Communication       Center      Software
+
+## v0.4b - Release Notes ##
+2014-03-14
+
+#### Requirements #####
+
+Server-side Requirements: see INSTALL.txt
+
+Client-side Requirements:
+- Webbrowser with Cookies and Javascript enabled (Tested on Firefox and Chrome only)
+
+#### Additions ####
+- Login configurable local or via third-party System with BASIC Authentication
+- Right Management with Roles 'Root' (Full Access), 'MLS' (Edit and Run active Concerns) and
+  'Dashboard' (Show Data of active Concerns)
+- Creation and Modification of Persons / Operators (incl. Rightmanagement)
+- Creation and Modification of Concerns
+- Creation, Batch-Creation and Modification of Units in a Concern
+- Modification of Hierarchical Structure of Units (Adding, Removing, (Re-)Naming of Sections, add Units to Sections)
+- As Root: Close and Re-open Concern
+- Print closed Concern
+- Dashboard:
+  * Full Log functional
+  * Links to single Unit functional, but only few data shown
+  * over all: Still under Construction!
+
+Main Program:
+- List and Hierarchical View of Units [Filter Options: All, Pending Alarm (is in TaskState 'Assigned'),
+   Available (for new Incident), Free (currently no order)]
+- List of Incidents [Filter Options: All, Active (not 'Done'), New, Open, Completed (='Done'),
+   New or Open (only via Notification)]
+- Add new Custom Log Entry
+- Show Custom Log Entries
+- Show Full Log (Limited to last 30 Entries by default)
+- Key of Symbols in Main Program
+- License Information
+- Search over Patientinformation (opens new Page)
+
+- Edit Info, Position and State of Unit
+- Assign Unit to Incident via Drag&Drop
+- Context Menu of Unit:
+  * Set State (EB, NEB, AD)
+  * Actions: "Single Unit Incidents": Send Home, Standby, Hold Position
+  * If Incident is connected: List of Incidents, click opens Incident
+  * New Incident: Empty Incident with Unit assigned
+  * Report Incident: Incident with Position of Unit as BO, Unit as Caller
+  * Edit and Log Link
+- Incident List:
+  * Filter Options, List updates interactive
+  * Full BO and AO (if present) shown in Title
+  * Icon with Type of Incident on right hand side (Blue Background for Blue Ligth = High Priority)
+  * Selected Incident: Info, State and assigned Units shown. Per Unit Button to set next State
+- Incident Form:
+  * Incident Type only changeable in new Incident
+  * "Reminder Function": BO and Caller have red shadow if empty, if one or more Unit is ABO: AO Field has red shadow
+  * Button for adding Patientinformation
+  * Button 'Copy' for Creation of Incident with same data, without any Units attached
+  * Little 'Copy' Button next to Unit name (only if >= 2 Units assigned) for Creation of new Incident with this Unit
+    assigned
+  * Buttons for Quick Selection of Points (next to BO, AO) deactivated
+- Quick Link for 'Add Incident' and 'Add Custom Log Entry' in Title Bar (visible if horizontal Resolution >= 1000px)
+- Notifications in Title Bar (visible if horizontal Resolution >= 880px)
+  * Connection Status: green - OK, red - disconnected or Error
+  * Counter for New or Open Incidents, open Transports, Pending Alarms and Free Units (=forgotten)
+  * Clock

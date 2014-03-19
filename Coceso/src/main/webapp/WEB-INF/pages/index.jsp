@@ -1,17 +1,19 @@
+<!DOCTYPE html>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ page session="false" %>
 
-<html>
+<html lang="en">
 <head>
     <title><spring:message code="label.coceso"/></title>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8" />
 
-    <link rel="icon" href="<c:url value="/static/favicon.ico"/>" type="image/x-icon">
+    <link rel="icon" href="<c:url value="/static/favicon.ico"/>" type="image/x-icon" />
 
-    <link href="<c:url value="/static/css/bootstrap.css" />" rel="stylesheet">
-    <link href="<c:url value="/static/css/bootstrap-theme.css" />" rel="stylesheet">
+    <link href="<c:url value="/static/css/bootstrap.css" />" rel="stylesheet" />
+    <link href="<c:url value="/static/css/bootstrap-theme.css" />" rel="stylesheet" />
     <link href="<c:url value="/static/css/flags.css"/>" rel="stylesheet" />
 
 </head>
@@ -55,7 +57,7 @@
     </div>
 
 
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <!-- jQuery (necessary for Bootstraps JavaScript plugins) -->
     <c:url var="jquery" value="/static/js/jquery.js" />
     <script src="${jquery}"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
