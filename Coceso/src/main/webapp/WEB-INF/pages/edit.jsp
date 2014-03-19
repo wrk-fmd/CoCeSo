@@ -296,7 +296,7 @@
                     <div class="form-group">
                         <label for="case_name"><spring:message code="label.concern.name"/></label>
                         <input type="text" id="case_name" name="name" value="${caze.name}"
-                               maxlength="64" class="form-control">
+                               maxlength="64" class="form-control" required>
                     </div>
                 </div>
 

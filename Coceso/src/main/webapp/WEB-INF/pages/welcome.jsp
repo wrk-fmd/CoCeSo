@@ -60,16 +60,14 @@
                 </div>
                 <div class="col-lg-5">
                     <label class="sr-only" for="new_name"><spring:message code="label.concern.name"/></label>
-                    <input type="text" id="new_name" name="name" maxlength="64" class="form-control" placeholder="<spring:message code="label.concern.name"/>"/>
+                    <input type="text" id="new_name" name="name" maxlength="64" class="form-control"
+                           placeholder="<spring:message code="label.concern.name"/>" required/>
                 </div>
                 <!--div>
                     <Info of Organiser: <input type="text" name="info" maxlength="64" /><br>>
                 </div-->
                 <div class="col-lg-3">
                     <input type="submit" value="<spring:message code="label.create"/>" class="btn btn-success"/>
-                </div>
-                <div class="col-lg-2">
-                    &nbsp;
                 </div>
             </div>
 

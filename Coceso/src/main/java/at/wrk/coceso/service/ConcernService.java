@@ -46,7 +46,7 @@ public class ConcernService {
     public int add(Concern concern, Operator user) {
         if(concern == null || nameAlreadyExists(concern.getName()))
         {
-            Logger.debug("ConcernService.add(): Invalid Concern given (empty name?)");
+            Logger.debug("ConcernService.add(): Error on Concern create. Code -3");
             return -3;
         }
         concern.setId(concernDao.add(concern));
@@ -54,8 +54,11 @@ public class ConcernService {
         return concern.getId();
     }
 
+    /*
+     * Returns true if name is empty, only whitespaces or another Incident already uses this Name
+     */
     private boolean nameAlreadyExists(String name) {
-        if(name == null || name.isEmpty()) {
+        if(name == null || name.isEmpty() || name.trim().isEmpty()) {
             return true;
         }
         List<Concern> list = concernDao.getAll();
