@@ -4,6 +4,7 @@ import at.wrk.coceso.dao.ConcernDao;
 import at.wrk.coceso.entity.*;
 import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.LogEntryType;
+import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entity.helper.JsonContainer;
 import at.wrk.coceso.service.IncidentService;
 import at.wrk.coceso.service.LogService;
@@ -98,6 +99,8 @@ public class FinalReportController {
             addMeta(document);
             addFrontPage(document);
             addUnitStats(document);
+            addIncidentStats(document);
+            addStatistics(document);
         }
         catch(IOException e) {
             Logger.error("FinalReportController:print(): " + e.getMessage());
@@ -148,13 +151,73 @@ public class FinalReportController {
 
     private void addStatistics(Document document) throws DocumentException {
 
+        int task, taskBlue, transport, transportBlue, relocation, relocationBlue, other, otherBlue;
+        task = taskBlue = transport = transportBlue = relocation = relocationBlue = other = otherBlue = 0;
+
+        for(Incident incident : incidentList) {
+            switch (incident.getType()) {
+                case Task:
+                    task++;
+                    if(incident.getBlue())
+                        taskBlue++;
+                    break;
+                case Transport:
+                    transport++;
+                    if(incident.getBlue())
+                        transportBlue++;
+                    break;
+                case Relocation:
+                    relocation++;
+                    if(incident.getBlue())
+                        relocationBlue++;
+                    break;
+                default:
+                    other++;
+                    if(incident.getBlue())
+                        otherBlue++;
+                    break;
+            }
+        }
+
+        PdfPTable table = new PdfPTable(new float[] {3, 1, 1});
+        table.setWidthPercentage(100);
+
+        table.addCell("");
+        table.addCell(messageSource.getMessage("label.report.total", null, locale));
+        table.addCell(messageSource.getMessage("label.report.stat_blue", null, locale));
+
+        table.addCell(messageSource.getMessage("label.incident.type.task", null, locale) + " / " + messageSource.getMessage("label.incident.type.task.blue", null, locale));
+        table.addCell(""+task);
+        table.addCell(""+taskBlue);
+
+        table.addCell(messageSource.getMessage("label.incident.type.transport", null, locale));
+        table.addCell(""+transport);
+        table.addCell(""+transportBlue);
+
+        table.addCell(messageSource.getMessage("label.incident.type.relocation", null, locale));
+        table.addCell(""+relocation);
+        table.addCell(""+relocationBlue);
+
+        table.addCell(messageSource.getMessage("label.report.incident.other", null, locale));
+        table.addCell(""+other);
+        table.addCell(""+otherBlue);
+
+
+        document.add(new Paragraph(messageSource.getMessage("label.report.statistics", null, locale), titleFont));
+        document.add(new Paragraph(" "));
+        document.add(table);
+
+
+
+        document.add(new Paragraph(" "));
+        document.newPage();
     }
 
     private void addUnitStats(Document document) throws DocumentException {
 
         ObjectMapper mapper = new ObjectMapper();
 
-        document.add(new Paragraph(messageSource.getMessage("label.units", null, locale)));
+        document.add(new Paragraph(messageSource.getMessage("label.units", null, locale), titleFont));
         document.add(new Paragraph(" "));
 
         for(Unit unit : unitList) {
@@ -246,6 +309,7 @@ public class FinalReportController {
             p.add(new Paragraph(" "));
             document.add(p);
         }
+        document.newPage();
     }
 
     private String incidentTitle(Incident inc) {
@@ -265,16 +329,7 @@ public class FinalReportController {
             position = formatPoint(inc.getBo());
         }
 
-        if(inc.getType() == IncidentType.Task) {
-            if(inc.getBlue() == null || !inc.getBlue()) {
-                type = messageSource.getMessage("label.incident.type.task", null, locale);
-            } else {
-                type = messageSource.getMessage("label.incident.type.task.blue", null, locale);
-            }
-
-        } else {
-            type = messageSource.getMessage("label.incident.type." + inc.getType().name().toLowerCase(), null, locale);
-        }
+        type = humanreadableIncidentType(inc);
 
         return "#" + inc.getId() + " - " + type + "\n" + position ;
     }
@@ -294,8 +349,26 @@ public class FinalReportController {
         return info.split("\n")[0];
     }
 
+    private String humanreadableIncidentType(Incident inc) {
+        String type;
+        if(inc.getType() == IncidentType.Task) {
+            if(inc.getBlue() == null || !inc.getBlue()) {
+                type = messageSource.getMessage("label.incident.type.task", null, locale);
+            } else {
+                type = messageSource.getMessage("label.incident.type.task.blue", null, locale);
+            }
+
+        } else {
+            type = messageSource.getMessage("label.incident.type." + inc.getType().name().toLowerCase(), null, locale);
+        }
+        return type;
+    }
+
     private void addIncidentStats(Document document) throws DocumentException {
         ObjectMapper mapper = new ObjectMapper();
+
+        document.add(new Paragraph(messageSource.getMessage("label.incidents", null, locale), titleFont));
+        document.add(new Paragraph(" "));
 
         for(Incident incident : incidentList) {
             // Single Unit Incidents are fully logged by UnitStats
@@ -303,19 +376,60 @@ public class FinalReportController {
                 continue;
 
             java.util.List<LogEntry> logs = logService.getByIncidentId(incident.getId());
+            Collections.reverse(logs);
+
             Paragraph p = new Paragraph();
 
-            Paragraph h = new Paragraph("#" + incident.getId(), title2Font);
+            Paragraph h = new Paragraph("#" + incident.getId() + " - " + humanreadableIncidentType(incident),
+                    title2Font);
 
             Paragraph s = new Paragraph("BO: " + (incident.getBo() == null ? "N/A" : incident.getBo()) + "\n" +
                     "AO: " + (incident.getAo() == null ? "N/A" : incident.getAo()), descrFont);
             p.add(h);
             p.add(s);
 
-            PdfPTable table = new PdfPTable(7);
+            PdfPTable table = new PdfPTable(new float[] {2, 3, 4, 2, 4, 4, 5, 3, 1});
+            PdfPTable table2 = new PdfPTable(new float[] {2, 3, 5, 5, 1});
             table.setWidthPercentage(100);
+            table2.setWidthPercentage(100);
 
-            /*for(LogEntry log : logs) {
+            table.addCell(messageSource.getMessage("label.log.timestamp", null, locale));
+            table.addCell(messageSource.getMessage("label.operator", null, locale));
+            table.addCell(messageSource.getMessage("label.log.text", null, locale));
+            table.addCell(messageSource.getMessage("label.incident.state", null, locale));
+            table.addCell(messageSource.getMessage("label.incident.bo", null, locale));
+            table.addCell(messageSource.getMessage("label.incident.ao", null, locale));
+            table.addCell(messageSource.getMessage("label.incident.info", null, locale));
+            table.addCell(messageSource.getMessage("label.incident.casus", null, locale));
+            table.addCell(messageSource.getMessage("label.incident.blue", null, locale));
+
+            table2.addCell(messageSource.getMessage("label.log.timestamp", null, locale));
+            table2.addCell(messageSource.getMessage("label.operator", null, locale));
+            table2.addCell(messageSource.getMessage("label.log.text", null, locale));
+            table2.addCell(messageSource.getMessage("label.unit", null, locale));
+            table2.addCell(""); //messageSource.getMessage("label.task.state", null, locale));
+
+
+            String lastBO = "";
+            String lastAO = "";
+            String lastInfo = "";
+            String lastState = "";
+            String lastCasus = "";
+
+            for(LogEntry log : logs)
+            {
+                if(log.getJson() == null || log.getType() == LogEntryType.CUSTOM) {
+                    table.addCell(new java.text.SimpleDateFormat(dateFormat).format(log.getTimestamp()));
+                    table.addCell(log.getUser().getUsername());
+
+                    PdfPCell cell = new PdfPCell(new Phrase((log.getType() == LogEntryType.CUSTOM || log.getType() == null) ? log.getText() :
+                            messageSource.getMessage("descr."+log.getType().name(), null, locale)));
+                    cell.setColspan(7);
+                    table.addCell(cell);
+
+                    continue;
+                }
+
                 JsonContainer jsonContainer;
                 try {
                     jsonContainer = mapper.readValue(log.getJson(), JsonContainer.class);
@@ -327,19 +441,24 @@ public class FinalReportController {
                         continue;
                     }
 
-
-                    table.addCell(new java.text.SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(log.getTimestamp()));
-                    table.addCell(messageSource.getMessage("descr."+log.getType().name(), null, locale));
-                    table.addCell(t.getState() == null ? "" : tUnit.getState().name());
-                    table.addCell(tUnit.getPosition() == null ? "" : tUnit.getPosition().getInfo());
-                    table.addCell(tUnit.getInfo() == null ? "" : tUnit.getInfo());
-
                     if(tUnit == null) {
-                        table.addCell("");
-                        table.addCell("");
+                        table.addCell(new java.text.SimpleDateFormat(dateFormat).format(log.getTimestamp()));
+                        table.addCell(log.getUser().getUsername());
+                        table.addCell(messageSource.getMessage("descr." + log.getType().name(), null, locale));
+                        table.addCell(tIncident.getState() == null ? "" : ( tIncident.getState().name().equals(lastState) ? "" :
+                                ( messageSource.getMessage("label.incident.state." + ( lastState = tIncident.getState().name() ).toLowerCase(), null, locale) ) ) );
+                        table.addCell(tIncident.getBo() == null ? "" : ( tIncident.getBo().toString().equals(lastBO) ? "" : ( lastBO = tIncident.getBo()+"" ) ) );
+                        table.addCell(tIncident.getAo() == null ? "" : ( tIncident.getAo().toString().equals(lastAO) ? "" : ( lastAO = tIncident.getAo()+"" ) ) );
+                        table.addCell(tIncident.getInfo() == null ? "" : ( tIncident.getInfo().equals(lastInfo) ? "" : ( lastInfo = tIncident.getInfo() ) ) );
+                        table.addCell(tIncident.getCasusNr() == null ? "" : ( tIncident.getCasusNr().equals(lastCasus) ? "" : ( lastCasus = tIncident.getCasusNr() ) ) );
+                        table.addCell(tIncident.getBlue() == null ? "" : ( tIncident.getBlue() ? "J" : "N" ) );
                     } else {
-                        table.addCell(tUnit.getCall());
-                        table.addCell(log.getState() == null ? "-" : log.getState().name());
+                        table2.addCell(new java.text.SimpleDateFormat(dateFormat).format(log.getTimestamp()));
+                        table2.addCell(log.getUser().getUsername());
+                        table2.addCell(messageSource.getMessage("descr." + log.getType().name(), null, locale));
+                        table2.addCell("#" + tUnit.getId() + (tUnit.getCall() !=  null ? ": " + tUnit.getCall() : ""));
+                        table2.addCell(log.getState() + "");
+
                     }
 
                 } catch (IOException e) {
@@ -347,12 +466,20 @@ public class FinalReportController {
                 }
 
 
-            }*/
+            }
 
             p.add(table);
+            p.add(new Paragraph(messageSource.getMessage("label.unit.movement", null, locale), descrFont));
+            p.add(table2);
+            // Empty Line
+            p.add(new Paragraph(" "));
             document.add(p);
         }
-        document.add(new Paragraph(" "));
+        document.newPage();
+    }
+
+    private void addCustomLog(Document document) {
+        //TODO !
     }
 
     private static void addEmptyLine(Paragraph paragraph, int number) {

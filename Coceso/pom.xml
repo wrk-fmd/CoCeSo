@@ -4,7 +4,7 @@
     <groupId>at.wrk</groupId>
     <artifactId>coceso</artifactId>
     <packaging>war</packaging>
-    <version>0.4b</version>
+    <version>0.4.1b</version>
     <name>Coceso</name>
 
     <properties>

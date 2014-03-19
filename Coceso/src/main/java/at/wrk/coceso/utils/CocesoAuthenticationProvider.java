@@ -55,11 +55,11 @@ public class CocesoAuthenticationProvider implements AuthenticationProvider {
         Operator user = operatorDao.getByUsername(username);
 
         if(user == null) {
-            Logger.debug("User "+username+" not found");
+            Logger.debug("[failed] " + username + ": User not found");
             throw new BadCredentialsException("Wrong Username/Password");
         }
         if(!user.isEnabled()) {
-            Logger.debug("User "+username+" has no Access Rights");
+            Logger.debug("[failed] " + username + ": Login deactivated");
             throw new BadCredentialsException("Access Denied");
         }
 
@@ -69,11 +69,10 @@ public class CocesoAuthenticationProvider implements AuthenticationProvider {
 
         boolean offline_failed = !user.validatePassword(password);
 
-        if(offline_failed) { // Offline Auth failed
-            Logger.debug("Offline Authentication failed");
-        }
+        Logger.debug("[" + (offline_failed ? "failed" : "  OK  ") + "] " + username + ": Offline Authentication ");
 
         if(offline_failed && useThirdPartyAuth) {
+            Logger.debug(username + ": Using Online Authentication");
             try { // #################### THIRD PARTY AUTHENTICATION ####################
                 URL url = new URL(thirdPartyAuthenticationURL);
                 String phrase = username+":"+password;
@@ -101,6 +100,8 @@ public class CocesoAuthenticationProvider implements AuthenticationProvider {
                 Logger.debug("IOException (No Connection?) "+e.getMessage());
                 returnCode = ERROR;
             }
+
+
         } else if(offline_failed && !useThirdPartyAuth) {
             returnCode = firstUse ? SUCCESS : NOT_AUTHORIZED;
         } else {
@@ -108,7 +109,7 @@ public class CocesoAuthenticationProvider implements AuthenticationProvider {
         }
 
         if(returnCode == NOT_AUTHORIZED) {
-            Logger.debug("Online Authentication Failed");
+            Logger.debug("[failed] " + username + ": Authentication");
             throw new BadCredentialsException("Wrong Username/Password");
         }
         if(returnCode == SUCCESS) {
@@ -117,12 +118,12 @@ public class CocesoAuthenticationProvider implements AuthenticationProvider {
                 operatorDao.update(user);
                 Logger.debug("User "+username+": PW written to DB");
             }
-            Logger.debug("User "+username+" authenticated");
+            Logger.debug("[  OK  ] " + username + ": Authentication");
             return new UsernamePasswordAuthenticationToken(user,password, auth);
         }
         if(returnCode == ERROR) {
 
-            Logger.debug("Authentication failed");
+            Logger.debug("ERROR - Authentication failed");
             throw new BadCredentialsException("Wrong Username/Password");
         }
         else { // Wrong Status Code Definition?

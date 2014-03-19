@@ -25,15 +25,17 @@
 
     <%-- Show Error Message --%>
     <c:if test="${not empty error}">
-        <div class="alert alert-danger">
+        <div class="alert alert-danger alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
             <strong><spring:message code="label.error" />:</strong> <spring:message code="label.error.${error}" />
         </div>
     </c:if>
 
     <%-- Userdetails -- DEBUG --%>
-    <div class="alert alert-info">
-            <strong><spring:message code="label.operator"/>:</strong> ${user.given_name} ${user.sur_name} (${user.username})&nbsp;&nbsp;
-            Roles: <c:forEach items="${user.authorities}" var="role">${role} - </c:forEach>
+    <div class="alert alert-info alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <strong><spring:message code="label.operator"/>:</strong> ${user.given_name} ${user.sur_name} (${user.username})&nbsp;&nbsp;
+        Roles: <c:forEach items="${user.authorities}" var="role">${role} - </c:forEach>
     </div>
 
     <%-- Last Active Concern --%>
@@ -43,6 +45,37 @@
             <a href="<c:url value="/main/"/>" class="btn btn-success"><spring:message code="label.start" /></a>
         </div>
     </c:if>
+
+    <%-- Create new Concern --%>
+    <div class="page-header">
+        <h2>
+            <spring:message code="label.concern.create"/>
+        </h2>
+    </div>
+    <div>
+        <form action="${pageContext.request.contextPath}/edit/create" method="post" role="form">
+            <div class="row">
+                <div class="col-lg-2">
+                    &nbsp;
+                </div>
+                <div class="col-lg-5">
+                    <label class="sr-only" for="new_name"><spring:message code="label.concern.name"/></label>
+                    <input type="text" id="new_name" name="name" maxlength="64" class="form-control" placeholder="<spring:message code="label.concern.name"/>"/>
+                </div>
+                <!--div>
+                    <Info of Organiser: <input type="text" name="info" maxlength="64" /><br>>
+                </div-->
+                <div class="col-lg-3">
+                    <input type="submit" value="<spring:message code="label.create"/>" class="btn btn-success"/>
+                </div>
+                <div class="col-lg-2">
+                    &nbsp;
+                </div>
+            </div>
+
+
+        </form>
+    </div>
 
     <%-- Active Concerns --%>
     <div class="page-header">
@@ -122,36 +155,7 @@
         </form>
     </div>
 
-    <%-- Create new Concern --%>
-    <div class="page-header">
-        <h2>
-            <spring:message code="label.concern.create"/>
-        </h2>
-    </div>
-    <div>
-        <form action="${pageContext.request.contextPath}/edit/create" method="post" role="form">
-            <div class="row">
-                <div class="col-lg-2">
-                    &nbsp;
-                </div>
-                <div class="col-lg-5">
-                    <label class="sr-only" for="new_name"><spring:message code="label.concern.name"/></label>
-                    <input type="text" id="new_name" name="name" maxlength="64" class="form-control" placeholder="<spring:message code="label.concern.name"/>"/>
-                </div>
-                <!--div>
-                    <Info of Organiser: <input type="text" name="info" maxlength="64" /><br>>
-                </div-->
-                <div class="col-lg-3">
-                    <input type="submit" value="<spring:message code="label.create"/>" class="btn btn-success"/>
-                </div>
-                <div class="col-lg-2">
-                    &nbsp;
-                </div>
-            </div>
 
-
-        </form>
-    </div>
     <div class="page-header">
         &nbsp; <%--Just for a nicer view --%>
     </div>

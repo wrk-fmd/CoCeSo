@@ -275,6 +275,14 @@
         <h2><spring:message code="label.concern.edit"/></h2>
     </div>
 
+    <%-- Show Error Message --%>
+    <c:if test="${not empty error}">
+        <div class="alert alert-danger alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <strong><spring:message code="label.error" />:</strong> <spring:message code="label.error.${error}" />
+        </div>
+    </c:if>
+
     <div>
         <c:url value="/edit/update" var="update" />
         <form action="${update}" method="post" role="form" accept-charset="UTF-8">

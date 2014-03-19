@@ -20,12 +20,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @Controller
 @RequestMapping("/edit")
 public class ConcernEditController {
+
+    private static Set<Integer> allowedErrors;
+
+    static {
+        allowedErrors = new HashSet<Integer>();
+        allowedErrors.add(3);
+    }
 
     @Autowired
     //ConcernDao concernService;
@@ -47,19 +55,24 @@ public class ConcernEditController {
         concern.setName(request.getParameter("name"));
         concern.setInfo(request.getParameter("info"));
 
-        concernService.add(concern, user);
+        int ret = concernService.add(concern, user);
 
-        return "redirect:/welcome";
+        return "redirect:/welcome" + (ret == -3 ? "?error=3" : "");
     }
 
     @RequestMapping("")
-    public String edit(@CookieValue(value = "active_case") String c_id, ModelMap map) {
+    public String edit(@CookieValue(value = "active_case") String c_id, ModelMap map,
+                       @RequestParam(value = "error", required = false) Integer error_id) {
 
-        final String return_address_error = "redirect:/welcome";
+        final String return_address_error = "redirect:/welcome?error=1";
 
         if(c_id == null || c_id.isEmpty()) {
-            //TODO Show Error Message
             return return_address_error;
+        }
+
+        // Write Error Code to ModelMap
+        if(error_id != null && allowedErrors.contains(error_id)) {
+            map.addAttribute("error", error_id);
         }
 
         int id;
@@ -103,9 +116,9 @@ public class ConcernEditController {
         concern.setPax(pax);
         concern.setInfo(info);
 
-        concernService.update(concern, user);
+        boolean success = concernService.update(concern, user);
 
-        return "redirect:/edit";
+        return "redirect:/edit" + (success ? "" : "?error=3");
     }
 
 

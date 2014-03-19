@@ -26,10 +26,21 @@ public class MainController {
     IncidentService incidentService;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public String showMain(ModelMap model, @CookieValue("active_case") int concern_id) {
+    public String showMain(ModelMap model, @CookieValue("active_case") String c_id) {
+        String error_return = "redirect:/welcome?error=1";
+
+        if(c_id == null || c_id.isEmpty())
+            return error_return;
+
+        int concern_id;
+        try {
+            concern_id = Integer.parseInt(c_id);
+        } catch (NumberFormatException nfe) {
+            return error_return;
+        }
         Concern c = concernService.getById(concern_id);
         if(c == null || c.isClosed())
-            return "redirect:/welcome?error=1";
+            return error_return;
 
         model.addAttribute("concern", c);
 

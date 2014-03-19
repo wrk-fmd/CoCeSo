@@ -30,18 +30,35 @@ public class ConcernService {
     }
 
     public boolean update(Concern concern, Operator user) {
+        if(concern == null || nameAlreadyExists(concern.getName())) {
+            return false;
+        }
         logService.logFull(user, LogEntryType.CONCERN_UPDATE, concern.getId(), null, null, true);
         return concernDao.update(concern);
     }
 
     public int add(Concern concern, Operator user) {
-        if(concern == null || concern.getName() == null || concern.getName().isEmpty()) {
+        if(concern == null || nameAlreadyExists(concern.getName()))
+        {
             Logger.debug("ConcernService.add(): Invalid Concern given (empty name?)");
-            return -1;
+            return -3;
         }
         concern.setId(concernDao.add(concern));
         logService.logFull(user, LogEntryType.CONCERN_CREATE, concern.getId(), null, null, true);
         return concern.getId();
+    }
+
+    private boolean nameAlreadyExists(String name) {
+        if(name == null || name.isEmpty()) {
+            return true;
+        }
+        List<Concern> list = concernDao.getAll();
+
+        for(Concern c : list) {
+            if(c.getName() != null && name.equals(c.getName()))
+                return true;
+        }
+        return false;
     }
 
     // TODO if used anywhere, fix foreign key problem on delete

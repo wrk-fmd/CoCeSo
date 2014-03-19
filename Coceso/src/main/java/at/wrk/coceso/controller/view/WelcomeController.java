@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,6 +34,7 @@ public class WelcomeController {
     static {
         allowedErrors = new HashSet<Integer>();
         allowedErrors.add(1);
+        allowedErrors.add(3);
     }
 
     @Autowired
@@ -62,14 +62,14 @@ public class WelcomeController {
 
     @RequestMapping(value = "/welcome", method = RequestMethod.GET)
     public String showWelcome(ModelMap map, Principal principal, HttpServletResponse response,
-                              @RequestParam(value = "error", required = false) Integer id) {
+                              @RequestParam(value = "error", required = false) Integer error_id) {
 
         UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
         Operator user = (Operator) token.getPrincipal();
 
         // Write Error Code to ModelMap
-        if(id != null && allowedErrors.contains(id)) {
-            map.addAttribute("error", id);
+        if(error_id != null && allowedErrors.contains(error_id)) {
+            map.addAttribute("error", error_id);
         }
 
         user = operatorDao.getById(user.getId());
