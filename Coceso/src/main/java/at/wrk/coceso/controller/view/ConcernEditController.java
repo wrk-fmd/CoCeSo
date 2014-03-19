@@ -181,7 +181,7 @@ public class ConcernEditController {
 
         unitService.add(unit, user);
 
-        Logger.debug("createUnit: Unit: "+ unit.getId() +", "+ unit.getCall());
+        //Logger.debug("createUnit: Unit: "+ unit.getId() +", "+ unit.getCall());
 
         return "redirect:/edit";
     }

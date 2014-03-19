@@ -30,9 +30,15 @@ public class ConcernService {
     }
 
     public boolean update(Concern concern, Operator user) {
-        if(concern == null || nameAlreadyExists(concern.getName())) {
+        if(concern == null) {
             return false;
         }
+
+        // Return false if Name changed and another Concern already has the same Name
+        if(!concernDao.getById(concern.getId()).getName().equals(concern.getName()) && nameAlreadyExists(concern.getName())) {
+            return false;
+        }
+
         logService.logFull(user, LogEntryType.CONCERN_UPDATE, concern.getId(), null, null, true);
         return concernDao.update(concern);
     }
