@@ -10,5 +10,5 @@
 2014-03-21
 
 #### Additions ####
-- Gender of Patient
+- Gender of Patient (Ticket #35)
 - Ticket #51 fixed

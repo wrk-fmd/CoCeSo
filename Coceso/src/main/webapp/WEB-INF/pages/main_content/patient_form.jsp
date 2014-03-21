@@ -38,7 +38,8 @@
 
     <div class="clearfix">
         <div class="form-group col-md-12">
-            <div class="btn-group">
+            <label for="sex"><spring:message code="label.patient.sex" />:&nbsp;</label>
+            <div class="btn-group" id="sex">
                 <button type="button" class="btn btn-default" value="u"
                         data-bind="click: function() {sex('u') }, css: {active: sex() === 'u'}">
                     <spring:message code="label.patient.sex.u" />
