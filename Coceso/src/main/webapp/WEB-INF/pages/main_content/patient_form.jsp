@@ -37,6 +37,34 @@
 
 
     <div class="clearfix">
+        <div class="form-group col-md-12">
+            <div class="btn-group">
+                <button type="button" class="btn btn-default" value="u"
+                        data-bind="click: function() {sex('u') }, css: {active: sex() === 'u'}">
+                    <spring:message code="label.patient.sex.u" />
+                </button>
+                <button type="button" class="btn btn-default" value="m"
+                        data-bind="click: function() {sex('m') }, css: {active: sex() === 'm'}">
+                    <spring:message code="label.patient.sex.m" />
+                </button>
+                <button type="button" class="btn btn-default" value="f"
+                        data-bind="click: function() {sex('f') }, css: {active: sex() === 'f'}">
+                    <spring:message code="label.patient.sex.f" />
+                </button>
+                <%--label class="btn btn-default">
+                    <input type="radio" name="sex" value="u" data-bind="checked: sex"><spring:message code="label.patient.sex.u" />
+                </label>
+                <label class="btn btn-default">
+                    <input type="radio" name="sex" value="m" data-bind="checked: sex"><spring:message code="label.patient.sex.u" />
+                </label>
+                <label class="btn btn-default">
+                    <input type="radio" name="sex" value="f" data-bind="checked: sex"><spring:message code="label.patient.sex.u" />
+                </label--%>
+            </div>
+        </div>
+    </div>
+
+    <div class="clearfix">
         <div class="form-group col-md-6">
             <label for="sur_name"><spring:message code="label.person.sur_name"/>:</label>
             <input id="sur_name" type="text" class="form-control" name="sur_name" data-bind="value: sur_name, valueUpdate: 'input'" autofocus>

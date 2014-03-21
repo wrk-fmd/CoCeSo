@@ -245,7 +245,8 @@ Coceso.Models = {
     diagnosis: "",
     erType: "",
     info: "",
-    externalID: ""
+    externalID: "",
+    sex: "u"
   }
 };
 
@@ -2768,7 +2769,7 @@ Coceso.ViewModels.Patient = function(data, options) {
 
     //Detect changes
     this.dependencies.push(this.given_name, this.sur_name, this.insurance_number, this.externalID, this.diagnosis,
-                            this.erType, this.info);
+                            this.erType, this.info, this.sex);
 
 };
 Coceso.ViewModels.Patient.prototype = Object.create(Coceso.ViewModels.ViewModelSingle.prototype, /** @lends Coceso.ViewModels.Log.prototype */ {

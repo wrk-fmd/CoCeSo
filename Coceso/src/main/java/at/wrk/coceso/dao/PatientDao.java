@@ -106,6 +106,12 @@ public class PatientDao extends CocesoDao<Patient> {
             parameters.add(patient.getInsurance_number());
             comma = true;
         }
+        if(patient.getSex() != null) {
+            if(comma) q+= ",";
+            q += "sex = ? ";
+            parameters.add(patient.getSex());
+            comma = true;
+        }
         if(patient.getExternalID() != null) {
             if(comma) q+= ",";
             q += "external_id = ? ";
@@ -134,7 +140,7 @@ public class PatientDao extends CocesoDao<Patient> {
             return -1;
         }
         String q = "INSERT INTO patient (incident_fk, info, given_name, sur_name, external_id, " +
-                "er_type, diagnosis, insurance_number) VALUES (?,?,?,?,?,?,?,?)";
+                "er_type, diagnosis, insurance_number, sex) VALUES (?,?,?,?,?,?,?,?,?)";
 
         try {
             jdbc.update(q,
@@ -145,7 +151,8 @@ public class PatientDao extends CocesoDao<Patient> {
                     patient.getExternalID(),
                     patient.getErType(),
                     patient.getDiagnosis(),
-                    patient.getInsurance_number());
+                    patient.getInsurance_number(),
+                    patient.getSex());
         } catch(DataAccessException e) {
             Logger.debug("TaskDao add: "+e);
             return -1;

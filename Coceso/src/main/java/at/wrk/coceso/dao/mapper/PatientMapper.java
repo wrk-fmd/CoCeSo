@@ -21,6 +21,7 @@ public class PatientMapper implements RowMapper<Patient> {
         p.setGiven_name(rs.getString("given_name"));
         p.setSur_name(rs.getString("sur_name"));
         p.setInsurance_number(rs.getString("insurance_number"));
+        p.setSex(rs.getString("sex").charAt(0));
 
         return p;
     }

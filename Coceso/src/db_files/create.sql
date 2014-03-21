@@ -143,6 +143,7 @@ CREATE TABLE patient (
   er_type VARCHAR (40) NOT NULL DEFAULT '',
   info TEXT NOT NULL DEFAULT '',
   external_id VARCHAR (40) NOT NULL DEFAULT '',
+  sex CHAR (1) NOT NULL DEFAULT 'u',
   PRIMARY KEY (incident_fk),
   FOREIGN KEY (incident_fk) REFERENCES incident ON DELETE CASCADE
 );

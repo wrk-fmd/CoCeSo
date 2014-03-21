@@ -16,6 +16,8 @@ public class Patient {
 
     private String externalID;
 
+    private Character sex;
+
     public int getId() {
         return id;
     }
@@ -80,4 +82,11 @@ public class Patient {
         this.externalID = externalID;
     }
 
+    public Character getSex() {
+        return sex;
+    }
+
+    public void setSex(Character sex) {
+        this.sex = sex;
+    }
 }

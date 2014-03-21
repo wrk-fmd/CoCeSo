@@ -48,6 +48,7 @@
     <script src="<c:url value="/static/js/bootstrap.dropdown.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/bootstrap.modals.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/bootstrap.collapse.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/static/js/bootstrap.buttons.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/bindings.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/coceso.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/jquery.ui.touch-punch.js"/>" type="text/javascript"></script>
