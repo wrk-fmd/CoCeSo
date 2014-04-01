@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
@@ -5,6 +6,7 @@
 <head>
     <title><spring:message code="label.patient.search" /></title>
 
+    <meta charset="utf-8" />
     <link rel="icon" href="<c:url value="/static/favicon.ico"/>" type="image/x-icon">
 
     <link rel="stylesheet" href="<c:url value="/static/css/coceso.css" />" type="text/css"/>

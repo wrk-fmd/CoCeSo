@@ -1,6 +1,6 @@
+<!DOCTYPE html>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<!DOCTYPE html>
 <!--
 /**
 * CoCeSo
@@ -27,6 +27,7 @@
 <head>
     <title><spring:message code="label.coceso"/></title>
     <meta charset="utf-8"/>
+
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 
     <link rel="icon" href="<c:url value="/static/favicon.ico"/>" type="image/x-icon">

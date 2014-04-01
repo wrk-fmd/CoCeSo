@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <%@ page import="org.springframework.security.core.GrantedAuthority" %>
 <%@ page import="java.util.List" %>
 <%@ page import="at.wrk.coceso.entity.Operator" %>
@@ -10,10 +11,10 @@
 <html>
 <head>
     <title><spring:message code="label.coceso"/> - <spring:message code="label.person.edit"/></title>
-    <meta charset="utf-8" />
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8" />
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
     <link rel="icon" href="<c:url value="/static/favicon.ico"/>" type="image/x-icon">
 

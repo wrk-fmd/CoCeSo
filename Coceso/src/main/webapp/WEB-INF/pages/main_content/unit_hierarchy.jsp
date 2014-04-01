@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -21,6 +22,7 @@
 <head>
     <title><spring:message code="label.units" /> / <spring:message code="label.main.list" /></title>
 
+    <meta charset="utf-8" />
     <link rel="stylesheet" href="<c:url value="/static/css/coceso.css"/>" type="text/css">
 </head>
 <body>

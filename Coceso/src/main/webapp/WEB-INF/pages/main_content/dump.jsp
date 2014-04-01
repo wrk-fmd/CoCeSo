@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <%--
   Creates a Dump of current Concern
   UNDER CONSTRUCTION
@@ -9,6 +10,7 @@
 <html>
 <head>
     <title>${concern.name}</title>
+    <meta charset="utf-8" />
 
     <style type="text/css">
         @media print{

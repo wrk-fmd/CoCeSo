@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <%@ page import="at.wrk.coceso.entity.Unit" %>
 <%@ page import="java.util.Map" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
@@ -7,10 +8,10 @@
 <html>
 <head>
     <title><spring:message code="label.coceso"/> - <spring:message code="label.nav.dashboard"/></title>
-    <meta charset="utf-8" />
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8" />
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
     <link rel="icon" href="<c:url value="/static/favicon.ico"/>" type="image/x-icon">
     <!-- Bootstrap -->
