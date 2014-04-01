@@ -83,7 +83,7 @@
     </div>
     <div>
         <form action="${pageContext.request.contextPath}/welcome" method="post" role="form">
-            <div class="row">
+            <div class="row form-group">
                 <div class="col-lg-2">
                     &nbsp;
                 </div>
@@ -96,7 +96,7 @@
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row form-group">
                 <div class="col-lg-2">
                     &nbsp;
                 </div>
@@ -111,6 +111,18 @@
                         <input type="submit" value="<spring:message code="label.close"/>" name="close" class="btn btn-danger">
                     </div>
                 </c:if>
+            </div>
+
+            <div class="row form-group">
+                <div class="col-lg-2">
+                    &nbsp;
+                </div>
+                <div class="col-lg-3 text-center">
+                    <input type="submit" value="<spring:message code="label.print"/>" name="print" class="btn btn-primary">
+                </div>
+                <div class="col-lg-3 text-center">
+                    <input type="submit" value="<spring:message code="label.dump"/>" name="dump" class="btn btn-primary" disabled>
+                </div>
             </div>
         </form>
     </div>
@@ -142,7 +154,7 @@
                     &nbsp;
                 </div>
                 <div class="col-lg-2 text-center">
-                    <input type="submit" value="<spring:message code="label.print"/>" name="print" class="btn btn-success">
+                    <input type="submit" value="<spring:message code="label.print"/>" name="print" class="btn btn-primary">
                 </div>
                 <c:if test="${not empty authorized}">
                     <div class="col-lg-2 text-center">

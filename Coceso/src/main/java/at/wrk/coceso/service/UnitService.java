@@ -159,7 +159,7 @@ public class UnitService {
 
     public boolean standby(int activeCase, int unitId, Operator user) {
         // Standby only possible, if no other Incident assigned, except for ToHome
-        if(!detachAllGivenTypes(unitId, IncidentType.ToHome))
+        if(!detachAllGivenTypes(unitId, IncidentType.ToHome, IncidentType.HoldPosition))
             return false;
 
         Unit unit = getById(unitId);

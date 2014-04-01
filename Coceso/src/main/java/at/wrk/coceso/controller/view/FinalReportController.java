@@ -1,6 +1,7 @@
 package at.wrk.coceso.controller.view;
 
 import at.wrk.coceso.dao.ConcernDao;
+import at.wrk.coceso.dao.PatientDao;
 import at.wrk.coceso.entity.*;
 import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.LogEntryType;
@@ -8,6 +9,7 @@ import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entity.helper.JsonContainer;
 import at.wrk.coceso.service.IncidentService;
 import at.wrk.coceso.service.LogService;
+import at.wrk.coceso.service.PatientService;
 import at.wrk.coceso.service.UnitService;
 import at.wrk.coceso.utils.Logger;
 import com.itextpdf.text.*;
@@ -46,6 +48,9 @@ public class FinalReportController {
 
     @Autowired
     LogService logService;
+
+    @Autowired
+    private PatientService patientService;
 
     private Concern concern;
     private Operator user;
@@ -101,6 +106,8 @@ public class FinalReportController {
             addUnitStats(document);
             addIncidentStats(document);
             addStatistics(document);
+
+            // TODO Custom Log History
         }
         catch(IOException e) {
             Logger.error("FinalReportController:print(): " + e.getMessage());
@@ -364,6 +371,7 @@ public class FinalReportController {
         return type;
     }
 
+    // TODO History of Patientdata changes
     private void addIncidentStats(Document document) throws DocumentException {
         ObjectMapper mapper = new ObjectMapper();
 
@@ -387,6 +395,20 @@ public class FinalReportController {
                     "AO: " + (incident.getAo() == null ? "N/A" : incident.getAo()), descrFont);
             p.add(h);
             p.add(s);
+
+            Patient patient = patientService.getById(incident.getId());
+            if(patient != null) {
+                Paragraph pat = new Paragraph(messageSource.getMessage("label.patient", null, locale) + ": "+
+                        patient.getGiven_name() + "" + patient.getSur_name() );
+                        /*messageSource.getMessage("label.patient.sex", null, locale) + ": " + patient.getSex() + "\n" +
+                        messageSource.getMessage("label.patient.insurance_number", null, locale) + ": " + patient.getSur_name() + "\n" +
+                        messageSource.getMessage("label.patient.externalID", null, locale) + ": " + patient.getExternalID() + "\n" +
+                        messageSource.getMessage("label.patient.diagnosis", null, locale) + ": " + patient.getDiagnosis() + "\n" +
+                        messageSource.getMessage("label.patient.erType", null, locale) + ": " + patient.getErType() + "\n" +
+                        messageSource.getMessage("label.patient.info", null, locale) + ": " + patient.getInfo() + "\n" );*/
+
+                p.add(pat);
+            }
 
             PdfPTable table = new PdfPTable(new float[] {2, 3, 4, 2, 4, 4, 5, 3, 1});
             PdfPTable table2 = new PdfPTable(new float[] {2, 3, 5, 5, 1});

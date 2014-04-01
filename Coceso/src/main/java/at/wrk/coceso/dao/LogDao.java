@@ -54,6 +54,15 @@ public class LogDao extends CocesoDao<LogEntry> {
         return jdbc.query(q, new Object[]{id}, logMapper);
     }
 
+    public List<LogEntry> getLimitedByUnitId(int id, int limit) {
+        if(id <= 0) return null;
+
+        String q = getPrefix + "WHERE l.unit_fk = ?" + sortSuffix + "  LIMIT ?";
+
+        return jdbc.query(q, new Object[]{ id, limit }, logMapper);
+    }
+
+
     public List<LogEntry> getByIncidentId(int id) {
         if(id <= 0) return null;
 

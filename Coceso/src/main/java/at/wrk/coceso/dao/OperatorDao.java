@@ -50,10 +50,13 @@ public class OperatorDao extends CocesoDao<Operator> {
         }
     }
 
+    /**
+     * Search case-insensitive for operator by username
+     */
     public Operator getByUsername(String username) {
         if(username == null) return null;
 
-        String q = "SELECT * FROM operator o NATURAL JOIN person p WHERE o.username = ?";
+        String q = "SELECT * FROM operator o NATURAL JOIN person p WHERE LOWER(o.username) = LOWER(?)";
         try {
             return jdbc.queryForObject(q, new Object[] {username}, operatorMapper);
         } catch(DataAccessException e) {

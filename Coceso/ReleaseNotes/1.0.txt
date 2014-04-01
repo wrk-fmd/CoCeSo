@@ -1,0 +1,25 @@
+   ______            ______           _____
+  / ____/  ____     / ____/  ___     / ___/   ____
+ / /      / __ \   / /      / _ \    \__ \   / __ \
+/ /___   / /_/ /  / /___   /  __/   ___/ /  / /_/ /
+\____/   \____/   \____/   \___/   /____/   \____/
+
+   Communication       Center      Software
+
+## v1.0 - Release Notes ##
+2014-04-01
+
+#### Additions ####
+- Show unit call in title bar of unit edit
+- Show unit call in title bar of status confirmation popup
+- Incident informations shown in confirmation popup on nextState()
+- Labels for fields in incident and unit form
+
+#### Changes ####
+- Username on login is case insensitive
+- Fixed Ticket #56 (Main Program - custom log entry - empty input)
+- Fixed Ticket #47 (Dashboard - Click on Logo should have no function)
+- Limited Unit Log to 30 Entries
+- Bugfix: Edit Person -> delete Authorities, now no NullPointerException in PersonController
+- Welcome Screen: Added Print Button to Open Concerns
+- Minor Localization Fixes

@@ -91,7 +91,10 @@
 
     <!--##### TABLE -->
     <div class="page-header">
-        <h2><spring:message code="label.concern.edit.unit"/> <a href="<c:url value="/edit/container"/>" class="btn btn-default"><spring:message code="label.container.edit" /></a></h2>
+        <h3>
+            <spring:message code="label.concern.edit.unit"/>
+            <a href="<c:url value="/edit/container"/>" class="btn btn-default pull-right"><spring:message code="label.container.edit" /></a>
+        </h3>
     </div>
     <div>
         <table class="table table-striped">
@@ -272,7 +275,7 @@
     </div>
 
     <div class="page-header">
-        <h2><spring:message code="label.concern.edit"/></h2>
+        <h3><spring:message code="label.concern.edit"/></h3>
     </div>
 
     <%-- Show Error Message --%>
@@ -322,7 +325,7 @@
 
 
     <div class="page-header">
-        <h2><spring:message code="label.concern.edit.batch"/></h2>
+        <h3><spring:message code="label.concern.edit.batch"/></h3>
     </div>
     <div>
         <c:url value="/edit/createUnitBatch" var="createUnitBatch" />

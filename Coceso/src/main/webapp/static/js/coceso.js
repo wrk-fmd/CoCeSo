@@ -1,13 +1,11 @@
 /**
  * CoCeSo
  * Client JS
- * Copyright (c) WRK\Daniel Rohr
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) 2013 Daniel Rohr
  * @link          https://sourceforge.net/projects/coceso/
  * @package       coceso.client.js
  * @since         Rev. 1
@@ -34,8 +32,13 @@ var Coceso = {};
  * Global vars
  */
 Coceso.Global = {
-    notificationViewModel: {}
-    ,patients: {}
+    notificationViewModel: {},
+    dialogViewModel: {
+        title: ko.observable(""),
+        info_text: ko.observable(""),
+        elements: ko.observableArray([])
+    },
+    patients: {}
 };
 
 /**
@@ -84,6 +87,9 @@ Coceso.startup = function() {
 
     //Load Bindings for Notifications
     ko.applyBindings(Coceso.Global.notificationViewModel, $("#nav-notifications").get(0));
+
+    // Load Binding for Confirmation Dialog
+    ko.applyBindings(Coceso.Global.dialogViewModel, $("#next-state-confirm")[0]);
 };
 
 /**
@@ -248,47 +254,6 @@ Coceso.Models = {
     externalID: "",
     sex: "u"
   }
-};
-
-// Little Helper go in here
-Coceso.Helper = {
-    confirmationDialog: function(elementID, yes) {
-        if(!elementID) {
-            return;
-        }
-
-        var modal = $("#" + elementID);
-
-        modal.modal({
-            backdrop: true
-            ,keyboard: true
-            ,show: true
-        });
-
-        var yesHandler = function() {
-            $("#" + elementID).modal('hide');
-            if(typeof yes === 'function') {
-                yes();
-            }
-        };
-
-
-        $("#" + elementID + "-yes").bind('click', yesHandler);
-
-        modal.on('hidden.bs.modal', function (e) {
-            $("#" + elementID + "-yes").unbind('click', yesHandler);
-        })
-    }
-    ,initializeModalKeyHandler: function(elementID) {
-        $("#" + elementID).keyup(function(event) {
-            if(event.which === Coceso.Conf.keyMapping.noKey) {
-                $("#" + elementID + "-no").click();
-            }
-            if(event.which === Coceso.Conf.keyMapping.yesKey) {
-                $("#" + elementID + "-yes").click();
-            }
-        });
-    }
 };
 
 /**
@@ -653,6 +618,158 @@ Coceso.Ajax = {
       }
     });
   }
+};
+
+// Little Helper go in here
+Coceso.Helper = {
+
+    /**
+     * Opens Dialog with ID <code>elementID</code>
+     * @param elementID String of ID of element, which should be handled as Dialog
+     * @param yes function for Handler in case of "yes"
+     * @param viewmodel viewmodel to be applied to Dialog.
+     *        Structure: {title: "Title", elements: [ {key: "...", val: "..."}, ...] }
+     */
+    confirmationDialog: function(elementID, yes, viewmodel) {
+        if(!elementID) {
+            return;
+        }
+
+        var modal = $("#" + elementID);
+
+        viewmodel = $.extend(true, {title: "Title", info_text: "", elements: []}, viewmodel);
+        //console.info(viewmodel);
+
+        Coceso.Global.dialogViewModel.title(viewmodel.title);
+        Coceso.Global.dialogViewModel.info_text(viewmodel.info_text);
+        Coceso.Global.dialogViewModel.elements(viewmodel.elements);
+
+        modal.modal({
+            backdrop: true  // Show backdrop, custom css for higher z-index!!
+            ,keyboard: true // Closable with Escape key
+            ,show: true
+        });
+
+        var yesHandler = function() {
+            $("#" + elementID).modal('hide');
+            if(typeof yes === 'function') {
+                yes();
+            }
+        };
+
+
+        $("#" + elementID + "-yes").bind('click', yesHandler);
+
+        modal.on('hidden.bs.modal', function (e) {
+            $("#" + elementID + "-yes").unbind('click', yesHandler);
+        })
+    }
+    /**
+     * Handles the nextState request
+     * @param unit Full model of Unit
+     * @param incident Full model of Incident
+     */
+    ,nextState: function(unit, incident) {
+        if(!unit || !incident) {
+            console.error("Coceso.Helper.nextState(): invalid unit or incident!");
+            return;
+        }
+
+        var taskstate;
+        if(incident.taskState() !== null && incident.taskState() !== "") {
+            taskstate = incident.taskState();
+        } else if(unit.taskState() !== null && unit.taskState() !== "") {
+            taskstate = unit.taskState();
+        } else {
+            console.warn("Coceso.Helper.nextState(): Could not read TaskState!");
+            taskstate = "";
+        }
+
+        // Return if AO not given and Action is "set to ZAO" (== Assigned if Relocation, else ==ABO)
+        if ( incident.ao.info() === "" &&
+            ( taskstate === Coceso.Constants.TaskState.abo ||
+                ( incident.type() === Coceso.Constants.Incident.type.relocation &&
+                    taskstate === Coceso.Constants.TaskState.assigned ) ) )
+        {
+            console.info("No AO set, opening Incident Window");
+            Coceso.UI.openIncident(_("label.incident.edit"), "incident_form.html", {id: incident.id()});
+            return;
+        }
+
+        var save = function() {
+            console.info("nextState() triggered on Server");
+            Coceso.Ajax.save({incident_id: incident.id(), unit_id: unit.id()}, "incident/nextState.json");
+        };
+
+        if(Coceso.Conf.confirmStatusUpdate) {
+            var info = _("text.confirmation");
+            var elements = [];
+
+            if (incident.type === Coceso.Constants.Incident.type.standby) {
+                if(taskstate === Coceso.Constants.TaskState.assigned)
+                    info = _("text.standby.send");
+                if(taskstate === Coceso.Constants.TaskState.aao)
+                    info = _("text.standby.end");
+
+                elements = [
+                    { key: _("label.unit.position"), val: unit.position.info() }
+                ];
+
+            } else if (incident.type === Coceso.Constants.Incident.type.tohome) {
+                elements = [
+                    { key: _("label.incident.bo"), val: incident.bo.info() }
+                    ,{ key: _("label.incident.ao"), val: incident.ao.info() }
+                ];
+            } else if (incident.type === Coceso.Constants.Incident.type.relocation) {
+                elements = [
+                    { key: _("text.confirmation.current"), val: _("label.task.state." + taskstate.toLowerCase()) }
+                    ,{ key: _("label.incident.ao"), val: incident.ao.info() }
+                    ,{ key: _("label.incident.info"), val: incident.info() }
+                ];
+            } else if (incident.type === Coceso.Constants.Incident.type.transport) {
+                elements = [
+                     { key: _("label.incident.bo"), val: incident.bo.info() }
+                    ,{ key: _("label.incident.ao"), val: incident.ao.info() }
+                    ,{ key: _("label.incident.info"), val: incident.info() }
+                    ,{ key: _("label.incident.caller"), val: incident.caller() }
+                    // TODO add Patientinformation
+                ];
+            } else if (incident.type === Coceso.Constants.Incident.type.holdposition) {
+                elements = [
+                     { key: _("label.unit.position"), val: incident.ao.info() }
+                ];
+            } else {
+                elements = [
+                     { key: _("text.confirmation.current"), val: _("label.task.state." + taskstate.toLowerCase()) }
+                    ,{ key: _("label.incident.bo"), val: incident.bo.info() }
+                    ,{ key: _("label.incident.ao"), val: incident.ao.info() }
+                    ,{ key: _("label.incident.info"), val: incident.info() }
+                    ,{ key: _("label.incident.caller"), val: incident.caller() }
+                    // TODO Sondersignal, andere Einheiten
+                ];
+            }
+
+            var viewmodel = {
+                 title: "<strong>" + unit.call() + "</strong>" + " - " + incident.localizedType()
+                ,info_text: info
+                ,elements: elements
+            };
+
+            Coceso.Helper.confirmationDialog('next-state-confirm', save, viewmodel);
+        } else {
+            save();
+        }
+    }
+    ,initializeModalKeyHandler: function(elementID) {
+        $("#" + elementID).keyup(function(event) {
+            if(event.which === Coceso.Conf.keyMapping.noKey) {
+                $("#" + elementID + "-no").click();
+            }
+            if(event.which === Coceso.Conf.keyMapping.yesKey) {
+                $("#" + elementID + "-yes").click();
+            }
+        });
+    }
 };
 
 /**
@@ -1212,6 +1329,16 @@ Coceso.ViewModels.Incident = function(data, options) {
     this.dependencies.push(this.units.unitlist);
   }
 
+    self.localizedType = ko.computed(function() {
+        if(self.type() && self.type() !== null) {
+            if(self.type() == Coceso.Constants.Incident.type.task && self.blue()) {
+                return _("label.incident.type.task.blue");
+            }
+            return _("label.incident.type." + self.type().toLowerCase())
+        }
+        return "";
+    });
+
   /**
    * Incident is of type "Task"
    *
@@ -1545,16 +1672,24 @@ Coceso.ViewModels.Incident = function(data, options) {
    * @return {void}
    */
   this.nextState = function(unitid) {
-      if (unitid && self.id()) {
-          var save = function() {
-              Coceso.Ajax.save({incident_id: self.id(), unit_id: unitid}, "incident/nextState.json");
-          };
+      if (typeof unitid === "undefined" && self.unitCount() === 1) {
+          unitid = self.units.unitlist()[0].id();
+      }
 
-          if(Coceso.Conf.confirmStatusUpdate) {
-              Coceso.Helper.confirmationDialog('next-state-confirm', save);
-          } else {
-              save();
+      if (unitid && self.id()) {
+          var unit = ko.utils.arrayFirst( self.units.unitlist(), function(item) {
+              return item.id() === unitid;
+          });
+
+          if(unit.id() !== unitid) {
+              console.error("Coceso.ViewModel.Incident.nextState(): something went wrong on Unit filtering");
+              return;
           }
+
+          Coceso.Helper.nextState(unit, self);
+
+      } else {
+          console.warn("called nextState() without valid unit reference!")
       }
   };
 
@@ -2158,6 +2293,13 @@ Coceso.ViewModels.Unit = function(data, options) {
     return "";
   }, this);
 
+
+    self.localizedTaskState = ko.computed(function() {
+        if(self.taskState() && self.taskState() !== null) {
+            return _("label.task.state." + self.taskState().toLowerCase());
+        }
+        return "";
+    });
   /**
    * Options for the tooltip
    *
@@ -2208,23 +2350,19 @@ Coceso.ViewModels.Unit = function(data, options) {
     }
 
     if (incid && self.id()) {
-        if(self.incidentCount() === 1) {
-            var incident = self.incidents.incidentlist()[0];
-            // Return if AO not given and Action is "set to ZAO"
-            if(incident.ao.info() === "" && incident.taskState() === Coceso.Constants.TaskState.abo) {
-                Coceso.UI.openIncident(_("label.incident.edit"), "incident_form.html", {id: incident.id()});
-                return;
-            }
-        }
-        var save = function() {
-            Coceso.Ajax.save({incident_id: incid, unit_id: self.id()}, "incident/nextState.json");
-        };
+        var incident = ko.utils.arrayFirst( self.incidents.incidentlist(), function(item) {
+            return item.id() === incid;
+        });
 
-        if(Coceso.Conf.confirmStatusUpdate) {
-            Coceso.Helper.confirmationDialog('next-state-confirm', save);
-        } else {
-            save();
+        if(incident.id() !== incid) {
+            console.error("Coceso.ViewModel.Unit.nextState(): something went wrong on Incident filtering");
+            return;
         }
+
+        Coceso.Helper.nextState(self, incident);
+
+    } else {
+        console.warn("called nextState() without valid incident reference!")
     }
   };
 
@@ -2290,7 +2428,7 @@ Coceso.ViewModels.Unit = function(data, options) {
    * @return {void}
    */
   this.openForm = function() {
-    Coceso.UI.openUnit(_("label.unit.edit"), "unit_form.html", {id: self.id()});
+    Coceso.UI.openUnit(self.call() + " - " + _("label.unit.edit"), "unit_form.html", {id: self.id()});
   };
 
   /**
@@ -2300,7 +2438,7 @@ Coceso.ViewModels.Unit = function(data, options) {
    */
   this.openLog = function() {
     if (self.id()) {
-      Coceso.UI.openLogs("Unit-Log", "log.html", {url: "log/getByUnit/" + self.id()});
+      Coceso.UI.openLogs("Unit-Log", "log.html", {url: "log/getLastByUnit/" + self.id() + "/" + Coceso.Conf.logEntryLimit});
     }
   };
 
@@ -2908,6 +3046,7 @@ Coceso.ViewModels.CustomLogEntry = function(options) {
     self.error = ko.observable(false);
 
     self.ok = function() {
+
         Coceso.Ajax.save(ko.toJSON($.extend({id: 0, unit: null, incident: null},self), function(key, value){
             // Filter field error and ui
             if(key === "error" || key === "ui" || key === "unitList") {

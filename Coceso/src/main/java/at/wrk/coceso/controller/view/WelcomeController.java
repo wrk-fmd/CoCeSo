@@ -35,6 +35,7 @@ public class WelcomeController {
         allowedErrors = new HashSet<Integer>();
         allowedErrors.add(1);
         allowedErrors.add(3);
+        allowedErrors.add(4);
     }
 
     @Autowired
@@ -128,14 +129,14 @@ public class WelcomeController {
         try {
             case_id = Integer.parseInt(request.getParameter("case_id"));
         } catch (NumberFormatException e) {
-            return "redirect:/welcome";
+            return "redirect:/welcome?error=1";
         }
 
         Concern currentConcern = concernDao.getById(case_id);
 
         // Not existent
         if(currentConcern == null) {
-            return "redirect:/welcome";
+            return "redirect:/welcome?error=1";
         }
 
 
@@ -144,40 +145,44 @@ public class WelcomeController {
                 if(user.getInternalAuthorities().contains(CLOSE_AUTHORITY)){
                     currentConcern.setClosed(true);
                     concernDao.update(currentConcern);
+                    return "redirect:/welcome";
                 }
                 else {
-                    Logger.error("User "+user.getUsername()+" tried to close Concern \"" + currentConcern.getName() +
+                    Logger.warning("User "+user.getUsername()+" tried to close Concern \"" + currentConcern.getName() +
                             "\" without Authority \"" + CLOSE_AUTHORITY + "\"");
+                    return "redirect:/welcome?error=5";
                 }
             }
-            else {
-                user.setActiveConcern(currentConcern);
-                operatorDao.update(user);
 
-                response.addCookie(new Cookie("active_case", case_id+""));
+            user.setActiveConcern(currentConcern);
+            operatorDao.update(user);
 
-                if(request.getParameter("start") != null)
-                    return "redirect:/main";
-                if(request.getParameter("edit") != null)
-                    return "redirect:/edit";
-            }
+            response.addCookie(new Cookie("active_case", case_id+""));
+
+            if(request.getParameter("start") != null)
+                return "redirect:/main";
+            if(request.getParameter("edit") != null)
+                return "redirect:/edit";
         }
         else {
-            if(request.getParameter("print") != null)
-                return "redirect:/finalReport/report.pdf?id="+currentConcern.getId();
 
             if(request.getParameter("reopen") != null)  {
                 if(user.getInternalAuthorities().contains(CLOSE_AUTHORITY)){
                     currentConcern.setClosed(false);
                     concernDao.update(currentConcern);
+                    return "redirect:/welcome";
                 }
                 else {
-                    Logger.error("User "+user.getUsername()+" tried to reopen Concern \"" + currentConcern.getName() +
+                    Logger.warning("User "+user.getUsername()+" tried to reopen Concern \"" + currentConcern.getName() +
                             "\" without Authority \"" + CLOSE_AUTHORITY + "\"");
+                    return "redirect:/welcome?error=5";
                 }
             }
         }
 
-        return "redirect:/welcome";
+        if(request.getParameter("print") != null)
+            return "redirect:/finalReport/report.pdf?id="+currentConcern.getId();
+
+        return "redirect:/welcome?error=4";
     }
 }

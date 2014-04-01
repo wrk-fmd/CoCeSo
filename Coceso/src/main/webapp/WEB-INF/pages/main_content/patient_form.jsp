@@ -80,6 +80,7 @@
     <div class="clearfix">
         <div class="form-group col-md-6">
             <label for="insurance_number"><spring:message code="label.patient.insurance_number"/>:</label>
+            <%-- TODO Change type to date, bugfix of sending empty data --%>
             <input id="insurance_number" type="text" class="form-control" name="insurance_number" data-bind="value: insurance_number, valueUpdate: 'input'">
         </div>
 

@@ -38,11 +38,11 @@ public class PatientDao extends CocesoDao<Patient> {
             patient = jdbc.queryForObject(q, new Object[] {id}, patientMapper);
         }
         catch(IncorrectResultSizeDataAccessException e) {
-            Logger.error("PatientDao.getById(int): requested id: " + id + "; "+e.getMessage());
+            Logger.debug("PatientDao.getById(int): requested id: " + id + "; "+e.getMessage());
             return null;
         }
         catch(DataAccessException dae) {
-            Logger.error("PatientDao.getById(int): requested id: "+id+"; DataAccessException: "+dae.getMessage());
+            Logger.warning("PatientDao.getById(int): requested id: "+id+"; DataAccessException: "+dae.getMessage());
             return null;
         }
 

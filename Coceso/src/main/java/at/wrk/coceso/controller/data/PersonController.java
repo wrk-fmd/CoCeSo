@@ -9,11 +9,13 @@ import at.wrk.coceso.service.PersonService;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -104,7 +106,12 @@ public class PersonController {
 
     @RequestMapping(value = "updateOp", method = RequestMethod.POST)
     @PreAuthorize("hasRole('Root')")
-    public String updateOpByPost(@ModelAttribute Operator operator, ModelMap map, HttpServletRequest request) {
+    public String updateOpByPost(@ModelAttribute Operator operator, ModelMap map, HttpServletRequest request,
+                                 Principal principal)
+    {
+        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
+        Operator user = (Operator) token.getPrincipal();
+
         if(operator.getId() <= 0) {
             map.addAttribute("error", "Update of User Failed. Invalid ID: "+ operator.getId());
             return "redirect:/edit/person";
@@ -114,15 +121,25 @@ public class PersonController {
             map.addAttribute("error", "Person not found: "+ operator.getId());
             return "redirect:/edit/person";
         }
+        Logger.info("Updating Operator " + op.getUsername() + "(#" + op.getId() + ") by " + user.getUsername());
+
         op.setUsername(operator.getUsername());
         op.setAllowLogin(operator.isAllowLogin());
 
         List<CocesoAuthority> new_authorities = operator.getInternalAuthorities();
         List<CocesoAuthority> old_authorities = op.getInternalAuthorities();
-        for(CocesoAuthority auth : CocesoAuthority.class.getEnumConstants()) {
-            if(new_authorities.contains(auth) && !old_authorities.contains(auth))
-                roleDao.add(operator.getId(), auth);
-            if(!new_authorities.contains(auth) && old_authorities.contains(auth)) {
+        if(new_authorities != null) {
+            Logger.debug("PersonController.updateOpByPost: updating Authorities of " + op.getUsername());
+            for(CocesoAuthority auth : CocesoAuthority.class.getEnumConstants()) {
+                if(new_authorities.contains(auth) && !old_authorities.contains(auth))
+                    roleDao.add(operator.getId(), auth);
+                if(!new_authorities.contains(auth) && old_authorities.contains(auth)) {
+                    roleDao.remove(operator.getId(), auth);
+                }
+            }
+        } else {
+            Logger.debug("PersonController.updateOpByPost: deleting all Authorities of " + op.getUsername());
+            for(CocesoAuthority auth : old_authorities) {
                 roleDao.remove(operator.getId(), auth);
             }
         }

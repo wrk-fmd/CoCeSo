@@ -66,7 +66,7 @@
 
     <div class="clearfix">
         <div class="form-group col-md-8">
-            <label for="bo" class="sr-only"><spring:message code="label.incident.bo" />:</label>
+            <label for="bo" class=""><spring:message code="label.incident.bo" />:</label>
             <textarea id="bo" name="bo" rows="3" class="form-control"
                       placeholder="<spring:message code='label.incident.bo' />"
                       data-bind="disable: disableBO, value: bo.info, css: {'form-changed': bo.info.localChange, 'form-highlight': bo.info() === '' && !disableBO()}, valueUpdate: 'afterkeydown'"
@@ -83,14 +83,14 @@
     </div>
 
     <div class="form-group col-md-12">
-        <label for="caller" class="sr-only"><spring:message code="label.incident.caller" />:</label>
+        <label for="caller" class=""><spring:message code="label.incident.caller" />:</label>
         <input type="text" id="caller" name="caller" class="form-control"
                placeholder="<spring:message code='label.incident.caller' />"
                data-bind="value: caller, css: {'form-changed': caller.localChange, 'form-highlight': caller() === ''}, valueUpdate: 'afterkeydown'" />
     </div>
 
     <div class="form-group col-md-12">
-        <label for="info" class="sr-only"><spring:message code="label.incident.info" />:</label>
+        <label for="info" class=""><spring:message code="label.incident.info" />:</label>
         <div class="alert alert-warning" data-bind="visible: info.serverChange">
             Field has changed on server!<br>
             New Value: <a href="#" title="Apply new value" data-bind="text: info.serverChange, click: info.reset"></a>
@@ -100,7 +100,7 @@
 
     <div class="clearfix">
         <div class="form-group col-md-8">
-            <label for="ao" class="sr-only"><spring:message code="label.incident.ao" />:</label>
+            <label for="ao" class=""><spring:message code="label.incident.ao" />:</label>
             <textarea id="ao" name="ao" rows="3" class="form-control"
                       placeholder="<spring:message code='label.incident.ao' />"
                       data-bind="value: ao.info, css: {'form-changed': ao.info.localChange, 'form-highlight': highlightAO}, valueUpdate: 'afterkeydown'">
@@ -120,7 +120,7 @@
 
     <div class="clearfix">
         <div class="form-group col-md-6">
-            <label for="casus" class="sr-only"><spring:message code="label.incident.casus" />:</label>
+            <label for="casus" class=""><spring:message code="label.incident.casus" />:</label>
             <input type="text" id="casus" name="casus" class="form-control"
                    placeholder="<spring:message code='label.incident.casus' />"
                    data-bind="value: casusNr, css: {'form-changed': casusNr.localChange}, valueUpdate: 'afterkeydown'" />

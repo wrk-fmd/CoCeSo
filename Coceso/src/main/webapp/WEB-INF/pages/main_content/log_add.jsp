@@ -30,16 +30,17 @@
 <body>
 <div class="alert alert-danger"><spring:message code="label.main.error.no_direct_access"/></div>
 
+<%-- MODEL: Coceso.ViewModels.CustomLogEntry --%>
 <div class="ajax_content">
     <div>
         <div class="col-md-8">
-                <textarea class="form-control" data-bind="value: text" rows="3" autofocus></textarea>
+                <textarea class="form-control" data-bind="value: text, valueUpdate: 'input'" rows="3" autofocus></textarea>
         </div>
         <div class="col-md-3">
             <select class="form-control" data-bind="options: unitList, optionsText: 'call', optionsValue: 'id', value: unit, optionsCaption: '<spring:message code="label.unit.select"/>'"></select>
         </div>
         <div class="col-md-2">
-            <input type="submit" class="btn btn-success" data-bind="click: ok" value="<spring:message code="label.ok" />">
+            <input type="submit" class="btn btn-success" data-bind="click: ok, enable: text().trim()" value="<spring:message code="label.ok" />">
             <span class="glyphicon glyphicon-warning-sign tooltipped" style="color: #ff0000; font-size: x-large" data-bind="visible: error"
                   title="<spring:message code="label.error.2" />" data-toggle="tooltip" data-placement="top"></span>
         </div>

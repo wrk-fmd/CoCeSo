@@ -82,6 +82,13 @@ public class LogController {
         return dao.getByUnitId(unit);
     }
 
+    @RequestMapping(value = "getByUnit/{id}/{limit}", produces = "application/json")
+    @ResponseBody
+    public List<LogEntry> getLastByUnit(@PathVariable("id") int unit, @PathVariable("limit") int limit) {
+
+        return dao.getLimitedByUnitId(unit, limit);
+    }
+
     @RequestMapping(value = "getByIncident/{id}", produces = "application/json")
     @ResponseBody
     public List<LogEntry> getByIncident(@PathVariable("id") int id) {

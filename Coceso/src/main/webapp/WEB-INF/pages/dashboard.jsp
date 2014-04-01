@@ -36,7 +36,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="${home_link}"><spring:message code="label.coceso"/></a>
+            <a class="navbar-brand" href="#" onclick="return false;"><spring:message code="label.coceso"/></a>
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">

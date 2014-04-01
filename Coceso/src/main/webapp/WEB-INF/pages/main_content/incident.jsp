@@ -149,8 +149,8 @@
             <!-- ko foreach: units.unitlist -->
             <p>
               <span class="key" data-bind="text: call"></span>
-              <span data-bind="text: taskState"></span>
-              <button type="button" class="btn btn-xs btn-default" data-bind="click: function() {nextState($parent.id())}">
+              <span data-bind="text: localizedTaskState"></span>
+              <button type="button" class="btn btn-xs btn-default" data-bind="click: function() { $parent.nextState( id() ) }">
                 <span class="glyphicon glyphicon-forward"></span>
               </button>
             </p>

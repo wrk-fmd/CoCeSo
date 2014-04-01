@@ -92,19 +92,21 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title" id="nextStateConfirmLabel"><spring:message code="text.confirmation.title" /></h4>
+                <h4 class="modal-title" data-bind="html: title"></h4>
             </div>
             <div class="modal-body">
+                <p data-bind="html: info_text"></p>
+
+                <!-- ko foreach: elements -->
                 <p>
-                    <spring:message code="text.confirmation"/>
+                    <strong data-bind="text: key"></strong>: <span data-bind="text: val"></span>
                 </p>
-                <%--p>
-                    <strong data-bind="text: call"></strong>: <span data-bind="text: current_state"></span> -> <span data-bind="text: new_state"></span>
-                </p--%>
+                <!-- /ko -->
+
             </div>
             <div class="modal-footer">
-                <button type="button" id="next-state-confirm-no" class="btn btn-danger btn-lg" data-dismiss="modal" autofocus><spring:message code="label.confirmation.no" /></button>
-                <button type="button" id="next-state-confirm-yes" class="btn btn-success btn-lg"><spring:message code="label.confirmation.yes" /></button>
+                <button type="button" id="next-state-confirm-no" class="btn btn-danger btn-lg pull-left" data-dismiss="modal" autofocus><spring:message code="label.confirmation.no" /></button>
+                <button type="button" id="next-state-confirm-yes" class="btn btn-success btn-lg pull-right"><spring:message code="label.confirmation.yes" /></button>
             </div>
         </div>
     </div>
