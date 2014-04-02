@@ -60,7 +60,7 @@
 
     <bean id="localeResolver"
           class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
-        <property name="defaultLocale" value="en"/>
+        <property name="defaultLocale" value="${default.lang}"/>
     </bean>
 
 </beans>
