@@ -705,7 +705,8 @@ Coceso.Helper = {
             var info = _("text.confirmation");
             var elements = [];
 
-            if (incident.type === Coceso.Constants.Incident.type.standby) {
+            //console.log(incident.type())
+            if (incident.type() === Coceso.Constants.Incident.type.standby) {
                 if(taskstate === Coceso.Constants.TaskState.assigned)
                     info = _("text.standby.send");
                 if(taskstate === Coceso.Constants.TaskState.aao)
@@ -715,26 +716,33 @@ Coceso.Helper = {
                     { key: _("label.unit.position"), val: unit.position.info() }
                 ];
 
-            } else if (incident.type === Coceso.Constants.Incident.type.tohome) {
+            } else if (incident.type() === Coceso.Constants.Incident.type.tohome) {
                 elements = [
                     { key: _("label.incident.bo"), val: incident.bo.info() }
                     ,{ key: _("label.incident.ao"), val: incident.ao.info() }
                 ];
-            } else if (incident.type === Coceso.Constants.Incident.type.relocation) {
+            } else if (incident.type() === Coceso.Constants.Incident.type.relocation) {
                 elements = [
                     { key: _("text.confirmation.current"), val: _("label.task.state." + taskstate.toLowerCase()) }
                     ,{ key: _("label.incident.ao"), val: incident.ao.info() }
+                    ,{ key: _("label.incident.blue"), val: ( incident.blue() ? _("label.yes") : _("label.no") ) }
                     ,{ key: _("label.incident.info"), val: incident.info() }
                 ];
-            } else if (incident.type === Coceso.Constants.Incident.type.transport) {
+            } else if (incident.type() === Coceso.Constants.Incident.type.transport) {
                 elements = [
                      { key: _("label.incident.bo"), val: incident.bo.info() }
                     ,{ key: _("label.incident.ao"), val: incident.ao.info() }
+                    ,{ key: _("label.incident.blue"), val: ( incident.blue() ? _("label.yes") : _("label.no") ) }
                     ,{ key: _("label.incident.info"), val: incident.info() }
                     ,{ key: _("label.incident.caller"), val: incident.caller() }
-                    // TODO add Patientinformation
                 ];
-            } else if (incident.type === Coceso.Constants.Incident.type.holdposition) {
+                if(incident.patient()) {
+                    var p = incident.patient();
+                    elements.push({ key: _("label.patient"), val: p.given_name() + " " + p.sur_name() });
+                    elements.push({ key: _("label.patient.insurance_number"), val: p.insurance_number() });
+                    elements.push({ key: _("label.patient.info"), val: p.info() });
+                }
+            } else if (incident.type() === Coceso.Constants.Incident.type.holdposition) {
                 elements = [
                      { key: _("label.unit.position"), val: incident.ao.info() }
                 ];
@@ -743,10 +751,16 @@ Coceso.Helper = {
                      { key: _("text.confirmation.current"), val: _("label.task.state." + taskstate.toLowerCase()) }
                     ,{ key: _("label.incident.bo"), val: incident.bo.info() }
                     ,{ key: _("label.incident.ao"), val: incident.ao.info() }
+                    ,{ key: _("label.incident.blue"), val: ( incident.blue() ? _("label.yes") : _("label.no") ) }
                     ,{ key: _("label.incident.info"), val: incident.info() }
                     ,{ key: _("label.incident.caller"), val: incident.caller() }
-                    // TODO Sondersignal, andere Einheiten
                 ];
+                if(incident.patient()) {
+                    var pp = incident.patient();
+                    elements.push({ key: _("label.patient"), val: pp.given_name() + " " + pp.sur_name() });
+                    elements.push({ key: _("label.patient.insurance_number"), val: pp.insurance_number() });
+                    elements.push({ key: _("label.patient.info"), val: pp.info() });
+                }
             }
 
             var viewmodel = {
@@ -1689,7 +1703,8 @@ Coceso.ViewModels.Incident = function(data, options) {
           Coceso.Helper.nextState(unit, self);
 
       } else {
-          console.warn("called nextState() without valid unit reference!")
+          console.warn("called nextState() without valid unit reference!");
+          console.warn("Stack:\n" + (new Error()).stack);
       }
   };
 
@@ -2362,7 +2377,8 @@ Coceso.ViewModels.Unit = function(data, options) {
         Coceso.Helper.nextState(self, incident);
 
     } else {
-        console.warn("called nextState() without valid incident reference!")
+        console.warn("called nextState() without valid incident reference! (Unit: " + self.call() + ")");
+        console.warn("Stack:\n" + (new Error()).stack);
     }
   };
 

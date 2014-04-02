@@ -87,7 +87,7 @@
 </script>
 <%-- END TEMPLATE DEFINITIONs --%>
 
-<div id="next-state-confirm" class="modal" tabindex="-1" role="dialog" aria-labelledby="nextStateConfirmLabel" aria-hidden="true" style="display: none">
+<div id="next-state-confirm" class="modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div class="modal-header">

@@ -16,10 +16,11 @@
 - Labels for fields in incident and unit form
 
 #### Changes ####
-- Username on login is case insensitive
+- Username on login is now case insensitive
 - Fixed Ticket #56 (Main Program - custom log entry - empty input)
 - Fixed Ticket #47 (Dashboard - Click on Logo should have no function)
 - Limited Unit Log to 30 Entries
 - Bugfix: Edit Person -> delete Authorities, now no NullPointerException in PersonController
-- Welcome Screen: Added Print Button to Open Concerns
+- Welcome Screen: Added Print Button to Active Concerns
 - Minor Localization Fixes
+- Fixed Ticket #63 (Show Labels of Fields in Incident Form)

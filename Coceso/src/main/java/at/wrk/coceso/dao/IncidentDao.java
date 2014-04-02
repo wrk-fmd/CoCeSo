@@ -188,6 +188,12 @@ public class IncidentDao extends CocesoDao<Incident> {
 
         parameters.add(incident.getId());
 
+        // Nothing to update
+        if(!comma) {
+            Logger.warning("Tried to update empty Incident: id="+incident.getId());
+            return false;
+        }
+
         q += suf_q;
 
         jdbc.update(q, parameters.toArray());
