@@ -142,7 +142,7 @@
                             <td style="display: none;"><input type="hidden" name="id" value="${unit.id}"></td>
                             <td>
                                 <input type="text" name="call" value="${unit.call}" maxlength="64" class="formpart-${unit.id} form-control"
-                                        placeholder="${call}">
+                                        placeholder="${call}" required>
                             </td>
                             <td>
                                 <input type="text" name="ani" value="${unit.ani}" maxlength="16" class="formpart-${unit.id} form-control"
@@ -226,7 +226,7 @@
                         <td>
                             <label class="sr-only" for="new_call">${call}</label>
                             <input type="text" id="new_call" name="call" maxlength="64" class="form-control"
-                                   placeholder="${call}">
+                                   placeholder="${call}" required>
                         </td>
                         <td>
                             <label class="sr-only" for="new_ani">${ani}</label>

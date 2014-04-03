@@ -2,12 +2,14 @@ package at.wrk.coceso.controller.view;
 
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.LogEntry;
+import at.wrk.coceso.entity.Operator;
 import at.wrk.coceso.entity.Patient;
 import at.wrk.coceso.entity.enums.LogEntryType;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.service.*;
 import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.security.Principal;
 import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.List;
@@ -62,7 +65,11 @@ public class SearchPatientController {
 
     @RequestMapping(value = "data/{concernId}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public List<PatientModel> index(@PathVariable("concernId") String cid) {
+    public List<PatientModel> index(@PathVariable("concernId") String cid, Principal principal) {
+
+        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
+        Operator user = (Operator) token.getPrincipal();
+
         int concernId;
         try {
             concernId = Integer.parseInt(cid);
@@ -70,6 +77,8 @@ public class SearchPatientController {
             Logger.debug(ne.getMessage());
             return new LinkedList<PatientModel>();
         }
+
+        Logger.info("SearchPatient: User " + user.getUsername() + " loaded patientdata of concern #" + concernId);
 
         List<Patient> patients = patientService.getAll(concernId);
 

@@ -70,6 +70,7 @@ public class WelcomeController {
 
         // Write Error Code to ModelMap
         if(error_id != null && allowedErrors.contains(error_id)) {
+            Logger.debug("/welcome[GET]: Error " + error_id + ", user: " + user.getUsername());
             map.addAttribute("error", error_id);
         }
 
@@ -142,7 +143,8 @@ public class WelcomeController {
 
         if(!currentConcern.isClosed()) {
             if(request.getParameter("close") != null) {
-                if(user.getInternalAuthorities().contains(CLOSE_AUTHORITY)){
+                if(user.getInternalAuthorities().contains(CLOSE_AUTHORITY)) {
+                    Logger.info("/welcome[POST]: user " + user.getUsername() + " closed Concern #" + currentConcern.getId());
                     currentConcern.setClosed(true);
                     concernDao.update(currentConcern);
                     return "redirect:/welcome";
@@ -159,15 +161,20 @@ public class WelcomeController {
 
             response.addCookie(new Cookie("active_case", case_id+""));
 
-            if(request.getParameter("start") != null)
+            if(request.getParameter("start") != null) {
+                Logger.info("/welcome[POST]: user " + user.getUsername() + " started Concern #" + currentConcern.getId());
                 return "redirect:/main";
-            if(request.getParameter("edit") != null)
+            }
+            if(request.getParameter("edit") != null) {
+                Logger.info("/welcome[POST]: user " + user.getUsername() + " requested Edit Concern #" + currentConcern.getId());
                 return "redirect:/edit";
+            }
         }
         else {
 
             if(request.getParameter("reopen") != null)  {
-                if(user.getInternalAuthorities().contains(CLOSE_AUTHORITY)){
+                if(user.getInternalAuthorities().contains(CLOSE_AUTHORITY)) {
+                    Logger.info("/welcome[POST]: user " + user.getUsername() + " re-opened Concern #" + currentConcern.getId());
                     currentConcern.setClosed(false);
                     concernDao.update(currentConcern);
                     return "redirect:/welcome";
@@ -180,8 +187,10 @@ public class WelcomeController {
             }
         }
 
-        if(request.getParameter("print") != null)
-            return "redirect:/finalReport/report.pdf?id="+currentConcern.getId();
+        if(request.getParameter("print") != null) {
+            Logger.info("/welcome[POST]: user " + user.getUsername() + " requested Final Report of Concern #" + currentConcern.getId());
+            return "redirect:/finalReport/report.pdf?id=" + currentConcern.getId();
+        }
 
         return "redirect:/welcome?error=4";
     }

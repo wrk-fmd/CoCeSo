@@ -82,9 +82,11 @@ public class TaskDao {
         String q = "INSERT INTO task (incident_fk, unit_fk, state) VALUES (?,?,?)";
 
         try {
+            Logger.debug("TaskDao.add(): Try to add unit #" + unit_id +
+                    ", incident #" + incident_id + " with new state '" + state + "'");
             jdbc.update(q, incident_id, unit_id, state.name());
         } catch(DataAccessException e) {
-            Logger.debug("TaskDao add: "+e);
+            Logger.warning("TaskDao add: "+e);
             return false;
         }
         return true;
@@ -94,9 +96,11 @@ public class TaskDao {
         String q = "UPDATE task SET state = ? WHERE incident_fk = ? AND unit_fk = ?";
 
         try {
+            Logger.debug("TaskDao.update(): Try to update unit #" + unit_id +
+                    ", incident #" + incident_id + " to new state '" + state + "'");
             jdbc.update(q, state.name(), incident_id, unit_id);
         } catch(DataAccessException e) {
-            Logger.debug("TaskDao update: "+e);
+            Logger.warning("TaskDao.update(): ERROR "+e);
             return false;
         }
         return true;
@@ -106,9 +110,11 @@ public class TaskDao {
         String q = "DELETE FROM task WHERE incident_fk = ? AND unit_fk = ?";
 
         try {
+            Logger.debug("TaskDao.remove(): Try to remove unit #" + unit_id +
+                    " and incident #" + incident_id);
             jdbc.update(q, incident_id, unit_id);
         } catch(DataAccessException e) {
-            Logger.debug("TaskDao remove: "+e);
+            Logger.warning("TaskDao.remove(): "+e);
         }
     }
 
@@ -116,9 +122,10 @@ public class TaskDao {
         String q = "DELETE FROM task WHERE unit_fk = ?";
 
         try {
+            Logger.debug("TaskDao.removeAllByUnit(): Try to remove all from unit #" + unit_id);
             jdbc.update(q, unit_id);
         } catch(DataAccessException e) {
-            Logger.debug("TaskDao removeAllByUnit: "+e);
+            Logger.warning("TaskDao removeAllByUnit: "+e);
         }
     }
 
@@ -126,6 +133,7 @@ public class TaskDao {
         String q = "DELETE FROM task WHERE incident_fk = ?";
 
         try {
+            Logger.debug("TaskDao.removeAllByIncident(): Try to remove all from incident #" + incident_id);
             jdbc.update(q, incident_id);
         } catch(DataAccessException e) {
             Logger.debug("TaskDao removeAllByIncident: "+e);

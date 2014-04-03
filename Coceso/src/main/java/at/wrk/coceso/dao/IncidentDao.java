@@ -86,7 +86,7 @@ public class IncidentDao extends CocesoDao<Incident> {
 
         String q = "SELECT * FROM incident " +
                 "WHERE concern_fk = ? AND (state != 'Done' OR " +
-                "(type != 'ToHome' AND type != 'Standby' AND type != 'HoldPosition' AND type != 'Relocation' )) " +
+                "(type != 'ToHome' AND type != 'Standby' AND type != 'HoldPosition' )) " +
                 "ORDER BY id ASC";
 
         return jdbc.query(q, new Object[] {case_id}, incidentMapper);

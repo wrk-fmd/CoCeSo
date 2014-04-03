@@ -12,6 +12,7 @@ import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Iterator;
 import java.util.Map;
 
 @Service
@@ -34,19 +35,24 @@ public class TaskService {
 
         // Not in same Concern; HoldPosition and Standby can't be assigned to multiple Units
         if(!i.getConcern().equals(u.getConcern())) {
+            Logger.warning("TaskService.assignUnit(): Unit and Incident in different Concerns!");
             return false;
         }
 
         if(i.getType().isSingleUnit() && i.getUnits().size() > 0) {
-                Logger.debug("TaskService: Tried to assign multiple Units to Single Unit Incident");
-                return false;
+            Logger.debug("TaskService.assignUnit(): Tried to assign multiple Units to Single Unit Incident");
+            return false;
         }
 
         // Auto-Detach from all SingleUnit Incidents and Relocation
         for(Integer incId : u.getIncidents().keySet()) {
             Incident inc = incidentService.getById(incId);
             if(inc.getType().isSingleUnit() || inc.getType() == IncidentType.Relocation) {
-                inc.setState(IncidentState.Done);
+                Logger.debug("TaskService.assignUnit(): Auto-detach unit #" + unit_id + ", incident #" + incId);
+                if(inc.getType() != IncidentType.Relocation) {
+                    Logger.debug("TaskService.assignUnit(): Auto-set incident #" + incId + " to state 'Done'");
+                    inc.setState(IncidentState.Done);
+                }
                 incidentService.update(inc, user);
                 taskDao.remove(inc.getId(), u.getId());
             }
@@ -80,13 +86,21 @@ public class TaskService {
     }
 
     public synchronized boolean changeState(int incident_id, int unit_id, TaskState state, Operator user) {
+        Logger.debug("TaskService.changeState(): User " + user.getUsername() + " triggered update of unit #" + unit_id +
+                " and incident #" + incident_id + " to TaskState '" + state + "'");
+
         Incident i = incidentService.getById(incident_id);
         Unit u = unitService.getById(unit_id);
 
-        if(i == null || u == null)
+        if(i == null || u == null) {
+            Logger.debug("TaskService.changeState(): Combination not found. unit #" + unit_id + " ==null: " + (u == null) +
+                    ", incident #" + incident_id + " ==null: " + (i == null));
             return false;
+        }
 
         if(!i.getConcern().equals(u.getConcern())) {    // Not in same Concern
+            Logger.warning("TaskService.changeState(): Combination in different concerns. unit #" + unit_id +
+                    ", incident #" + incident_id);
             return false;
         }
 
@@ -96,8 +110,11 @@ public class TaskService {
         // Assign Unit if TaskState is Assigned
         if(tmp == null && (state == TaskState.Assigned))  // Not Assigned
             assignUnit(incident_id, unit_id, user);
-        else if(tmp == null)
+        else if(tmp == null) {
+            Logger.debug("TaskService.changeState(): Unit not assigned, new State is not 'Assigned'. unit #" + unit_id +
+                    ", incident #" + incident_id);
             return false;
+        }
 
         i.getUnits().put(unit_id, state);
 
@@ -108,7 +125,7 @@ public class TaskService {
 
         switch (state) {
             case Assigned:
-                if(i.getState() == IncidentState.New) {
+                if(i.getState() == IncidentState.New || i.getState() == IncidentState.Open) {
                     Incident wIncident = i.slimCopy();
                     wIncident.setState(IncidentState.Dispo);
                     log.logFull(user, LogEntryType.INCIDENT_AUTO_STATE, i.getConcern(), u, wIncident, true);
@@ -116,6 +133,7 @@ public class TaskService {
                 }
                 break;
             case ABO:
+                // TODO Auto-set Incident State to Working
                 // Set Position of Unit to BO
                 Unit writeUnit = u.slimCopy();
                 writeUnit.setPosition(i.getBo());
@@ -167,10 +185,17 @@ public class TaskService {
                 }
                 break;
             default:
+
                 break;
         }
 
-        taskDao.update(incident_id, unit_id, state);
+        if(state == TaskState.Detached) {
+            taskDao.remove(incident_id, unit_id);
+        } else {
+            // TODO Avoid double call if was assigned in this call, BUT set to 'Assigned' must be possible, if assigned
+            //      before
+            taskDao.update(incident_id, unit_id, state);
+        }
 
         if(user != null) {
             checkStates(incident_id, user);
@@ -183,18 +208,23 @@ public class TaskService {
 
         checkEmpty(i, user);
 
-        // TODO Avoid ConcurrentModificationException (Delete from i.getUnits() on Detach)
-        for(Integer unitId : i.getUnits().keySet()) {
+        Iterator<Integer> iterator = i.getUnits().keySet().iterator();
+
+        while(iterator.hasNext()) {
+            Integer unitId = iterator.next();
+
             if(i.getState() == IncidentState.Done) {
                 log.logWithIDs(user.getId(), LogEntryType.UNIT_AUTO_DETACH, i.getConcern(), unitId, i.getId(), true);
                 detachUnit(i.getId(), unitId, null);
-                i.getUnits().remove(unitId);
+
+                iterator.remove();
             } else {
                 TaskState state = i.getUnits().get(unitId);
                 if(state == TaskState.Detached) {
                     log.logWithIDs(user.getId(), LogEntryType.UNIT_AUTO_DETACH, i.getConcern(), unitId, i.getId(), true);
                     detachUnit(i.getId(), unitId, null);
-                    i.getUnits().remove(unitId);
+
+                    iterator.remove();
                 }
             }
         }
@@ -203,6 +233,7 @@ public class TaskService {
     }
 
     private void checkEmpty(Incident i, Operator user) {
+        // TODO Avoid that new or open incidents are closed (e.g. after undo of incorrect assigning)
         if(i.getUnits().isEmpty() && i.getState() != IncidentState.Done) {
             Incident write = i.slimCopy();
             write.setState(IncidentState.Done);
