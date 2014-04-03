@@ -2429,7 +2429,7 @@ Coceso.ViewModels.Unit = function(data, options) {
     this.reportIncident = function() {
         options = {caller: self.call()};
         if(self.portable()) {
-            options = $.extend(options, { bo: self.position, blue: true, units: {} });
+            options = $.extend(options, { bo: { info: self.position.info() }, blue: true, units: {} });
         }
         var model = new Coceso.ViewModels.Incident(options);
         if(self.portable() && model.units.unitlist) {

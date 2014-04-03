@@ -116,6 +116,12 @@ public class TaskService {
             return false;
         }
 
+        if(!i.getType().isPossibleState(state)) {
+            Logger.warning("TaskService.changeState(): new State not possible, cancel Request. unit #" + unit_id +
+                    ", incident #" + incident_id);
+            return false;
+        }
+
         i.getUnits().put(unit_id, state);
 
 

@@ -43,5 +43,9 @@ public enum IncidentType {
         return singleUnit;
     }
 
+    public boolean isPossibleState(TaskState state) {
+        return possibleStates.contains(state);
+    }
+
 }
 
