@@ -41,6 +41,7 @@
         JQuery 1.10.4 needed for correct refresh of Accordions (Incident List) --%>
     <script src="<c:url value="/static/js/jquery-ui-1.9.2.dialog.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/jquery-ui-1.10.4.wo_dialog.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/static/js/jquery.fixes.js"/>" type="text/javascript"></script>
 
     <script src="<c:url value="/static/js/jquery.ui.winman.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/jquery.i18n.min.js"/>" type="text/javascript"></script>

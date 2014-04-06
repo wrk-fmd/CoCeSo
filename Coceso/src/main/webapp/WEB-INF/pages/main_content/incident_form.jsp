@@ -33,7 +33,7 @@
 <body>
 <div class="alert alert-danger"><spring:message code="label.main.error.no_direct_access" /></div>
 
-<div class="ajax_content incident_form" data-bind="droppable: {drop: assignUnitForm}">
+<div class="ajax_content incident_form" data-bind="droppable: {drop: assignUnitForm, tolerance: 'pointer'}">
     <div class="alert alert-danger" id="error" style="display: none"><strong>Saving failed</strong><br/>Try again or see <em>Debug</em> for further information.</div>
 
     <div class="clearfix">
