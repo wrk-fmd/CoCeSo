@@ -74,6 +74,13 @@ public class LogService {
         return logDao.getByIncidentId(inc_id);
     }
 
+    public List<LogEntry> getCustom(int concern_id) {
+        if(concern_id < 1) {
+            return null;
+        }
+        return logDao.getCustom(concern_id);
+    }
+
     public List<LogEntry> getByUnitId(int id) {
         return logDao.getByUnitId(id);
     }
