@@ -145,7 +145,7 @@
                                         placeholder="${call}" required>
                             </td>
                             <td>
-                                <input type="text" name="ani" value="${unit.ani}" maxlength="16" class="formpart-${unit.id} form-control"
+                                <input type="text" name="ani" value="${unit.ani}" maxlength="64" class="formpart-${unit.id} form-control"
                                         placeholder="${ani}">
                             </td>
                             <td>
@@ -195,7 +195,7 @@
                                 </div>
                             </td>
                             <td>
-                                <input type="text" name="info" value="${unit.info}" maxlength="128" class="formpart-${unit.id} form-control"
+                                <input type="text" name="info" value="${unit.info}" class="formpart-${unit.id} form-control"
                                         placeholder="${info}">
                             </td>
                             <td>
@@ -230,7 +230,7 @@
                         </td>
                         <td>
                             <label class="sr-only" for="new_ani">${ani}</label>
-                            <input type="text" id="new_ani" name="ani" maxlength="16" class="form-control" placeholder="${ani}">
+                            <input type="text" id="new_ani" name="ani" maxlength="64" class="form-control" placeholder="${ani}">
                         </td>
                         <td>
                             <div class="btn-group" data-toggle="buttons">
@@ -255,7 +255,7 @@
                         </td>
                         <td>
                             <label class="sr-only" for="new_info">${info}</label>
-                            <input type="text" id="new_info" name="info" maxlength="128" class="form-control"
+                            <input type="text" id="new_info" name="info" class="form-control"
                                    placeholder="${info}">
                         </td>
                         <td>
@@ -312,7 +312,7 @@
             <div class="row">
                 <div class="form-group col-lg-8">
                     <label for="case_organiser"><spring:message code="label.concern.info"/></label>
-                    <textarea id="case_organiser" name="info" maxlength="128" class="form-control" rows="5">${caze.info}</textarea>
+                    <textarea id="case_organiser" name="info" class="form-control" rows="5">${caze.info}</textarea>
                 </div>
             </div>
 

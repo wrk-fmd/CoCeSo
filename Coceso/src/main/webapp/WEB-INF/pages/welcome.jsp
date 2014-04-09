@@ -122,7 +122,7 @@
                     <input type="submit" value="<spring:message code="label.print"/>" name="print" class="btn btn-primary">
                 </div>
                 <div class="col-lg-3 text-center">
-                    <input type="submit" value="<spring:message code="label.dump"/>" name="dump" class="btn btn-primary" disabled>
+                    <input type="submit" value="<spring:message code="label.dump"/>" name="dump" class="btn btn-primary">
                 </div>
             </div>
         </form>

@@ -1,4 +1,4 @@
-package at.wrk.coceso.controller.view;
+package at.wrk.coceso.controller.pdf;
 
 import at.wrk.coceso.dao.ConcernDao;
 import at.wrk.coceso.dao.PatientDao;
@@ -12,6 +12,7 @@ import at.wrk.coceso.service.LogService;
 import at.wrk.coceso.service.PatientService;
 import at.wrk.coceso.service.UnitService;
 import at.wrk.coceso.utils.Logger;
+import at.wrk.coceso.utils.PdfStyle;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
@@ -67,6 +68,7 @@ public class FinalReportController {
                       @RequestParam(value = "fullDate", required = false) Boolean fullDate,
                       Principal principal,
                       Locale locale)
+            throws ConcernNotFoundException
     {
 
         if(fullDate != null && fullDate) {
@@ -134,13 +136,6 @@ public class FinalReportController {
                 new java.text.SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date())));
     }
 
-    private static Font titleFont = new Font(Font.FontFamily.TIMES_ROMAN, 24, Font.BOLD);
-    private static Font subTitleFont = new Font(Font.FontFamily.TIMES_ROMAN, 18);
-
-    private static Font title2Font = new Font(Font.FontFamily.TIMES_ROMAN, 16, Font.BOLD);
-    private static Font descrFont = new Font(Font.FontFamily.TIMES_ROMAN, 12);
-
-    private static Font defFont = new Font(Font.FontFamily.TIMES_ROMAN, 11);
 
     private void addMeta(Document document) throws DocumentException {
         document.addTitle("Abschlussbericht der Ambulanz\n" + concern.getName());
@@ -153,20 +148,20 @@ public class FinalReportController {
         Paragraph preface = new Paragraph();
         addEmptyLine(preface, 1);
 
-        Paragraph p0 = new Paragraph("Bericht der Ambulanz: " + concern.getName(), titleFont);
+        Paragraph p0 = new Paragraph("Bericht der Ambulanz: " + concern.getName(), PdfStyle.titleFont);
         p0.setAlignment(Element.ALIGN_CENTER);
         preface.add(p0);
 
         addEmptyLine(preface, 1);
 
         Paragraph p1 = new Paragraph("Bericht erstellt von: " + user.getGiven_name() + " " + user.getSur_name() +
-                " am " + new java.text.SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date()), subTitleFont);
+                " am " + new java.text.SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date()), PdfStyle.subTitleFont);
         p1.setAlignment(Element.ALIGN_CENTER);
         preface.add(p1);
 
         addEmptyLine(preface, 3);
         if(!concern.getInfo().trim().isEmpty())
-            preface.add(new Paragraph("Infos zur Ambulanz:\n" + concern.getInfo(), defFont));
+            preface.add(new Paragraph("Infos zur Ambulanz:\n" + concern.getInfo(), PdfStyle.defFont));
 
         document.add(preface);
         document.newPage();
@@ -226,7 +221,7 @@ public class FinalReportController {
         table.addCell(""+otherBlue);
 
 
-        document.add(new Paragraph(messageSource.getMessage("label.report.statistics", null, locale), titleFont));
+        document.add(new Paragraph(messageSource.getMessage("label.report.statistics", null, locale), PdfStyle.titleFont));
         document.add(new Paragraph(" "));
         document.add(table);
 
@@ -240,7 +235,7 @@ public class FinalReportController {
 
         ObjectMapper mapper = new ObjectMapper();
 
-        document.add(new Paragraph(messageSource.getMessage("label.units", null, locale), titleFont));
+        document.add(new Paragraph(messageSource.getMessage("label.units", null, locale), PdfStyle.titleFont));
         document.add(new Paragraph(" "));
 
         for(Unit unit : unitList) {
@@ -249,7 +244,7 @@ public class FinalReportController {
 
             Paragraph p = new Paragraph();
 
-            Paragraph h = new Paragraph(unit.getCall() + " - #" + unit.getId(), title2Font);
+            Paragraph h = new Paragraph(unit.getCall() + " - #" + unit.getId(), PdfStyle.title2Font);
 
             Paragraph s = new Paragraph((unit.getAni() == null || unit.getAni().isEmpty() ? "" : ("ANI: " + unit.getAni()) + "\n") +
                     messageSource.getMessage("label.unit.home", null, locale) + ": " + (unit.getHome() == null ? "N/A" : unit.getHome()));
@@ -352,7 +347,7 @@ public class FinalReportController {
             position = formatPoint(inc.getBo());
         }
 
-        type = humanreadableIncidentType(inc);
+        type = PdfStyle.humanreadableIncidentType(messageSource, locale, inc);
 
         return "#" + inc.getId() + " - " + type; // + "\n" + position ; // Consumes too much space
     }
@@ -372,26 +367,13 @@ public class FinalReportController {
         return info.split("\n")[0];
     }
 
-    private String humanreadableIncidentType(Incident inc) {
-        String type;
-        if(inc.getType() == IncidentType.Task) {
-            if(inc.getBlue() == null || !inc.getBlue()) {
-                type = messageSource.getMessage("label.incident.type.task", null, locale);
-            } else {
-                type = messageSource.getMessage("label.incident.type.task.blue", null, locale);
-            }
 
-        } else {
-            type = messageSource.getMessage("label.incident.type." + inc.getType().name().toLowerCase(), null, locale);
-        }
-        return type;
-    }
 
     // TODO History of Patientdata changes
     private void addIncidentStats(Document document) throws DocumentException {
         ObjectMapper mapper = new ObjectMapper();
 
-        document.add(new Paragraph(messageSource.getMessage("label.incidents", null, locale), titleFont));
+        document.add(new Paragraph(messageSource.getMessage("label.incidents", null, locale), PdfStyle.titleFont));
         document.add(new Paragraph(" "));
 
         for(Incident incident : incidentList) {
@@ -404,11 +386,11 @@ public class FinalReportController {
 
             Paragraph p = new Paragraph();
 
-            Paragraph h = new Paragraph("#" + incident.getId() + " - " + humanreadableIncidentType(incident),
-                    title2Font);
+            Paragraph h = new Paragraph("#" + incident.getId() + " - " + PdfStyle.humanreadableIncidentType(messageSource, locale, incident),
+                    PdfStyle.title2Font);
 
             Paragraph s = new Paragraph("BO: " + (incident.getBo() == null ? "N/A" : incident.getBo()) + "\n" +
-                    "AO: " + (incident.getAo() == null ? "N/A" : incident.getAo()), descrFont);
+                    "AO: " + (incident.getAo() == null ? "N/A" : incident.getAo()), PdfStyle.descrFont);
             p.add(h);
             p.add(s);
 
@@ -507,7 +489,7 @@ public class FinalReportController {
             }
 
             p.add(table);
-            p.add(new Paragraph(messageSource.getMessage("label.unit.movement", null, locale), descrFont));
+            p.add(new Paragraph(messageSource.getMessage("label.unit.movement", null, locale), PdfStyle.descrFont));
             p.add(table2);
             // Empty Line
             p.add(new Paragraph(" "));
@@ -522,7 +504,7 @@ public class FinalReportController {
 
         Paragraph p = new Paragraph();
 
-        Paragraph h = new Paragraph(messageSource.getMessage("label.log.custom", null, locale), title2Font);
+        Paragraph h = new Paragraph(messageSource.getMessage("label.log.custom", null, locale), PdfStyle.title2Font);
 
         p.add(h);
 
@@ -565,9 +547,9 @@ public class FinalReportController {
 
     @ExceptionHandler(ConcernNotFoundException.class)
     public String error() {
-        return "redirect:/welcome";
+        return "redirect:/welcome?error=1";
     }
 
-    private class ConcernNotFoundException extends Error {
+    private class ConcernNotFoundException extends Exception {
     }
 }

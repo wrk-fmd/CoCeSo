@@ -169,6 +169,10 @@ public class WelcomeController {
                 Logger.info("/welcome[POST]: user " + user.getUsername() + " requested Edit Concern #" + currentConcern.getId());
                 return "redirect:/edit";
             }
+            if(request.getParameter("dump") != null) {
+                Logger.info("/welcome[POST]: user " + user.getUsername() + " requested PDF Dump #" + currentConcern.getId());
+                return "redirect:/pdfdump/dump.pdf?id=" + currentConcern.getId();
+            }
         }
         else {
 

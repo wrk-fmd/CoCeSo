@@ -22,6 +22,8 @@
         <intercept-url pattern="/main" access="hasAnyRole(${roles.main})"/>
         <intercept-url pattern="/main/**" access="hasAnyRole(${roles.main})"/>
         <intercept-url pattern="/data/**" access="hasAnyRole(${roles.main})"/>
+        <intercept-url pattern="/finalReport/**" access="hasAnyRole(${roles.main})"/>
+        <intercept-url pattern="/pdfdump/**" access="hasAnyRole(${roles.main})"/>
 
         <intercept-url pattern="/welcome" access="hasAnyRole(${roles.main})"/>
 
@@ -32,7 +34,7 @@
 
         <logout delete-cookies="true" invalidate-session="true" logout-url="/logout" logout-success-url="/" />
 
-        <!-- TODO 'always-use-default-target' is set to true, because of buggy behaviour with left open windows -->
+        <!-- TODO 'always-use-default-target' is set to true, because of buggy behaviour with left-open windows -->
         <form-login login-page="/login" default-target-url="/welcome" authentication-failure-url="/loginfailed"
                     always-use-default-target="true"/>
     </http>
