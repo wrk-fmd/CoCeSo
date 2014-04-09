@@ -21,9 +21,6 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.Locale;
 
-/**
- * Created by Robert on 08.04.2014.
- */
 @Controller
 @RequestMapping("/pdfdump")
 public class PDFDumpController {
@@ -70,7 +67,6 @@ public class PDFDumpController {
             PdfWriter.getInstance(document, response.getOutputStream());
             document.open();
 
-
             pdfDumpService.init(dateFormat, locale, concern, user);
 
             pdfDumpService.create(document);
@@ -84,21 +80,68 @@ public class PDFDumpController {
         }
         finally {
             document.close();
+            pdfDumpService.setDestructed();
         }
 
     }
 
+    @RequestMapping(value = "transportlist.pdf", produces = "application/pdf")
+    public void transportlist(HttpServletResponse response,
+                      @RequestParam(value = "id") int id,
+                      @RequestParam(value = "fullDate", required = false) Boolean fullDate,
+                      Principal principal,
+                      Locale locale)
+            throws ConcernClosedException, ConcernNotFoundException
+    {
+
+        if(fullDate != null && fullDate) {
+            dateFormat = "dd.MM.yy HH:mm:ss";
+        }
+
+        Operator user = (Operator) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+
+        Concern concern = concernService.getById(id);
+        if(concern == null) {
+            throw new ConcernNotFoundException();
+        }
+
+        Logger.info("User " + user.getUsername() + " requested Transport for Concern #" + id + " (" + concern.getName() + ")");
+
+
+        Document document = new Document(PageSize.A4);
+
+        try {
+            PdfWriter.getInstance(document, response.getOutputStream());
+            document.open();
+
+
+            pdfDumpService.init(dateFormat, locale, concern, user);
+
+            pdfDumpService.createTransportList(document);
+
+        }
+        catch(IOException e) {
+            Logger.error("PDFDumpController.transportlist(): " + e.getMessage());
+        }
+        catch(DocumentException e) {
+            Logger.error("PDFDumpController.transportlist(): " + e.getMessage());
+        }
+        finally {
+            document.close();
+            pdfDumpService.setDestructed();
+        }
+
+    }
 
     @ExceptionHandler(ConcernNotFoundException.class)
-    public String error() {
+    public String notFoundError() {
         return "redirect:/welcome?error=1";
     }
 
     @ExceptionHandler(ConcernClosedException.class)
-    public String error2() {
+    public String closedError() {
         return "redirect:/welcome?error=4";
     }
-
 
     private class ConcernNotFoundException extends Exception {
     }

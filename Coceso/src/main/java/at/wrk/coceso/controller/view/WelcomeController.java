@@ -36,6 +36,7 @@ public class WelcomeController {
         allowedErrors.add(1);
         allowedErrors.add(3);
         allowedErrors.add(4);
+        allowedErrors.add(5);
     }
 
     @Autowired
@@ -70,7 +71,7 @@ public class WelcomeController {
 
         // Write Error Code to ModelMap
         if(error_id != null && allowedErrors.contains(error_id)) {
-            Logger.debug("/welcome[GET]: Error " + error_id + ", user: " + user.getUsername());
+            Logger.debug("/welcome[GET]: Show error " + error_id + ", user: " + user.getUsername());
             map.addAttribute("error", error_id);
         }
 
@@ -194,6 +195,11 @@ public class WelcomeController {
         if(request.getParameter("print") != null) {
             Logger.info("/welcome[POST]: user " + user.getUsername() + " requested Final Report of Concern #" + currentConcern.getId());
             return "redirect:/finalReport/report.pdf?id=" + currentConcern.getId();
+        }
+
+        if(request.getParameter("transportlist") != null) {
+            Logger.info("/welcome[POST]: user " + user.getUsername() + " requested Transportlist of Concern #" + currentConcern.getId());
+            return "redirect:/pdfdump/transportlist.pdf?id=" + currentConcern.getId();
         }
 
         return "redirect:/welcome?error=4";

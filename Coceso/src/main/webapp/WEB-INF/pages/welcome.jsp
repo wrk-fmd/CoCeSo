@@ -157,6 +157,9 @@
                 <div class="col-lg-2 text-center">
                     <input type="submit" value="<spring:message code="label.print"/>" name="print" class="btn btn-primary">
                 </div>
+                <div class="col-lg-2 text-center">
+                    <input type="submit" value="<spring:message code="label.transportlist"/>" name="transportlist" class="btn btn-primary">
+                </div>
                 <c:if test="${not empty authorized}">
                     <div class="col-lg-2 text-center">
                         <input type="submit" value="<spring:message code="label.reopen"/>" name="reopen" class="btn btn-danger">
