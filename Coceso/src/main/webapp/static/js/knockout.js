@@ -1534,6 +1534,10 @@ ko.dependentObservable = function (evaluatorFunctionOrOptions, evaluatorFunction
     dependentObservable.hasWriteFunction = typeof options["write"] === "function";
     dependentObservable.dispose = function () { dispose(); };
     dependentObservable.isActive = isActive;
+    //CHANGED dro
+    dependentObservable.evaluateImmediate = evaluateImmediate;
+    //END CHANGES
+
 
     ko.subscribable.call(dependentObservable);
     ko.utils.extend(dependentObservable, ko.dependentObservable['fn']);
@@ -1541,6 +1545,7 @@ ko.dependentObservable = function (evaluatorFunctionOrOptions, evaluatorFunction
     ko.exportProperty(dependentObservable, 'peek', dependentObservable.peek);
     ko.exportProperty(dependentObservable, 'dispose', dependentObservable.dispose);
     ko.exportProperty(dependentObservable, 'isActive', dependentObservable.isActive);
+    ko.exportProperty(dependentObservable, 'evaluateImmediate', dependentObservable.evaluateImmediate);
     ko.exportProperty(dependentObservable, 'getDependenciesCount', dependentObservable.getDependenciesCount);
 
     // Add a "disposeWhen" callback that, on each evaluation, disposes if the node was removed without using ko.removeNode.

@@ -117,7 +117,7 @@ ko.extenders.integer = function(target, active) {
     read: target, //always return the original observables value
     write: function(newValue) {
       var current = target(),
-        newValueInt = (newValue && !isNaN(newValue)) ? parseInt(newValue) : 0;
+              newValueInt = (newValue && !isNaN(newValue)) ? parseInt(newValue) : 0;
 
       //only write if it changed
       if (newValueInt !== current) {
@@ -143,9 +143,6 @@ ko.extenders.integer = function(target, active) {
  * @returns {ko.computed}
  */
 ko.extenders.observeChanges = function(target, options) {
-  target.orig = (typeof options.orig !== "undefined") ? ko.observable(options.orig) : ko.observable(ko.utils.unwrapObservable(target));
-  target.serverChange = ko.observable(null);
-
   target.equals = function(a, b) {
     if (typeof b === "undefined") {
       b = this;
@@ -157,16 +154,37 @@ ko.extenders.observeChanges = function(target, options) {
     return (options.equals instanceof Function) ? options.equals(a, b) : (a === b);
   };
 
+  target.server = options.server;
+  target.orig = (typeof options.orig !== "undefined") ? ko.observable(options.orig) : ko.observable(ko.utils.unwrapObservable(target.server));
+
   target.localChange = ko.computed(function() {
     return !this.equals(this.orig);
+  }, target);
+
+  target.serverChange = ko.computed(function() {
+    if (!this.equals(this.orig, this.server)) {
+      return ko.utils.unwrapObservable(this.server);
+    }
+    return null;
   }, target);
 
   target.reset = function() {
     if (target.localChange()) {
       target(target.orig());
-      target.serverChange(null);
     }
   };
+
+  target.tmp = ko.computed(function() {
+    if (!this.equals(this.server, this.orig)) {
+      var val = ko.utils.unwrapObservable(this.server);
+      if (!options.keepChanges || !this.localChange() || target.equals(this.server)) {
+        this.orig(val);
+        this(val);
+      }
+    }
+    return this();
+  }, target);
+
 
   return target;
 };
@@ -320,7 +338,7 @@ ko.extenders.filtered = function(target, options) {
     }
 
     var filters = options.filters ? ko.utils.unwrapObservable(options.filters) || {} : {},
-      sort = options.sort ? ko.utils.unwrapObservable(options.sort) : null;
+            sort = options.sort ? ko.utils.unwrapObservable(options.sort) : null;
 
     if (filters.filter) {
       data = ko.utils.arrayFilter(data, function(val) {

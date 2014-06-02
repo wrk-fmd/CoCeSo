@@ -39,20 +39,20 @@
       <div class="clearfix">
         <div class="form-group col-md-6">
           <label for="call"><spring:message code="label.unit.call" />:</label>
-          <input type="text" id="call" class="form-control" name="call" data-bind="value: call" readonly />
+          <input type="text" id="call" class="form-control" name="call" data-bind="value: model.call" readonly />
         </div>
       </div>
 
       <div class="clearfix">
         <div class="form-group col-md-6">
           <label for="position"><spring:message code="label.unit.position" />:</label>
-          <a href="#" style="float: right" data-bind="click: function() {position.info(home.info())}">Set to home</a>
+          <a href="#" style="float: right" data-bind="click: function() {position.info(model.home.info())}">Set to home</a>
           <textarea id="position" name="position" rows="3" class="form-control" data-bind="value: position.info, css: {'form-changed': position.info.localChange}, valueUpdate: 'afterkeydown'"></textarea>
         </div>
 
         <div class="form-group col-md-6">
           <label for="home"><spring:message code="label.unit.home" />:</label>
-          <textarea id="home" name="home" rows="3" class="form-control" data-bind="value: home.info" readonly></textarea>
+          <textarea id="home" name="home" rows="3" class="form-control" data-bind="value: model.home.info" readonly></textarea>
         </div>
       </div>
 
@@ -87,42 +87,42 @@
         </div>
       </div>
 
-      <div class="assigned" data-bind="foreach: incidents.incidentlist">
+      <div class="assigned" data-bind="foreach: incidents">
         <div class="form-group clearfix">
-          <label class="col-md-2 control-label" data-bind="html: assignedTitle"></label>
+          <label class="col-md-2 control-label" data-bind="html: incident().assignedTitle"></label>
           <div class="col-md-10 ui-buttonset">
             <input type="radio" class="ui-helper-hidden-accessible"
-                   data-bind="checked: taskState, disable: disableAssigned, attr: {id: $root.ui + '-taskState_assigned_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.assigned" />
+                   data-bind="checked: taskState, disable: incident().disableAssigned, attr: {id: $root.ui + '-taskState_assigned_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.assigned" />
             <label class="ui-button ui-widget ui-state-default ui-corner-left"
-                   data-bind="attr: {for: $root.ui + '-taskState_assigned_' + $index()}, css: {'ui-state-active': isAssigned, 'ui-state-disabled': disableAssigned}">
+                   data-bind="attr: {for: $root.ui + '-taskState_assigned_' + $index()}, css: {'ui-state-active': isAssigned, 'ui-state-disabled': incident().disableAssigned}">
               <span class="ui-button-text"><spring:message code="label.task.state.assigned" /></span>
             </label>
 
             <input type="radio" class="ui-helper-hidden-accessible"
-                   data-bind="checked: taskState, disable: disableBO, attr: {id: $root.ui + '-taskState_zbo_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.zbo" />
+                   data-bind="checked: taskState, disable: incident().disableBO, attr: {id: $root.ui + '-taskState_zbo_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.zbo" />
             <label class="ui-button ui-widget ui-state-default"
-                   data-bind="attr: {for: $root.ui + '-taskState_zbo_' + $index()}, css: {'ui-state-active': isZBO, 'ui-state-disabled': disableBO}">
+                   data-bind="attr: {for: $root.ui + '-taskState_zbo_' + $index()}, css: {'ui-state-active': isZBO, 'ui-state-disabled': incident().disableBO}">
               <span class="ui-button-text"><spring:message code="label.task.state.zbo" /></span>
             </label>
 
             <input type="radio" class="ui-helper-hidden-accessible"
-                   data-bind="checked: taskState, disable: disableBO, attr: {id: $root.ui + '-taskState_abo_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.abo" />
+                   data-bind="checked: taskState, disable: incident().disableBO, attr: {id: $root.ui + '-taskState_abo_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.abo" />
             <label class="ui-button ui-widget ui-state-default"
-                   data-bind="attr: {for: $root.ui + '-taskState_abo_' + $index()}, css: {'ui-state-active': isABO, 'ui-state-disabled': disableBO}">
+                   data-bind="attr: {for: $root.ui + '-taskState_abo_' + $index()}, css: {'ui-state-active': isABO, 'ui-state-disabled': incident().disableBO}">
               <span class="ui-button-text"><spring:message code="label.task.state.abo" /></span>
             </label>
 
             <input type="radio" class="ui-helper-hidden-accessible"
-                   data-bind="checked: taskState, disable: disableZAO, attr: {id: $root.ui + '-taskState_zao_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.zao" />
+                   data-bind="checked: taskState, disable: incident().disableZAO, attr: {id: $root.ui + '-taskState_zao_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.zao" />
             <label class="ui-button ui-widget ui-state-default"
-                   data-bind="attr: {for: $root.ui + '-taskState_zao_' + $index()}, css: {'ui-state-active': isZAO, 'ui-state-disabled': disableZAO}">
+                   data-bind="attr: {for: $root.ui + '-taskState_zao_' + $index()}, css: {'ui-state-active': isZAO, 'ui-state-disabled': incident().disableZAO}">
               <span class="ui-button-text"><spring:message code="label.task.state.zao" /></span>
             </label>
 
             <input type="radio" class="ui-helper-hidden-accessible"
-                   data-bind="checked: taskState, disable: disableAAO, attr: {id: $root.ui + '-taskState_aao_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.aao" />
+                   data-bind="checked: taskState, disable: incident().disableAAO, attr: {id: $root.ui + '-taskState_aao_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.aao" />
             <label class="ui-button ui-widget ui-state-default"
-                   data-bind="attr: {for: $root.ui + '-taskState_aao_' + $index()}, css: {'ui-state-active': isAAO, 'ui-state-disabled': disableAAO}">
+                   data-bind="attr: {for: $root.ui + '-taskState_aao_' + $index()}, css: {'ui-state-active': isAAO, 'ui-state-disabled': incident().disableAAO}">
               <span class="ui-button-text"><spring:message code="label.task.state.aao" /></span>
             </label>
 

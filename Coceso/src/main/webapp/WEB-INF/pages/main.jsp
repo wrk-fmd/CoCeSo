@@ -45,8 +45,7 @@
 
     <script src="<c:url value="/static/js/jquery.ui.winman.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/jquery.i18n.min.js"/>" type="text/javascript"></script>
-    <script src="<c:url value="/static/js/knockout.min.js"/>" type="text/javascript"></script>
-    <script src="<c:url value="/static/js/knockout.mapping.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/static/js/knockout.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/bootstrap.dropdown.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/bootstrap.modals.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/bootstrap.collapse.js"/>" type="text/javascript"></script>
@@ -154,7 +153,7 @@
                     </li>
                     <li>
                         <%-- Initialization Value for auto-margin of centered element --%>
-                        <span id="clock" class="navbar-brand">24:00:00</span>
+                        <span class="navbar-brand" data-bind="text: clock_time">00:00:00</span>
                     </li>
                 </ul>
             </div>

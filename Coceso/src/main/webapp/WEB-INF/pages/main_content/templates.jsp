@@ -27,7 +27,7 @@
             <li data-bind="css: {disabled: isAD}"><a href="#" title="<spring:message code="label.set" />: <spring:message code="label.unit.state.ad" />" data-bind="click: setAD"><spring:message code="label.unit.state.ad" /></a></li>
             <!-- /ko -->
 
-            <!-- ko if: portable() && !( disableSendHome() && disableStandby() && disableHoldPosition() )  -->
+            <!-- ko if: portable && !( disableSendHome() && disableStandby() && disableHoldPosition() )  -->
             <li class="divider"></li>
             <li class="dropdown-header"><spring:message code="label.actions" /></li>
             <!-- ko ifnot: disableSendHome -->
@@ -41,7 +41,7 @@
             <!-- /ko -->
             <!-- /ko -->
 
-            <!-- ko if: portable() && dropdownActive()  -->
+            <!-- ko if: portable && dropdownActive()  -->
             <li class="divider"></li>
             <li class="dropdown-header"><spring:message code="label.incidents" /></li>
             <!-- ko foreach: dropdownIncidents -->
