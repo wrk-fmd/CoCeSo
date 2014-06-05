@@ -16,7 +16,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/data/incident")
@@ -131,17 +133,38 @@ public class IncidentController implements IEntityController<Incident> {
             incident.setId(0);
 
             incident.setId(incidentService.add(incident, user));
+
+            String associated = "{}";
+            if (incident.getId() > 0) {
+              associated = setAssociated(incident, user);
+            }
+
             //log.logFull(user, "Incident created", caseId, null, incident, true);
-            return "{\"success\": " + (incident.getId() != -1) + ", \"new\": true, \"incident_id\":"+incident.getId()+"}";
+            return "{\"success\": " + (incident.getId() != -1) + ", \"new\": true, \"incident_id\":"+incident.getId()+",\"associated\":"+associated+"}";
         }
 
         //log.logFull(user, "Incident updated", caseId, null, incident, true);
         boolean ret = incidentService.update(incident, user);
+        String associated = "{}";
 
         if(ret && incident.getState() == IncidentState.Done)
             taskService.checkStates(incident.getId(), user);
+        else if (ret)
+            associated = setAssociated(incident, user);
 
-        return "{\"success\": " + ret + ", \"new\": false}";
+        return "{\"success\": " + ret + ", \"new\": false,\"associated\":"+associated+"}";
+    }
+
+    protected String setAssociated(Incident incident, Operator user) {
+      String messages = "{";
+      for (Map.Entry<Integer,TaskState> entry : incident.getUnits().entrySet()) {
+        if (messages.length() > 1) {
+          messages += ",";
+        }
+        messages += "\"" + entry.getKey() + "\":" + taskService.changeState(incident.getId(), entry.getKey(), entry.getValue(), user);
+      }
+      messages += "}";
+      return messages;
     }
 
     @RequestMapping(value = "nextState/{incident_id}/{unit_id}", produces = "application/json", method = RequestMethod.GET)

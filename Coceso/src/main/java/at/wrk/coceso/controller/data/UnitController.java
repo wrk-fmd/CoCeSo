@@ -3,6 +3,7 @@ package at.wrk.coceso.controller.data;
 
 import at.wrk.coceso.dao.TaskDao;
 import at.wrk.coceso.entity.*;
+import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.service.IncidentService;
 import at.wrk.coceso.service.TaskService;
 import at.wrk.coceso.service.UnitService;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/data/unit")
@@ -111,8 +113,25 @@ public class UnitController implements IEntityController<Unit> {
             return "{\"success\": " + (unit.getId() != -1) + ", \"new\": true, \"unit_id\":"+ unit.getId() +"}";
         }
 
+        boolean ret = unitService.update(unit, user);
+        String associated = "{}";
+        if (ret)
+            associated = setAssociated(unit, user);
+
         //log.logFull(user, "Unit updated", caseId, unit, null, true);
-        return "{\"success\": " + unitService.update(unit, user) + ", \"new\": false}";
+        return "{\"success\": " + ret + ", \"new\": false,\"associated\":"+associated+"}";
+    }
+
+    protected String setAssociated(Unit unit, Operator user) {
+      String messages = "{";
+      for (Map.Entry<Integer,TaskState> entry : unit.getIncidents().entrySet()) {
+        if (messages.length() > 1) {
+          messages += ",";
+        }
+        messages += "\"" + entry.getKey() + "\":" + taskService.changeState(entry.getKey(), unit.getId(), entry.getValue(), user);
+      }
+      messages += "}";
+      return messages;
     }
 
     @RequestMapping(value = "sendHome", produces = "application/json", method = RequestMethod.POST)
