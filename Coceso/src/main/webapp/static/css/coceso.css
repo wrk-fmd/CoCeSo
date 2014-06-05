@@ -24,8 +24,8 @@
  * Import other stylesheets
  */
 
-@import "bootstrap.css";
-@import "bootstrap-theme.css";
+@import "bootstrap.min.css";
+@import "bootstrap-theme.min.css";
 @import "ui-bootstrap/jquery-ui-1.10.3.custom.css";
 @import "jquery.ui.winman.css";
 
@@ -48,9 +48,9 @@ body.main {
 }
 
 body.login {
-    padding-top: 40px;
-    padding-bottom: 40px;
-    background-color: #eee;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: #eee;
 }
 
 #dialog_container {
@@ -209,14 +209,15 @@ input.ui-helper-hidden-accessible:focus + label.ui-button {
 /**
  * Overwrite/extend some Bootstrap defaults
  */
+nav.navbar {
+  padding-left: 10px;
+  padding-right: 15px;
+}
 
-.col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, .col-sm-3, .col-md-3, .col-lg-3,
-.col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .col-sm-6, .col-md-6, .col-lg-6,
-.col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9,
-.col-xs-10, .col-sm-10, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .col-sm-12, .col-md-12, .col-lg-12 {
-  /* TODO: Set this directly in bootstrap.css as default value with LESS */
-  padding-right: 5px;
-  padding-left: 5px;
+.btn-default:active,
+.btn-default.active {
+  color: #ffffff;
+  background-color: #428bca;
 }
 
 .ui-buttonset.col-md-10 {
@@ -236,11 +237,26 @@ button.btn.btn-sm, button.btn.btn-xs {
   top: 0;
   left: 0;
 }
+
 /**
  * Overflow has to be visible for Dropdown Menu in Unit List
  */
 ul.dropdown-menu {
-    overflow: visible;
+  overflow: visible;
+}
+
+.quicklink {
+  height: 50px;
+  /* padding-top: 17px !important; */
+  color: #ffffff !important;
+}
+
+.quicklink_incident {
+  background-color: #2268b3 !important;
+}
+
+.quicklink_log {
+  background-color: #ffb66c !important;
 }
 
 input[type="number"] {
@@ -308,41 +324,41 @@ textarea.form-control {
  * Login
  */
 .login form {
-    width: 300px;
-    padding: 0;
-    margin: 0 auto;
+  width: 300px;
+  padding: 0;
+  margin: 0 auto;
 }
 
 .login h2,
 .login .checkbox {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 .login .checkbox {
-    font-weight: normal;
+  font-weight: normal;
 }
 
 .login .form-control {
-    position: relative;
-    font-size: 16px;
-    height: auto;
-    padding: 10px;
+  position: relative;
+  font-size: 16px;
+  height: auto;
+  padding: 10px;
 }
 
 .login .form-control:focus {
-    z-index: 2;
+  z-index: 2;
 }
 
 .login input:first-of-type {
-    margin-bottom: -1px;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
+  margin-bottom: -1px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
 }
 
 .login input:last-of-type {
-    margin-bottom: 10px;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
 }
 
 /**
@@ -387,21 +403,27 @@ span.incident_priority {
   min-width: 1.4em;
   padding: 0.2em;
   float: right;
+  margin-top: -3px;
 }
 
 span.incident_type_text {
-    display: block;
-    text-align: center;
-    margin-left: 0.7em;
-    min-height: 1.4em;
-    min-width: 1.4em;
-    float: right;
-    border: solid 1px;
-    border-color: black;
+  display: block;
+  text-align: center;
+  margin-left: 0.7em;
+  margin-top: -3px;
+  min-height: 1.4em;
+  min-width: 1.4em;
+  float: right;
+  border: solid 1px;
+  border-color: black;
 }
 
 span.incident_blue {
-  background-color: #0064cd;
+  background: url("../imgs/bluelight.png");
+/*  background-color: #0064cd;*/
+  height: 22px;
+  width: 25px;
+  padding-left: 3px;
   color: #ffffff;
   font-weight: bold;
 }
@@ -507,46 +529,56 @@ span.incident_blue {
 /**
  *   Unit Container definitions
  */
+.panel.unit-container {
+  margin-top: 10px;
+}
+
 .unit_container {
-    display: block;
-    margin: 5px;
-    padding: 10px 5px;
-    /*border: solid 1px #888888;*/
+  display: block;
+  margin: 5px;
+  padding: 10px 5px;
+  /*border: solid 1px #888888;*/
 }
 
 .highlight {
-    min-height: 40px;
-    background-color: #ff4444;
+  min-height: 40px;
+  background-color: #ff4444;
 }
 
 .panel {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 .panel-heading {
-    padding: 5px 15px;
+  padding: 5px 15px;
 }
 
 /**
  * Notifications
  */
 .notification-icon {
-    font-size: larger;
+  font-size: larger;
+  padding-bottom: 10px !important;
 }
 
 .notification-highlight {
-    background-color: #dd0000;
+  background-color: #dd0000;
 }
 
 .notification-ok {
-    background-color: #00dd00;
+  background-color: #00dd00;
+}
+
+.notification-icon .badge {
+  position: relative;
+  top: -3px;
 }
 
 .connection-error {
-    color: #dd0000;
+  color: #dd0000;
 }
 .connection-ok {
-    color: #00dd00;
+  color: #00dd00;
 }
 
 /**
@@ -563,51 +595,51 @@ td.license_icon {
 }
 
 table[id*='keytable'] > tbody > tr > td:nth-child(2) {
-    text-align: center;
+  text-align: center;
 }
 
 /**
  * Fix to lay backdrop over windows
  */
 .modal-backdrop {
-    z-index: 1530;
+  z-index: 1530;
 }
 .modal {
-    z-index: 1540;
+  z-index: 1540;
 }
 .modal-dialog {
-    margin-top: 80px;
-    z-index: 1550;
+  margin-top: 80px;
+  z-index: 1550;
 }
 
 /*
  * Highlight Text Fields
  */
 .form-highlight {
-    border-color: #e94136;
-    outline: 0;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 10px rgba(233, 65, 54, 0.60);
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 10px rgba(233, 65, 54, 0.60);
+  border-color: #e94136;
+  outline: 0;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 10px rgba(233, 65, 54, 0.60);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 10px rgba(233, 65, 54, 0.60);
 }
 
 @media (min-width: 768px){
-    .navbar-center {
-        margin: 0 auto;
-        display: table;
-        table-layout: fixed;
-        float:none;
-    }
+  .navbar-center {
+    margin: 0 auto;
+    display: table;
+    table-layout: fixed;
+    float:none;
+  }
 }
 
 
 @media (max-width: 880px){
-    .navbar-hide-on-mobile {
-        display: none
-    }
+  .navbar-hide-on-mobile {
+    display: none
+  }
 }
 
 @media (max-width: 999px){
-    .navbar-hide-on-1000px {
-        display: none
-    }
+  .navbar-hide-on-1000px {
+    display: none
+  }
 }

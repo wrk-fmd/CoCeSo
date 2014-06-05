@@ -29,11 +29,7 @@
 <div class="alert alert-danger"><spring:message code="label.main.error.no_direct_access" /></div>
 
 <div class="ajax_content">
-
-    <a href="#" class="ui-helper-hidden-accessible">&nbsp;</a>
-
     <div data-bind="template: { name: 'container-template', data: top }"></div>
-
 </div>
 
 

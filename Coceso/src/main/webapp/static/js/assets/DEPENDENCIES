@@ -1,0 +1,55 @@
+CSS and JS dependencies
+
+COMMON DEPENDENCIES
+Bootstrap-CSS: Typography, Grid, Tables, Forms, Buttons, Glyphicons, Button groups, Navbar, Alerts
+Bootstrap-JS:  Dropdowns, Basic and responsive utilities, Transitions/Animations
+Base jQuery
+
+ADDITIONAL DEPENDENCIES in some files
+Bootstrap-CSS
+Badges:        main/templates.jsp
+Panels:        edit_container.jsp, main/templates.jsp
+Close icon:    main/templates.jsp (for modal)
+
+Bootstrap-JS:
+Tooltips:      edit.jsp, main.jsp, main/log_add.jsp
+Popovers:      main/templates.jsp
+Modals:        main/templates.jsp (called in main.js)
+Alert dismiss: welcome.jsp
+Collapse:      main/templates.jsp
+
+jQuery:
+jquery.i18n:   main.jsp
+
+jQuery UI:
+Autocomplete:  personmgmt.jsp
+Accordion:     main/incident.jsp (via knockout.extensions.js)
+Draggable:     main/templates.jsp (via knockout.extensions.js)
+Droppable:     main/incident.jsp, main/incident_form.jsp (via knockout.extensions.js)
+Sortable:      knockout.sortable.js
+Dialog:        main.jsp (via jquery.ui.winman.js): Version 1.9.2 with edit!
+Buttonset:     main/incident_form.jsp, main/unit_form.jsp; CSS only, to be replaced with bootstrap buttons
+
+Touch-Punch:   all pages with draggable, sortable, dialog
+Winman:        main.jsp (via main.js)
+Fixes:         main.jsp (fixes draggable in combination with dialogs behind each other)
+
+Knockout:
+KO Base:       main.jsp, edit_container.jsp, search/patient.jsp
+KO Sortable:   edit_container.jsp
+
+
+USED VERSIONS
+Bootstrap:     3.1.1 custom
+jQuery:        1.11.1
+jQuery i18n:   1.0.9
+jQuery UI:     1.10.4 custom (except dialog, see above)
+ui-bootstrap:  1.0 alpha (TODO: compile only necessary parts)
+Touch-Punch:   0.2.3
+KO Base:       3.1.0
+KO Sortable:   0.8.6
+
+CUSTOM OPTIONS
+Bootstrap:     all of the above Components, with @grid-gutter-width set to 10px
+jQuery UI:     1.10.4  Draggable, Droppable, Sortable, Accordion, Autocomplete with dependencies
+               1.9.2   Dialog with dependencies (edited afterwards)

@@ -172,10 +172,10 @@
 </div>
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<c:url var="jquery" value="/static/js/jquery.js" />
+<c:url var="jquery" value="/static/js/assets/jquery.min.js" />
 <script src="${jquery}"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
-<c:url var="bootstrap_js" value="/static/js/bootstrap.js" />
+<c:url var="bootstrap_js" value="/static/js/assets/bootstrap.min.js" />
 <script src="${bootstrap_js}"></script>
 
 </body>

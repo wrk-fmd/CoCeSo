@@ -33,26 +33,26 @@
   <body>
     <div class="alert alert-danger"><spring:message code="label.main.error.no_direct_access" /></div>
 
-    <div class="ajax_content unit_form" data-bind="droppable: {drop: assignIncidentForm, tolerance: 'pointer'}">
+    <div class="ajax_content unit_form">
       <div class="alert alert-danger" id="error" style="display: none"><strong>Saving failed</strong><br/>Try again or see <em>Debug</em> for further information.</div>
 
       <div class="clearfix">
         <div class="form-group col-md-6">
           <label for="call"><spring:message code="label.unit.call" />:</label>
-          <input type="text" id="call" class="form-control" name="call" data-bind="value: model.call" readonly />
+          <input type="text" id="call" class="form-control" name="call" data-bind="value: model().call" readonly />
         </div>
       </div>
 
       <div class="clearfix">
         <div class="form-group col-md-6">
           <label for="position"><spring:message code="label.unit.position" />:</label>
-          <a href="#" style="float: right" data-bind="click: function() {position.info(model.home.info())}">Set to home</a>
+          <a href="#" style="float: right" data-bind="click: function() {position.info(model().home.info())}">Set to home</a>
           <textarea id="position" name="position" rows="3" class="form-control" data-bind="value: position.info, css: {'form-changed': position.info.localChange}, valueUpdate: 'afterkeydown'"></textarea>
         </div>
 
         <div class="form-group col-md-6">
           <label for="home"><spring:message code="label.unit.home" />:</label>
-          <textarea id="home" name="home" rows="3" class="form-control" data-bind="value: model.home.info" readonly></textarea>
+          <textarea id="home" name="home" rows="3" class="form-control" data-bind="value: model().home.info" readonly></textarea>
         </div>
       </div>
 

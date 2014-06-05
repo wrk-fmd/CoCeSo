@@ -55,14 +55,5 @@
             <a href="<c:url value="/static/license.html"/>"><spring:message code="text.license" /></a>
         </div>
     </div>
-
-
-    <!-- jQuery (necessary for Bootstraps JavaScript plugins) -->
-    <c:url var="jquery" value="/static/js/jquery.js" />
-    <script src="${jquery}"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <c:url var="bootstrap_js" value="/static/js/bootstrap.js" />
-    <script src="${bootstrap_js}"></script>
-
 </body>
 </html>

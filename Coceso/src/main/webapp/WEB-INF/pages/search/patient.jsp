@@ -11,13 +11,12 @@
 
     <link rel="stylesheet" href="<c:url value="/static/css/coceso.css" />" type="text/css"/>
 
-    <script src="<c:url value="/static/js/jquery-1.11.0.min.js"/>" type="text/javascript"></script>
-    <script src="<c:url value="/static/js/jquery.ui.min.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/static/js/assets/jquery.min.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/static/js/assets/jquery.ui.1.10.4.min.js"/>" type="text/javascript"></script>
 
-    <script src="<c:url value="/static/js/knockout.min.js"/>" type="text/javascript"></script>
-    <script src="<c:url value="/static/js/bindings.js"/>" type="text/javascript"></script>
-    <script src="<c:url value="/static/js/bootstrap.js"/>" type="text/javascript"></script>
-    <script src="<c:url value="/static/js/jquery.ui.touch-punch.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/static/js/assets/knockout.min.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/static/js/assets/bootstrap.min.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/static/js/assets/jquery.ui.touch-punch.min.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/search.patient.js"/>" type="text/javascript"></script>
 
     <script type="text/javascript">

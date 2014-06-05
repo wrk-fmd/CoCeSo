@@ -1,7 +1,3 @@
-/**
- * Under MIT License
- * https://github.com/rniemeyer/knockout-sortable
- */
 // knockout-sortable 0.8.6 | (c) 2014 Ryan Niemeyer |  http://www.opensource.org/licenses/mit-license
 ;(function(factory) {
     if (typeof define === "function" && define.amd) {

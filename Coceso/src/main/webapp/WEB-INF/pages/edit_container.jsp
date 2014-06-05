@@ -17,15 +17,14 @@
     <link href="<c:url value="/static/css/flags.css"/>" rel="stylesheet" />
     <link href="<c:url value="/static/css/coceso.css"/>" rel="stylesheet">
 
-    <script src="<c:url value="/static/js/jquery.js"/>" type="text/javascript"></script>
-    <script src="<c:url value="/static/js/jquery.ui.js"/>" type="text/javascript"></script>
-    <script src="<c:url value="/static/js/bootstrap.js" />"></script>
-    <script src="<c:url value="/static/js/knockout.js"/>" type="text/javascript"></script>
-    <script src="<c:url value="/static/js/knockout.mapping.js"/>" type="text/javascript"></script>
-    <script src="<c:url value="/static/js/knockout-sortable.js"/>" type="text/javascript"></script>
-    <script src="<c:url value="/static/js/jquery.ui.touch-punch.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/static/js/assets/jquery.min.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/static/js/assets/jquery.ui.1.10.4.min.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/static/js/assets/jquery.ui.touch-punch.min.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/static/js/assets/bootstrap.min.js" />"></script>
+    <script src="<c:url value="/static/js/assets/knockout.min.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/static/js/assets/knockout.sortable.min.js"/>" type="text/javascript"></script>
 
-    <script src="<c:url value="/static/js/container.edit.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/static/js/edit_container.js"/>" type="text/javascript"></script>
 
     <style type="text/css">
         .unit_list {

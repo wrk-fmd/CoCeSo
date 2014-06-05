@@ -41,13 +41,10 @@ $.ui.dialog.prototype._init = function() {
   });
 
   //Minimize button
-  this.uiDialogTitlebarMinimize = $("<button></button>").button({
-    label: this.options.minimizeText,
-    icons: {
-      primary: "ui-icon-minusthick"
-    },
-    text: false
-  }).addClass("ui-dialog-titlebar-close ui-dialog-titlebar-minimize").insertBefore(this.uiDialogTitlebarClose);
+  this.uiDialogTitlebarMinimize = $("<a href='#'></a>")
+          .addClass("ui-dialog-titlebar-close ui-dialog-titlebar-minimize ui-corner-all")
+          .attr("role", "button").insertBefore(this.uiDialogTitlebarClose);
+  $("<span>").addClass("ui-icon ui-icon-minusthick").appendTo(this.uiDialogTitlebarMinimize);
   this._on(this.uiDialogTitlebarMinimize, {
     click: function(event) {
       event.preventDefault();
@@ -108,10 +105,10 @@ $.widget("ui.winman", {
     var el = $("<div class='dialog_window' id='" + id + "' title='" + title + "'></div>");
     el.load(src + " .ajax_content", function(response, status, request) {
       el.find("*").each(function(i, child) {
-          // Uncomment for usage of Templates in Windows
-          // if($(child).is("script")) {
-          //    return;
-          // }
+        // Uncomment for usage of Templates in Windows
+        // if($(child).is("script")) {
+        //    return;
+        // }
         $(child).prependAttr("id", id + "-");
         $(child).prependAttr("for", id + "-");
         $(child).prependAttr("name", id + "-");
@@ -147,7 +144,7 @@ $.widget("ui.winman", {
       }
     }, options);
 
-      //TODO Max-Height to option in Dialog-options?
+    //TODO Max-Height to option in Dialog-options?
     this.windows[id].dialog(options).css("maxHeight", window.innerHeight - 150).data("ui-dialog").uiDialog.draggable("option", "containment", $("#dialog_container"));
     this.element.append(this.buttons[id]);
 

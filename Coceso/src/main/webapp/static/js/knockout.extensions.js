@@ -50,26 +50,6 @@ function uiBindingHandler(widget) {
 }
 
 /**
- * Generate the binding to refresh a jQuery UI widget
- *
- * @param {String} widget The jQuery UI widget constructor
- * @return {BindingHandler}
- */
-function uiBindingHandlerRefresh(widget) {
-  return {
-    init: function(element, valueAccessor) {
-      ko.utils.unwrapObservable(valueAccessor());
-    },
-    update: function(element, valueAccessor) {
-      ko.utils.unwrapObservable(valueAccessor());
-      if ($(element).data("ui-" + widget)) {
-        $(element)[widget]("refresh");
-      }
-    }
-  };
-}
-
-/**
  * Generate Accordion from loop
  *
  * @type {BindingHandler}
@@ -81,7 +61,17 @@ ko.bindingHandlers.accordion = uiBindingHandler("accordion");
  *
  * @type {BindingHandler}
  */
-ko.bindingHandlers.accordionRefresh = uiBindingHandlerRefresh("accordion");
+ko.bindingHandlers.accordionRefresh = {
+    init: function(element, valueAccessor) {
+      ko.utils.unwrapObservable(valueAccessor());
+    },
+    update: function(element, valueAccessor) {
+      ko.utils.unwrapObservable(valueAccessor());
+      if ($(element).data("ui-accordion")) {
+        $(element)["accordion"]("refresh");
+      }
+    }
+  };
 
 /**
  * Generate Draggable from element
@@ -143,27 +133,17 @@ ko.extenders.integer = function(target, active) {
  * @returns {ko.computed}
  */
 ko.extenders.observeChanges = function(target, options) {
-  target.equals = function(a, b) {
-    if (typeof b === "undefined") {
-      b = this;
-    }
-
-    a = ko.utils.unwrapObservable(a);
-    b = ko.utils.unwrapObservable(b);
-
-    return (options.equals instanceof Function) ? options.equals(a, b) : (a === b);
-  };
-
   target.server = options.server;
   target.orig = (typeof options.orig !== "undefined") ? ko.observable(options.orig) : ko.observable(ko.utils.unwrapObservable(target.server));
 
   target.localChange = ko.computed(function() {
-    return !this.equals(this.orig);
+    return (typeof this.orig() !== "undefined" && this() !== this.orig());
   }, target);
 
   target.serverChange = ko.computed(function() {
-    if (!this.equals(this.orig, this.server)) {
-      return ko.utils.unwrapObservable(this.server);
+    var server = ko.utils.unwrapObservable(this.server), orig = this.orig();
+    if (typeof server !== "undefined" && server !== orig) {
+      return server;
     }
     return null;
   }, target);
@@ -174,17 +154,20 @@ ko.extenders.observeChanges = function(target, options) {
     }
   };
 
+  target.setServer = function(server) {
+    target.server = server;
+    target.orig.valueHasMutated();
+  };
+
   target.tmp = ko.computed(function() {
-    if (!this.equals(this.server, this.orig)) {
-      var val = ko.utils.unwrapObservable(this.server);
-      if (!options.keepChanges || !this.localChange() || target.equals(this.server)) {
-        this.orig(val);
-        this(val);
+    var server = ko.utils.unwrapObservable(this.server), orig = this.orig();
+    if (typeof server !== "undefined" && server !== orig) {
+      if (!options.keepChanges || !this.localChange() || server === this()) {
+        this.orig(server);
+        this(server);
       }
     }
-    return this();
   }, target);
-
 
   return target;
 };
@@ -202,28 +185,25 @@ ko.extenders.arrayChanges = function(target, options) {
   target.serverChange = ko.observable(null);
 
   target.localChange = ko.computed(function() {
-    var i, items = ko.utils.unwrapObservable(this);
+    var items = ko.utils.unwrapObservable(this);
     if (!items instanceof Array) {
       return false;
     }
-    for (i = 0; i < items.length; i++) {
-      if (ko.utils.unwrapObservable(items[i].localChange)) {
-        return true;
-      }
-    }
-    return false;
+    return (ko.utils.arrayFirst(items, function(item) {
+      return ko.utils.unwrapObservable(item.localChange);
+    }) ? true : false);
   }, target);
 
   target.reset = function() {
-    var i, items = ko.utils.unwrapObservable(target);
+    var items = ko.utils.unwrapObservable(target);
     if (!items instanceof Array) {
       return;
     }
-    for (i = 0; i < items.length; i++) {
-      if (items[i].reset instanceof Function) {
-        items[i].reset();
+    ko.utils.arrayForEach(items, function(item) {
+      if (item.reset instanceof Function) {
+        item.reset();
       }
-    }
+    });
   };
 
   return target;

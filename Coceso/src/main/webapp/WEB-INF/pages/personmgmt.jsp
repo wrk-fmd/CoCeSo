@@ -22,9 +22,9 @@
     <link href="<c:url value="/static/css/flags.css"/>" rel="stylesheet" />
 
 
-    <script src="<c:url value='/static/js/jquery.js' />"></script>
-    <script src="<c:url value='/static/js/bootstrap.js' />"></script>
-    <script src="<c:url value='/static/js/jquery.ui.js' />"></script>
+    <script src="<c:url value='/static/js/assets/jquery.min.js' />"></script>
+    <script src="<c:url value='/static/js/assets/bootstrap.min.js' />"></script>
+    <script src="<c:url value='/static/js/assets/jquery.ui.1.10.4.min.js' />"></script>
 
 
     <script>

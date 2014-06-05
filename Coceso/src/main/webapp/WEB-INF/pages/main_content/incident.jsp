@@ -37,7 +37,7 @@
       <div class="filter" data-bind="accordion: {active: false, collapsible: true, heightStyle: 'content'}, if: (disableFilter !== true)">
         <h3>Filter</h3>
         <div>
-          <div class="form-group">
+          <div class="form-group" data-bind="visible: (disableFilter.type !== true)">
             <label><spring:message code="label.incident.type" />:</label>
             <div class="clearfix">
               <div class="checkbox-inline">
@@ -52,6 +52,7 @@
                   <spring:message code="label.incident.type.transport" />
                 </label>
               </div>
+              <br />
               <div class="checkbox-inline">
                 <label>
                   <input type="checkbox" data-bind="value: Coceso.Constants.Incident.type.relocation, checked: filter.type" />
@@ -91,19 +92,19 @@
                   <input type="checkbox" data-bind="value: Coceso.Constants.Incident.state.open, checked: filter.state" />
                   <spring:message code="label.incident.state.open" />
                 </label>
-              </div>
+              </div><br />
               <div class="checkbox-inline" data-bind="visible: (!disableFilter.state || disableFilter.state.dispo !== true)">
                 <label>
                   <input type="checkbox" data-bind="value: Coceso.Constants.Incident.state.dispo, checked: filter.state" />
                   <spring:message code="label.incident.state.dispo" />
                 </label>
-              </div><br />
+              </div>
               <div class="checkbox-inline" data-bind="visible: (!disableFilter.state || disableFilter.state.working !== true)">
                 <label>
                   <input type="checkbox" data-bind="value: Coceso.Constants.Incident.state.working, checked: filter.state" />
                   <spring:message code="label.incident.state.working" />
                 </label>
-              </div>
+              </div><br />
               <div class="checkbox-inline" data-bind="visible: (!disableFilter.state || disableFilter.state.done !== true)">
                 <label>
                   <input type="checkbox" data-bind="value: Coceso.Constants.Incident.state.done, checked: filter.state" />
@@ -117,7 +118,7 @@
 
       <ul data-bind="foreach: filtered, accordion: {active: false, collapsible: true, heightStyle: 'content'}, accordionRefresh: filtered">
         <li data-bind="droppable: {drop: assignUnitList, tolerance: 'pointer'}">
-          <h3 class="clearfix" data-bind="css: {incident_open: notifyOpen }">
+          <h3 class="clearfix" data-bind="css: {incident_open: isNewOrOpen}">
             <span class="incident_priority" data-bind="text: typeString, css: {incident_blue: blue}"></span>
 
             <span data-bind="text: title"></span>
@@ -151,7 +152,7 @@
             <p>
               <span class="key" data-bind="text: unit().call"></span>
               <span data-bind="text: localizedTaskState"></span>
-              <button type="button" class="btn btn-xs btn-default" data-bind="click: function() { $parent.nextState( id() ) }">
+              <button type="button" class="btn btn-xs btn-default" data-bind="click: nextState">
                 <span class="glyphicon glyphicon-forward"></span>
               </button>
             </p>

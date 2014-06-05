@@ -1,4 +1,4 @@
-/*! jQuery UI - v1.9.2 - 2014-02-28
+/*! jQuery UI - v1.9.2 - 2014-06-05
 * http://jqueryui.com
 * Includes: jquery.ui.core.js, jquery.ui.widget.js, jquery.ui.mouse.js, jquery.ui.position.js, jquery.ui.draggable.js, jquery.ui.resizable.js, jquery.ui.button.js, jquery.ui.dialog.js
 * Copyright 2014 jQuery Foundation and other contributors; Licensed MIT */
@@ -3654,7 +3654,7 @@ $.widget("ui.dialog", {
 				})
 				.prependTo( uiDialog );
 
-			uiDialogTitlebarClose = ( this.uiDialogTitlebarClose = $( "<a href='#'></a>" ) ) // Changed by robow
+			uiDialogTitlebarClose = $( "<a href='#'></a>" )
 				.addClass( "ui-dialog-titlebar-close  ui-corner-all" )
 				.attr( "role", "button" )
 				.click(function( event ) {
@@ -3662,6 +3662,10 @@ $.widget("ui.dialog", {
 					that.close( event );
 				})
 				.appendTo( uiDialogTitlebar );
+
+      //EDIT dro
+      this.uiDialogTitlebarClose = uiDialogTitlebarClose;
+      //END EDIT
 
 			( this.uiDialogTitlebarCloseText = $( "<span>" ) )
 				.addClass( "ui-icon ui-icon-closethick" )
