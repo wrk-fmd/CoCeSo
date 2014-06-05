@@ -7,10 +7,9 @@ import at.wrk.coceso.service.IncidentService;
 import at.wrk.coceso.service.LogService;
 import at.wrk.coceso.service.PatientService;
 import at.wrk.coceso.service.UnitService;
-import at.wrk.coceso.utils.Logger;
+import at.wrk.coceso.utils.CocesoLogger;
 import at.wrk.coceso.utils.PdfStyle;
 import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,7 +78,7 @@ public class PDFDumpService {
      */
     public void create(Document document) throws DocumentException {
         if(initialized == null) {
-            Logger.warning("PDFDumpService.create(): Tried to run not initialized instance!");
+            CocesoLogger.warning("PDFDumpService.create(): Tried to run not initialized instance!");
             return;
         }
 
@@ -95,7 +94,7 @@ public class PDFDumpService {
                 shownTypes.add(type);
         }
 
-        Logger.debug("Create PDF Dump of #" + concern.getId() + ", unitMap.size()=" + unitMap.size() +
+        CocesoLogger.debug("Create PDF Dump of #" + concern.getId() + ", unitMap.size()=" + unitMap.size() +
                 ", incidentMap.size()=" + incidentMap.size());
 
         addFrontPage(document);
@@ -147,7 +146,7 @@ public class PDFDumpService {
                             if(tUnit.getState() != current) {
                                 // No valid LogEntry with same State found before
                                 if(last == null) {
-                                    Logger.warning("PDFDumpService.addUnitStats(): CORRUPT DATA while parsing last UnitState Change!");
+                                    CocesoLogger.warning("PDFDumpService.addUnitStats(): CORRUPT DATA while parsing last UnitState Change!");
                                     break;
                                 }
                                 // Set Timestamp of last LogEntry with same State as 'current'
@@ -158,7 +157,7 @@ public class PDFDumpService {
                             }
                         }
                     } catch (IOException e) {
-                        Logger.warning(e.getMessage());
+                        CocesoLogger.warning(e.getMessage());
                     }
                 }
             }
@@ -203,7 +202,7 @@ public class PDFDumpService {
                                 if (logEntry.getState() == state) {
                                     lastChange = logEntry.getTimestamp();
                                 } else {
-                                    Logger.warning("PDFDumpService.addUnitStats(): CORRUPT DATA while parsing last TaskState Change!");
+                                    CocesoLogger.warning("PDFDumpService.addUnitStats(): CORRUPT DATA while parsing last TaskState Change!");
                                 }
                                 break;
                             }
@@ -217,7 +216,7 @@ public class PDFDumpService {
                         table.addCell(state == null ? "N/A" : messageSource.getMessage("label.task.state." + state.name().toLowerCase(), null, locale));
                         table.addCell(lastChange == null ? "N/A" : new java.text.SimpleDateFormat(dateFormat).format(lastChange));
                     } else {
-                        Logger.warning("PDFDumpService.addUnitStats(): assigned Incident with ID #" + incidentID + " not found.");
+                        CocesoLogger.warning("PDFDumpService.addUnitStats(): assigned Incident with ID #" + incidentID + " not found.");
                     }
 
                 }
@@ -390,13 +389,13 @@ public class PDFDumpService {
     }
 
     public void setDestructed() {
-        Logger.debug("PdfDumpService destructed");
+        CocesoLogger.debug("PdfDumpService destructed");
         initialized = null;
     }
 
     public void createTransportList(Document document) throws DocumentException {
         if(initialized == null) {
-            Logger.warning("PDFDumpService.createTransportList(): Tried to run not initialized instance!");
+            CocesoLogger.warning("PDFDumpService.createTransportList(): Tried to run not initialized instance!");
             return;
         }
 

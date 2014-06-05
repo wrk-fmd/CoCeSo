@@ -19,9 +19,12 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.Collection;
+import java.util.logging.Logger;
 
 @Service
 public class CocesoAuthenticationProvider implements AuthenticationProvider {
+
+    private Logger logger = Logger.getLogger("CoCeSo");
 
     private final boolean firstUse;
 
@@ -55,11 +58,11 @@ public class CocesoAuthenticationProvider implements AuthenticationProvider {
         Operator user = operatorDao.getByUsername(username);
 
         if(user == null) {
-            Logger.info("[failed] " + username + ": User not found");
+            logger.info("[failed] " + username + ": User not found");
             throw new BadCredentialsException("Wrong Username/Password");
         }
         if(!user.isEnabled()) {
-            Logger.info("[failed] " + username + ": Login deactivated");
+            logger.info("[failed] " + username + ": Login deactivated");
             throw new BadCredentialsException("Access Denied");
         }
 
@@ -69,10 +72,10 @@ public class CocesoAuthenticationProvider implements AuthenticationProvider {
 
         boolean offline_failed = !user.validatePassword(password);
 
-        Logger.info("[" + (offline_failed ? "failed" : "  OK  ") + "] " + username + ": Offline Authentication ");
+        logger.info("[" + (offline_failed ? "failed" : "  OK  ") + "] " + username + ": Offline Authentication ");
 
         if(offline_failed && useThirdPartyAuth) {
-            Logger.info(username + ": Using Online Authentication");
+            logger.info(username + ": Using Online Authentication");
             try { // #################### THIRD PARTY AUTHENTICATION ####################
                 URL url = new URL(thirdPartyAuthenticationURL);
                 String phrase = username+":"+password;
@@ -89,15 +92,15 @@ public class CocesoAuthenticationProvider implements AuthenticationProvider {
 
             }
             catch(MalformedURLException e){
-                Logger.info("Wrong URL! "+e.getMessage());
+                logger.info("Wrong URL! "+e.getMessage());
                 returnCode = ERROR;
             }
             catch (ProtocolException e) {
-                Logger.info("ProtocolException: "+e.getMessage());
+                logger.info("ProtocolException: "+e.getMessage());
                 returnCode = ERROR;
             }
             catch (IOException e) {
-                Logger.info("IOException (No Connection?) "+e.getMessage());
+                logger.info("IOException (No Connection?) "+e.getMessage());
                 returnCode = ERROR;
             }
 
@@ -109,21 +112,21 @@ public class CocesoAuthenticationProvider implements AuthenticationProvider {
         }
 
         if(returnCode == NOT_AUTHORIZED) {
-            Logger.info("[failed] " + username + ": Authentication");
+            logger.info("[failed] " + username + ": Authentication");
             throw new BadCredentialsException("Wrong Username/Password");
         }
         if(returnCode == SUCCESS) {
             if(offline_failed) {
                 user.setPassword(password);
                 operatorDao.update(user);
-                Logger.info("User "+username+": PW written to DB");
+                logger.info("User "+username+": PW written to DB");
             }
-            Logger.info("[  OK  ] " + username + ": Authentication");
+            logger.info("[  OK  ] " + username + ": Authentication");
             return new UsernamePasswordAuthenticationToken(user,password, auth);
         }
         if(returnCode == ERROR) {
 
-            Logger.info("ERROR - Authentication failed");
+            logger.info("ERROR - Authentication failed");
             throw new BadCredentialsException("Wrong Username/Password");
         }
         else { // Wrong Status Code Definition?

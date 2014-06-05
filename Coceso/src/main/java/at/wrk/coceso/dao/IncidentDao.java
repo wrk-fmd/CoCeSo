@@ -4,7 +4,7 @@ import at.wrk.coceso.dao.mapper.IncidentMapper;
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.enums.IncidentType;
-import at.wrk.coceso.utils.Logger;
+import at.wrk.coceso.utils.CocesoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
@@ -41,7 +41,7 @@ public class IncidentDao extends CocesoDao<Incident> {
     @Override
     public Incident getById(int id) {
         if(id < 1) {
-            Logger.error("IncidentDao.getById(int): Invalid ID: "+id);
+            CocesoLogger.error("IncidentDao.getById(int): Invalid ID: "+id);
             return null;
         }
 
@@ -52,11 +52,11 @@ public class IncidentDao extends CocesoDao<Incident> {
             incident = jdbc.queryForObject(q, new Object[] {id}, incidentMapper);
         }
         catch(IncorrectResultSizeDataAccessException e) {
-            Logger.error("IncidentDao.getById(int): requested id: " + id + "; "+e.getMessage());
+            CocesoLogger.error("IncidentDao.getById(int): requested id: " + id + "; "+e.getMessage());
             return null;
         }
         catch(DataAccessException dae) {
-            Logger.error("IncidentDao.getById(int): requested id: "+id+"; DataAccessException: "+dae.getMessage());
+            CocesoLogger.error("IncidentDao.getById(int): requested id: "+id+"; DataAccessException: "+dae.getMessage());
             return null;
         }
 
@@ -190,7 +190,7 @@ public class IncidentDao extends CocesoDao<Incident> {
 
         // Nothing to update
         if(!comma) {
-            Logger.warning("Tried to update empty Incident: id="+incident.getId());
+            CocesoLogger.warning("Tried to update empty Incident: id="+incident.getId());
             return false;
         }
 

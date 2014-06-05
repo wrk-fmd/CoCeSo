@@ -4,7 +4,7 @@ import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Operator;
 import at.wrk.coceso.service.ConcernService;
 import at.wrk.coceso.service.pdf.PDFDumpService;
-import at.wrk.coceso.utils.Logger;
+import at.wrk.coceso.utils.CocesoLogger;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.PageSize;
@@ -58,7 +58,7 @@ public class PDFDumpController {
             throw new ConcernClosedException();
         }
 
-        Logger.info("User " + user.getUsername() + " requested PDF Dump for Concern #" + id + " (" + concern.getName() + ")");
+        CocesoLogger.info("User " + user.getUsername() + " requested PDF Dump for Concern #" + id + " (" + concern.getName() + ")");
 
 
         Document document = new Document(PageSize.A4.rotate());
@@ -73,10 +73,10 @@ public class PDFDumpController {
 
         }
         catch(IOException e) {
-            Logger.error("PDFDumpController.print(): " + e.getMessage());
+            CocesoLogger.error("PDFDumpController.print(): " + e.getMessage());
         }
         catch(DocumentException e) {
-            Logger.error("PDFDumpController.print(): " + e.getMessage());
+            CocesoLogger.error("PDFDumpController.print(): " + e.getMessage());
         }
         finally {
             document.close();
@@ -105,7 +105,7 @@ public class PDFDumpController {
             throw new ConcernNotFoundException();
         }
 
-        Logger.info("User " + user.getUsername() + " requested Transport for Concern #" + id + " (" + concern.getName() + ")");
+        CocesoLogger.info("User " + user.getUsername() + " requested Transport for Concern #" + id + " (" + concern.getName() + ")");
 
 
         Document document = new Document(PageSize.A4);
@@ -121,10 +121,10 @@ public class PDFDumpController {
 
         }
         catch(IOException e) {
-            Logger.error("PDFDumpController.transportlist(): " + e.getMessage());
+            CocesoLogger.error("PDFDumpController.transportlist(): " + e.getMessage());
         }
         catch(DocumentException e) {
-            Logger.error("PDFDumpController.transportlist(): " + e.getMessage());
+            CocesoLogger.error("PDFDumpController.transportlist(): " + e.getMessage());
         }
         finally {
             document.close();

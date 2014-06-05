@@ -7,7 +7,7 @@ import at.wrk.coceso.entity.Patient;
 import at.wrk.coceso.entity.enums.LogEntryType;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.service.*;
-import at.wrk.coceso.utils.Logger;
+import at.wrk.coceso.utils.CocesoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
@@ -74,11 +74,11 @@ public class SearchPatientController {
         try {
             concernId = Integer.parseInt(cid);
         } catch (NumberFormatException ne) {
-            Logger.debug(ne.getMessage());
+            CocesoLogger.debug(ne.getMessage());
             return new LinkedList<PatientModel>();
         }
 
-        Logger.info("SearchPatient: User " + user.getUsername() + " loaded patientdata of concern #" + concernId);
+        CocesoLogger.info("SearchPatient: User " + user.getUsername() + " loaded patientdata of concern #" + concernId);
 
         List<Patient> patients = patientService.getAll(concernId);
 

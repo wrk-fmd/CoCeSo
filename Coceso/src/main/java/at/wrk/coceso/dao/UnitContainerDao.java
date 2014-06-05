@@ -1,9 +1,8 @@
 package at.wrk.coceso.dao;
 
 import at.wrk.coceso.entity.helper.SlimUnit;
-import at.wrk.coceso.entity.helper.SlimUnitContainer;
 import at.wrk.coceso.entity.helper.UnitContainer;
-import at.wrk.coceso.utils.Logger;
+import at.wrk.coceso.utils.CocesoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -100,7 +99,7 @@ public class UnitContainerDao {
             Collections.sort(ordered);
             container.setUnits(ordered);
         } catch (DataAccessException dae) {
-            Logger.error(dae.getMessage());
+            CocesoLogger.error(dae.getMessage());
         }
     }
 
@@ -173,7 +172,7 @@ public class UnitContainerDao {
             return (Integer) holder.getKeys().get("id");
 
         } catch (DataAccessException dae) {
-            Logger.warning(dae.getMessage());
+            CocesoLogger.warning(dae.getMessage());
             return -1;
         }
     }
@@ -207,7 +206,7 @@ public class UnitContainerDao {
             return (Integer) holder.getKeys().get("id");
 
         } catch (DataAccessException dae) {
-            Logger.warning(dae.getMessage());
+            CocesoLogger.warning(dae.getMessage());
             return -1;
         }
     }
@@ -231,7 +230,7 @@ public class UnitContainerDao {
             //Logger.debug("container updated: "+container);
             return true;
         } catch (DataAccessException dae) {
-            Logger.error(dae.getMessage());
+            CocesoLogger.error(dae.getMessage());
             return false;
         }
     }
@@ -251,7 +250,7 @@ public class UnitContainerDao {
         try {
             jdbc.update(q, containerId, unitId, ordering);
         } catch (DataAccessException dae) {
-            Logger.error(dae.getMessage());
+            CocesoLogger.error(dae.getMessage());
             return false;
         }
         return true;
@@ -262,7 +261,7 @@ public class UnitContainerDao {
         try {
             jdbc.update(q, unitId);
         } catch (DataAccessException dae) {
-            Logger.error(dae.getMessage());
+            CocesoLogger.error(dae.getMessage());
         }
     }
 

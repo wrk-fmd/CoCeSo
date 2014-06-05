@@ -1,7 +1,7 @@
 package at.wrk.coceso.dao.mapper;
 
 import at.wrk.coceso.entity.enums.CocesoAuthority;
-import at.wrk.coceso.utils.Logger;
+import at.wrk.coceso.utils.CocesoLogger;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
@@ -16,7 +16,7 @@ public class RoleMapper implements RowMapper<CocesoAuthority> {
         try {
             return CocesoAuthority.valueOf(role);
         } catch (Exception e) {
-            Logger.error("RoleMapper: invalid: "+role);
+            CocesoLogger.error("RoleMapper: invalid: "+role);
             return null;
         }
     }

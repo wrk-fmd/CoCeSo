@@ -5,7 +5,7 @@ import at.wrk.coceso.entity.Operator;
 import at.wrk.coceso.entity.Patient;
 import at.wrk.coceso.service.IncidentService;
 import at.wrk.coceso.service.PatientService;
-import at.wrk.coceso.utils.Logger;
+import at.wrk.coceso.utils.CocesoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
@@ -63,7 +63,7 @@ public class PatientController implements IEntityController<Patient> {
         try {
             caseId = Integer.parseInt(case_id);
         } catch(NumberFormatException e) {
-            Logger.warning("PatientController: update: " + e);
+            CocesoLogger.warning("PatientController: update: " + e);
             return "{\"success\": false, \"info\":\"No active Concern. Cookies enabled?\"}";
         }
 

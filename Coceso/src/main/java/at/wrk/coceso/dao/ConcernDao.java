@@ -2,7 +2,7 @@ package at.wrk.coceso.dao;
 
 import at.wrk.coceso.dao.mapper.ConcernMapper;
 import at.wrk.coceso.entity.Concern;
-import at.wrk.coceso.utils.Logger;
+import at.wrk.coceso.utils.CocesoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
@@ -46,12 +46,12 @@ public class ConcernDao extends CocesoDao<Concern> {
             caze = jdbc.queryForObject(q, new Integer[] {id}, concernMapper);
         }
         catch(IncorrectResultSizeDataAccessException e) {
-            Logger.debug("ConcernDao.getById(int): requested id: "+id
+            CocesoLogger.debug("ConcernDao.getById(int): requested id: "+id
                     +"; IncorrectResultSizeDataAccessException: "+e.getMessage());
             return null;
         }
         catch(DataAccessException dae) {
-            Logger.warning("CaseDao.getById(int): requested id: "+id+"; DataAccessException: "+dae.getMessage());
+            CocesoLogger.warning("CaseDao.getById(int): requested id: "+id+"; DataAccessException: "+dae.getMessage());
             return null;
         }
 
@@ -73,7 +73,7 @@ public class ConcernDao extends CocesoDao<Concern> {
             return jdbc.query(q, concernMapper);
         }
         catch(DataAccessException dae) {
-            Logger.error("UnitDao.getAll: DataAccessException: "+dae.getMessage());
+            CocesoLogger.error("UnitDao.getAll: DataAccessException: "+dae.getMessage());
             return null;
         }
     }
@@ -155,7 +155,7 @@ public class ConcernDao extends CocesoDao<Concern> {
             return jdbc.query(q, concernMapper);
         }
         catch(DataAccessException dae) {
-            Logger.error("UnitDao.getAll: DataAccessException: "+dae.getMessage());
+            CocesoLogger.error("UnitDao.getAll: DataAccessException: "+dae.getMessage());
             return null;
         }
     }

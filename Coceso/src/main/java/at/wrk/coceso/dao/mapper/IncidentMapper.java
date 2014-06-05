@@ -7,7 +7,7 @@ import at.wrk.coceso.dao.TaskDao;
 import at.wrk.coceso.entity.*;
 import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.enums.IncidentType;
-import at.wrk.coceso.utils.Logger;
+import at.wrk.coceso.utils.CocesoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -42,14 +42,14 @@ public class IncidentMapper implements RowMapper<Incident> {
             inc.setState(IncidentState.valueOf(rs.getString("state")));
         }
         catch(NullPointerException e) {
-            Logger.error("IncidentMapper: incident_id:"+inc.getId()+", Cant read IncidentState, Reset To NULL");
+            CocesoLogger.error("IncidentMapper: incident_id:"+inc.getId()+", Cant read IncidentState, Reset To NULL");
             inc.setState(null);
         }
         try {
             inc.setType(IncidentType.valueOf(rs.getString("type")));
         }
         catch(NullPointerException e) {
-            Logger.error("IncidentMapper: incident_id:"+inc.getId()+", Cant read IncidentType, Reset To NULL");
+            CocesoLogger.error("IncidentMapper: incident_id:"+inc.getId()+", Cant read IncidentType, Reset To NULL");
             inc.setType(null);
         }
         // References

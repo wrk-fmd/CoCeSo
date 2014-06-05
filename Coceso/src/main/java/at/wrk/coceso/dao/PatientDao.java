@@ -2,7 +2,7 @@ package at.wrk.coceso.dao;
 
 import at.wrk.coceso.dao.mapper.PatientMapper;
 import at.wrk.coceso.entity.Patient;
-import at.wrk.coceso.utils.Logger;
+import at.wrk.coceso.utils.CocesoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
@@ -27,7 +27,7 @@ public class PatientDao extends CocesoDao<Patient> {
     @Override
     public Patient getById(int id) {
         if(id < 1) {
-            Logger.error("PatientDao.getById(int): Invalid ID: " + id);
+            CocesoLogger.error("PatientDao.getById(int): Invalid ID: " + id);
             return null;
         }
 
@@ -42,7 +42,7 @@ public class PatientDao extends CocesoDao<Patient> {
             return null;
         }
         catch(DataAccessException dae) {
-            Logger.warning("PatientDao.getById(int): requested id: "+id+"; DataAccessException: "+dae.getMessage());
+            CocesoLogger.warning("PatientDao.getById(int): requested id: "+id+"; DataAccessException: "+dae.getMessage());
             return null;
         }
 
@@ -126,7 +126,7 @@ public class PatientDao extends CocesoDao<Patient> {
         try {
             jdbc.update(q, parameters.toArray());
         } catch (DataAccessException dae) {
-            Logger.warning(dae.getMessage());
+            CocesoLogger.warning(dae.getMessage());
             return false;
         }
 
@@ -136,7 +136,7 @@ public class PatientDao extends CocesoDao<Patient> {
     @Override
     public int add(Patient patient) {
         if(patient == null || patient.getId() < 1) {
-            Logger.debug("PatientDao.add(): Invalid Parameter patient");
+            CocesoLogger.debug("PatientDao.add(): Invalid Parameter patient");
             return -1;
         }
         String q = "INSERT INTO patient (incident_fk, info, given_name, sur_name, external_id, " +
@@ -154,7 +154,7 @@ public class PatientDao extends CocesoDao<Patient> {
                     patient.getInsurance_number(),
                     patient.getSex());
         } catch(DataAccessException e) {
-            Logger.debug("TaskDao add: "+e);
+            CocesoLogger.debug("TaskDao add: "+e);
             return -1;
         }
         return patient.getId();
@@ -168,7 +168,7 @@ public class PatientDao extends CocesoDao<Patient> {
         try {
             jdbc.update(q, patient.getId());
         } catch (DataAccessException dae) {
-            Logger.warning("PatientDao.remove(): "+ dae.getMessage());
+            CocesoLogger.warning("PatientDao.remove(): "+ dae.getMessage());
             return false;
         }
 
