@@ -8,10 +8,15 @@
 
 # IDE files to ignore (Netbeans, Eclipse)
 nbproject
+nb-configuration.xml
+context.xml
 .classpath
 .project
 .settings
 build.xml
+
+# ignore database configuration
+coceso.properties
 
 # ignore generated .class files
 *.class
@@ -21,9 +26,3 @@ target
 
 # except this file
 !.gitignore
-
-# ignore real conf files
-conf/configuration.php
-
-# ignore caches
-prototype_cake/app/tmp
