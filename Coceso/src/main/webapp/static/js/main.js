@@ -824,9 +824,9 @@ Coceso.Models.Incident = function(data) {
   this.bo = {info: ko.observable("")};
   this.units = ko.observableArray([]);
   this.blue = ko.observable(false);
-  this.caller = ko.observable(null);
-  this.casusNr = ko.observable(null);
-  this.info = ko.observable(null);
+  this.caller = ko.observable("");
+  this.casusNr = ko.observable("");
+  this.info = ko.observable("");
   this.state = ko.observable(Coceso.Constants.Incident.state.new);
   this.type = ko.observable(Coceso.Constants.Incident.type.task);
 
@@ -872,9 +872,9 @@ Coceso.Models.Incident = function(data) {
       self.units([]);
     }
     self.blue(data.blue || false);
-    self.caller(data.caller || null);
-    self.casusNr(data.casusNr || null);
-    self.info(data.info || null);
+    self.caller(data.caller || "");
+    self.casusNr(data.casusNr || "");
+    self.info(data.info || "");
     self.state(data.state || Coceso.Constants.Incident.state.new);
     self.type(data.type || Coceso.Constants.Incident.type.task);
   };
@@ -1277,7 +1277,7 @@ Coceso.Models.Unit = function(data) {
   this.home = {info: ko.observable("")};
   this.position = {info: ko.observable("")};
   this.incidents = ko.observableArray([]);
-  this.info = ko.observable(null);
+  this.info = ko.observable("");
   this.state = ko.observable(Coceso.Constants.Unit.state.ad);
 
   /**
@@ -1321,7 +1321,7 @@ Coceso.Models.Unit = function(data) {
     } else {
       self.incidents([]);
     }
-    self.info(data.info || null);
+    self.info(data.info || "");
     self.state(data.state || Coceso.Constants.Unit.state.ad);
   };
 
@@ -1834,13 +1834,13 @@ Coceso.Models.Patient = function(data) {
 
   //Create basic properties
   this.id = data.id;
-  this.given_name = ko.observable(null);
-  this.sur_name = ko.observable(null);
-  this.insurance_number = ko.observable(null);
-  this.diagnosis = ko.observable(null);
-  this.erType = ko.observable(null);
-  this.info = ko.observable(null);
-  this.externalID = ko.observable(null);
+  this.given_name = ko.observable("");
+  this.sur_name = ko.observable("");
+  this.insurance_number = ko.observable("");
+  this.diagnosis = ko.observable("");
+  this.erType = ko.observable("");
+  this.info = ko.observable("");
+  this.externalID = ko.observable("");
   this.sex = ko.observable("u");
 
   /**
@@ -1850,13 +1850,13 @@ Coceso.Models.Patient = function(data) {
    * @returns {void}
    */
   this.setData = function(data) {
-    self.given_name(data.given_name || null);
-    self.sur_name(data.sur_name || null);
-    self.insurance_number(data.insurance_number || null);
-    self.diagnosis(data.diagnosis || null);
-    self.erType(data.erType || null);
-    self.info(data.info || null);
-    self.externalID(data.externalID || null);
+    self.given_name(data.given_name || "");
+    self.sur_name(data.sur_name || "");
+    self.insurance_number(data.insurance_number || "");
+    self.diagnosis(data.diagnosis || "");
+    self.erType(data.erType || "");
+    self.info(data.info || "");
+    self.externalID(data.externalID || "");
     self.sex(data.sex || "u");
   };
 
