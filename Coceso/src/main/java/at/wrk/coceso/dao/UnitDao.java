@@ -153,7 +153,7 @@ public class UnitDao extends CocesoDao<Unit> {
                 q += ",";
             }
             q += " position_point_fk = " + (unit.getPosition().getId() == -2 ? "null" : unit.getPosition().getId());
-            //first = false;
+            first = false;
         }
         /*if(unit.getHome() != null) {
             if(!first) {

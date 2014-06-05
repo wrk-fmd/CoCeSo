@@ -4,7 +4,9 @@ package at.wrk.coceso.controller.data;
 import at.wrk.coceso.entity.Operator;
 import at.wrk.coceso.entity.Point;
 import at.wrk.coceso.entity.Unit;
+import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.service.UnitService;
+import at.wrk.coceso.service.TaskService;
 import at.wrk.coceso.utils.CocesoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Controller
@@ -25,6 +28,9 @@ public class UnitController {
 
     @Autowired
     private UnitService unitService;
+
+    @Autowired
+    TaskService taskService;
 
     @RequestMapping(value = "getAll", produces = "application/json")
     @ResponseBody
@@ -165,9 +171,20 @@ public class UnitController {
             associated = setAssociated(unit, user);
 
         //log.logFull(user, "Unit updated", caseId, unit, null, true);
-        boolean success = unitService.update(unit, user);
-        return new ResponseEntity<String>("{\"success\": " + success + ", \"new\": false}",
-                success ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<String>("{\"success\": " + ret + ", \"new\": false}",
+                ret ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
+    }
+
+    protected String setAssociated(Unit unit, Operator user) {
+      String messages = "{";
+      for (Map.Entry<Integer,TaskState> entry : unit.getIncidents().entrySet()) {
+        if (messages.length() > 1) {
+          messages += ",";
+        }
+        messages += "\"" + entry.getKey() + "\":" + taskService.changeState(entry.getKey(), unit.getId(), entry.getValue(), user);
+      }
+      messages += "}";
+      return messages;
     }
 
     @RequestMapping(value = "updateFull", produces = "application/json", method = RequestMethod.POST)

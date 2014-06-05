@@ -110,14 +110,10 @@ public class TaskService {
         // Assign Unit if TaskState is Assigned
         if(tmp == null) { // Not Assigned
             assignUnit(incident_id, unit_id, user);
-        else if(tmp == null) {
-            CocesoLogger.debug("TaskService.changeState(): Unit not assigned, new State is not 'Assigned'. unit #" + unit_id +
-                    ", incident #" + incident_id);
-            return false;
         }
 //Allow direct setting for any state
 //        else if(tmp == null) {
-//            Logger.debug("TaskService.changeState(): Unit not assigned, new State is not 'Assigned'. unit #" + unit_id +
+//            CocesoLogger.debug("TaskService.changeState(): Unit not assigned, new State is not 'Assigned'. unit #" + unit_id +
 //                    ", incident #" + incident_id);
 //            return false;
 //        }
