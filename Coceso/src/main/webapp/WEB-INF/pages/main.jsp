@@ -59,8 +59,6 @@
       Coceso.Conf.contentBase = "${pageContext.request.contextPath}/main/";
       Coceso.Conf.langBase = "${pageContext.request.contextPath}/static/i18n/";
       Coceso.Conf.language = "<spring:message code="this.languageCode" />";
-      Coceso.Conf.keyboardControl = true;
-      Coceso.Conf.debug = true;
       Coceso.startup();
       Coceso.UI.openHierarchyUnits("<spring:message code="label.units"/>: <spring:message code="label.main.unit.hierarchy"/>");
       Coceso.UI.openIncidents("<spring:message code='label.main.incident.active' />", {filter: ['overview', 'active']}, {position: {at: "left+70% top"}});
