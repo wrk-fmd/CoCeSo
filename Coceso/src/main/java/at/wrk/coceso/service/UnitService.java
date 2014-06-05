@@ -9,6 +9,7 @@ import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.LogEntryType;
 import at.wrk.coceso.entity.enums.TaskState;
+import at.wrk.coceso.utils.CocesoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,6 +51,9 @@ public class UnitService {
 
     public boolean update(Unit unit, Operator operator) {
         boolean ret = update(unit);
+        if(!ret) {
+            CocesoLogger.info("Update of Unit #" + unit.getId() + " by User " + operator.getUsername() + " failed");
+        }
         logService.logFull(operator, LogEntryType.UNIT_UPDATE, unit.getConcern(), unit, null, true);
         return ret;
     }
@@ -60,6 +64,9 @@ public class UnitService {
 
     public boolean updateFull(Unit unit, Operator operator) {
         boolean ret = updateFull(unit);
+        if(!ret) {
+            CocesoLogger.info("Full Update of Unit #" + unit.getId() + " by User " + operator.getUsername() + " failed");
+        }
         // UNIT_CREATE for difference in Log -> so it can be deleted, if Unit is only updated via Edit Page
         logService.logFull(operator, LogEntryType.UNIT_CREATE, unit.getConcern(), unit, null, true);
         return ret;
@@ -133,7 +140,6 @@ public class UnitService {
 
 
         toHome.setId(incidentService.add(toHome, user));
-        //log.logFull(user, LogText.SEND_HOME_ASSIGN, activeCase, unit, toHome, true);
         taskService.changeState(toHome.getId(), unitId, TaskState.Assigned, user);
 
         return true;
@@ -151,7 +157,6 @@ public class UnitService {
         inc.setAo(unit.getPosition());
 
         inc.setId(incidentService.add(inc, user));
-        //log.logFull(user, LogText.SEND_HOME_ASSIGN, activeCase, unit, toHome, true);
         taskService.changeState(inc.getId(), unitId, TaskState.Assigned, user);
 
         return true;
@@ -169,7 +174,6 @@ public class UnitService {
         inc.setAo(unit.getPosition());
 
         inc.setId(incidentService.add(inc, user));
-        //log.logFull(user, LogText.SEND_HOME_ASSIGN, activeCase, unit, toHome, true);
         taskService.changeState(inc.getId(), unitId, TaskState.Assigned, user);
 
         return true;

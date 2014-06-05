@@ -2,7 +2,7 @@ package at.wrk.coceso.dao;
 
 import at.wrk.coceso.dao.mapper.RoleMapper;
 import at.wrk.coceso.entity.enums.CocesoAuthority;
-import at.wrk.coceso.utils.Logger;
+import at.wrk.coceso.utils.CocesoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -42,7 +42,7 @@ public class RoleDao {
 
     public boolean add(int operator_fk, CocesoAuthority authority) {
         if(operator_fk <= 0 || authority == null){
-            Logger.debug("RoleDao: Invalid values: op_fk:"+operator_fk+", authority:"+authority);
+            CocesoLogger.debug("RoleDao: Invalid values: op_fk:"+operator_fk+", authority:"+authority);
             return false;
         }
 
@@ -51,7 +51,7 @@ public class RoleDao {
         try {
             jdbc.update(q, operator_fk, authority.name());
         } catch (DataAccessException dae) {
-            Logger.debug("RoleDao.add(): "+dae.getMessage());
+            CocesoLogger.debug("RoleDao.add(): "+dae.getMessage());
         }
 
         return true;

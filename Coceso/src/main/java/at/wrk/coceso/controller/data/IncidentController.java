@@ -6,7 +6,7 @@ import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.service.IncidentService;
 import at.wrk.coceso.service.TaskService;
-import at.wrk.coceso.utils.Logger;
+import at.wrk.coceso.utils.CocesoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +41,7 @@ public class IncidentController implements IEntityController<Incident> {
         try {
             return incidentService.getAll(Integer.parseInt(case_id));
         } catch(NumberFormatException e) {
-            Logger.warning("IncidentController: getAll: " + e);
+            CocesoLogger.warning("IncidentController: getAll: " + e);
             return null;
         }
     }
@@ -53,7 +53,7 @@ public class IncidentController implements IEntityController<Incident> {
         try {
             return incidentService.getAllActive(Integer.parseInt(case_id));
         } catch(NumberFormatException e) {
-            Logger.warning("IncidentController: getAll: " + e);
+            CocesoLogger.warning("IncidentController: getAll: " + e);
             return null;
         }
     }
@@ -65,7 +65,7 @@ public class IncidentController implements IEntityController<Incident> {
         try {
             return incidentService.getAllRelevant(Integer.parseInt(case_id));
         } catch(NumberFormatException e) {
-            Logger.warning("IncidentController: getAll: " + e);
+            CocesoLogger.warning("IncidentController: getAll: " + e);
             return null;
         }
     }
@@ -78,7 +78,7 @@ public class IncidentController implements IEntityController<Incident> {
         try {
             return incidentService.getAllByState(Integer.parseInt(case_id), IncidentState.valueOf(s_state));
         } catch(NumberFormatException e) {
-            Logger.warning("IncidentController: getAll: " + e);
+            CocesoLogger.warning("IncidentController: getAll: " + e);
             return null;
         } catch (IllegalArgumentException e) {
             return null;

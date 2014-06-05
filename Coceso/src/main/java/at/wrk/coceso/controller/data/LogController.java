@@ -6,7 +6,7 @@ import at.wrk.coceso.entity.LogEntry;
 import at.wrk.coceso.entity.Operator;
 import at.wrk.coceso.entity.enums.LogEntryType;
 import at.wrk.coceso.service.LogService;
-import at.wrk.coceso.utils.Logger;
+import at.wrk.coceso.utils.CocesoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
@@ -34,7 +34,7 @@ public class LogController {
         try {
             case_id = Integer.parseInt(caze);
         }catch (NumberFormatException e) {
-            Logger.debug(e.getMessage());
+            CocesoLogger.debug(e.getMessage());
             return new LinkedList<LogEntry>();
         }
         return dao.getAll(case_id);
@@ -47,7 +47,7 @@ public class LogController {
         try {
             case_id = Integer.parseInt(caze);
         }catch (NumberFormatException e) {
-            Logger.debug(e.getMessage());
+            CocesoLogger.debug(e.getMessage());
             return new LinkedList<LogEntry>();
         }
         return dao.getCustom(case_id);
@@ -67,7 +67,7 @@ public class LogController {
         try {
             case_id = Integer.parseInt(caze);
         }catch (NumberFormatException e) {
-            Logger.debug(e.getMessage());
+            CocesoLogger.debug(e.getMessage());
             return null;
         }
 

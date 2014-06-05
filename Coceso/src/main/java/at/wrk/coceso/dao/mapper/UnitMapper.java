@@ -6,7 +6,7 @@ import at.wrk.coceso.dao.PointDao;
 import at.wrk.coceso.dao.TaskDao;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.enums.UnitState;
-import at.wrk.coceso.utils.Logger;
+import at.wrk.coceso.utils.CocesoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -45,7 +45,7 @@ public class UnitMapper implements RowMapper<Unit> {
             unit.setState(UnitState.valueOf(rs.getString("state")));
         }
         catch(IllegalArgumentException e) {
-            Logger.error("IncidentMapper: incident_id:" + unit.getId() + ", Cant read UnitState, Reset To NULL");
+            CocesoLogger.error("IncidentMapper: incident_id:" + unit.getId() + ", Cant read UnitState, Reset To NULL");
             unit.setState(null);
         }
 

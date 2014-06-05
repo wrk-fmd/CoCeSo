@@ -6,7 +6,6 @@ import at.wrk.coceso.entity.Person;
 import at.wrk.coceso.entity.Point;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.enums.UnitState;
-import at.wrk.coceso.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -21,9 +20,12 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
+import java.util.logging.Logger;
 
 @Repository
 public class UnitDao extends CocesoDao<Unit> {
+
+    Logger logger = Logger.getLogger("CoCeSo");
 
     @Autowired
     UnitMapper unitMapper;
@@ -45,7 +47,7 @@ public class UnitDao extends CocesoDao<Unit> {
     @Override
     public Unit getById(int id) {
         if(id < 1) {
-            Logger.error("UnitDao.getById(int): Invalid ID: " + id);
+            logger.severe("Invalid ID: " + id);
             return null;
         }
 
@@ -56,7 +58,7 @@ public class UnitDao extends CocesoDao<Unit> {
             unit = jdbc.queryForObject(q, new Integer[] {id}, unitMapper);
         }
         catch(DataAccessException dae) {
-            Logger.error("UnitDao.getById(int): requested id: "+id+"; DataAccessException: "+dae.getMessage());
+            logger.severe("requested id: "+id+"; DataAccessException: "+dae.getMessage());
             return null;
         }
 
@@ -66,7 +68,7 @@ public class UnitDao extends CocesoDao<Unit> {
     @Override
     public List<Unit> getAll(int concern_id) {
         if(concern_id < 1) {
-            Logger.warning("UnitDao.getAll: invalid concern_id: "+concern_id);
+            logger.warning("invalid concern_id: "+concern_id);
             return null;
         }
         String q = "SELECT * FROM unit WHERE concern_fk = ? ORDER BY id ASC";
@@ -75,7 +77,7 @@ public class UnitDao extends CocesoDao<Unit> {
             return jdbc.query(q, new Object[] {concern_id}, unitMapper);
         }
         catch(DataAccessException dae) {
-            Logger.error("UnitDao.getAll: DataAccessException: "+dae.getMessage());
+            logger.severe(dae.getMessage());
             return null;
         }
     }
@@ -116,11 +118,11 @@ public class UnitDao extends CocesoDao<Unit> {
     @Override
     public boolean update(Unit unit) {
         if(unit == null) {
-            Logger.error("UnitDao.update(Unit): unit is NULL");
+            logger.severe("unit is NULL");
             return false;
         }
         if(unit.getId() <= 0) {
-            Logger.error("UnitDao.update(Unit): Invalid id: " + unit.getId() + ", call: "+ unit.getCall());
+            logger.severe("Invalid id: " + unit.getId() + ", call: "+ unit.getCall());
             return false;
         }
 
@@ -161,6 +163,13 @@ public class UnitDao extends CocesoDao<Unit> {
             // first = false;
         }*/
         q += suf_q;
+
+        // Nothing to update
+        if(first) {
+            logger.warning("Tried to update empty Unit: id="+unit.getId());
+            return false;
+        }
+
         try {
             if(info_given) {
                 jdbc.update(q, unit.getInfo());
@@ -170,7 +179,7 @@ public class UnitDao extends CocesoDao<Unit> {
             }
         }
         catch(DataAccessException dae) {
-            Logger.error("UnitDao.update(Unit): DataAccessException: " + dae.getMessage());
+            logger.severe("DataAccessException: " + dae.getMessage());
             return false;
         }
         return true;
@@ -178,11 +187,11 @@ public class UnitDao extends CocesoDao<Unit> {
 
     public boolean updateFull(Unit unit) {
         if(unit == null) {
-            Logger.error("UnitDao.updateFull(Unit): unit is NULL");
+            logger.severe("unit is NULL");
             return false;
         }
         if(unit.getId() <= 0) {
-            Logger.error("UnitDao.updateFull(Unit): Invalid id: " + unit.getId() + ", call: "+ unit.getCall());
+            logger.severe("Invalid id: " + unit.getId() + ", call: "+ unit.getCall());
             return false;
         }
 
@@ -207,7 +216,7 @@ public class UnitDao extends CocesoDao<Unit> {
                     unit.getId());
         }
         catch(DataAccessException dae) {
-            Logger.error("UnitDao.updateFull(Unit): DataAccessException: " + dae.getMessage());
+            logger.severe("DataAccessException: " + dae.getMessage());
             return false;
         }
         return true;
@@ -216,11 +225,11 @@ public class UnitDao extends CocesoDao<Unit> {
     @Override
     public int add(Unit uunit) {
         if(uunit == null) {
-            Logger.error("UnitDao.add(Unit): unit is NULL");
+            logger.severe("unit is NULL");
             return -1;
         }
         if(uunit.getConcern() == null || uunit.getConcern() <= 0) {
-            Logger.error("UnitDao.add(Unit): No concern given. call: " + uunit.getCall());
+            logger.severe("No concern given. call: " + uunit.getCall());
             return -1;
         }
 
@@ -275,7 +284,7 @@ public class UnitDao extends CocesoDao<Unit> {
             return (Integer) holder.getKeys().get("id");
         }
         catch (DataAccessException dae) {
-            Logger.error("UnitDao.add(Unit): call: "+ unit.getCall() +"; DataAccessException: "+dae.getMessage());
+            logger.severe("call: "+ unit.getCall() +"; DataAccessException: "+dae.getMessage());
             return -1;
         }
 
@@ -284,14 +293,21 @@ public class UnitDao extends CocesoDao<Unit> {
     @Override
     public boolean remove(Unit unit) {
         if(unit == null) {
-            Logger.error("UnitDao.remove(Unit): unit is NULL");
+            logger.severe("unit is NULL");
             return false;
         }
         if(unit.getId() <= 0) {
-            Logger.error("UnitDao.remove(Unit): invalid id: " + unit.getId() + ", call: " + unit.getCall());
+            logger.severe("invalid id: " + unit.getId() + ", call: " + unit.getCall());
             return false;
         }
+
+        // Load from DB for Security Reasons. => Concern cannot be faked and all fields are loaded
+        logger.info("Load current unit from DB");
+        unit = getById(unit.getId());
+
+
         if(getNonDeletable(unit.getConcern()).contains(unit.getId())) {
+            logger.warning("tried to remove non-deletable Unit");
             return false;
         }
         logDao.updateForRemoval(unit.getId());
@@ -301,18 +317,24 @@ public class UnitDao extends CocesoDao<Unit> {
             jdbc.update(q, unit.getId());
         }
         catch (DataAccessException dae) {
-            Logger.debug("UnitDao.remove(Unit): id: " + unit.getId() + "; DataAccessException: " + dae.getMessage());
+            logger.fine("UnitDao.remove(Unit): id: " + unit.getId() + "; DataAccessException: " + dae.getMessage());
             return false;
         }
 
+        logger.info("Unit removed. ID=" + unit.getId());
         return true;
     }
 
-    public Set<Integer> getNonDeletable(int caseId) {
+    /**
+     * Returns Integer-Set of Unit IDs, that are already used by the Main Application and cannot be removed anymore
+     * @param concernId ID of Concern, in that all Units are checked
+     * @return Integer-Set of Unit IDs
+     */
+    public Set<Integer> getNonDeletable(int concernId) {
         String q = "SELECT DISTINCT u.id FROM unit u, log l WHERE u.id = l.unit_fk AND l.concern_fk = ? " +
                 "AND (l.type != 'UNIT_CREATE' OR l.type IS NULL)";
 
-        SqlRowSet rs = jdbc.queryForRowSet(q, caseId);
+        SqlRowSet rs = jdbc.queryForRowSet(q, concernId);
 
         Set<Integer> ret = new HashSet<Integer>();
 

@@ -6,7 +6,7 @@
  */
 
 var jsonBase = "";
-var model = new ViewModel();
+var model = new ContainerViewModel();
 
 function SlimUnit(data) {
     this.id = data.id;
@@ -105,7 +105,7 @@ function Container(data) {
     };
 }
 
-function ViewModel() {
+function ContainerViewModel() {
     var self = this;
 
     self.spareUnits = ko.observableArray([]);

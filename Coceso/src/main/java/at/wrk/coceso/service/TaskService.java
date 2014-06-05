@@ -8,7 +8,7 @@ import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.LogEntryType;
 import at.wrk.coceso.entity.enums.TaskState;
-import at.wrk.coceso.utils.Logger;
+import at.wrk.coceso.utils.CocesoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,12 +35,12 @@ public class TaskService {
 
         // Not in same Concern; HoldPosition and Standby can't be assigned to multiple Units
         if(!i.getConcern().equals(u.getConcern())) {
-            Logger.warning("TaskService.assignUnit(): Unit and Incident in different Concerns!");
+            CocesoLogger.warning("TaskService.assignUnit(): Unit and Incident in different Concerns!");
             return false;
         }
 
         if(i.getType().isSingleUnit() && i.getUnits().size() > 0) {
-            Logger.debug("TaskService.assignUnit(): Tried to assign multiple Units to Single Unit Incident");
+            CocesoLogger.debug("TaskService.assignUnit(): Tried to assign multiple Units to Single Unit Incident");
             return false;
         }
 
@@ -48,9 +48,9 @@ public class TaskService {
         for(Integer incId : u.getIncidents().keySet()) {
             Incident inc = incidentService.getById(incId);
             if(inc.getType().isSingleUnit() || inc.getType() == IncidentType.Relocation) {
-                Logger.debug("TaskService.assignUnit(): Auto-detach unit #" + unit_id + ", incident #" + incId);
+                CocesoLogger.debug("TaskService.assignUnit(): Auto-detach unit #" + unit_id + ", incident #" + incId);
                 if(inc.getType() != IncidentType.Relocation) {
-                    Logger.debug("TaskService.assignUnit(): Auto-set incident #" + incId + " to state 'Done'");
+                    CocesoLogger.debug("TaskService.assignUnit(): Auto-set incident #" + incId + " to state 'Done'");
                     inc.setState(IncidentState.Done);
                 }
                 incidentService.update(inc, user);
@@ -86,20 +86,20 @@ public class TaskService {
     }
 
     public synchronized boolean changeState(int incident_id, int unit_id, TaskState state, Operator user) {
-        Logger.debug("TaskService.changeState(): User " + user.getUsername() + " triggered update of unit #" + unit_id +
+        CocesoLogger.debug("TaskService.changeState(): User " + user.getUsername() + " triggered update of unit #" + unit_id +
                 " and incident #" + incident_id + " to TaskState '" + state + "'");
 
         Incident i = incidentService.getById(incident_id);
         Unit u = unitService.getById(unit_id);
 
         if(i == null || u == null) {
-            Logger.debug("TaskService.changeState(): Combination not found. unit #" + unit_id + " ==null: " + (u == null) +
+            CocesoLogger.debug("TaskService.changeState(): Combination not found. unit #" + unit_id + " ==null: " + (u == null) +
                     ", incident #" + incident_id + " ==null: " + (i == null));
             return false;
         }
 
         if(!i.getConcern().equals(u.getConcern())) {    // Not in same Concern
-            Logger.warning("TaskService.changeState(): Combination in different concerns. unit #" + unit_id +
+            CocesoLogger.warning("TaskService.changeState(): Combination in different concerns. unit #" + unit_id +
                     ", incident #" + incident_id);
             return false;
         }
@@ -119,7 +119,7 @@ public class TaskService {
 //        }
 
         if(!i.getType().isPossibleState(state)) {
-            Logger.warning("TaskService.changeState(): new State not possible, cancel Request. unit #" + unit_id +
+            CocesoLogger.warning("TaskService.changeState(): new State not possible, cancel Request. unit #" + unit_id +
                     ", incident #" + incident_id);
             return false;
         }

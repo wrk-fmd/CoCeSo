@@ -5,7 +5,8 @@ import org.springframework.stereotype.Service;
 import java.util.logging.*; // cannot import Logger only, because of the class name conflict!
 
 @Service
-public class Logger {
+@Deprecated
+public class CocesoLogger {
     private static final String WARNING_PREFIX = "";
     private static final String ERROR_PREFIX = "";
     private static final String INFO_PREFIX = "";

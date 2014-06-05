@@ -1,17 +1,15 @@
 package at.wrk.coceso.controller.pdf;
 
 import at.wrk.coceso.dao.ConcernDao;
-import at.wrk.coceso.dao.PatientDao;
 import at.wrk.coceso.entity.*;
 import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.LogEntryType;
-import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entity.helper.JsonContainer;
 import at.wrk.coceso.service.IncidentService;
 import at.wrk.coceso.service.LogService;
 import at.wrk.coceso.service.PatientService;
 import at.wrk.coceso.service.UnitService;
-import at.wrk.coceso.utils.Logger;
+import at.wrk.coceso.utils.CocesoLogger;
 import at.wrk.coceso.utils.PdfStyle;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
@@ -84,7 +82,7 @@ public class FinalReportController {
             throw new ConcernNotFoundException();
         }
 
-        Logger.info("User " + user.getUsername() + " requested Final Report for Concern #" + id + " (" + concern.getName() + ")");
+        CocesoLogger.info("User " + user.getUsername() + " requested Final Report for Concern #" + id + " (" + concern.getName() + ")");
 
         // Load all data
 
@@ -116,14 +114,14 @@ public class FinalReportController {
 
             // TODO Custom Log History
 
-            Logger.info("Final Report for Concern #" + id + " (" + concern.getName() + ") completely written");
+            CocesoLogger.info("Final Report for Concern #" + id + " (" + concern.getName() + ") completely written");
 
         }
         catch(IOException e) {
-            Logger.error("FinalReportController.print(): " + e.getMessage());
+            CocesoLogger.error("FinalReportController.print(): " + e.getMessage());
         }
         catch(DocumentException e) {
-            Logger.error("FinalReportController.print(): "+e.getMessage());
+            CocesoLogger.error("FinalReportController.print(): "+e.getMessage());
         }
         finally {
             document.close();
@@ -295,7 +293,7 @@ public class FinalReportController {
                     Incident tIncident = jsonContainer.getIncident();
 
                     if(tUnit == null) {
-                        Logger.debug("FinalReportController: Parsing Error???");
+                        CocesoLogger.debug("FinalReportController: Parsing Error???");
                         continue;
                     }
 
@@ -316,7 +314,7 @@ public class FinalReportController {
                     }
 
                 } catch (IOException e) {
-                    Logger.warning(e.getMessage());
+                    CocesoLogger.warning(e.getMessage());
                 }
 
 
@@ -457,7 +455,7 @@ public class FinalReportController {
                     Incident tIncident = jsonContainer.getIncident();
 
                     if(tIncident == null) {
-                        Logger.debug("FinalReportController: Parsing Error???");
+                        CocesoLogger.debug("FinalReportController: Parsing Error???");
                         continue;
                     }
 
@@ -482,7 +480,7 @@ public class FinalReportController {
                     }
 
                 } catch (IOException e) {
-                    Logger.warning(e.getMessage());
+                    CocesoLogger.warning(e.getMessage());
                 }
 
 

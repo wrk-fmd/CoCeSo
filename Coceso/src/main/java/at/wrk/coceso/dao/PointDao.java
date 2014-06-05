@@ -2,7 +2,7 @@ package at.wrk.coceso.dao;
 
 import at.wrk.coceso.dao.mapper.PointMapper;
 import at.wrk.coceso.entity.Point;
-import at.wrk.coceso.utils.Logger;
+import at.wrk.coceso.utils.CocesoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -42,7 +42,7 @@ public class PointDao extends CocesoDao<Point> {
             poi = jdbc.queryForObject(q, new Integer[] {id}, pointMapper);
         }
         catch(DataAccessException dae) {
-            Logger.error("PoiDao.getById(int): requested id: "+id+"; DataAccessException: "+dae.getMessage());
+            CocesoLogger.error("PoiDao.getById(int): requested id: "+id+"; DataAccessException: "+dae.getMessage());
             return null;
         }
 
@@ -67,7 +67,7 @@ public class PointDao extends CocesoDao<Point> {
             return list.get(0);
         }
         catch(DataAccessException dae) {
-            Logger.error("PoiDao.getByInfo: requested id: "+info+"; DataAccessException: "+dae.getMessage());
+            CocesoLogger.error("PoiDao.getByInfo: requested id: "+info+"; DataAccessException: "+dae.getMessage());
             return null;
         }
     }
@@ -86,7 +86,7 @@ public class PointDao extends CocesoDao<Point> {
             return jdbc.query(q, pointMapper);
         }
         catch(DataAccessException dae) {
-            Logger.error("PoiDao.getAll(): DataAccessException: "+dae.getMessage());
+            CocesoLogger.error("PoiDao.getAll(): DataAccessException: "+dae.getMessage());
             return null;
         }
 
@@ -95,7 +95,7 @@ public class PointDao extends CocesoDao<Point> {
     @Override
     public boolean update(Point poi) {
         if(poi == null) {
-            Logger.debug("PoiDao.update(): poi is NULL");
+            CocesoLogger.debug("PoiDao.update(): poi is NULL");
             return false;
         }
         if(poi.getId() <= 0) {
@@ -110,7 +110,7 @@ public class PointDao extends CocesoDao<Point> {
             jdbc.update(q, poi.getInfo(), poi.getLongitude(), poi.getLatitude(), poi.getId());
         }
         catch(DataAccessException dae) {
-            Logger.error("PoiDao.update(): DataAccessException: " + dae.getMessage());
+            CocesoLogger.error("PoiDao.update(): DataAccessException: " + dae.getMessage());
             return false;
         }
         return true;
@@ -119,7 +119,7 @@ public class PointDao extends CocesoDao<Point> {
     @Override
     public int add(final Point poi) {
         if(poi == null) {
-            Logger.debug("PoiDao.add(): poi is NULL");
+            CocesoLogger.debug("PoiDao.add(): poi is NULL");
             return -1;
         }
 
@@ -149,7 +149,7 @@ public class PointDao extends CocesoDao<Point> {
             return (Integer) holder.getKeys().get("id");
         }
         catch(DataAccessException dae) {
-            Logger.error("PoiDao.add(): DataAccessException: " + dae.getMessage());
+            CocesoLogger.error("PoiDao.add(): DataAccessException: " + dae.getMessage());
             return -1;
         }
     }
@@ -157,11 +157,11 @@ public class PointDao extends CocesoDao<Point> {
     @Override
     public boolean remove(Point poi) {
         if(poi == null) {
-            Logger.error("PoiDao.remove(): poi is NULL");
+            CocesoLogger.error("PoiDao.remove(): poi is NULL");
             return false;
         }
         if(poi.getId() <= 0) {
-            Logger.error("PoiDao.remove(): Invalid id: " + poi.getId());
+            CocesoLogger.error("PoiDao.remove(): Invalid id: " + poi.getId());
             return false;
         }
 
@@ -171,7 +171,7 @@ public class PointDao extends CocesoDao<Point> {
             jdbc.update(q, poi.getId());
         }
         catch(DataAccessException dae) {
-            Logger.error("PoiDao.update(): DataAccessException: " + dae.getMessage());
+            CocesoLogger.error("PoiDao.update(): DataAccessException: " + dae.getMessage());
             return false;
         }
         return true;

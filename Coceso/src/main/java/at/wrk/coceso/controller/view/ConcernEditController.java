@@ -1,13 +1,12 @@
 package at.wrk.coceso.controller.view;
 
-import at.wrk.coceso.dao.ConcernDao;
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Operator;
 import at.wrk.coceso.entity.Point;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.service.ConcernService;
 import at.wrk.coceso.service.UnitService;
-import at.wrk.coceso.utils.Logger;
+import at.wrk.coceso.utils.CocesoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
@@ -79,7 +78,7 @@ public class ConcernEditController {
         try {
             id = Integer.parseInt(c_id);
         } catch(NumberFormatException nfe) {
-            Logger.debug("ConcernEditController: "+nfe.getMessage());
+            CocesoLogger.debug("ConcernEditController: "+nfe.getMessage());
             return return_address_error;
         }
 
@@ -151,7 +150,7 @@ public class ConcernEditController {
             unitService.remove(unit, user);
         }
         else {
-            Logger.error("CreateController: updateUnit wrong submit button");
+            CocesoLogger.error("CreateController: updateUnit wrong submit button");
         }
 
         return "redirect:/edit";
@@ -228,7 +227,7 @@ public class ConcernEditController {
         try {
             id = Integer.parseInt(c_id);
         } catch(NumberFormatException nfe) {
-            Logger.debug("ConcernEditController: "+nfe.getMessage());
+            CocesoLogger.debug("ConcernEditController: "+nfe.getMessage());
             return return_address_error;
         }
 
