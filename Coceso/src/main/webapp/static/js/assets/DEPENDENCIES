@@ -28,7 +28,6 @@ Draggable:     main/templates.jsp (via knockout.extensions.js)
 Droppable:     main/incident.jsp, main/incident_form.jsp (via knockout.extensions.js)
 Sortable:      knockout.sortable.js
 Dialog:        main.jsp (via jquery.ui.winman.js): Version 1.9.2 with edit!
-Buttonset:     main/incident_form.jsp, main/unit_form.jsp; CSS only, to be replaced with bootstrap buttons
 
 Touch-Punch:   all pages with draggable, sortable, dialog
 Winman:        main.jsp (via main.js)
