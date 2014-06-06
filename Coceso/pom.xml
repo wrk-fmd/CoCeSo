@@ -4,7 +4,7 @@
     <groupId>at.wrk</groupId>
     <artifactId>coceso</artifactId>
     <packaging>war</packaging>
-    <version>1.0.2</version>
+    <version>1.1.0</version>
     <name>Coceso</name>
 
     <properties>
@@ -146,7 +146,7 @@
                     <target>1.6</target>
                 </configuration>
             </plugin>
-            
+
             <!-- For JUnit Tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
