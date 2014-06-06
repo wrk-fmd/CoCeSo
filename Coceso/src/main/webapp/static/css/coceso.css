@@ -117,91 +117,6 @@ body > .ajax_content {
   padding: 0.5em;
 }
 
-label.ui-button {
-  font-weight: normal;
-}
-
-input.ui-helper-hidden-accessible:focus + label.ui-button {
-  /* same as bootstrap.css:1943ff */
-  border-color: #66AFE9;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(102, 175, 233, 0.6);
-  outline: 0 none;
-}
-
-.ui-button.ui-state-active {
-  color: #ffffff;
-  background-color: #0064cd;
-  background-repeat: repeat-x;
-  background-image: -khtml-gradient(linear, left top, left bottom, from(#049cdb), to(#0064cd));
-  background-image: -moz-linear-gradient(top, #049cdb, #0064cd);
-  background-image: -ms-linear-gradient(top, #049cdb, #0064cd);
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #049cdb), color-stop(100%, #0064cd));
-  background-image: -webkit-linear-gradient(top, #049cdb, #0064cd);
-  background-image: -o-linear-gradient(top, #049cdb, #0064cd);
-  background-image: linear-gradient(top, #049cdb, #0064cd);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#049cdb', endColorstr='#0064cd', GradientType=0);
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-  border-color: #0064cd #0064cd #003f81;
-  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-}
-
-.ui-buttonset {
-  white-space: nowrap;
-}
-
-.ui-buttonset .ui-button:last-child {
-  margin-right: 0;
-}
-
-.ui-button:hover, .ui-button:focus {
-  z-index: 2;
-}
-
-.ui-buttonset.ui-tabs {
-  background: none;
-  padding: .2em .2em 0;
-  margin: 0 0 0.5em;
-  border-bottom: 1px solid #DDD;
-}
-
-.ui-buttonset.ui-tabs .ui-button {
-  background: none;
-  margin: 0 0 -1px;
-  padding: 0;
-  text-shadow: none;
-  white-space: nowrap;
-  border: 1px solid transparent;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
-  box-shadow: none;
-}
-
-.ui-buttonset.ui-tabs .ui-button:hover {
-  background: whiteSmoke;
-  border-color: #ddd;
-}
-
-.ui-buttonset.ui-tabs .ui-button .ui-button-text {
-  color: #0069D6;
-  cursor: pointer;
-  padding: 0 15px;
-  line-height: 34px;
-}
-
-.ui-buttonset.ui-tabs .ui-button.ui-state-active {
-  background: none;
-  border-color: #ddd;
-  border-bottom-color: #ffffff;
-}
-
-.ui-buttonset.ui-tabs .ui-button.ui-state-active:hover {
-  background: none;
-}
-
-.ui-buttonset.ui-tabs .ui-button.ui-state-active .ui-button-text {
-  cursor: default;
-}
-
 .ui-draggable-dragging, .ui-draggable-dragging * {
   pointer-events: none;
 }
@@ -218,18 +133,15 @@ nav.navbar {
 .btn-default.active {
   color: #ffffff;
   background-color: #428bca;
-}
-
-.ui-buttonset.col-md-10 {
-  margin-right: 0;
-}
-
-button.btn.btn-sm, button.btn.btn-xs {
-  font-size: 12px;
+  text-shadow: none;
 }
 
 .btn-default .glyphicon {
   color: #666666;
+}
+
+.btn-sm, .btn-xs {
+  font-size: 12px !important;
 }
 
 .ui-dialog .dropdown-menu {
@@ -317,7 +229,7 @@ textarea.form-control {
 
 .assigned label.control-label {
   padding-top: 4px;
-  text-align: right;
+  text-align: center;
 }
 
 /**
@@ -446,7 +358,7 @@ span.incident_blue {
 /**
  * Forms
  */
-.incident_form, .unit_form .patient_form {
+.incident_form, .unit_form, .patient_form {
   min-width: 444px;
 }
 

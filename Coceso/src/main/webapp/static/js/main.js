@@ -101,6 +101,13 @@ Coceso.Constants = {
     zao: "ZAO",
     aao: "AAO",
     detached: "Detached"
+  },
+  Patient: {
+    sex: {
+      unknown: "u",
+      male: "m",
+      female: "f"
+    }
   }
 };
 
@@ -721,6 +728,54 @@ Coceso.Models.Task = function(taskState, incident, unit) {
   }, this);
 };
 Coceso.Models.Task.prototype = Object.create({}, /** @lends Coceso.Models.Task.prototype */ {
+  /**
+   * Set task state to "assigned"
+   */
+  setAssigned: {
+    value: function() {
+      this.taskState(Coceso.Constants.TaskState.assigned);
+    }
+  },
+  /**
+   * Set task state to "assigned"
+   */
+  setZBO: {
+    value: function() {
+      this.taskState(Coceso.Constants.TaskState.zbo);
+    }
+  },
+  /**
+   * Set task state to "assigned"
+   */
+  setABO: {
+    value: function() {
+      this.taskState(Coceso.Constants.TaskState.abo);
+    }
+  },
+  /**
+   * Set task state to "assigned"
+   */
+  setZAO: {
+    value: function() {
+      this.taskState(Coceso.Constants.TaskState.zao);
+    }
+  },
+  /**
+   * Set task state to "assigned"
+   */
+  setAAO: {
+    value: function() {
+      this.taskState(Coceso.Constants.TaskState.aao);
+    }
+  },
+  /**
+   * Set task state to "assigned"
+   */
+  setDetached: {
+    value: function() {
+      this.taskState(Coceso.Constants.TaskState.detached);
+    }
+  },
   /**
    * Handles the nextState request
    *
@@ -1841,7 +1896,7 @@ Coceso.Models.Patient = function(data) {
   this.erType = ko.observable("");
   this.info = ko.observable("");
   this.externalID = ko.observable("");
-  this.sex = ko.observable("u");
+  this.sex = ko.observable(Coceso.Constants.Patient.sex.unknown);
 
   /**
    * Method to set data (loaded with AJAX)
@@ -1857,11 +1912,44 @@ Coceso.Models.Patient = function(data) {
     self.erType(data.erType || "");
     self.info(data.info || "");
     self.externalID(data.externalID || "");
-    self.sex(data.sex || "u");
+    self.sex(data.sex || Coceso.Constants.Patient.sex.unknown);
   };
 
   //Set data
   this.setData(data);
+
+  /**
+   * Patient is male
+   *
+   * @function
+   * @type ko.computed
+   * @returns {boolean}
+   */
+  this.isMale = ko.computed(function() {
+    return (this.sex() === Coceso.Constants.Patient.sex.male);
+  }, this);
+
+  /**
+   * Patient is female
+   *
+   * @function
+   * @type ko.computed
+   * @returns {boolean}
+   */
+  this.isFemale = ko.computed(function() {
+    return (this.sex() === Coceso.Constants.Patient.sex.female);
+  }, this);
+
+  /**
+   * Patient's sex is unknown
+   *
+   * @function
+   * @type ko.computed
+   * @returns {boolean}
+   */
+  this.isUnknown = ko.computed(function() {
+    return (!this.isMale() && !this.isFemale());
+  }, this);
 };
 
 /**
@@ -2483,13 +2571,8 @@ Coceso.ViewModels.Incident = function(data) {
    * @returns {boolean}
    */
   this.disableDispo = ko.computed(function() {
-    return false;
-    if (!this.getOption("writeable") || !this.units.unitlist) {
-      return true;
-    }
-
-    return (ko.utils.arrayFirst(this.units.unitlist(), function(unit) {
-      return (unit.isAssigned() || unit.isZBO());
+    return (ko.utils.arrayFirst(this.units(), function(task) {
+      return (task.isAssigned() || task.isZBO());
     }) === null);
   }, this);
 
@@ -2501,13 +2584,8 @@ Coceso.ViewModels.Incident = function(data) {
    * @returns {boolean}
    */
   this.disableWorking = ko.computed(function() {
-    return false;
-    if (!this.getOption("writeable") || !this.units.unitlist) {
-      return true;
-    }
-
-    return (ko.utils.arrayFirst(this.units.unitlist(), function(unit) {
-      return (unit.isABO() || unit.isZAO() || unit.isAAO());
+    return (ko.utils.arrayFirst(this.units(), function(task) {
+      return (task.isABO() || task.isZAO() || task.isAAO());
     }) === null);
   }, this);
 
@@ -2557,6 +2635,105 @@ Coceso.ViewModels.Incident = function(data) {
   };
 };
 Coceso.ViewModels.Incident.prototype = Object.create(Coceso.Models.Incident.prototype, /** @lends Coceso.ViewModels.Incident.prototype */ {
+  /**
+   * Set type to "task"
+   *
+   * @function
+   * @returns {void}
+   */
+  setTypeTask: {
+    value: function() {
+      this.type(Coceso.Constants.Incident.type.task);
+    }
+  },
+  /**
+   * Set type to "task"
+   *
+   * @function
+   * @returns {void}
+   */
+  setTypeTransport: {
+    value: function() {
+      this.type(Coceso.Constants.Incident.type.transport);
+    }
+  },
+  /**
+   * Set type to "task"
+   *
+   * @function
+   * @returns {void}
+   */
+  setTypeRelocation: {
+    value: function() {
+      this.type(Coceso.Constants.Incident.type.relocation);
+    }
+  },
+  /**
+   * Set incident state to "new"
+   *
+   * @function
+   * @returns {void}
+   */
+  setStateNew: {
+    value: function() {
+      this.state(Coceso.Constants.Incident.state.new);
+    }
+  },
+  /**
+   * Set incident state to "open"
+   *
+   * @function
+   * @returns {void}
+   */
+  setStateOpen: {
+    value: function() {
+      this.state(Coceso.Constants.Incident.state.open);
+    }
+  },
+  /**
+   * Set incident state to "dispo"
+   *
+   * @function
+   * @returns {void}
+   */
+  setStateDispo: {
+    value: function() {
+      this.state(Coceso.Constants.Incident.state.dispo);
+    }
+  },
+  /**
+   * Set incident state to "working"
+   *
+   * @function
+   * @returns {void}
+   */
+  setStateWorking: {
+    value: function() {
+      this.state(Coceso.Constants.Incident.state.working);
+    }
+  },
+  /**
+   * Set incident state to "done"
+   *
+   * @function
+   * @returns {void}
+   */
+  setStateDone: {
+    value: function() {
+      this.state(Coceso.Constants.Incident.state.done);
+    }
+  },
+  /**
+   * Toggle blue light active
+   *
+   * @function
+   * @returns {void}
+   */
+  toggleBlue: {
+    value: function() {
+      this.blue(!this.blue());
+    }
+  },
   /**
    * Set TaskState for unit
    *
@@ -2795,6 +2972,39 @@ Coceso.ViewModels.Unit = function(data) {
 };
 Coceso.ViewModels.Unit.prototype = Object.create(Coceso.Models.Unit.prototype, /** @lends Coceso.ViewModels.Unit.prototype */ {
   /**
+   * Set state in form to "eb"
+   *
+   * @function
+   * @returns {void}
+   */
+  setStateEB: {
+    value: function() {
+      this.state(Coceso.Constants.Unit.state.eb);
+    }
+  },
+  /**
+   * Set state in form to "neb"
+   *
+   * @function
+   * @returns {void}
+   */
+  setStateNEB: {
+    value: function() {
+      this.state(Coceso.Constants.Unit.state.neb);
+    }
+  },
+  /**
+   * Set state in form to "ad"
+   *
+   * @function
+   * @returns {void}
+   */
+  setStateAD: {
+    value: function() {
+      this.state(Coceso.Constants.Unit.state.ad);
+    }
+  },
+  /**
    * Save the form
    *
    * @function
@@ -2950,6 +3160,39 @@ Coceso.ViewModels.Patient = function(data) {
   }, this);
 };
 Coceso.ViewModels.Patient.prototype = Object.create(Coceso.Models.Patient.prototype, /** @lends Coceso.ViewModels.Patient.prototype */ {
+  /**
+   * Set sex to undefined
+   *
+   * @function
+   * @returns {void}
+   */
+  setSexUnknown: {
+    value: function() {
+      this.sex(Coceso.Constants.Patient.sex.unknown);
+    }
+  },
+  /**
+   * Set sex to male
+   *
+   * @function
+   * @returns {void}
+   */
+  setSexMale: {
+    value: function() {
+      this.sex(Coceso.Constants.Patient.sex.male);
+    }
+  },
+  /**
+   * Set sex to female
+   *
+   * @function
+   * @returns {void}
+   */
+  setSexFemale: {
+    value: function() {
+      this.sex(Coceso.Constants.Patient.sex.female);
+    }
+  },
   /**
    * Save the form
    *

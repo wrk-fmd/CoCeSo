@@ -39,29 +39,23 @@
       <div class="clearfix">
         <div class="form-group col-md-8">
           <label class="sr-only"><spring:message code="label.incident.type" />:</label>
-          <div class="ui-buttonset">
-            <input id="type_task" type="radio" class="ui-helper-hidden-accessible" name="type" data-bind="checked: type, disable: disableTask, value: Coceso.Constants.Incident.type.task" />
-            <label for="type_task" class="ui-button ui-widget ui-state-default ui-corner-left" data-bind="css: {'ui-state-active': isTask, 'ui-state-disabled': disableTask}">
-              <span class="ui-button-text"><spring:message code="label.incident.type.task" /></span>
-            </label>
-
-            <input id="type_transport" type="radio" class="ui-helper-hidden-accessible" name="type" data-bind="checked: type, disable: disableTransport, value: Coceso.Constants.Incident.type.transport" />
-            <label for="type_transport" class="ui-button ui-widget ui-state-default" data-bind="css: {'ui-state-active': isTransport, 'ui-state-disabled': disableTransport}">
-              <span class="ui-button-text"><spring:message code="label.incident.type.transport" /></span>
-            </label>
-
-            <input id="type_relocation" type="radio" class="ui-helper-hidden-accessible" name="type" data-bind="checked: type, disable: disableRelocation, value: Coceso.Constants.Incident.type.relocation" />
-            <label for="type_relocation" class="ui-button ui-widget ui-state-default ui-corner-right" data-bind="css: {'ui-state-active': isRelocation, 'ui-state-disabled': disableRelocation}">
-              <span class="ui-button-text"><spring:message code="label.incident.type.relocation" /></span>
-            </label>
+          <div class="btn-group btn-group-sm">
+            <button class="btn btn-default" data-bind="disable: disableTask, click: setTypeTask, css: {active: isTask}">
+              <spring:message code="label.incident.type.task" />
+            </button>
+            <button class="btn btn-default" data-bind="disable: disableTransport, click: setTypeTransport, css: {active: isTransport}">
+              <spring:message code="label.incident.type.transport" />
+            </button>
+            <button class="btn btn-default" data-bind="disable: disableRelocation, click: setTypeRelocation, css: {active: isRelocation}">
+              <spring:message code="label.incident.type.relocation" />
+            </button>
           </div>
         </div>
 
         <div class="form-group col-md-4 text-right">
-          <input id="blue" type="checkbox" class="ui-helper-hidden-accessible" name="blue" data-bind="checked: blue" />
-          <label for="blue" class="ui-button ui-widget ui-state-default ui-corner-all" data-bind="css: {'ui-state-active': blue}">
-            <span class="ui-button-text"><spring:message code="label.incident.blue" /></span>
-          </label>
+          <button class="btn btn-default btn-sm" data-bind="click: toggleBlue, css: {active: blue}">
+            <spring:message code="label.incident.blue" />
+          </button>
         </div>
       </div>
 
@@ -75,7 +69,7 @@
           </textarea>
         </div>
 
-        <div class="form-group btn-group-vertical col-md-4">
+        <div class="form-group btn-group-vertical btn-group-sm col-md-4">
           <!-- TODO data-bind -->
           <button type="button" class="btn btn-default" disabled><spring:message code="label.addressbook" /></button>
           <button type="button" class="btn btn-default" disabled><spring:message code="label.hospitals" /></button>
@@ -108,7 +102,7 @@
           </textarea>
         </div>
 
-        <div class="form-group btn-group-vertical col-md-4">
+        <div class="form-group btn-group-vertical btn-group-sm col-md-4">
           <!-- TODO data-bind -->
           <button type="button" class="btn btn-default" disabled><spring:message code="label.addressbook" /></button>
           <button type="button" class="btn btn-default" disabled><spring:message code="label.hospitals" /></button>
@@ -117,23 +111,23 @@
       </div>
 
       <div class="clearfix">
-        <div class="col-md-6">
-          <!-- ko if: patient -->
+        <!-- ko if: patient -->
+        <div class="col-md-7">
           <strong><spring:message code="text.patient.needs" /></strong>:
           <span data-bind="text: patient().erType"></span>
-          <!-- ko if: patient().sex && patient().sex !== 'u' -->
-          (<span data-bind="text: patient().sex"></span>)
-          <!-- /ko -->
-          <!-- /ko -->
-        </div>
-        <div class="form-group col-md-6">
-          <!-- ko if: patient -->
-          <button type="button" class="btn btn-primary" data-bind="click: openPatient"><spring:message code="label.patient.edit"/></button>
-          <!-- /ko -->
-          <!-- ko ifnot: patient -->
-          <button type="button" class="btn btn-danger" data-bind="click: openPatient, enable: id"><spring:message code="label.patient.add"/></button>
+          <!-- ko if: !patient().isUnknown() -->
+          (<span data-bind="text: _('label.patient.sex.' + patient().sex())"></span>)
           <!-- /ko -->
         </div>
+        <div class="form-group col-md-5">
+          <button type="button" class="btn btn-primary btn-sm" data-bind="click: openPatient"><spring:message code="label.patient.edit"/></button>
+        </div>
+        <!-- /ko -->
+        <!-- ko ifnot: patient -->
+        <div class="form-group col-md-5">
+          <button type="button" class="btn btn-danger btn-sm" data-bind="click: openPatient, enable: id"><spring:message code="label.patient.add"/></button>
+        </div>
+        <!-- /ko -->
       </div>
 
       <div class="clearfix">
@@ -149,31 +143,22 @@
       <div class="clearfix">
         <div class="form-group col-md-offset-2 col-md-10">
           <label class="sr-only"><spring:message code="label.incident.state" />:</label>
-          <div class="ui-buttonset">
-            <input id="state_new" type="radio" class="ui-helper-hidden-accessible" name="state" data-bind="checked: state, disable: disableNew, value: Coceso.Constants.Incident.state.new" />
-            <label for="state_new" class="ui-button ui-widget ui-state-default ui-corner-left" data-bind="css: {'ui-state-active': isNew, 'ui-state-disabled': disableNew}">
-              <span class="ui-button-text"><spring:message code="label.incident.state.new" /></span>
-            </label>
-
-            <input id="state_open" type="radio" class="ui-helper-hidden-accessible" name="state" data-bind="checked: state, value: Coceso.Constants.Incident.state.open" />
-            <label for="state_open" class="ui-button ui-widget ui-state-default" data-bind="css: {'ui-state-active': isOpen}">
-              <span class="ui-button-text"><spring:message code="label.incident.state.open" /></span>
-            </label>
-
-            <input id="state_dispo" type="radio" class="ui-helper-hidden-accessible" name="state" data-bind="checked: state, disable: disableDispo, value: Coceso.Constants.Incident.state.dispo" />
-            <label for="state_dispo" class="ui-button ui-widget ui-state-default" data-bind="css: {'ui-state-active': isDispo(), 'ui-state-disabled': disableDispo}">
-              <span class="ui-button-text"><spring:message code="label.incident.state.dispo" /></span>
-            </label>
-
-            <input id="state_working" type="radio" class="ui-helper-hidden-accessible" name="state" data-bind="checked: state, disable: disableWorking, value: Coceso.Constants.Incident.state.working" />
-            <label for="state_working" class="ui-button ui-widget ui-state-default" data-bind="css: {'ui-state-active': isWorking(), 'ui-state-disabled': disableWorking}">
-              <span class="ui-button-text"><spring:message code="label.incident.state.working" /></span>
-            </label>
-
-            <input id="state_done" type="radio" class="ui-helper-hidden-accessible" name="state" data-bind="checked: state, value: Coceso.Constants.Incident.state.done" />
-            <label for="state_done" class="ui-button ui-widget ui-state-default ui-corner-right" data-bind="css: {'ui-state-active': isDone()}">
-              <span class="ui-button-text"><spring:message code="label.incident.state.done" /></span>
-            </label>
+          <div class="btn-group btn-group-sm">
+            <button class="btn btn-default" data-bind="disable: disableNew, click: setStateNew, css: {active: isNew}">
+              <spring:message code="label.incident.state.new" />
+            </button>
+            <button class="btn btn-default" data-bind="click: setStateOpen, css: {active: isOpen}">
+              <spring:message code="label.incident.state.open" />
+            </button>
+            <button class="btn btn-default" data-bind="disable: disableDispo, click: setStateDispo, css: {active: isDispo}">
+              <spring:message code="label.incident.state.dispo" />
+            </button>
+            <button class="btn btn-default" data-bind="disable: disableWorking, click: setStateWorking, css: {active: isWorking}">
+              <spring:message code="label.incident.state.working" />
+            </button>
+            <button class="btn btn-default" data-bind="click: setStateDone, css: {active: isDone}">
+              <spring:message code="label.incident.state.done" />
+            </button>
           </div>
         </div>
       </div>
@@ -181,54 +166,31 @@
       <%-- Assigned Units --%>
       <div class="assigned" data-bind="foreach: units">
         <div class="form-group clearfix">
-          <label class="col-md-2 control-label">
+          <label class="col-md-4 control-label">
             <!-- ko if: $parent.unitCount() > 1 -->
             <span class="glyphicon glyphicon-share" data-bind="click: function() {$parent.duplicate($data);}"></span>
             <!-- /ko -->
             <span data-bind="text: unit().call"></span>
           </label>
-          <div class="col-md-10 ui-buttonset">
-            <input type="radio" class="ui-helper-hidden-accessible"
-                   data-bind="checked: taskState, disable: $parent.disableAssigned, attr: {id: $root.ui + '-taskState_assigned_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.assigned" />
-            <label class="ui-button ui-widget ui-state-default ui-corner-left"
-                   data-bind="attr: {for: $root.ui + '-taskState_assigned_' + $index()}, css: {'ui-state-active': isAssigned, 'ui-state-disabled': $parent.disableAssigned}">
-              <span class="ui-button-text"><spring:message code="label.task.state.assigned" /></span>
-            </label>
-
-            <input type="radio" class="ui-helper-hidden-accessible"
-                   data-bind="checked: taskState, disable: $parent.disableBO, attr: {id: $root.ui + '-taskState_zbo_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.zbo" />
-            <label class="ui-button ui-widget ui-state-default"
-                   data-bind="attr: {for: $root.ui + '-taskState_zbo_' + $index()}, css: {'ui-state-active': isZBO, 'ui-state-disabled': $parent.disableBO}">
-              <span class="ui-button-text"><spring:message code="label.task.state.zbo" /></span>
-            </label>
-
-            <input type="radio" class="ui-helper-hidden-accessible"
-                   data-bind="checked: taskState, disable: $parent.disableBO, attr: {id: $root.ui + '-taskState_abo_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.abo" />
-            <label class="ui-button ui-widget ui-state-default"
-                   data-bind="attr: {for: $root.ui + '-taskState_abo_' + $index()}, css: {'ui-state-active': isABO, 'ui-state-disabled': $parent.disableBO}">
-              <span class="ui-button-text"><spring:message code="label.task.state.abo" /></span>
-            </label>
-
-            <input type="radio" class="ui-helper-hidden-accessible"
-                   data-bind="checked: taskState, disable: $parent.disableZAO, attr: {id: $root.ui + '-taskState_zao_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.zao" />
-            <label class="ui-button ui-widget ui-state-default"
-                   data-bind="attr: {for: $root.ui + '-taskState_zao_' + $index()}, css: {'ui-state-active': isZAO, 'ui-state-disabled': $parent.disableZAO}">
-              <span class="ui-button-text"><spring:message code="label.task.state.zao" /></span>
-            </label>
-
-            <input type="radio" class="ui-helper-hidden-accessible"
-                   data-bind="checked: taskState, disable: $parent.disableAAO, attr: {id: $root.ui + '-taskState_aao_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.aao" />
-            <label class="ui-button ui-widget ui-state-default"
-                   data-bind="attr: {for: $root.ui + '-taskState_aao_' + $index()}, css: {'ui-state-active': isAAO, 'ui-state-disabled': $parent.disableAAO}">
-              <span class="ui-button-text"><spring:message code="label.task.state.aao" /></span>
-            </label>
-
-            <input type="radio" class="ui-helper-hidden-accessible"
-                   data-bind="checked: taskState, attr: {id: $root.ui + '-taskState_det_' + $index(), name: $root.ui + '-taskState_' + $index()}, value: Coceso.Constants.TaskState.detached" />
-            <label class="ui-button ui-widget ui-state-default ui-corner-right"
-                   data-bind="attr: {for: $root.ui + '-taskState_det_' + $index()}, css: {'ui-state-active': isDetached}">
-              <span class="ui-button-text"><spring:message code="label.task.state.detached" /></span>
-            </label>
+          <div class="col-md-8 btn-group btn-group-sm nowrap">
+            <button class="btn btn-default" data-bind="disable: $parent.disableAssigned, click: setAssigned, css: {active: isAssigned}">
+              <spring:message code="label.task.state.assigned" />
+            </button>
+            <button class="btn btn-default" data-bind="disable: $parent.disableBO, click: setZBO, css: {active: isZBO}">
+              <spring:message code="label.task.state.zbo" />
+            </button>
+            <button class="btn btn-default" data-bind="disable: $parent.disableBO, click: setABO, css: {active: isABO}">
+              <spring:message code="label.task.state.abo" />
+            </button>
+            <button class="btn btn-default" data-bind="disable: $parent.disableZAO, click: setZAO, css: {active: isZAO}">
+              <spring:message code="label.task.state.zao" />
+            </button>
+            <button class="btn btn-default" data-bind="disable: $parent.disableAAO, click: setAAO, css: {active: isAAO}">
+              <spring:message code="label.task.state.aao" />
+            </button>
+            <button class="btn btn-default" data-bind="click: setDetached, css: {active: isDetached}">
+              <spring:message code="label.task.state.detached" />
+            </button>
           </div>
         </div>
       </div>

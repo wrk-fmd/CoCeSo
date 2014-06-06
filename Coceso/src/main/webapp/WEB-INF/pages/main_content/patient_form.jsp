@@ -41,27 +41,15 @@
         <div class="form-group col-md-12">
             <label for="sex"><spring:message code="label.patient.sex" />:&nbsp;</label>
             <div class="btn-group" id="sex">
-                <button type="button" class="btn btn-default" value="u"
-                        data-bind="click: function() {sex('u') }, css: {active: sex() === 'u'}">
+                <button class="btn btn-default" data-bind="click: setSexUnknown, css: {active: isUnknown}">
                     <spring:message code="label.patient.sex.u" />
                 </button>
-                <button type="button" class="btn btn-default" value="m"
-                        data-bind="click: function() {sex('m') }, css: {active: sex() === 'm'}">
+                <button class="btn btn-default" data-bind="click: setSexMale, css: {active: isMale}">
                     <spring:message code="label.patient.sex.m" />
                 </button>
-                <button type="button" class="btn btn-default" value="f"
-                        data-bind="click: function() {sex('f') }, css: {active: sex() === 'f'}">
+                <button class="btn btn-default" data-bind="click: setSexFemale, css: {active: isFemale}">
                     <spring:message code="label.patient.sex.f" />
                 </button>
-                <%--label class="btn btn-default">
-                    <input type="radio" name="sex" value="u" data-bind="checked: sex"><spring:message code="label.patient.sex.u" />
-                </label>
-                <label class="btn btn-default">
-                    <input type="radio" name="sex" value="m" data-bind="checked: sex"><spring:message code="label.patient.sex.u" />
-                </label>
-                <label class="btn btn-default">
-                    <input type="radio" name="sex" value="f" data-bind="checked: sex"><spring:message code="label.patient.sex.u" />
-                </label--%>
             </div>
         </div>
     </div>
