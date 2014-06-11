@@ -30,7 +30,7 @@ public class UnitController {
     private UnitService unitService;
 
     @Autowired
-    TaskService taskService;
+    private TaskService taskService;
 
     @RequestMapping(value = "getAll", produces = "application/json")
     @ResponseBody

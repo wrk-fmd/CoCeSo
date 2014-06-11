@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ContainerService {
     @Autowired
-    UnitContainerDao containerDao;
+    private UnitContainerDao containerDao;
 
     /**
      * Id <= 0 for New, Id > 0 for Update: ordering == -2 for Delete

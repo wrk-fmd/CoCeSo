@@ -21,7 +21,7 @@ import java.util.List;
 public class PersonDao extends CocesoDao<Person> {
 
     @Autowired
-    PersonMapper personMapper;
+    private PersonMapper personMapper;
 
     @Autowired
     public PersonDao(DataSource dataSource) {

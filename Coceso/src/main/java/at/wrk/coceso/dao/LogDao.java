@@ -17,7 +17,7 @@ public class LogDao extends CocesoDao<LogEntry> {
 
     // REFERENCES NOT RESOLVED BY THIS MAPPER
     @Autowired
-    LogMapper logMapper;
+    private LogMapper logMapper;
 
     @Autowired
     public LogDao(DataSource dataSource) {

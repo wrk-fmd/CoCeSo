@@ -10,9 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 
 @Controller
@@ -20,10 +17,10 @@ import java.util.Date;
 public class DataController {
 
     @Autowired
-    TaskService taskService;
+    private TaskService taskService;
 
     @Autowired
-    LogService log;
+    private LogService log;
 
     @ResponseBody
     @RequestMapping(value="assignUnit/{incidentid}/{unitid}", method = RequestMethod.GET, produces = "application/json")

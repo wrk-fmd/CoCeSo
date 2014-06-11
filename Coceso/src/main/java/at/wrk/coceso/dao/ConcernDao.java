@@ -25,7 +25,7 @@ public class ConcernDao extends CocesoDao<Concern> {
     private final String prefix = "SELECT * FROM concern ";
 
     @Autowired
-    ConcernMapper concernMapper;
+    private ConcernMapper concernMapper;
 
     @Autowired
     public ConcernDao(DataSource dataSource) {

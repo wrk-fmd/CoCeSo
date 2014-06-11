@@ -31,19 +31,19 @@ public class PDFDumpService {
     private Operator user;
 
     @Autowired
-    MessageSource messageSource;
+    private MessageSource messageSource;
 
     @Autowired
-    LogService logService;
+    private LogService logService;
 
     @Autowired
-    UnitService unitService;
+    private UnitService unitService;
 
     @Autowired
-    IncidentService incidentService;
+    private IncidentService incidentService;
 
     @Autowired
-    PatientService patientService;
+    private PatientService patientService;
 
     private java.util.Map<Integer, Unit> unitMap;
     private java.util.Map<Integer, Incident> incidentMap;

@@ -23,13 +23,13 @@ import java.util.List;
 public class PersonController {
 
     @Autowired
-    PersonService personService;
+    private PersonService personService;
 
     @Autowired
-    OperatorService operatorService;
+    private OperatorService operatorService;
 
     @Autowired
-    RoleDao roleDao;
+    private RoleDao roleDao;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String index(ModelMap map, HttpServletRequest request, @RequestParam(value = "error", required = false) String s_error) {

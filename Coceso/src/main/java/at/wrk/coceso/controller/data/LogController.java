@@ -22,10 +22,10 @@ import java.util.List;
 public class LogController {
 
     @Autowired
-    LogDao dao;
+    private LogDao dao;
 
     @Autowired
-    LogService log;
+    private LogService log;
 
     @RequestMapping(value = "getAll", produces = "application/json")
     @ResponseBody

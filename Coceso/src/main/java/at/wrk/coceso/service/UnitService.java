@@ -21,19 +21,19 @@ import java.util.Set;
 public class UnitService {
 
     @Autowired
-    LogService logService;
+    private LogService logService;
 
     @Autowired
-    UnitDao unitDao;
+    private UnitDao unitDao;
 
     @Autowired
-    TaskDao taskDao;
+    private TaskDao taskDao;
 
     @Autowired
-    IncidentService incidentService;
+    private IncidentService incidentService;
 
     @Autowired
-    TaskService taskService;
+    private TaskService taskService;
 
     public Unit getById(int id) {
         return unitDao.getById(id);

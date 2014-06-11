@@ -25,19 +25,19 @@ import java.util.logging.Logger;
 @Repository
 public class UnitDao extends CocesoDao<Unit> {
 
-    Logger logger = Logger.getLogger("CoCeSo");
+    private static Logger logger = Logger.getLogger("CoCeSo");
 
     @Autowired
-    UnitMapper unitMapper;
+    private UnitMapper unitMapper;
 
     @Autowired
-    CrewDao crewDao;
+    private CrewDao crewDao;
 
     @Autowired
-    PointDao pointDao;
+    private PointDao pointDao;
 
     @Autowired
-    LogDao logDao;
+    private LogDao logDao;
 
     @Autowired
     public UnitDao(DataSource dataSource) {

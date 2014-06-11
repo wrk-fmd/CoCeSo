@@ -17,13 +17,13 @@ import java.util.List;
 public class CrewDao {
 
     @Autowired
-    CrewPersonMapper crewPersonMapper;
+    private CrewPersonMapper crewPersonMapper;
 
     @Autowired
-    CrewUnitMapper crewUnitMapper;
+    private CrewUnitMapper crewUnitMapper;
 
     @Autowired
-    PersonDao personDao;
+    private PersonDao personDao;
 
     private JdbcTemplate jdbc;
 
