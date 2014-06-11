@@ -17,6 +17,7 @@ Popovers:      main/templates.jsp
 Modals:        main/templates.jsp (called in main.js)
 Alert dismiss: welcome.jsp
 Collapse:      main/templates.jsp
+Buttons:       edit.jsp
 
 jQuery:
 jquery.i18n:   main.jsp
