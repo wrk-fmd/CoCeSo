@@ -32,6 +32,7 @@ public class SelcallManager {
     private SerialPort serialPort;
     private InputStream inputStream;
     private OutputStream outputStream;
+    private boolean portReady = false;
 
     private ConcurrentLinkedQueue<Byte> queue;
 
@@ -133,14 +134,18 @@ public class SelcallManager {
 
 
         LOG.info("Succesfully opened port");
-        return true;
+        return this.portReady = true;
     }
 
     private void closeSerialPort() {
-        try {
-            sendMessage("TD" + counter());
-        } catch (IllegalMessageException e) {
-            LOG.error("this should not happen. internal error at goodbye-message", e);
+
+        if(portReady) {
+            LOG.debug("Say goodbye to TRX");
+            try {
+                sendMessage("TD" + counter());
+            } catch (IllegalMessageException e) {
+                LOG.error("this should not happen. internal error at goodbye-message", e);
+            }
         }
 
         LOG.info("Close Serial Port");
@@ -148,10 +153,13 @@ public class SelcallManager {
     }
 
     private void helloToTransceiver() {
-        try {
-            sendMessage("TE");
-        } catch (IllegalMessageException e) {
-            LOG.error("this should not happen. internal error at hello-message", e);
+        if(portReady) {
+            LOG.debug("Say hello to TRX");
+            try {
+                sendMessage("TE");
+            } catch (IllegalMessageException e) {
+                LOG.error("this should not happen. internal error at hello-message", e);
+            }
         }
     }
 
@@ -161,6 +169,11 @@ public class SelcallManager {
     }
 
     private synchronized void readData() {
+        if(!portReady) {
+            LOG.warn("Port not ready!");
+            return;
+        }
+
         byte[] data = new byte[128];
         int i;
         LOG.info("100ms delay...");
@@ -223,7 +236,12 @@ public class SelcallManager {
     }
 
     public synchronized boolean sendMessage(String message) throws IllegalMessageException {
-        LOG.info(String.format("Send message '%s'", message));
+        LOG.info(String.format("Try to send message '%s'", message));
+
+        if(!portReady) {
+            LOG.warn("Port not ready!");
+            return false;
+        }
 
         if(message == null) {
             throw new IllegalMessageException();
