@@ -70,8 +70,8 @@ public class SelcallService {
 
     public List<Selcall> getLastHour() {
         LOG.debug("Selcalls of last hour requested");
-        //return selcallDao.getLastHour();
-        return new LinkedList<>();
+        // TODO return selcallDao.getLastHour();
+        return selcallDao.findAll();
     }
 
     public boolean sendSelcall(Selcall selcall) {
