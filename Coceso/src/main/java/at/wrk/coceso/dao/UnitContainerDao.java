@@ -172,7 +172,7 @@ public class UnitContainerDao {
             return (Integer) holder.getKeys().get("id");
 
         } catch (DataAccessException dae) {
-            CocesoLogger.warning(dae.getMessage());
+            CocesoLogger.warn(dae.getMessage());
             return -1;
         }
     }
@@ -206,7 +206,7 @@ public class UnitContainerDao {
             return (Integer) holder.getKeys().get("id");
 
         } catch (DataAccessException dae) {
-            CocesoLogger.warning(dae.getMessage());
+            CocesoLogger.warn(dae.getMessage());
             return -1;
         }
     }

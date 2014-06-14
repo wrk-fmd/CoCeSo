@@ -51,7 +51,7 @@ public class ConcernDao extends CocesoDao<Concern> {
             return null;
         }
         catch(DataAccessException dae) {
-            CocesoLogger.warning("CaseDao.getById(int): requested id: "+id+"; DataAccessException: "+dae.getMessage());
+            CocesoLogger.warn("CaseDao.getById(int): requested id: "+id+"; DataAccessException: "+dae.getMessage());
             return null;
         }
 

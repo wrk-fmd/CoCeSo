@@ -314,7 +314,7 @@ public class FinalReportController {
                     }
 
                 } catch (IOException e) {
-                    CocesoLogger.warning(e.getMessage());
+                    CocesoLogger.warn(e.getMessage());
                 }
 
 
@@ -480,7 +480,7 @@ public class FinalReportController {
                     }
 
                 } catch (IOException e) {
-                    CocesoLogger.warning(e.getMessage());
+                    CocesoLogger.warn(e.getMessage());
                 }
 
 

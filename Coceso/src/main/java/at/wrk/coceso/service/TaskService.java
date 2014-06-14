@@ -8,17 +8,19 @@ import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.LogEntryType;
 import at.wrk.coceso.entity.enums.TaskState;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Iterator;
 import java.util.Map;
-import java.util.logging.Logger;
 
 @Service
 public class TaskService {
 
-    private static Logger logger = Logger.getLogger("CoCeSo");
+
+    private final static
+    Logger LOG = Logger.getLogger(TaskService.class);
 
     @Autowired
     IncidentService incidentService;
@@ -38,12 +40,12 @@ public class TaskService {
 
         // Not in same Concern; HoldPosition and Standby can't be assigned to multiple Units
         if(!i.getConcern().equals(u.getConcern())) {
-            logger.warning("TaskService.assignUnit(): Unit and Incident in different Concerns!");
+            LOG.warn("TaskService.assignUnit(): Unit and Incident in different Concerns!");
             return false;
         }
 
         if(i.getType().isSingleUnit() && i.getUnits().size() > 0) {
-            logger.fine("TaskService.assignUnit(): Tried to assign multiple Units to Single Unit Incident");
+            LOG.debug("TaskService.assignUnit(): Tried to assign multiple Units to Single Unit Incident");
             return false;
         }
 
@@ -51,9 +53,9 @@ public class TaskService {
         for(Integer incId : u.getIncidents().keySet()) {
             Incident inc = incidentService.getById(incId);
             if(inc.getType().isSingleUnit() || inc.getType() == IncidentType.Relocation) {
-                logger.fine("TaskService.assignUnit(): Auto-detach unit #" + unit_id + ", incident #" + incId);
+                LOG.debug("TaskService.assignUnit(): Auto-detach unit #" + unit_id + ", incident #" + incId);
                 if(inc.getType() != IncidentType.Relocation) {
-                    logger.fine("TaskService.assignUnit(): Auto-set incident #" + incId + " to state 'Done'");
+                    LOG.debug("TaskService.assignUnit(): Auto-set incident #" + incId + " to state 'Done'");
                     inc.setState(IncidentState.Done);
                 }
                 incidentService.update(inc, user);
@@ -89,20 +91,20 @@ public class TaskService {
     }
 
     public synchronized boolean changeState(int incident_id, int unit_id, TaskState state, Operator user) {
-        logger.fine("changeState(): User " + ( user == null ? null : user.getUsername() ) + " triggered update of unit #" + unit_id +
+        LOG.debug("changeState(): User " + (user == null ? null : user.getUsername()) + " triggered update of unit #" + unit_id +
                 " and incident #" + incident_id + " to TaskState '" + state + "'");
 
         Incident i = incidentService.getById(incident_id);
         Unit u = unitService.getById(unit_id);
 
         if(i == null || u == null) {
-            logger.info("changeState(): Combination not found. unit #" + unit_id + " ==null: " + (u == null) +
+            LOG.info("changeState(): Combination not found. unit #" + unit_id + " ==null: " + (u == null) +
                     ", incident #" + incident_id + " ==null: " + (i == null));
             return false;
         }
 
         if(!i.getConcern().equals(u.getConcern())) {    // Not in same Concern
-            logger.warning("changeState(): Combination in different concerns. unit #" + unit_id +
+            LOG.warn("changeState(): Combination in different concerns. unit #" + unit_id +
                     ", incident #" + incident_id);
             return false;
         }
@@ -122,7 +124,7 @@ public class TaskService {
 //        }
 
         if(!i.getType().isPossibleState(state)) {
-            logger.warning("changeState(): new State not possible, cancel Request. unit #" + unit_id +
+            LOG.warn("changeState(): new State not possible, cancel Request. unit #" + unit_id +
                     ", incident #" + incident_id);
             return false;
         }
@@ -131,13 +133,13 @@ public class TaskService {
 
 
         if(user != null) {
-            logger.fine("Write LogEntry");
+            LOG.debug("Write LogEntry");
             logService.logFull(user, LogEntryType.TASKSTATE_CHANGED, i.getConcern(), u, i, true);
         } else {
-            logger.info("user = null => No LogEntry possible");
+            LOG.info("user = null => No LogEntry possible");
         }
 
-        logger.fine("state = " + state);
+        LOG.debug("state = " + state);
         switch (state) {
             case Assigned:
                 if(i.getState() == IncidentState.New || i.getState() == IncidentState.Open) {
@@ -200,17 +202,17 @@ public class TaskService {
                 }
                 break;
             default:
-                logger.warning("!!! Unknown TaskState !!!");
+                LOG.warn("!!! Unknown TaskState !!!");
                 break;
         }
 
         if(state == TaskState.Detached) {
-            logger.fine("Try to detach Unit");
+            LOG.debug("Try to detach Unit");
             taskDao.remove(incident_id, unit_id);
         } else {
             // TODO Avoid double call if was assigned in this call, BUT set to 'Assigned' must be possible, if assigned
             //      before
-            logger.fine("Try to update TaskState");
+            LOG.debug("Try to update TaskState");
             taskDao.update(incident_id, unit_id, state);
         }
 

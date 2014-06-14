@@ -42,7 +42,7 @@ public class PatientDao extends CocesoDao<Patient> {
             return null;
         }
         catch(DataAccessException dae) {
-            CocesoLogger.warning("PatientDao.getById(int): requested id: "+id+"; DataAccessException: "+dae.getMessage());
+            CocesoLogger.warn("PatientDao.getById(int): requested id: "+id+"; DataAccessException: "+dae.getMessage());
             return null;
         }
 
@@ -126,7 +126,7 @@ public class PatientDao extends CocesoDao<Patient> {
         try {
             jdbc.update(q, parameters.toArray());
         } catch (DataAccessException dae) {
-            CocesoLogger.warning(dae.getMessage());
+            CocesoLogger.warn(dae.getMessage());
             return false;
         }
 
@@ -168,7 +168,7 @@ public class PatientDao extends CocesoDao<Patient> {
         try {
             jdbc.update(q, patient.getId());
         } catch (DataAccessException dae) {
-            CocesoLogger.warning("PatientDao.remove(): "+ dae.getMessage());
+            CocesoLogger.warn("PatientDao.remove(): "+ dae.getMessage());
             return false;
         }
 

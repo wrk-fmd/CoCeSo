@@ -5,6 +5,7 @@ import at.wrk.coceso.dao.OperatorDao;
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Operator;
 import at.wrk.coceso.entity.enums.CocesoAuthority;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
@@ -21,12 +22,12 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 
 @Controller
 public class WelcomeController {
 
-    private Logger logger = Logger.getLogger("CoCeSo");
+    private static final
+    Logger LOG = Logger.getLogger("CoCeSo");
 
     // TODO Authority to Close and Reopen Concerns
     private static final CocesoAuthority CLOSE_AUTHORITY = CocesoAuthority.Root;
@@ -73,7 +74,7 @@ public class WelcomeController {
 
         // Write Error Code to ModelMap
         if(error_id != null && allowedErrors.contains(error_id)) {
-            logger.fine("/welcome[GET]: Show error " + error_id + ", user: " + user.getUsername());
+            LOG.debug("/welcome[GET]: Show error " + error_id + ", user: " + user.getUsername());
             map.addAttribute("error", error_id);
         }
 
@@ -147,13 +148,13 @@ public class WelcomeController {
         if(!currentConcern.isClosed()) {
             if(request.getParameter("close") != null) {
                 if(user.getInternalAuthorities().contains(CLOSE_AUTHORITY)) {
-                    logger.info("/welcome[POST]: user " + user.getUsername() + " closed Concern #" + currentConcern.getId());
+                    LOG.info("/welcome[POST]: user " + user.getUsername() + " closed Concern #" + currentConcern.getId());
                     currentConcern.setClosed(true);
                     concernDao.update(currentConcern);
                     return "redirect:/welcome";
                 }
                 else {
-                    logger.warning("User "+user.getUsername()+" tried to close Concern \"" + currentConcern.getName() +
+                    LOG.warn("User " + user.getUsername() + " tried to close Concern \"" + currentConcern.getName() +
                             "\" without Authority \"" + CLOSE_AUTHORITY + "\"");
                     return "redirect:/welcome?error=5";
                 }
@@ -165,15 +166,15 @@ public class WelcomeController {
             response.addCookie(new Cookie("active_case", case_id+""));
 
             if(request.getParameter("start") != null) {
-                logger.info("/welcome[POST]: user " + user.getUsername() + " started Concern #" + currentConcern.getId());
+                LOG.info("/welcome[POST]: user " + user.getUsername() + " started Concern #" + currentConcern.getId());
                 return "redirect:/main";
             }
             if(request.getParameter("edit") != null) {
-                logger.info("/welcome[POST]: user " + user.getUsername() + " requested Edit Concern #" + currentConcern.getId());
+                LOG.info("/welcome[POST]: user " + user.getUsername() + " requested Edit Concern #" + currentConcern.getId());
                 return "redirect:/edit";
             }
             if(request.getParameter("dump") != null) {
-                logger.info("/welcome[POST]: user " + user.getUsername() + " requested PDF Dump #" + currentConcern.getId());
+                LOG.info("/welcome[POST]: user " + user.getUsername() + " requested PDF Dump #" + currentConcern.getId());
                 return "redirect:/pdfdump/dump.pdf?id=" + currentConcern.getId();
             }
         }
@@ -181,13 +182,13 @@ public class WelcomeController {
 
             if(request.getParameter("reopen") != null)  {
                 if(user.getInternalAuthorities().contains(CLOSE_AUTHORITY)) {
-                    logger.info("/welcome[POST]: user " + user.getUsername() + " re-opened Concern #" + currentConcern.getId());
+                    LOG.info("/welcome[POST]: user " + user.getUsername() + " re-opened Concern #" + currentConcern.getId());
                     currentConcern.setClosed(false);
                     concernDao.update(currentConcern);
                     return "redirect:/welcome";
                 }
                 else {
-                    logger.warning("User "+user.getUsername()+" tried to reopen Concern \"" + currentConcern.getName() +
+                    LOG.warn("User " + user.getUsername() + " tried to reopen Concern \"" + currentConcern.getName() +
                             "\" without Authority \"" + CLOSE_AUTHORITY + "\"");
                     return "redirect:/welcome?error=5";
                 }
@@ -195,12 +196,12 @@ public class WelcomeController {
         }
 
         if(request.getParameter("print") != null) {
-            logger.info("/welcome[POST]: user " + user.getUsername() + " requested Final Report of Concern #" + currentConcern.getId());
+            LOG.info("/welcome[POST]: user " + user.getUsername() + " requested Final Report of Concern #" + currentConcern.getId());
             return "redirect:/finalReport/report.pdf?id=" + currentConcern.getId();
         }
 
         if(request.getParameter("transportlist") != null) {
-            logger.info("/welcome[POST]: user " + user.getUsername() + " requested Transportlist of Concern #" + currentConcern.getId());
+            LOG.info("/welcome[POST]: user " + user.getUsername() + " requested Transportlist of Concern #" + currentConcern.getId());
             return "redirect:/pdfdump/transportlist.pdf?id=" + currentConcern.getId();
         }
 

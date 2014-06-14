@@ -63,7 +63,7 @@ public class PatientController implements IEntityController<Patient> {
         try {
             caseId = Integer.parseInt(case_id);
         } catch(NumberFormatException e) {
-            CocesoLogger.warning("PatientController: update: " + e);
+            CocesoLogger.warn("PatientController: update: " + e);
             return "{\"success\": false, \"info\":\"No active Concern. Cookies enabled?\"}";
         }
 

@@ -39,7 +39,7 @@ public class UnitController {
         try {
             return unitService.getAll(Integer.parseInt(case_id));
         } catch(NumberFormatException e) {
-            CocesoLogger.warning("UnitController: getAll: "+e);
+            CocesoLogger.warn("UnitController: getAll: "+e);
             return null;
         }
     }
@@ -65,7 +65,7 @@ public class UnitController {
         try {
             return unitService.getNonDeletable(Integer.parseInt(case_id));
         } catch(NumberFormatException e) {
-            CocesoLogger.warning("UnitController: getAll: "+e);
+            CocesoLogger.warn("UnitController: getAll: "+e);
             return null;
         }
     }
@@ -124,7 +124,7 @@ public class UnitController {
         try {
             caseId = Integer.parseInt(case_id);
         } catch(NumberFormatException e) {
-            CocesoLogger.warning("UnitController: update: "+e);
+            CocesoLogger.warn("UnitController: update: "+e);
             return new ResponseEntity<String>("{\"success\": false, \"info\":\"No active Concern. Cookies enabled?\"}", HttpStatus.BAD_REQUEST);
         }
 
@@ -137,7 +137,7 @@ public class UnitController {
         if(unit.getId() > 0) {
             Unit u = unitService.getById(unit.getId());
             if(u.getConcern() != caseId) {
-                CocesoLogger.warning("UnitController.update(): User " + user.getUsername() + " tried to update Unit of wrong Concern");
+                CocesoLogger.warn("UnitController.update(): User " + user.getUsername() + " tried to update Unit of wrong Concern");
                 return new ResponseEntity<String>("{\"success\": false, \"info\":\"Active Concern not valid\"}", HttpStatus.BAD_REQUEST);
             }
         }
@@ -158,7 +158,7 @@ public class UnitController {
             unit.setId(unitService.add(unit, user));
 
             if(unit.getId() <= 0) {
-                CocesoLogger.warning("UnitController.update(): User " + user.getUsername() + ":  Creating unit with call=" +
+                CocesoLogger.warn("UnitController.update(): User " + user.getUsername() + ":  Creating unit with call=" +
                                 unit.getCall() + " failed. returned id=" + unit.getId());
             }
             boolean success = (unit.getId() > 0);

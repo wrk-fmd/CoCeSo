@@ -37,7 +37,7 @@ public class IncidentController implements IEntityController<Incident> {
         try {
             return incidentService.getAll(Integer.parseInt(case_id));
         } catch(NumberFormatException e) {
-            CocesoLogger.warning("IncidentController: getAll: " + e);
+            CocesoLogger.warn("IncidentController: getAll: " + e);
             return null;
         }
     }
@@ -49,7 +49,7 @@ public class IncidentController implements IEntityController<Incident> {
         try {
             return incidentService.getAllActive(Integer.parseInt(case_id));
         } catch(NumberFormatException e) {
-            CocesoLogger.warning("IncidentController: getAll: " + e);
+            CocesoLogger.warn("IncidentController: getAll: " + e);
             return null;
         }
     }
@@ -61,7 +61,7 @@ public class IncidentController implements IEntityController<Incident> {
         try {
             return incidentService.getAllRelevant(Integer.parseInt(case_id));
         } catch(NumberFormatException e) {
-            CocesoLogger.warning("IncidentController: getAll: " + e);
+            CocesoLogger.warn("IncidentController: getAll: " + e);
             return null;
         }
     }
@@ -74,7 +74,7 @@ public class IncidentController implements IEntityController<Incident> {
         try {
             return incidentService.getAllByState(Integer.parseInt(case_id), IncidentState.valueOf(s_state));
         } catch(NumberFormatException e) {
-            CocesoLogger.warning("IncidentController: getAll: " + e);
+            CocesoLogger.warn("IncidentController: getAll: " + e);
             return null;
         } catch (IllegalArgumentException e) {
             return null;

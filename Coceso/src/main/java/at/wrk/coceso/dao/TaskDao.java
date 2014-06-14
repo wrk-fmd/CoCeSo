@@ -86,7 +86,7 @@ public class TaskDao {
                     ", incident #" + incident_id + " with new state '" + state + "'");
             jdbc.update(q, incident_id, unit_id, state.name());
         } catch(DataAccessException e) {
-            CocesoLogger.warning("TaskDao add: "+e);
+            CocesoLogger.warn("TaskDao add: "+e);
             return false;
         }
         return true;
@@ -100,7 +100,7 @@ public class TaskDao {
                     ", incident #" + incident_id + " to new state '" + state + "'");
             jdbc.update(q, state.name(), incident_id, unit_id);
         } catch(DataAccessException e) {
-            CocesoLogger.warning("TaskDao.update(): ERROR "+e);
+            CocesoLogger.warn("TaskDao.update(): ERROR "+e);
             return false;
         }
         return true;
@@ -114,7 +114,7 @@ public class TaskDao {
                     " and incident #" + incident_id);
             jdbc.update(q, incident_id, unit_id);
         } catch(DataAccessException e) {
-            CocesoLogger.warning("TaskDao.remove(): "+e);
+            CocesoLogger.warn("TaskDao.remove(): "+e);
         }
     }
 
@@ -125,7 +125,7 @@ public class TaskDao {
             CocesoLogger.debug("TaskDao.removeAllByUnit(): Try to remove all from unit #" + unit_id);
             jdbc.update(q, unit_id);
         } catch(DataAccessException e) {
-            CocesoLogger.warning("TaskDao removeAllByUnit: "+e);
+            CocesoLogger.warn("TaskDao removeAllByUnit: "+e);
         }
     }
 

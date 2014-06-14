@@ -19,7 +19,7 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.Collection;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 @Service
 public class CocesoAuthenticationProvider implements AuthenticationProvider {
