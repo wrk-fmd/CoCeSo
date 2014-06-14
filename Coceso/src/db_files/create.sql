@@ -1,3 +1,5 @@
+START TRANSACTION;
+
 CREATE SEQUENCE unit_id_seq;
 CREATE SEQUENCE person_id_seq;
 CREATE SEQUENCE log_id_seq;
@@ -14,10 +16,19 @@ MINVALUE 1
 MAXVALUE 9223372036854775807
 START 1
 CACHE 1;
+COMMIT;
 
+START TRANSACTION;
 
+CREATE TABLE IF NOT EXISTS selcall (
+  id SERIAL NOT NULL,
+  ani VARCHAR(5) NOT NULL,
+  timestamp TIMESTAMP,
+  direction VARCHAR(20) NOT NULL,
+  PRIMARY KEY (id)
+);
 
-CREATE TABLE point (
+CREATE TABLE IF NOT EXISTS point (
   id INTEGER NOT NULL DEFAULT nextval('point_id_seq'),
   info TEXT NOT NULL DEFAULT(''),
   longitude DOUBLE PRECISION NOT NULL DEFAULT (0),
@@ -25,7 +36,7 @@ CREATE TABLE point (
   PRIMARY KEY (id)
 );
 
-CREATE TABLE concern (
+CREATE TABLE IF NOT EXISTS concern (
   id INTEGER NOT NULL DEFAULT nextval('concern_id_seq'),
   point_fk INTEGER,
   name VARCHAR(100) NOT NULL,
@@ -36,7 +47,7 @@ CREATE TABLE concern (
   FOREIGN KEY (point_fk) REFERENCES point ON DELETE SET NULL
 );
 
-CREATE TABLE unit (
+CREATE TABLE IF NOT EXISTS unit (
   id INTEGER NOT NULL DEFAULT nextval('unit_id_seq'),
   concern_fk INTEGER NOT NULL,
   state VARCHAR (16) NOT NULL,
@@ -54,7 +65,7 @@ CREATE TABLE unit (
   FOREIGN KEY (home_point_fk) REFERENCES point ON DELETE SET NULL
 );
 
-CREATE TABLE person (
+CREATE TABLE IF NOT EXISTS person (
   id INTEGER NOT NULL DEFAULT nextval('person_id_seq'),
   given_name VARCHAR (64) NOT NULL ,
   sur_name VARCHAR (64) NOT NULL,
@@ -63,7 +74,7 @@ CREATE TABLE person (
   PRIMARY KEY (id)
 );
 
-CREATE TABLE operator (
+CREATE TABLE IF NOT EXISTS operator (
   id INTEGER NOT NULL,
   concern_fk INTEGER,
   allowLogin BOOLEAN NOT NULL,
@@ -74,13 +85,13 @@ CREATE TABLE operator (
   FOREIGN KEY (concern_fk) REFERENCES concern ON DELETE SET NULL
 );
 
-CREATE TABLE operator_role (
+CREATE TABLE IF NOT EXISTS operator_role (
   operator_fk INTEGER NOT NULL,
   role VARCHAR (30) NOT NULL,
   PRIMARY KEY (operator_fk, role)
 );
 
-CREATE TABLE crew (
+CREATE TABLE IF NOT EXISTS crew (
   unit_fk integer NOT NULL,
   person_fk integer NOT NULL,
   PRIMARY KEY (unit_fk, person_fk),
@@ -88,7 +99,7 @@ CREATE TABLE crew (
   FOREIGN KEY (person_fk) REFERENCES person ON DELETE CASCADE
 );
 
-CREATE TABLE incident (
+CREATE TABLE IF NOT EXISTS incident (
   id INTEGER NOT NULL DEFAULT nextval('incident_id_seq'),
   concern_fk INTEGER NOT NULL,
   state VARCHAR (30) NOT NULL,
@@ -106,7 +117,7 @@ CREATE TABLE incident (
   FOREIGN KEY (ao_point_fk) REFERENCES point ON DELETE SET NULL
 );
 
-CREATE TABLE log (
+CREATE TABLE IF NOT EXISTS log (
   id INTEGER NOT NULL DEFAULT nextval('log_id_seq'),
   concern_fk INTEGER NOT NULL,
   timestamp TIMESTAMP NOT NULL,
@@ -125,7 +136,7 @@ CREATE TABLE log (
   FOREIGN KEY (operator_fk) REFERENCES operator ON DELETE NO ACTION
 );
 
-CREATE TABLE task (
+CREATE TABLE IF NOT EXISTS task (
   incident_fk INTEGER NOT NULL,
   unit_fk INTEGER NOT NULL,
   state VARCHAR (30),
@@ -134,7 +145,7 @@ CREATE TABLE task (
   FOREIGN KEY (unit_fk) REFERENCES unit ON DELETE CASCADE
 );
 
-CREATE TABLE patient (
+CREATE TABLE IF NOT EXISTS patient (
   incident_fk INTEGER NOT NULL,
   given_name VARCHAR (64) NOT NULL DEFAULT '',
   sur_name VARCHAR (64) NOT NULL DEFAULT '',
@@ -148,7 +159,7 @@ CREATE TABLE patient (
   FOREIGN KEY (incident_fk) REFERENCES incident ON DELETE CASCADE
 );
 
-CREATE TABLE container (
+CREATE TABLE IF NOT EXISTS container (
   id INTEGER NOT NULL DEFAULT nextval('container_id_seq'),
   concern_fk INTEGER NOT NULL,
   head INTEGER NOT NULL,
@@ -159,7 +170,7 @@ CREATE TABLE container (
   FOREIGN KEY (head) REFERENCES container(id) ON DELETE CASCADE
 );
 
-CREATE TABLE unit_in_container (
+CREATE TABLE IF NOT EXISTS unit_in_container (
   container_fk INTEGER NOT NULL,
   unit_fk INTEGER NOT NULL,
   ordering DOUBLE PRECISION NOT NULL,
@@ -167,3 +178,4 @@ CREATE TABLE unit_in_container (
   FOREIGN KEY (container_fk) REFERENCES container(id) ON DELETE CASCADE,
   FOREIGN KEY (unit_fk) REFERENCES unit(id) ON DELETE CASCADE
 );
+COMMIT;
