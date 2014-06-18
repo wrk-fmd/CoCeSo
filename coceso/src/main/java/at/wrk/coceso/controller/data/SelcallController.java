@@ -3,6 +3,7 @@ package at.wrk.coceso.controller.data;
 import at.wrk.coceso.entity.Selcall;
 import at.wrk.coceso.service.SelcallService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +21,7 @@ import java.util.List;
 public class SelcallController {
 
     @Autowired
+    @Qualifier("mockup")
     SelcallService selcallService;
 
     @RequestMapping(value = "receive", method = RequestMethod.GET, produces = "application/json")

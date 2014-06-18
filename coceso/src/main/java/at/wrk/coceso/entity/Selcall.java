@@ -1,5 +1,6 @@
 package at.wrk.coceso.entity;
 
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
@@ -8,7 +9,7 @@ import java.util.Date;
  * Created by Robert on 14.06.2014.
  */
 @Entity
-public class Selcall implements Serializable {
+public class Selcall implements Serializable, Comparable<Selcall> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,6 +23,11 @@ public class Selcall implements Serializable {
 
     @Enumerated(EnumType.STRING)
     private Direction direction;
+
+    @Override
+    public int compareTo(Selcall that) {
+        return this.timestamp.compareTo(that.timestamp);
+    }
 
     public enum Direction {
         RX, RX_ACK, TX, TX_FAILED

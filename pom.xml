@@ -9,7 +9,7 @@
 	<artifactId>fmd-it</artifactId>
 	<packaging>pom</packaging>
 	<version>1.1.0</version>
-	<name>fmd-it</name>
+	<name>Coceso Base Package (fmd-it)</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
