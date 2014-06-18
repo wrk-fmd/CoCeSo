@@ -16,8 +16,8 @@
 	</properties>
 
 	<modules>
-		<module>Coceso</module>
-        <module>Selcall</module>
+		<module>coceso</module>
+        <module>selcall</module>
 	</modules>
 
 

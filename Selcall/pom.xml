@@ -10,7 +10,8 @@
     </parent>
 
     <artifactId>selcall</artifactId>
-    <name>Selcall</name>
+
+    <name>Selcall Plugin for CoCeSo</name>
 
     <dependencies>
 

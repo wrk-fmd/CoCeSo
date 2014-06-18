@@ -9,7 +9,8 @@
 
     <artifactId>coceso</artifactId>
     <packaging>war</packaging>
-    <name>Coceso</name>
+
+    <name>Communication Center Software</name>
 
     <properties>
         <spring.version>4.0.2.RELEASE</spring.version>
