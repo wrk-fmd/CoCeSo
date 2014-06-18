@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>selcall</artifactId>
+    <name>Selcall</name>
 
     <dependencies>
 
