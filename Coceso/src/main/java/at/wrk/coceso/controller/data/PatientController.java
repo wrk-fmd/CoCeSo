@@ -18,74 +18,54 @@ import java.util.List;
 @Controller
 @RequestMapping("/data/patient")
 public class PatientController implements IEntityController<Patient> {
-    @Autowired
-    PatientService patientService;
 
-    @Autowired
-    IncidentService incidentService;
+  @Autowired
+  PatientService patientService;
 
-    @Override
-    @RequestMapping(value = "getAll", produces = "application/json")
-    @ResponseBody
-    public List<Patient> getAll(@CookieValue(value = "active_case", defaultValue = "0") String caseId) {
-        try {
-            return patientService.getAll(Integer.parseInt(caseId));
-        } catch(NumberFormatException e) {
-            return null;
-        }
+  @Autowired
+  IncidentService incidentService;
+
+  @Override
+  @RequestMapping(value = "getAll", produces = "application/json", method = RequestMethod.GET)
+  @ResponseBody
+  public List<Patient> getAll(@CookieValue(value = "active_case", defaultValue = "0") int concernId) {
+    return patientService.getAll(concernId);
+  }
+
+  @Override
+  @RequestMapping(value = "get/{id}", produces = "application/json", method = RequestMethod.GET)
+  @ResponseBody
+  public Patient getById(@PathVariable("id") int id) {
+    return patientService.getById(id);
+  }
+
+  @Override
+  @RequestMapping(value = "update", produces = "application/json", method = RequestMethod.POST)
+  @ResponseBody
+  public String update(@RequestBody Patient patient, BindingResult result,
+          @CookieValue(value = "active_case", defaultValue = "0") int concernId, Principal principal) {
+    UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
+    Operator user = (Operator) token.getPrincipal();
+
+    if (result.hasErrors()) {
+      return "{\"success\": false, description: \"Binding Error\"}";
     }
 
-    @Override
-    @RequestMapping(value = "get", produces = "application/json", method = RequestMethod.POST)
-    @ResponseBody
-    public Patient getByPost(@RequestParam(value = "id", required = true) int id) {
-        return patientService.getById(id);
+    Incident incident = incidentService.getById(patient.getId());
+    if (incident == null) {
+      return "{\"success\": false, \"info\":\"Invalid ID\"}";
+    }
+    if (incident.getConcern() != concernId) {
+      return "{\"success\": false, \"info\":\"Active Concern not valid\"}";
     }
 
-    @Override
-    @RequestMapping(value = "get/{id}", produces = "application/json", method = RequestMethod.GET)
-    @ResponseBody
-    public Patient getByGet(int id) {
-        return getByPost(id);
+    if (patientService.getById(patient.getId()) == null) {
+
+      int ret = patientService.add(patient, user, concernId);
+
+      return "{\"success\": " + (ret != -1) + ", \"new\": true}";
     }
 
-    @Override
-    @RequestMapping(value = "update", produces = "application/json", method = RequestMethod.POST)
-    @ResponseBody
-    public String update(@RequestBody Patient patient, BindingResult result,
-                         @CookieValue(value = "active_case", defaultValue = "0") String case_id, Principal principal)
-    {
-        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
-        Operator user = (Operator) token.getPrincipal();
-
-        int caseId;
-
-        try {
-            caseId = Integer.parseInt(case_id);
-        } catch(NumberFormatException e) {
-            CocesoLogger.warning("PatientController: update: " + e);
-            return "{\"success\": false, \"info\":\"No active Concern. Cookies enabled?\"}";
-        }
-
-
-        if(result.hasErrors()) {
-            return "{\"success\": false, description: \"Binding Error\"}";
-        }
-
-
-        Incident incident = incidentService.getById(patient.getId());
-        if(incident == null)
-            return "{\"success\": false, \"info\":\"Invalid ID\"}";
-        if(incident.getConcern() != caseId)
-            return "{\"success\": false, \"info\":\"Active Concern not valid\"}";
-
-        if(patientService.getById(patient.getId()) == null) {
-
-            int ret = patientService.add(patient, user, caseId);
-
-            return "{\"success\": " + (ret != -1) + ", \"new\": true}";
-        }
-
-        return "{\"success\": " + patientService.update(patient, user, caseId) + ", \"new\": false}";
-    }
+    return "{\"success\": " + patientService.update(patient, user, concernId) + ", \"new\": false}";
+  }
 }

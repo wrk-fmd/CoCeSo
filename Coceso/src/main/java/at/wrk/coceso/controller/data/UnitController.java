@@ -1,13 +1,16 @@
-
 package at.wrk.coceso.controller.data;
 
 import at.wrk.coceso.entity.Operator;
-import at.wrk.coceso.entity.Point;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.enums.TaskState;
-import at.wrk.coceso.service.UnitService;
+import at.wrk.coceso.entity.helper.BatchUnits;
+import at.wrk.coceso.entity.helper.UnitWithLocked;
 import at.wrk.coceso.service.TaskService;
+import at.wrk.coceso.service.UnitService;
 import at.wrk.coceso.utils.CocesoLogger;
+import java.security.Principal;
+import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,267 +19,201 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import java.security.Principal;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 @Controller
 @RequestMapping("/data/unit")
 public class UnitController {
 
-    @Autowired
-    private UnitService unitService;
+  @Autowired
+  private UnitService unitService;
 
-    @Autowired
-    TaskService taskService;
+  @Autowired
+  private TaskService taskService;
 
-    @RequestMapping(value = "getAll", produces = "application/json")
-    @ResponseBody
-    public List<Unit> getAll(@CookieValue(value = "active_case", defaultValue = "0") String case_id) {
+  @RequestMapping(value = "getAll", produces = "application/json", method = RequestMethod.GET)
+  @ResponseBody
+  public List<Unit> getAll(@CookieValue(value = "active_case", defaultValue = "0") int concernId) {
+    return unitService.getAll(concernId);
+  }
 
-        try {
-            return unitService.getAll(Integer.parseInt(case_id));
-        } catch(NumberFormatException e) {
-            CocesoLogger.warning("UnitController: getAll: "+e);
-            return null;
-        }
+  @RequestMapping(value = "getAllWithLocked", produces = "application/json", method = RequestMethod.GET)
+  @ResponseBody
+  public List<UnitWithLocked> getAllWithLocked(@CookieValue(value = "active_case", defaultValue = "0") int concernId) {
+    return unitService.getAllWithLocked(concernId);
+  }
+
+  @RequestMapping(value = "get/{id}", produces = "application/json", method = RequestMethod.GET)
+  @ResponseBody
+  public Unit getById(@PathVariable(value = "id") int id) {
+    return unitService.getById(id);
+  }
+
+  // TODO Error Handling
+  @RequestMapping(value = "createUnitBatch", produces = "application/json", method = RequestMethod.POST)
+  @ResponseBody
+  public String createUnitBatch(@RequestBody BatchUnits batch, BindingResult result,
+          @CookieValue(value = "active_case", defaultValue = "0") int concernId, UsernamePasswordAuthenticationToken token) {
+    Operator user = (Operator) token.getPrincipal();
+
+    Unit unit = new Unit();
+    unit.setConcern(concernId);
+    unit.setId(-1);
+    unit.setPortable(batch.isPortable());
+    unit.setWithDoc(batch.isWithDoc());
+    unit.setTransportVehicle(batch.isTransportVehicle());
+    unit.setHome(batch.getHome());
+
+    for (int i = batch.getFrom(); i <= batch.getTo(); i++) {
+      unit.setCall(batch.getCall() + i);
+      unitService.add(unit, user);
     }
 
-    @RequestMapping(value = "get", produces = "application/json", method = RequestMethod.POST)
-    @ResponseBody
-    public Unit getByPost(@RequestParam(value = "id", required = true) int id) {
+    return "{\"success\":true}";
+  }
 
-        return unitService.getById(id);
+  @RequestMapping(value = "update", produces = "application/json", method = RequestMethod.POST)
+  @ResponseBody
+  public ResponseEntity<String> update(@RequestBody Unit unit, BindingResult result,
+          @CookieValue(value = "active_case", defaultValue = "0") int concernId, Principal principal) {
+    UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
+    Operator user = (Operator) token.getPrincipal();
+
+    if (result.hasErrors()) {
+      return new ResponseEntity<String>("{\"success\": false, description: \"Binding Error\"}", HttpStatus.BAD_REQUEST);
     }
 
-    @RequestMapping(value = "get/{id}", produces = "application/json", method = RequestMethod.GET)
-    @ResponseBody
-    public Unit getByGet(@PathVariable("id") int id) {
-
-        return getByPost(id);
+    if (unit.getId() <= 0) {
+      //Adding units is not possible in "main" page, therefore not necessary here
+      CocesoLogger.warning("UnitController.update(): User " + user.getUsername() + " tried to add unit, use updateFull!");
+      return new ResponseEntity<String>("{\"success\": false, \"info\":\"Adding not allowed\"}", HttpStatus.BAD_REQUEST);
     }
 
-    @RequestMapping(value = "getNonDeletables", produces = "application/json")
-    @ResponseBody
-    public Set<Integer> getNonDeletables(@CookieValue(value = "active_case", defaultValue = "0") String case_id) {
-
-        try {
-            return unitService.getNonDeletable(Integer.parseInt(case_id));
-        } catch(NumberFormatException e) {
-            CocesoLogger.warning("UnitController: getAll: "+e);
-            return null;
-        }
+    Unit u = unitService.getById(unit.getId());
+    if (u.getConcern() != concernId) {
+      CocesoLogger.warning("UnitController.update(): User " + user.getUsername() + " tried to update Unit of wrong Concern");
+      return new ResponseEntity<String>("{\"success\": false, \"info\":\"Active Concern not valid\"}", HttpStatus.BAD_REQUEST);
     }
 
-    /**
-     * Batch Job for Creating Units
-     *
-     * POST data:
-     * portable, withDoc, transportVehicle, home, from, to, call_pre
-     * @param request The HttpRequest
-     * @param case_id Active Concern out of Cookie
-     * @param principal Logged-In User
-     * @return JSON with Success
-     */
-    // TODO Error Handling
-    @RequestMapping(value = "createUnitBatch", produces = "application/json", method = RequestMethod.POST)
-    @ResponseBody
-    public String createUnitBatch(HttpServletRequest request,
-                                  @CookieValue("active_case") int case_id,
-                                  Principal principal)
-    {
-        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
-        Operator user = (Operator) token.getPrincipal();
-
-        Unit unit = new Unit();
-        unit.setConcern(case_id);
-
-        unit.setId(-1);
-        unit.setPortable(request.getParameter("portable") != null);
-        unit.setWithDoc(request.getParameter("withDoc") != null);
-        unit.setTransportVehicle(request.getParameter("transportVehicle") != null);
-        unit.setHome(new Point(request.getParameter("home")));
-
-        int from = Integer.parseInt(request.getParameter("from"));
-        int to = Integer.parseInt(request.getParameter("to"));
-
-        for(int i = from; i <= to; i++){
-            unit.setCall(request.getParameter("call_pre")+i);
-            unitService.add(unit, user);
-        }
-
-        return "{\"success\":true}";
+    //TODO: Is this still necessary? Every unit already in DB has to have a concern anyhow...
+    if (unit.getConcern() <= 0) {
+      // Something went wrong with active Concern
+      CocesoLogger.info("UnitController.update(): User " + user.getUsername() + ":  Invalid Concern ID");
+      return new ResponseEntity<String>("{\"success\": false, \"info\":\"No active Concern. Cookies enabled?\"}", HttpStatus.BAD_REQUEST);
     }
 
-
-    @RequestMapping(value = "update", produces = "application/json", method = RequestMethod.POST)
-    @ResponseBody
-    public ResponseEntity<String> update(@RequestBody Unit unit, BindingResult result,
-                         @CookieValue(value = "active_case", defaultValue = "0") String case_id, Principal principal)
-    {
-        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
-        Operator user = (Operator) token.getPrincipal();
-
-        int caseId;
-
-        try {
-            caseId = Integer.parseInt(case_id);
-        } catch(NumberFormatException e) {
-            CocesoLogger.warning("UnitController: update: "+e);
-            return new ResponseEntity<String>("{\"success\": false, \"info\":\"No active Concern. Cookies enabled?\"}", HttpStatus.BAD_REQUEST);
-        }
-
-
-        if(result.hasErrors()) {
-            return new ResponseEntity<String>("{\"success\": false, description: \"Binding Error\"}", HttpStatus.BAD_REQUEST);
-        }
-
-        // if Unit already exists, check if in active Concern
-        if(unit.getId() > 0) {
-            Unit u = unitService.getById(unit.getId());
-            if(u.getConcern() != caseId) {
-                CocesoLogger.warning("UnitController.update(): User " + user.getUsername() + " tried to update Unit of wrong Concern");
-                return new ResponseEntity<String>("{\"success\": false, \"info\":\"Active Concern not valid\"}", HttpStatus.BAD_REQUEST);
-            }
-        }
-
-        // if exist: already checked, if new: set Concern
-        unit.setConcern(caseId);
-
-        if(unit.getConcern() <= 0) {
-            // Something went wrong with active Concern
-            CocesoLogger.info("UnitController.update(): User " + user.getUsername() + ":  Invalid Concern ID");
-            return new ResponseEntity<String>("{\"success\": false, \"info\":\"No active Concern. Cookies enabled?\"}", HttpStatus.BAD_REQUEST);
-        }
-
-        // Create new Unit
-        if(unit.getId() < 1) {
-            unit.setId(0);
-
-            unit.setId(unitService.add(unit, user));
-
-            if(unit.getId() <= 0) {
-                CocesoLogger.warning("UnitController.update(): User " + user.getUsername() + ":  Creating unit with call=" +
-                                unit.getCall() + " failed. returned id=" + unit.getId());
-            }
-            boolean success = (unit.getId() > 0);
-            return new ResponseEntity<String>("{\"success\": " + success + ", \"new\": true, \"unit_id\":"+ unit.getId() +"}", (success ? HttpStatus.OK : HttpStatus.BAD_REQUEST));
-        }
-
-        boolean ret = unitService.update(unit, user);
-        String associated = "{}";
-        if (ret)
-            associated = setAssociated(unit, user);
-
-        //log.logFull(user, "Unit updated", caseId, unit, null, true);
-        return new ResponseEntity<String>("{\"success\": " + ret + ", \"new\": false}",
-                ret ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
+    boolean ret = unitService.update(unit, user);
+    String associated = "{}";
+    if (ret && unit.getIncidents() != null) {
+      associated = setAssociated(unit, user);
     }
 
-    protected String setAssociated(Unit unit, Operator user) {
-      String messages = "{";
-      for (Map.Entry<Integer,TaskState> entry : unit.getIncidents().entrySet()) {
-        if (messages.length() > 1) {
-          messages += ",";
-        }
-        messages += "\"" + entry.getKey() + "\":" + taskService.changeState(entry.getKey(), unit.getId(), entry.getValue(), user);
+    //log.logFull(user, "Unit updated", caseId, unit, null, true);
+    return new ResponseEntity<String>("{\"success\": " + ret + ", \"new\": false,\"associated\":" + associated + "}",
+            ret ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
+  }
+
+  protected String setAssociated(Unit unit, Operator user) {
+    String messages = "{";
+    for (Map.Entry<Integer, TaskState> entry : unit.getIncidents().entrySet()) {
+      if (messages.length() > 1) {
+        messages += ",";
       }
-      messages += "}";
-      return messages;
+      messages += "\"" + entry.getKey() + "\":" + taskService.changeState(entry.getKey(), unit.getId(), entry.getValue(), user);
+    }
+    messages += "}";
+    return messages;
+  }
+
+  @RequestMapping(value = "updateFull", produces = "application/json", method = RequestMethod.POST)
+  @ResponseBody
+  public ResponseEntity<String> updateFull(@RequestBody Unit editedUnit, BindingResult result,
+          @CookieValue(value = "active_case", defaultValue = "0") int concernId, Principal principal) {
+    UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
+    Operator user = (Operator) token.getPrincipal();
+
+    if (result.hasErrors()) {
+      return new ResponseEntity<String>("{\"success\": false, description: \"Binding Error\"}", HttpStatus.BAD_REQUEST);
     }
 
-    @RequestMapping(value = "updateFull", produces = "application/json", method = RequestMethod.POST)
-    @ResponseBody
-    public ResponseEntity<String> updateFull(@RequestBody Unit editedUnit, BindingResult result, Principal principal)
-    {
-        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
-        Operator user = (Operator) token.getPrincipal();
+    // Create new Unit
+    if (editedUnit.getId() <= 0) {
+      editedUnit.setId(0);
+      editedUnit.setConcern(concernId);
 
-        if(result.hasErrors()) {
-            return new ResponseEntity<String>("{\"success\": false, description: \"Binding Error\"}", HttpStatus.BAD_REQUEST);
-        }
+      editedUnit.setId(unitService.add(editedUnit, user));
 
-
-        Unit unit = unitService.getById(editedUnit.getId());
-
-        unit.setCall(editedUnit.getCall());
-        unit.setAni(editedUnit.getAni());
-        unit.setInfo(editedUnit.getInfo());
-        unit.setPortable(editedUnit.isPortable());
-        unit.setWithDoc(editedUnit.isWithDoc());
-        unit.setTransportVehicle(editedUnit.isTransportVehicle());
-        unit.setHome(editedUnit.getHome());
-
-        boolean ret = unitService.updateFull(unit, user);
-
-        return new ResponseEntity<String>("{\"success\":" + ret + "}", ret ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
+      boolean success = (editedUnit.getId() > 0);
+      if (!success) {
+        CocesoLogger.warning("UnitController.update(): User " + user.getUsername() + ":  Creating unit with call="
+                + editedUnit.getCall() + " failed. returned id=" + editedUnit.getId());
+      }
+      return new ResponseEntity<String>("{\"success\": " + success + ", \"new\": true, \"unit_id\":" + editedUnit.getId() + "}", (success ? HttpStatus.OK : HttpStatus.BAD_REQUEST));
     }
 
-    @RequestMapping(value = "sendHome", produces = "application/json", method = RequestMethod.POST)
-    @ResponseBody
-    public ResponseEntity<String> sendHomeByPost(@CookieValue(value="active_case", defaultValue = "0") String case_id,
-                         @RequestParam("id") int unitId, Principal principal)
-    {
-        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
-        Operator user = (Operator) token.getPrincipal();
-
-        int activeCase = Integer.parseInt(case_id);
-
-        if(!unitService.sendHome(activeCase, unitId, user)) {
-            return new ResponseEntity<String>("{\"success\":false}", HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<String>("{\"success\":true}", HttpStatus.OK);
+    Unit unit = unitService.getById(editedUnit.getId());
+    if (unit.getConcern() != concernId) {
+      CocesoLogger.warning("UnitController.update(): User " + user.getUsername() + " tried to update Unit of wrong Concern");
+      return new ResponseEntity<String>("{\"success\": false, \"info\":\"Active Concern not valid\"}", HttpStatus.BAD_REQUEST);
     }
 
-    @RequestMapping(value = "holdPosition", produces = "application/json", method = RequestMethod.POST)
-    @ResponseBody
-    public ResponseEntity<String> holdPosition(@CookieValue(value="active_case", defaultValue = "0") String case_id,
-                                                 @RequestParam("id") int unitId, Principal principal)
-    {
-        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
-        Operator user = (Operator) token.getPrincipal();
+    unit.setCall(editedUnit.getCall());
+    unit.setAni(editedUnit.getAni());
+    unit.setInfo(editedUnit.getInfo());
+    unit.setPortable(editedUnit.isPortable());
+    unit.setWithDoc(editedUnit.isWithDoc());
+    unit.setTransportVehicle(editedUnit.isTransportVehicle());
+    unit.setHome(editedUnit.getHome());
 
-        int activeCase = Integer.parseInt(case_id);
+    boolean ret = unitService.updateFull(unit, user);
 
-        if(!unitService.holdPosition(activeCase, unitId, user)) {
-            return new ResponseEntity<String>("{\"success\":false}", HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<String>("{\"success\":true}", HttpStatus.OK);
+    return new ResponseEntity<String>("{\"success\":" + ret + "}", ret ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
+  }
+
+  @RequestMapping(value = "sendHome", produces = "application/json", method = RequestMethod.POST)
+  @ResponseBody
+  public ResponseEntity<String> sendHome(@CookieValue(value = "active_case", defaultValue = "0") int concernId,
+          @RequestParam("id") int unitId, Principal principal) {
+    UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
+    Operator user = (Operator) token.getPrincipal();
+
+    if (!unitService.sendHome(concernId, unitId, user)) {
+      return new ResponseEntity<String>("{\"success\":false}", HttpStatus.BAD_REQUEST);
     }
+    return new ResponseEntity<String>("{\"success\":true}", HttpStatus.OK);
+  }
 
-    @RequestMapping(value = "standby", produces = "application/json", method = RequestMethod.POST)
-    @ResponseBody
-    public ResponseEntity<String> standby(@CookieValue(value="active_case", defaultValue = "0") String case_id,
-                                               @RequestParam("id") int unitId, Principal principal)
-    {
-        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
-        Operator user = (Operator) token.getPrincipal();
+  @RequestMapping(value = "holdPosition", produces = "application/json", method = RequestMethod.POST)
+  @ResponseBody
+  public ResponseEntity<String> holdPosition(@CookieValue(value = "active_case", defaultValue = "0") int concernId,
+          @RequestParam("id") int unitId, Principal principal) {
+    UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
+    Operator user = (Operator) token.getPrincipal();
 
-        int activeCase = Integer.parseInt(case_id);
-
-        if(!unitService.standby(activeCase, unitId, user)) {
-            return new ResponseEntity<String>("{\"success\":false}", HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<String>("{\"success\":true}", HttpStatus.OK);
+    if (!unitService.holdPosition(concernId, unitId, user)) {
+      return new ResponseEntity<String>("{\"success\":false}", HttpStatus.BAD_REQUEST);
     }
+    return new ResponseEntity<String>("{\"success\":true}", HttpStatus.OK);
+  }
 
-    @RequestMapping(value = "remove", produces = "application/json", method = RequestMethod.POST)
-    @ResponseBody
-    public ResponseEntity<String> remove(@RequestBody Unit editedUnit, BindingResult result, Principal principal)
-    {
-        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
-        Operator user = (Operator) token.getPrincipal();
+  @RequestMapping(value = "standby", produces = "application/json", method = RequestMethod.POST)
+  @ResponseBody
+  public ResponseEntity<String> standby(@CookieValue(value = "active_case", defaultValue = "0") int concernId,
+          @RequestParam("id") int unitId, Principal principal) {
+    UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
+    Operator user = (Operator) token.getPrincipal();
 
-        if(result.hasErrors()) {
-            return new ResponseEntity<String>("{\"success\": false, description: \"Binding Error\"}", HttpStatus.BAD_REQUEST);
-        }
-
-        boolean ret = unitService.remove(editedUnit, user);
-
-        return new ResponseEntity<String>("{\"success\":" + ret + "}", HttpStatus.OK);
+    if (!unitService.standby(concernId, unitId, user)) {
+      return new ResponseEntity<String>("{\"success\":false}", HttpStatus.BAD_REQUEST);
     }
+    return new ResponseEntity<String>("{\"success\":true}", HttpStatus.OK);
+  }
 
+  @RequestMapping(value = "remove", produces = "application/json", method = RequestMethod.POST)
+  @ResponseBody
+  public ResponseEntity<String> remove(@RequestParam("id") int unitId, Principal principal) {
+    UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
+    Operator user = (Operator) token.getPrincipal();
+
+    return new ResponseEntity<String>("{\"success\":" + unitService.remove(unitId, user) + "}", HttpStatus.OK);
+  }
 
 }

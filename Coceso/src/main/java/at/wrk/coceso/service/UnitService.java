@@ -9,13 +9,13 @@ import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.LogEntryType;
 import at.wrk.coceso.entity.enums.TaskState;
+import at.wrk.coceso.entity.helper.UnitWithLocked;
 import at.wrk.coceso.utils.CocesoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class UnitService {
@@ -44,6 +44,9 @@ public class UnitService {
         return unitDao.getAll(case_id);
     }
 
+    public List<UnitWithLocked> getAllWithLocked(int concernId) {
+        return unitDao.getAllWithLocked(concernId);
+    }
 
     public boolean update(Unit unit) {
         return unitDao.update(unit);
@@ -83,16 +86,14 @@ public class UnitService {
         return unit.getId();
     }
 
-    public boolean remove(Unit unit) {
-        return unitDao.remove(unit);
+    public boolean remove(int unitId) {
+        return unitDao.remove(unitId);
     }
 
-    public boolean remove(Unit unit, Operator operator) {
-        if(unit == null)
-            return false;
+    public boolean remove(int unitId, Operator operator) {
         // Changed to REMOVED Flag on LogEntry:Create
         //logService.logFull(operator, LogEntryType.UNIT_DELETE, unit.getConcern(), unit, null, true);
-        return remove(unit);
+        return remove(unitId);
     }
 
     private boolean detachAllGivenTypes(int unitId, IncidentType... types) {
@@ -177,9 +178,5 @@ public class UnitService {
         taskService.changeState(inc.getId(), unitId, TaskState.Assigned, user);
 
         return true;
-    }
-
-    public Set<Integer> getNonDeletable(int caseId) {
-        return unitDao.getNonDeletable(caseId);
     }
 }

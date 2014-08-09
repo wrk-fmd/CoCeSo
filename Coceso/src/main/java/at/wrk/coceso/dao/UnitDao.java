@@ -2,16 +2,17 @@ package at.wrk.coceso.dao;
 
 
 import at.wrk.coceso.dao.mapper.UnitMapper;
+import at.wrk.coceso.dao.mapper.UnitMapperWithLocked;
 import at.wrk.coceso.entity.Person;
 import at.wrk.coceso.entity.Point;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.enums.UnitState;
+import at.wrk.coceso.entity.helper.UnitWithLocked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -20,7 +21,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
-import java.util.logging.Logger;
+import java.util.logging.*;
 
 @Repository
 public class UnitDao extends CocesoDao<Unit> {
@@ -29,6 +30,9 @@ public class UnitDao extends CocesoDao<Unit> {
 
     @Autowired
     UnitMapper unitMapper;
+
+    @Autowired
+    UnitMapperWithLocked unitMapperWithLocked;
 
     @Autowired
     CrewDao crewDao;
@@ -65,6 +69,27 @@ public class UnitDao extends CocesoDao<Unit> {
         return unit;
     }
 
+    public UnitWithLocked getWithLocked(int id) {
+        if(id < 1) {
+            logger.log(Level.SEVERE, "Invalid ID: {0}", id);
+            return null;
+        }
+
+        String q = "SELECT *, " +
+                "EXISTS(SELECT 1 FROM log l WHERE l.unit_fk = unit.id AND (l.type != 'UNIT_CREATE' OR l.type IS NULL)) AS locked " +
+                "FROM unit WHERE id = ?";
+        UnitWithLocked unit;
+
+        try {
+            unit = jdbc.queryForObject(q, new Integer[] {id}, unitMapperWithLocked);
+        } catch (DataAccessException dae) {
+            logger.log(Level.SEVERE, "requested id: {0}; DataAccessException: {1}", new Object[]{id, dae.getMessage()});
+            return null;
+        }
+
+        return unit;
+    }
+
     @Override
     public List<Unit> getAll(int concern_id) {
         if(concern_id < 1) {
@@ -75,6 +100,24 @@ public class UnitDao extends CocesoDao<Unit> {
 
         try {
             return jdbc.query(q, new Object[] {concern_id}, unitMapper);
+        }
+        catch(DataAccessException dae) {
+            logger.severe(dae.getMessage());
+            return null;
+        }
+    }
+
+    public List<UnitWithLocked> getAllWithLocked(int concernId) {
+        if(concernId < 1) {
+            logger.log(Level.WARNING, "invalid concern_id: {0}", concernId);
+            return null;
+        }
+        String q = "SELECT *, " +
+                "EXISTS(SELECT 1 FROM log l WHERE l.unit_fk = unit.id AND (l.type != 'UNIT_CREATE' OR l.type IS NULL)) AS locked " +
+                "FROM unit WHERE concern_fk = ? ORDER BY id ASC";
+
+        try {
+            return jdbc.query(q, new Object[] {concernId}, unitMapperWithLocked);
         }
         catch(DataAccessException dae) {
             logger.severe(dae.getMessage());
@@ -296,17 +339,21 @@ public class UnitDao extends CocesoDao<Unit> {
             logger.severe("unit is NULL");
             return false;
         }
-        if(unit.getId() <= 0) {
-            logger.severe("invalid id: " + unit.getId() + ", call: " + unit.getCall());
+
+        return remove(unit.getId());
+    }
+
+    public boolean remove(int unitId) {
+        if(unitId <= 0) {
+            logger.log(Level.SEVERE, "invalid id: {0}", unitId);
             return false;
         }
 
         // Load from DB for Security Reasons. => Concern cannot be faked and all fields are loaded
         logger.info("Load current unit from DB");
-        unit = getById(unit.getId());
+        UnitWithLocked unit = getWithLocked(unitId);
 
-
-        if(getNonDeletable(unit.getConcern()).contains(unit.getId())) {
+        if(unit.isLocked()) {
             logger.warning("tried to remove non-deletable Unit");
             return false;
         }
@@ -323,25 +370,5 @@ public class UnitDao extends CocesoDao<Unit> {
 
         logger.info("Unit removed. ID=" + unit.getId());
         return true;
-    }
-
-    /**
-     * Returns Integer-Set of Unit IDs, that are already used by the Main Application and cannot be removed anymore
-     * @param concernId ID of Concern, in that all Units are checked
-     * @return Integer-Set of Unit IDs
-     */
-    public Set<Integer> getNonDeletable(int concernId) {
-        String q = "SELECT DISTINCT u.id FROM unit u, log l WHERE u.id = l.unit_fk AND l.concern_fk = ? " +
-                "AND (l.type != 'UNIT_CREATE' OR l.type IS NULL)";
-
-        SqlRowSet rs = jdbc.queryForRowSet(q, concernId);
-
-        Set<Integer> ret = new HashSet<Integer>();
-
-        while(rs.next()) {
-            ret.add(rs.getInt("id"));
-        }
-
-        return ret;
     }
 }
