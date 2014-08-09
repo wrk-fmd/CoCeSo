@@ -334,3 +334,70 @@ ko.extenders.filtered = function(target, options) {
     return data;
   });
 };
+
+/**
+ * Helper for boolean values
+ *
+ * @param {ko.observable} target
+ * @param {Object} options
+ * @returns {ko.computed}
+ */
+ko.extenders.boolean = function(target) {
+  var ret = ko.computed({
+    read: target,
+    write: function(val) {
+      target(!!val);
+    }
+  });
+
+  ret.toggle = function() {
+    target(!target());
+  };
+
+  ret.set = function() {
+    target(true);
+  };
+
+  ret.setNot = function() {
+    target(false);
+  };
+
+  return ret;
+};
+
+/**
+ * Force value to be an integer
+ *
+ * @param {ko.observable} target
+ * @param {Integer} length
+ * @returns {ko.computed}
+ */
+ko.extenders.integer = function(target, length) {
+  var ret = ko.computed({
+    read: target,
+    write: function(newValue) {
+      var current = target(),
+          newValueInt = (newValue && !isNaN(newValue)) ? parseInt(newValue) : 0;
+
+      if (newValue === null || newValue === "") {
+        newValueInt = null;
+      } else if (length) {
+        newValueInt = newValueInt.toString();
+        while (newValueInt.length < length) {
+          newValueInt = "0" + newValueInt;
+        }
+      }
+
+      if (newValueInt !== current) {
+        target(newValueInt);
+      } else if (newValue !== current) {
+        target.notifySubscribers(newValueInt);
+      }
+    }
+  }).extend({notify: 'always'});
+
+  ret.valueHasMutated = target.valueHasMutated;
+  ret(target());
+
+  return ret;
+};

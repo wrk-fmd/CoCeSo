@@ -5,18 +5,15 @@
 
 <html>
   <head>
+    <title><spring:message code="label.nav.login"/></title>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="utf-8" />
-
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
     <link rel="icon" href="<c:url value="/static/favicon.ico"/>" type="image/x-icon">
-
-    <title><spring:message code="label.nav.login"/></title>
-
     <link href="<c:url value='/static/css/coceso.css' />" rel="stylesheet">
   </head>
-
   <body class="login">
     <div class="container">
       <c:if test="${not empty error}">

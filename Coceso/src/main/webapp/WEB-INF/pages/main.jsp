@@ -38,7 +38,7 @@
       jQuery UI
       See Bug #9166 of JQuery UI: http://bugs.jqueryui.com/ticket/9166
       JQuery UI 1.9.2 needed for correct handling of Dialogs (=Windows)
-      JQuery 1.10.4 needed for correct refresh of Accordions (Incident List)
+      JQuery UI 1.10.4 needed for correct refresh of Accordions (Incident List)
     --%>
     <script src="<c:url value="/static/js/assets/jquery.ui.1.9.2.dialog.min.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/assets/jquery.ui.1.10.4.min.js"/>" type="text/javascript"></script>
