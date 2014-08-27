@@ -545,7 +545,7 @@ public class FinalReportController {
 
     @ExceptionHandler(ConcernNotFoundException.class)
     public String error() {
-        return "redirect:/welcome?error=1";
+        return "redirect:/home?error=1";
     }
 
     private class ConcernNotFoundException extends Exception {

@@ -6,14 +6,11 @@ import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.service.IncidentService;
 import at.wrk.coceso.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
@@ -24,35 +21,32 @@ public class IncidentController implements IEntityController<Incident> {
   @Autowired
   IncidentService incidentService;
 
-  //@Autowired
-  //LogService log;
   @Autowired
   TaskService taskService;
 
   @Override
-  @RequestMapping(value = "getAll", produces = "application/json")
+  @RequestMapping(value = "getAll", produces = "application/json", method = RequestMethod.GET)
   @ResponseBody
-  public List<Incident> getAll(@CookieValue(value = "active_case", defaultValue = "0") int concernId) {
-    return incidentService.getAll(concernId);
+  public List<Incident> getAll(@CookieValue("concern") int concern_id) {
+    return incidentService.getAll(concern_id);
   }
 
-  @RequestMapping(value = "getAllActive", produces = "application/json")
+  @RequestMapping(value = "getAllActive", produces = "application/json", method = RequestMethod.GET)
   @ResponseBody
-  public List<Incident> getAllActive(@CookieValue(value = "active_case", defaultValue = "0") int concernId) {
-    return incidentService.getAllActive(concernId);
+  public List<Incident> getAllActive(@CookieValue("concern") int concern_id) {
+    return incidentService.getAllActive(concern_id);
   }
 
-  @RequestMapping(value = "getAllRelevant", produces = "application/json")
+  @RequestMapping(value = "getAllRelevant", produces = "application/json", method = RequestMethod.GET)
   @ResponseBody
-  public List<Incident> getAllRelevant(@CookieValue(value = "active_case", defaultValue = "0") int concernId) {
-    return incidentService.getAllRelevant(concernId);
+  public List<Incident> getAllRelevant(@CookieValue("concern") int concern_id) {
+    return incidentService.getAllRelevant(concern_id);
   }
 
-  @RequestMapping(value = "getAllByState/{state}", produces = "application/json")
+  @RequestMapping(value = "getAllByState/{state}", produces = "application/json", method = RequestMethod.GET)
   @ResponseBody
-  public List<Incident> getAllByState(@CookieValue(value = "active_case", defaultValue = "0") int concernId,
-          @PathVariable("state") IncidentState state) {
-    return incidentService.getAllByState(concernId, state);
+  public List<Incident> getAllByState(@CookieValue("concern") int concern_id, @PathVariable("state") IncidentState state) {
+    return incidentService.getAllByState(concern_id, state);
   }
 
   @Override
@@ -66,9 +60,7 @@ public class IncidentController implements IEntityController<Incident> {
   @RequestMapping(value = "update", produces = "application/json", method = RequestMethod.POST)
   @ResponseBody
   public String update(@RequestBody Incident incident, BindingResult result,
-          @CookieValue(value = "active_case", defaultValue = "0") int concernId,
-          Principal principal) {
-    UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
+          @CookieValue("concern") int concern_id, UsernamePasswordAuthenticationToken token) {
     Operator user = (Operator) token.getPrincipal();
 
     if (result.hasErrors()) {
@@ -77,12 +69,12 @@ public class IncidentController implements IEntityController<Incident> {
 
     if (incident.getId() > 0) {
       Incident i = incidentService.getById(incident.getId());
-      if (i.getConcern() != concernId) {
+      if (i.getConcern() != concern_id) {
         return "{\"success\": false, \"info\":\"Active Concern not valid\"}";
       }
     }
 
-    incident.setConcern(concernId);
+    incident.setConcern(concern_id);
 
     if (incident.getConcern() <= 0) {
       return "{\"success\": false, \"info\":\"No active Concern. Cookies enabled?\"}";
@@ -98,11 +90,11 @@ public class IncidentController implements IEntityController<Incident> {
         associated = setAssociated(incident, user);
       }
 
-      //log.logFull(user, "Incident created", caseId, null, incident, true);
+      //log.logFull(user, "Incident created", concern_id, null, incident, true);
       return "{\"success\": " + (incident.getId() > 0) + ", \"new\": true, \"incident_id\":" + incident.getId() + ",\"associated\":" + associated + "}";
     }
 
-    //log.logFull(user, "Incident updated", caseId, null, incident, true);
+    //log.logFull(user, "Incident updated", concern_id, null, incident, true);
     boolean ret = incidentService.update(incident, user);
     String associated = "{}";
 
@@ -129,10 +121,8 @@ public class IncidentController implements IEntityController<Incident> {
 
   @RequestMapping(value = "nextState", produces = "application/json", method = RequestMethod.POST)
   @ResponseBody
-  public ResponseEntity<String> nextState(@RequestParam("incident_id") int incident_id,
-          @RequestParam("unit_id") int unit_id,
-          Principal principal) {
-    UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
+  public String nextState(@RequestParam("incident_id") int incident_id, @RequestParam("unit_id") int unit_id,
+          UsernamePasswordAuthenticationToken token) {
     Operator user = (Operator) token.getPrincipal();
 
     Incident incident = incidentService.getById(incident_id);
@@ -140,33 +130,23 @@ public class IncidentController implements IEntityController<Incident> {
 
     // Don't set State to ZAO if no AO is present. Except for SingleUnit Incidents (TODO Home can be null, remove middle statement if not)
     if (newState == TaskState.ZAO && !incident.getType().isSingleUnit() && Point.isEmpty(incident.getAo())) {
-      return new ResponseEntity<String>("{\"success\":false,"
-              + " \"message\":\"No AO in Incident given\"}",
-              HttpStatus.BAD_REQUEST);
+      return "{\"success\":false,\"message\":\"No AO in Incident given\"}";
     }
 
     if (newState == null) {
-      return new ResponseEntity<String>("{\"success\":false,"
-              + " \"message\":\"Next State not possible, no Next State defined\"}",
-              HttpStatus.BAD_REQUEST);
+      return "{\"success\":false,\"message\":\"Next State not possible, no Next State defined\"}";
     }
 
     taskService.changeState(incident_id, unit_id, newState, user);
-
-    return new ResponseEntity<String>("{\"success\":true}", HttpStatus.OK);
+    return "{\"success\":true}";
   }
 
   @RequestMapping(value = "setToState", produces = "application/json", method = RequestMethod.POST)
   @ResponseBody
-  public ResponseEntity<String> setToState(
-          @RequestParam("incident_id") int incident_id,
-          @RequestParam("unit_id") int unit_id,
-          @RequestParam("state") TaskState state,
-          Principal principal) {
-    UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
+  public String setToState(@RequestParam("incident_id") int incident_id, @RequestParam("unit_id") int unit_id,
+          @RequestParam("state") TaskState state, UsernamePasswordAuthenticationToken token) {
     Operator user = (Operator) token.getPrincipal();
-
-    return new ResponseEntity<String>("{\"success\":" + taskService.changeState(incident_id, unit_id, state, user) + "}", HttpStatus.OK);
+    return "{\"success\":" + taskService.changeState(incident_id, unit_id, state, user) + "}";
   }
 
 }

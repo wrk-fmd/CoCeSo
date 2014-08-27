@@ -1,39 +1,24 @@
 <!DOCTYPE html>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<!--
+<%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%--
 /**
  * CoCeSo
- * Client HTML Debug
- * Copyright (c) WRK\Daniel Rohr
+ * Client HTML debug window
+ * Copyright (c) WRK\Coceso-Team
  *
- * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
+ * Licensed under the GNU General Public License, version 3 (GPL-3.0)
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) 2013 Daniel Rohr
- * @link          https://sourceforge.net/projects/coceso/
- * @package       coceso.client.html
- * @since         Rev. 1
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
- *
- * Dependencies:
- *	coceso.client.css
+ * @copyright Copyright (c) 2014 WRK\Coceso-Team
+ * @link https://sourceforge.net/projects/coceso/
+ * @license GPL-3.0 http://opensource.org/licenses/GPL-3.0
  */
--->
-<html lang="en">
+--%>
+<html>
   <head>
-    <title>Debug</title>
-    <meta charset="utf-8" />
-
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-
-    <link rel="stylesheet" href="<c:url value="/static/css/coceso.css"/>" type="text/css" />
+    <title>No direct access</title>
   </head>
-  <body>
-    <div class="alert alert-danger"><strong>No direct access</strong><br/>Use the main interface.</div>
-
+  <body style="display: none">
     <div class="ajax_content">
       <table class="table table-striped">
         <tr>

@@ -1,33 +1,33 @@
 <!DOCTYPE html>
-<%@ page import="org.springframework.security.core.GrantedAuthority" %>
-<%@ page import="java.util.List" %>
-<%@ page import="at.wrk.coceso.entity.Operator" %>
-<%@ page import="at.wrk.coceso.entity.enums.CocesoAuthority" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@page import="org.springframework.security.core.GrantedAuthority"%>
+<%@page import="java.util.List"%>
+<%@page import="at.wrk.coceso.entity.Operator"%>
+<%@page import="at.wrk.coceso.entity.enums.CocesoAuthority"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@page contentType="text/html;charset=UTF-8" language="java"%>
+<%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
 <html>
 <head>
     <title><spring:message code="label.coceso"/> - <spring:message code="label.person.edit"/></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta charset="utf-8" />
+    <meta charset="utf-8"/>
 
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 
     <link rel="icon" href="<c:url value="/static/favicon.ico"/>" type="image/x-icon">
 
-    <link href="<c:url value="/static/css/bootstrap.css" />" rel="stylesheet">
-    <link href="<c:url value="/static/css/bootstrap-theme.css" />" rel="stylesheet">
-    <link href="<c:url value="/static/css/flags.css"/>" rel="stylesheet" />
+    <link href="<c:url value="/static/css/bootstrap.css"/>" rel="stylesheet">
+    <link href="<c:url value="/static/css/bootstrap-theme.css"/>" rel="stylesheet">
+    <link href="<c:url value="/static/css/flags.css"/>" rel="stylesheet"/>
 
 </head>
 <body>
 
 <div class="container">
 
-    <c:set value="active" var="nav_person" />
+    <c:set value="active" var="nav_person"/>
     <%@include file="parts/navbar.jsp"%>
 
     <div class="page-header">
@@ -36,7 +36,7 @@
         </h2>
     </div>
     <div>
-        <form role="form" action="<c:url value="/edit/person/update" />" method="POST">
+        <form role="form" action="<c:url value="/edit/person/update"/>" method="POST">
             <div class="row">
                 <input type="hidden" name="id" value="${p_person.id}">
                 <div class="form-group col-lg-4">
@@ -68,7 +68,7 @@
 
             <div class="row">
                 <div class="form-group">
-                    <input type="submit" class="btn btn-success" value="<spring:message code="label.save" />">
+                    <input type="submit" class="btn btn-success" value="<spring:message code="label.save"/>">
                 </div>
             </div>
 
@@ -82,7 +82,7 @@
             </h2>
         </div>
         <div>
-            <form role="form" action="<c:url value="/edit/person/updateOp" />" method="POST">
+            <form role="form" action="<c:url value="/edit/person/updateOp"/>" method="POST">
                 <div class="row">
                     <input type="hidden" name="id" value="${operator.id}">
 
@@ -97,7 +97,7 @@
                         <label>
                             <spring:message code="label.operator.allowlogin"/>
                             <c:if test="${operator.allowLogin}">
-                                <c:set value="checked" var="o_allowlogin" />
+                                <c:set value="checked" var="o_allowlogin"/>
                             </c:if>
                             <input class="form-control" name="allowLogin" type="checkbox" ${o_allowlogin}>
                         </label>
@@ -111,12 +111,12 @@
                             <c:set value="${operator.internalAuthorities}" var="i_auths"/>
                             <%
                                 List<CocesoAuthority> opAuths = (List<CocesoAuthority>) pageContext.getAttribute("i_auths");
-                            %>
+                           %>
                             <c:forEach items="${authorities}" var="authority">
                                 <%
                                     CocesoAuthority auth = (CocesoAuthority) pageContext.getAttribute("authority");
-                                %>
-                                <option <%= opAuths.contains(auth) ? "selected" : "" %>>${authority}</option>
+                               %>
+                                <option <%= opAuths.contains(auth) ? "selected" : ""%>>${authority}</option>
                             </c:forEach>
                         </select>
                     </div>
@@ -124,7 +124,7 @@
 
                 <div class="row">
                     <div class="form-group">
-                        <input type="submit" class="btn btn-success" value="<spring:message code="label.save" />">
+                        <input type="submit" class="btn btn-success" value="<spring:message code="label.save"/>">
                     </div>
                 </div>
 
@@ -140,14 +140,14 @@
             </h2>
         </div>
         <div>
-            <form role="form" action="<c:url value="/edit/person/createOp" />" method="POST">
+            <form role="form" action="<c:url value="/edit/person/createOp"/>" method="POST">
                 <div class="row">
                     <input type="hidden" name="id" value="${p_person.id}">
 
                     <div class="form-group col-lg-4">
                         <label>
                             <spring:message code="label.operator.username"/>
-                            <input type="text" class="form-control" name="username" placeholder="<spring:message code="label.operator.username" />">
+                            <input type="text" class="form-control" name="username" placeholder="<spring:message code="label.operator.username"/>">
                         </label>
                     </div>
 
@@ -161,7 +161,7 @@
 
                 <div class="row">
                     <div class="form-group">
-                        <input type="submit" class="btn btn-success" value="<spring:message code="label.create" />">
+                        <input type="submit" class="btn btn-success" value="<spring:message code="label.create"/>">
                     </div>
                 </div>
 
@@ -172,10 +172,10 @@
 </div>
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<c:url var="jquery" value="/static/js/assets/jquery.min.js" />
+<c:url var="jquery" value="/static/js/assets/jquery.min.js"/>
 <script src="${jquery}"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
-<c:url var="bootstrap_js" value="/static/js/assets/bootstrap.min.js" />
+<c:url var="bootstrap_js" value="/static/js/assets/bootstrap.min.js"/>
 <script src="${bootstrap_js}"></script>
 
 </body>

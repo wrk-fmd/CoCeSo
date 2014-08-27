@@ -135,12 +135,12 @@ public class PDFDumpController {
 
     @ExceptionHandler(ConcernNotFoundException.class)
     public String notFoundError() {
-        return "redirect:/welcome?error=1";
+        return "redirect:/home?error=1";
     }
 
     @ExceptionHandler(ConcernClosedException.class)
     public String closedError() {
-        return "redirect:/welcome?error=4";
+        return "redirect:/home?error=1";
     }
 
     private class ConcernNotFoundException extends Exception {

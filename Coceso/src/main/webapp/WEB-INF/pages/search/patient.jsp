@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 <html>
 <head>
-    <title><spring:message code="label.patient.search" /></title>
+    <title><spring:message code="label.patient.search"/></title>
 
-    <meta charset="utf-8" />
+    <meta charset="utf-8"/>
     <link rel="icon" href="<c:url value="/static/favicon.ico"/>" type="image/x-icon">
 
-    <link rel="stylesheet" href="<c:url value="/static/css/coceso.css" />" type="text/css"/>
+    <link rel="stylesheet" href="<c:url value="/static/css/coceso.css"/>" type="text/css"/>
 
     <script src="<c:url value="/static/js/assets/jquery.min.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/assets/jquery.ui.1.10.4.min.js"/>" type="text/javascript"></script>
@@ -26,7 +26,7 @@
                 concernID: ${ not empty active ? active : 0}
                 ,urlprefix: "${pageContext.request.contextPath}/"
                 ,concerns: [
-                    {id: 0, name: "<spring:message code="label.select" />"}
+                    {id: 0, name: "<spring:message code="label.select"/>"}
                     <c:forEach var="concern" items="${concerns}">,{ id: ${concern.id}, name: "${concern.name}" }</c:forEach>
                 ]
             });
@@ -46,12 +46,12 @@
 <div class="container">
     <div class="page-title">
         <h2>
-            <spring:message code="label.patient.search" />
+            <spring:message code="label.patient.search"/>
         </h2>
     </div>
     <div class="page-header">
         <h4>
-            <spring:message code="label.concern" />
+            <spring:message code="label.concern"/>
         </h4>
     </div>
     <div class="page-header">
@@ -70,7 +70,7 @@
         <div class="row">
             <div class="col-md-6">
                 <input type="text" class="form-control" data-bind="value: query, valueUpdate: 'keyup'" autocomplete="off"
-                       placeholder="<spring:message code="label.search" />" autofocus>
+                       placeholder="<spring:message code="label.search"/>" autofocus>
             </div>
             <div class="col-md-2">
                 <button type="button" class="btn btn-lg btn-default" data-bind="click: clearQuery">

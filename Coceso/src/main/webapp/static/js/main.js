@@ -1,68 +1,26 @@
 /**
  * CoCeSo
  * Client JS - main
+ * Copyright (c) WRK\Coceso-Team
  *
- * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
+ * Licensed under the GNU General Public License, version 3 (GPL-3.0)
  * Redistributions of files must retain the above copyright notice.
  *
- * @link          https://sourceforge.net/projects/coceso/
- * @package       coceso.client.js
- * @since         Rev. 1
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
- *
- * Dependencies:
- *	jquery.js
- *	knockout.js
- *	coceso.client.winman
+ * @copyright Copyright (c) 2014 WRK\Coceso-Team
+ * @link https://sourceforge.net/projects/coceso/
+ * @license GPL-3.0 http://opensource.org/licenses/GPL-3.0
  */
-
-/**
- * Alias for the localization method
- *
- * @function
- * @param {String} key
- * @returns {String}
- */
-var _ = $.i18n.prop;
-
-/**
- * Object containing the main code
- *
- * @namespace Coceso
- * @type Object
- */
-var Coceso = {};
 
 /**
  * Some global settings
  *
  * @type Object
  */
-Coceso.Conf = {
-  interval: 10000,
-  logEntryLimit: 30,
-  contentBase: "",
-  jsonBase: "",
-  langBase: "",
-  language: "en",
-  debug: false,
-  keyboardControl: false,
-  keyMapping: {
-    // 32: Space
-    openIncidentKey: 32,
-    // 89: Y, 74: J
-    yesKey: 89,
-    // 78: N
-    noKey: 78
-  },
-  confirmStatusUpdate: true,
-  listURLs: {
+Coceso.Conf.listURLs = {
     units: "unit/getAll.json",
     incidents: "incident/getAllRelevant.json",
     patients: "patient/getAll.json"
-  }
-};
+  };
 
 /**
  * Constants for some values (states, types)
@@ -118,13 +76,7 @@ Coceso.Constants = {
  */
 Coceso.startup = function() {
   //Initialize localization
-  $.i18n.properties({
-    name: "messages",
-    path: Coceso.Conf.langBase,
-    mode: "map",
-    cache: true,
-    language: Coceso.Conf.language
-  });
+  Coceso.initi18n();
 
   //Initialize window management
   $("#taskbar").winman();
@@ -158,6 +110,10 @@ Coceso.startup = function() {
   }
 
   $(".tooltipped").tooltip();
+  $(document).on("click", ".panel-toggle", function() {
+    $(this).parent(".panel").children(".panel-body").slideToggle();
+    $(this).find(".glyphicon").toggleClass("glyphicon-chevron-down glyphicon-chevron-up");
+  });
 
   //Load the debug view model
   Coceso.UI.Debug = new Coceso.ViewModels.Debug();
@@ -270,12 +226,8 @@ Coceso.UI = {
   openHierarchyUnits: function(title, dialog) {
     var viewmodel = {top: ko.observable({name: "Loading...", unitIds: [], subContainer: []})};
 
-    $.getJSON(Coceso.Conf.jsonBase + "unitContainer/getSlim", function(topContainer) {
+    $.getJSON(Coceso.Conf.jsonBase + "unitContainer/getSlim.json", function(topContainer) {
       viewmodel.top(new Coceso.ViewModels.UnitContainer(topContainer));
-    });
-    //Bind toggle
-    $(document).on("click", ".unit-container-toggle", function() {
-      $(this).parent(".panel").children(".panel-body").slideToggle();
     });
 
     this.openWindow(title, Coceso.Conf.contentBase + "unit_hierarchy.html", viewmodel, $.extend({position: {at: "left top"}}, dialog));
@@ -367,132 +319,28 @@ Coceso.UI = {
 };
 
 /**
- * AJAX related functions and data
+ * AJAX options
  *
- * @namespace Coceso.Ajax
  * @type Object
  */
-Coceso.Ajax = {
-  loadOptions: {
-    units: {
-      url: Coceso.Conf.listURLs.units,
-      model: "Unit",
-      interval: null,
-      id: null
-    },
-    incidents: {
-      url: Coceso.Conf.listURLs.incidents,
-      model: "Incident",
-      interval: null,
-      id: null
-    },
-    patients: {
-      url: Coceso.Conf.listURLs.patients,
-      model: "Patient",
-      interval: null,
-      id: null
-    }
+Coceso.Ajax.loadOptions = {
+  units: {
+    url: Coceso.Conf.listURLs.units,
+    model: "Unit",
+    interval: null,
+    id: null
   },
-  /**
-   * Load the specified data
-   *
-   * @param {String} type The data type
-   * @returns {void}
-   */
-  load: function(type) {
-    if (!Coceso.Ajax.loadOptions[type]) {
-      return false;
-    }
-
-    var options = Coceso.Ajax.loadOptions[type];
-    if (options.id) {
-      window.clearTimeout(options.id);
-      options.id = null;
-    }
-    if (options.interval === null) {
-      options.interval = Coceso.Conf.interval;
-    }
-
-    $.ajax({
-      dataType: "json",
-      url: Coceso.Conf.jsonBase + options.url,
-      ifModified: true,
-      success: function(data, status) {
-        if (status !== "notmodified" && Coceso.Models[options.model] instanceof Function) {
-          var mutated = false;
-          ko.utils.arrayForEach(data, function(item) {
-            if (!item.id) {
-              return;
-            }
-
-            if (Coceso.Data[type].models()[item.id] instanceof Coceso.Models[options.model]) {
-              Coceso.Data[type].models()[item.id].setData(item);
-            } else {
-              Coceso.Data[type].models()[item.id] = new Coceso.Models[options.model](item);
-              mutated = true;
-            }
-          });
-          if (mutated) {
-            Coceso.Data[type].models.valueHasMutated();
-          }
-        }
-        Coceso.UI.Notifications.connectionError(false);
-      },
-      complete: function() {
-        if (options.interval) {
-          options.id = window.setTimeout(Coceso.Ajax.load, options.interval, type);
-        }
-      },
-      error: function(xhr) {
-        // 404: not found, 0: no connection to server, 200: error is thrown, because response is not a json (not authenticated)
-        if (xhr.status === 404 || xhr.status === 0 || xhr.status === 200) {
-          Coceso.UI.Notifications.connectionError(true);
-        }
-      }
-    });
+  incidents: {
+    url: Coceso.Conf.listURLs.incidents,
+    model: "Incident",
+    interval: null,
+    id: null
   },
-  /**
-   * Save entries with POST
-   *
-   * @param {Object} data
-   * @param {String} url
-   * @param {Function} success
-   * @param {Function} error
-   * @param {Function} httperror
-   * @returns {void}
-   */
-  save: function(data, url, success, error, httperror) {
-    $.ajax({
-      type: "POST",
-      url: Coceso.Conf.jsonBase + url,
-      dataType: "json",
-      contentType: (typeof data === "string") ? "application/json" : "application/x-www-form-urlencoded",
-      data: data,
-      processData: (typeof data !== "string"),
-      success: function(data) {
-        if (data.success) {
-          if (success instanceof Function) {
-            success(data);
-          }
-        } else {
-          if (error instanceof Function) {
-            error(data);
-          }
-        }
-      },
-      error: function(jqXHR) {
-        Coceso.UI.Debug.pushHttpError(jqXHR, url, data);
-        if (httperror instanceof Function) {
-          httperror(jqXHR);
-        }
-      },
-      complete: function() {
-        var i;
-        for (i in Coceso.Ajax.loadOptions) {
-          Coceso.Ajax.load(i);
-        }
-      }
-    });
+  patients: {
+    url: Coceso.Conf.listURLs.patients,
+    model: "Patient",
+    interval: null,
+    id: null
   }
 };
 
@@ -582,14 +430,6 @@ Coceso.Data.patients.list = ko.computed(function() {
     return v;
   });
 });
-
-/**
- * Contains all the models
- *
- * @namespace Coceso.Models
- * @type Object
- */
-Coceso.Models = {};
 
 /**
  * Helper function to set all task related methods, which are needed for both
@@ -1232,7 +1072,7 @@ Coceso.Models.Incident = function(data) {
       title = title.substring(0, 30) + "...";
     }
     return "<span class='incident_type_text" + (this.blue() ? " incident_blue" : "")
-            + "'>" + this.typeString() + "</span>" + title.split("\n")[0];
+        + "'>" + this.typeString() + "</span>" + title.split("\n")[0];
   }, this);
 
   /**
@@ -1693,7 +1533,7 @@ Coceso.Models.Unit = function(data) {
       content += "<p><span class='key'> <span class='glyphicon glyphicon-home'></span> </span><span>" + this.home.info() + "</span></p>";
     }
     content += "<p><span class='key'> <span class='glyphicon glyphicon-map-marker'></span> </span><span>" +
-            (this.position.info() === "" ? "N/A" : this.position.info()) + "</span></p>";
+        (this.position.info() === "" ? "N/A" : this.position.info()) + "</span></p>";
 
     content += "<hr>";
 
@@ -1990,29 +1830,6 @@ Coceso.Models.Log = function(data) {
     }
   };
 
-};
-
-/**
- * Contains all ViewModels (including baseclasses)
- *
- * @namespace Coceso.ViewModels
- * @type Object
- */
-Coceso.ViewModels = {};
-
-/**
- * Helper function to destroy all computated observables in an object
- *
- * @param {Object} obj
- * @returns {void}
- */
-Coceso.ViewModels.destroyComputed = function(obj) {
-  var i;
-  for (i in obj) {
-    if (obj.hasOwnProperty(i) && ko.isComputed(obj[i])) {
-      obj[i].dispose();
-    }
-  }
 };
 
 /**
@@ -2369,7 +2186,7 @@ Coceso.ViewModels.Incident = function(data) {
    */
   this.modelChange = ko.computed(function() {
     var newModel = Coceso.Data.getIncident(this.idObs()),
-            oldModel = this.model.peek();
+        oldModel = this.model.peek();
 
     if (newModel === null) {
       if (oldModel === null) {
@@ -2880,7 +2697,7 @@ Coceso.ViewModels.Unit = function(data) {
    */
   this.modelChange = ko.computed(function() {
     var newModel = Coceso.Data.getUnit(this.id),
-            oldModel = this.model.peek();
+        oldModel = this.model.peek();
 
     if (newModel === null) {
       if (oldModel === null) {
@@ -3083,7 +2900,7 @@ Coceso.ViewModels.Patient = function(data) {
   this.sex.extend({observeChanges: {}});
 
   this.dependencies.push(this.given_name, this.sur_name, this.insurance_number,
-          this.externalID, this.diagnosis, this.erType, this.info, this.sex);
+      this.externalID, this.diagnosis, this.erType, this.info, this.sex);
 
   /**
    * "Virtual" computed observable:
@@ -3095,7 +2912,7 @@ Coceso.ViewModels.Patient = function(data) {
    */
   this.modelChange = ko.computed(function() {
     var newModel = Coceso.Data.getPatient(this.id),
-            oldModel = this.model.peek();
+        oldModel = this.model.peek();
 
     if (newModel === null) {
       if (oldModel === null) {
@@ -3318,11 +3135,11 @@ Coceso.ViewModels.CustomLogEntry = function(data) {
 
   this.ok = function() {
     Coceso.Ajax.save(
-            JSON.stringify({
-              text: this.text(),
-              unit: this.unit() ? {id: this.unit()} : null
-            }),
-            "log/add.json", this.afterSave, this.saveError, this.saveError);
+        JSON.stringify({
+          text: this.text(),
+          unit: this.unit() ? {id: this.unit()} : null
+        }),
+        "log/add.json", this.afterSave, this.saveError, this.saveError);
   };
 
   this.saveError = function() {
@@ -3365,9 +3182,9 @@ Coceso.ViewModels.Notifications = function() {
    */
   this.clock_update = function() {
     var currentTime = new Date(new Date() - self.clock_offset),
-            currentHours = currentTime.getHours(),
-            currentMinutes = currentTime.getMinutes(),
-            currentSeconds = currentTime.getSeconds();
+        currentHours = currentTime.getHours(),
+        currentMinutes = currentTime.getMinutes(),
+        currentSeconds = currentTime.getSeconds();
 
     currentMinutes = (currentMinutes < 10 ? "0" : "") + currentMinutes;
     currentSeconds = (currentSeconds < 10 ? "0" : "") + currentSeconds;

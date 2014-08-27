@@ -1,4 +1,4 @@
-package at.wrk.coceso.controller.data;
+package at.wrk.coceso.controller.view;
 
 import at.wrk.coceso.dao.RoleDao;
 import at.wrk.coceso.entity.Operator;

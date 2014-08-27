@@ -1,22 +1,14 @@
 /**
  * CoCeSo
- * jQuery UI Window Manager Extension
- * Copyright (c) WRK\Daniel Rohr
+ * Client JS - jQuery window manager extension
+ * Copyright (c) WRK\Coceso-Team
  *
- * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
+ * Licensed under the GNU General Public License, version 3 (GPL-3.0)
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) 2013 Daniel Rohr
- * @link          https://sourceforge.net/projects/coceso/
- * @package       coceso.client.winman
- * @since         Rev. 1
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
- *
- * Dependencies:
- *	jquery.ui.core.js
- *	jquery.ui.widget.js
- *	jquery.ui.dialog.js
+ * @copyright Copyright (c) 2014 WRK\Coceso-Team
+ * @link https://sourceforge.net/projects/coceso/
+ * @license GPL-3.0 http://opensource.org/licenses/GPL-3.0
  */
 
 //Modify behaviour of JQueryUI Dialog widget

@@ -1,114 +1,109 @@
 <!DOCTYPE html>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%--
+/**
+ * CoCeSo
+ * Client HTML unit container edit interface
+ * Copyright (c) WRK\Coceso-Team
+ *
+ * Licensed under the GNU General Public License, version 3 (GPL-3.0)
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright Copyright (c) 2014 WRK\Coceso-Team
+ * @link https://sourceforge.net/projects/coceso/
+ * @license GPL-3.0 ( http://opensource.org/licenses/GPL-3.0 )
+ */
+--%>
 <html>
   <head>
-    <title><spring:message code="label.coceso"/> - <spring:message code="label.concern.edit"/>: ${concern.name}</title>
+    <title><spring:message code="label.coceso"/> - <spring:message code="label.concern.edit"/>: <c:out value="${concern.name}"/></title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="icon" href="<c:url value="/static/favicon.ico"/>" type="image/x-icon"/>
+    <link rel="stylesheet" href="<c:url value="/static/css/coceso.css"/>" type="text/css"/>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta charset="utf-8" />
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-
-    <link rel="icon" href="<c:url value="/static/favicon.ico"/>" type="image/x-icon">
-    <link href="<c:url value="/static/css/coceso.css"/>" rel="stylesheet">
-
+    <%-- jQuery --%>
     <script src="<c:url value="/static/js/assets/jquery.min.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/static/js/assets/jquery.i18n.min.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/assets/jquery.ui.1.10.4.min.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/assets/jquery.ui.touch-punch.min.js"/>" type="text/javascript"></script>
-    <script src="<c:url value="/static/js/assets/bootstrap.min.js" />"></script>
+    <%-- Knockout --%>
     <script src="<c:url value="/static/js/assets/knockout.min.js"/>" type="text/javascript"></script>
-    <script src="<c:url value="/static/js/assets/knockout.sortable.min.js"/>" type="text/javascript"></script>
-
-    <script src="<c:url value="/static/js/edit_container.js"/>" type="text/javascript"></script>
-
-    <style type="text/css">
-      .unit_list {
-        background: #eeeeee;
-        padding: 10px 5px;
-      }
-      .unit_state_ad {
-        background: #aaaaaa;
-      }
-    </style>
+    <script src="<c:url value="/static/js/assets/knockout.sortable.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/static/js/knockout.extensions.js"/>" type="text/javascript"></script>
+    <%-- Bootstrap --%>
+    <script src="<c:url value="/static/js/assets/bootstrap.min.js"/>" type="text/javascript"></script>
+    <%-- Client JS --%>
+    <script src="<c:url value="/static/js/coceso.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/static/js/edit.js"/>" type="text/javascript"></script>
 
     <script type="text/javascript">
-
       $(document).ready(function() {
-        jsonBase = "${pageContext.request.contextPath}/data/";
-        model.load();
-
-        ko.applyBindings(model);
+        Coceso.Conf.jsonBase = "<c:url value="/data/"/>";
+        Coceso.Conf.langBase = "<c:url value="/static/i18n/"/>";
+        Coceso.Conf.language = "<spring:message code="this.languageCode"/>";
+        Coceso.initi18n();
+        Coceso.Lock.lock();
+        ko.applyBindings(new Coceso.ViewModels.Container());
       });
     </script>
   </head>
   <body>
     <div class="container">
-      <c:set value="active" var="nav_concern" />
+      <c:set value="active" var="nav_concern"/>
       <%@include file="parts/navbar.jsp"%>
-      
-      <div>
-        <a href="<c:url value="/edit/"/>" class="btn btn-warning"><spring:message code="label.nav.back" /></a>
-      </div>
+
+      <h2><spring:message code="label.nav.edit_concern"/>: <c:out value="${concern.name}"/></h2>
+
       <div class="page-header">
-        <h3><spring:message code="label.container.edit" /></h3>
+        <h3>
+          <spring:message code="label.container.edit"/>
+          <a href="<c:url value="/edit/"/>" class="btn btn-warning btn-sm pull-right"><spring:message code="label.nav.back"/></a>
+        </h3>
       </div>
 
       <div>
-
-        <div class="unit_container" data-bind="template: {name: 'container-template', data: top}"></div>
-
-        <script type="text/html" id="container-template">
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <div class="panel-title">
-                <%-- HEADER --%>
-                <span data-bind="text: name() == '' ? '---' : name(), click: select, visible: !selected()"></span>
-                <form data-bind="submit: triggerBlur" style="display: inline;"><input type="text" data-bind="value: name, event: {blur: update}, visibleAndSelect: selected" /></form>
-
-                <button class="btn btn-danger" data-bind="click: remove, visible: id != head()"><span class="glyphicon glyphicon-minus-sign"></span></button>
-                  <%-- /HEADER --%>
-              </div>
-            </div>
-
-            <div class="panel-body">
-              <%-- UNITS --%>
-              <ul class="unit_list" data-bind="sortable: {data: units, connectClass: 'unit_list', afterMove: updateUnit}">
-                <li>
-                  <a href="#" class="unit_state">
-                    <span class="ui-corner-all unit_state_ad" data-bind="text: call"></span>
-                  </a>
-                </li>
-              </ul>
-              <%-- /UNITS --%>
-
-              <%-- Sub Container --%>
-              <div class="unit_container" data-bind="sortable: {template: 'container-template', data: subContainer, connectClass: 'unit_container', afterMove: drop, options: {placeholder: 'highlight'}}"></div>
-              <button class="btn btn-success" data-bind="click: addContainer"><span class="glyphicon glyphicon-plus-sign"></span></button>
-                <%-- /Sub Container --%>
-
-
-            </div>
-          </div>
-
-          </script>
-
-          <div id="spare">
-            <spring:message code="label.unit.spare"/>:
-            <ul class="unit_list spare" data-bind="sortable: {data: spareUnits, connectClass: 'unit_list', afterMove: updateUnit}">
-              <li>
-                <a href="#" class="unit_state">
-                  <span class="ui-corner-all unit_state_ad" data-bind="text: call"></span>
-                </a>
-              </li>
-            </ul>
-          </div>
+        <div class="unit-container" data-bind="template: {name: 'template-container', data: top}"></div>
+        <div id="spare">
+          <spring:message code="label.unit.spare"/>:
+          <ul class="unit_list unit_list_edit" data-bind="sortable: {data: spare, connectClass: 'unit_list', afterMove: dropUnit}">
+            <li>
+              <a href="#" class="unit_state">
+                <span class="ui-corner-all" data-bind="text: call"></span>
+              </a>
+            </li>
+          </ul>
         </div>
-        <div class="modal-footer">
-          &nbsp;<br/>&nbsp;
-        </div>
-
       </div>
+      <div class="modal-footer"></div>
+    </div>
 
-    </body>
-  </html>
+    <script type="text/html" id="template-container">
+      <div class="panel panel-default">
+        <div class="panel-heading clearfix">
+          <span data-bind="text: name() ? name() : '---', click: selected.set, visible: !selected()"></span>
+          <form data-bind="submit: selected.unset" style="display: inline;"><input type="text" data-bind="value: name, event: {blur: update}, visibleAndSelect: selected"/></form>
+
+          <div class="pull-right">
+            <button class="btn btn-danger btn-xs" data-bind="click: remove"><span class="glyphicon glyphicon-remove-sign"></span></button>
+            <button class="btn btn-success btn-xs" data-bind="click: add"><span class="glyphicon glyphicon-plus-sign"></span></button>
+          </div>
+        </div>
+
+        <div class="panel-body">
+          <ul class="unit_list unit_list_edit" data-bind="sortable: {data: units, connectClass: 'unit_list', afterMove: dropUnit, options: {placeholder: ''}}">
+            <li>
+              <a href="#" class="unit_state">
+                <span class="ui-corner-all" data-bind="text: call"></span>
+              </a>
+            </li>
+          </ul>
+
+          <div class="unit_container_edit" data-bind="sortable: {template: 'template-container', data: subContainer, connectClass: 'unit_container_edit', afterMove: drop, options: {placeholder: 'container-placeholder'}}"></div>
+        </div>
+      </div>
+    </script>
+  </body>
+</html>

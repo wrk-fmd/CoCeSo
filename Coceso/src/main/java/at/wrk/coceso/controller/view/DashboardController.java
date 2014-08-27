@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.web.bind.annotation.CookieValue;
 
 @Controller
 public class DashboardController {
@@ -41,10 +42,14 @@ public class DashboardController {
                                 @RequestParam(value = "uid", required = false) Integer uid,
                                 @RequestParam(value = "iid", required = false) Integer iid,
                                 ModelMap map,
-                                @RequestParam(value = "concern", defaultValue = "0") String caze)
+                                @RequestParam(value = "concern", required = false) Integer concern_id,
+                                @CookieValue(value = "concern", required = false) Integer cookie_id)
     {
-        int actCase = Integer.parseInt(caze);
-        map.addAttribute("concern", actCase);
+      if (concern_id == null) {
+        concern_id = cookie_id != null ? cookie_id : 0;
+      }
+
+        map.addAttribute("concern", concern_id);
 
         map.addAttribute("concerns", concernDao.getAll());
 
@@ -56,7 +61,7 @@ public class DashboardController {
 
         if(s_sub.equals("Unit")) {
             map.addAttribute("unit", "active");
-            map.addAttribute("sel_units", unitService.getAll(actCase));
+            map.addAttribute("sel_units", unitService.getAll(concern_id));
 
             if(uid != null && uid > 0) {
                 Unit ret = unitService.getById(uid);
@@ -69,14 +74,14 @@ public class DashboardController {
                 }
             }
             else {
-                map.addAttribute("units", unitService.getAll(actCase));
+                map.addAttribute("units", unitService.getAll(concern_id));
             }
 
         } else if(s_sub.equals("Incident")) {
             map.addAttribute("incident", "active");
 
             if(uid != null && uid == -1) {
-                map.addAttribute("incidents", incidentService.getAllActive(actCase));
+                map.addAttribute("incidents", incidentService.getAllActive(concern_id));
             } else if(iid != null) {
                 Incident ret = incidentService.getById(iid);
 
@@ -94,7 +99,7 @@ public class DashboardController {
                     map.addAttribute("i_incident", ret);
                 }
             } else {
-                map.addAttribute("incidents", incidentService.getAll(actCase));
+                map.addAttribute("incidents", incidentService.getAll(concern_id));
             }
 
 
@@ -113,7 +118,7 @@ public class DashboardController {
         } else {
             map.addAttribute("log", "active");
             if((uid == null && iid == null) || (uid != null && iid != null)) {
-                map.addAttribute("logs", logDao.getAll(actCase));
+                map.addAttribute("logs", logDao.getAll(concern_id));
             }
             else if(uid != null) {
                 map.addAttribute("logs", logDao.getByUnitId(uid));

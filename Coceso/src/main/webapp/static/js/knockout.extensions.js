@@ -1,23 +1,14 @@
 /**
  * CoCeSo
- * KnockoutJS Custom Bindings
- * Copyright (c) WRK\Daniel Rohr
+ * Client JS - Extensions for knockout.js
+ * Copyright (c) WRK\Coceso-Team
  *
- * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
+ * Licensed under the GNU General Public License, version 3 (GPL-3.0)
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) 2013 Daniel Rohr
- * @link          https://sourceforge.net/projects/coceso/
- * @package       coceso.client.js
- * @since         Rev. 1
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
- *
- * Dependencies:
- *	knockout.js
- *	jquery.ui.accordion.js
- *	jquery.ui.draggable.js
- *	jquery.ui.dropable.js
+ * @copyright Copyright (c) 2014 WRK\Coceso-Team
+ * @link https://sourceforge.net/projects/coceso/
+ * @license GPL-3.0 ( http://opensource.org/licenses/GPL-3.0 )
  */
 
 /**
@@ -62,16 +53,27 @@ ko.bindingHandlers.accordion = uiBindingHandler("accordion");
  * @type {BindingHandler}
  */
 ko.bindingHandlers.accordionRefresh = {
-    init: function(element, valueAccessor) {
-      ko.utils.unwrapObservable(valueAccessor());
-    },
-    update: function(element, valueAccessor) {
-      ko.utils.unwrapObservable(valueAccessor());
-      if ($(element).data("ui-accordion")) {
-        $(element)["accordion"]("refresh");
-      }
+  init: function(element, valueAccessor) {
+    ko.utils.unwrapObservable(valueAccessor());
+  },
+  update: function(element, valueAccessor) {
+    ko.utils.unwrapObservable(valueAccessor());
+    if ($(element).data("ui-accordion")) {
+      $(element)["accordion"]("refresh");
     }
-  };
+  }
+};
+
+ko.bindingHandlers.visibleAndSelect = {
+  update: function(element, valueAccessor) {
+    ko.bindingHandlers.visible.update(element, valueAccessor);
+    if (valueAccessor()) {
+      setTimeout(function() {
+        $(element).focus().select();
+      }, 0);
+    }
+  }
+};
 
 /**
  * Generate Draggable from element
@@ -107,7 +109,7 @@ ko.extenders.integer = function(target, active) {
     read: target, //always return the original observables value
     write: function(newValue) {
       var current = target(),
-              newValueInt = (newValue && !isNaN(newValue)) ? parseInt(newValue) : 0;
+          newValueInt = (newValue && !isNaN(newValue)) ? parseInt(newValue) : 0;
 
       //only write if it changed
       if (newValueInt !== current) {
@@ -318,7 +320,7 @@ ko.extenders.filtered = function(target, options) {
     }
 
     var filters = options.filters ? ko.utils.unwrapObservable(options.filters) || {} : {},
-            sort = options.sort ? ko.utils.unwrapObservable(options.sort) : null;
+        sort = options.sort ? ko.utils.unwrapObservable(options.sort) : null;
 
     if (filters.filter) {
       data = ko.utils.arrayFilter(data, function(val) {
@@ -339,7 +341,6 @@ ko.extenders.filtered = function(target, options) {
  * Helper for boolean values
  *
  * @param {ko.observable} target
- * @param {Object} options
  * @returns {ko.computed}
  */
 ko.extenders.boolean = function(target) {
@@ -358,7 +359,7 @@ ko.extenders.boolean = function(target) {
     target(true);
   };
 
-  ret.setNot = function() {
+  ret.unset = function() {
     target(false);
   };
 

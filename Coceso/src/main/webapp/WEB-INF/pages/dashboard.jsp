@@ -1,32 +1,32 @@
 <!DOCTYPE html>
-<%@ page import="at.wrk.coceso.entity.Unit" %>
-<%@ page import="java.util.Map" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@page import="at.wrk.coceso.entity.Unit"%>
+<%@page import="java.util.Map"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 <html>
 <head>
     <title><spring:message code="label.coceso"/> - <spring:message code="label.nav.dashboard"/></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta charset="utf-8" />
+    <meta charset="utf-8"/>
 
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 
     <link rel="icon" href="<c:url value="/static/favicon.ico"/>" type="image/x-icon">
     <!-- Bootstrap -->
-    <c:url var="bootstrap" value="/static/css/bootstrap.css" />
+    <c:url var="bootstrap" value="/static/css/bootstrap.css"/>
     <link href="${bootstrap}" rel="stylesheet">
 
-    <c:url var="bootstrap_theme" value="/static/css/bootstrap-theme.css" />
+    <c:url var="bootstrap_theme" value="/static/css/bootstrap-theme.css"/>
     <link href="${bootstrap_theme}" rel="stylesheet">
 
 </head>
 <body>
 <div class="container">
-    <c:url var="logout_link" value="/logout" />
-    <c:url var="back_link" value="/welcome" />
-    <c:url var="home_link" value="/" />
+    <c:url var="logout_link" value="/logout"/>
+    <c:url var="back_link" value="/home"/>
+    <c:url var="home_link" value="/"/>
 
     <!-- Static navbar -->
     <div class="navbar navbar-inverse" role="navigation">
@@ -46,34 +46,34 @@
                 <li class="dropdown ${log}">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"><spring:message code="label.log"/> <b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        <li><a href="?concern=${concern}&sub=Log"><spring:message code="label.dashboard.log.full"/></a></li>
+                        <li><a href="?concern=${concern}&amp;sub=Log"><spring:message code="label.dashboard.log.full"/></a></li>
                         <li class="divider"></li>
-                        <li><a href="?concern=${concern}&sub=Log&uid=0"><spring:message code="label.dashboard.log.unit"/></a></li>
-                        <li><a href="?concern=${concern}&sub=Log&iid=0"><spring:message code="label.dashboard.log.incident"/></a></li>
+                        <li><a href="?concern=${concern}&amp;sub=Log&amp;uid=0"><spring:message code="label.dashboard.log.unit"/></a></li>
+                        <li><a href="?concern=${concern}&amp;sub=Log&amp;iid=0"><spring:message code="label.dashboard.log.incident"/></a></li>
                     </ul>
                 </li>
                 <li class="dropdown ${task}">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Task <b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                    <li><a href="?concern=${concern}&sub=Task&uid=0">Tasks by Unit</a></li>
-                    <li><a href="?concern=${concern}&sub=Task&iid=0">Tasks by Incident</a></li>
+                    <li><a href="?concern=${concern}&amp;sub=Task&amp;uid=0">Tasks by Unit</a></li>
+                    <li><a href="?concern=${concern}&amp;sub=Task&amp;iid=0">Tasks by Incident</a></li>
                 </ul>
             </li>
                 <li class="dropdown ${unit}">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Unit <b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        <li><a href="?concern=${concern}&sub=Unit">Unit List</a></li>
+                        <li><a href="?concern=${concern}&amp;sub=Unit">Unit List</a></li>
                         <li class="divider"></li>
-                        <li><a href="?concern=${concern}&sub=Unit&uid=0">Unit by Id</a></li>
+                        <li><a href="?concern=${concern}&amp;sub=Unit&amp;uid=0">Unit by Id</a></li>
                     </ul>
                 </li>
                 <li class="dropdown ${incident}">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"><spring:message code="label.incident"/> <b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        <li><a href="?concern=${concern}&sub=Incident">Incident List</a></li>
-                        <li><a href="?concern=${concern}&sub=Incident&uid=-1">Active Incidents</a></li>
+                        <li><a href="?concern=${concern}&amp;sub=Incident">Incident List</a></li>
+                        <li><a href="?concern=${concern}&amp;sub=Incident&amp;uid=-1">Active Incidents</a></li>
                         <li class="divider"></li>
-                        <li><a href="?concern=${concern}&sub=Incident&iid=0">Incident by Id</a></li>
+                        <li><a href="?concern=${concern}&amp;sub=Incident&amp;iid=0">Incident by Id</a></li>
                     </ul>
                 </li>
             </ul>
@@ -100,16 +100,16 @@
     </c:if>
 
 
-    <c:url var="get_inc" value="/dashboard?concern=${concern}&sub=Incident&iid=" />
-    <c:url var="get_unit" value="/dashboard?concern=${concern}&sub=Unit&uid=" />
+    <c:url var="get_inc" value="/dashboard?concern=${concern}&amp;sub=Incident&amp;iid="/>
+    <c:url var="get_unit" value="/dashboard?concern=${concern}&amp;sub=Unit&amp;uid="/>
 
     <c:if test="${not empty unit && not empty uid}">
         <div>
             <form class="form-inline" action="?">
                 <div class="row">
                     <div class="col-lg-2">
-                        <input type="hidden" name="sub" value="Unit" />
-                        <input type="hidden" name="concern" value="${concern}" />
+                        <input type="hidden" name="sub" value="Unit"/>
+                        <input type="hidden" name="concern" value="${concern}"/>
                     </div>
                     <div class="col-lg-2">
                         <!--input type="number" placeholder="Unit ID" name="uid" class="form-control" value="${uid}"/-->
@@ -150,7 +150,7 @@
             <form class="form-inline" action="?">
                 <div class="row">
                     <div class="col-lg-2">
-                        <input type="hidden" name="sub" value="Incident" />
+                        <input type="hidden" name="sub" value="Incident"/>
                     </div>
                     <div class="col-lg-2">
                         <select name="id" size="1" class="form-control">
@@ -269,7 +269,7 @@
                 <c:forEach items="${logs}" var="logEntry">
                     <tr>
                         <td>
-                            <fmt:formatDate type="both" dateStyle="short" timeStyle="short" value="${logEntry.timestamp}" />
+                            <fmt:formatDate type="both" dateStyle="short" timeStyle="short" value="${logEntry.timestamp}"/>
                         </td>
                         <td>
                             ${logEntry.user.username}
@@ -310,7 +310,7 @@
                                 if(u.getIncidents().size() == 1) {
                                     out.print(u.getIncidents().get(u.getIncidents().keySet().iterator().next()).name());
                                 }
-                            %>
+                           %>
                         </td>
                     </tr>
                 </c:forEach>
@@ -361,10 +361,10 @@
 
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<c:url var="jquery" value="/static/js/assets/jquery.min.js" />
+<c:url var="jquery" value="/static/js/assets/jquery.min.js"/>
 <script src="${jquery}"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
-<c:url var="bootstrap_js" value="/static/js/assets/bootstrap.min.js" />
+<c:url var="bootstrap_js" value="/static/js/assets/bootstrap.min.js"/>
 <script src="${bootstrap_js}"></script>
 </body>
 </html>

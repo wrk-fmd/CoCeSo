@@ -6,8 +6,6 @@ import at.wrk.coceso.entity.helper.SlimUnitContainer;
 import at.wrk.coceso.entity.helper.UnitContainer;
 import at.wrk.coceso.service.ContainerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -25,57 +23,57 @@ public class UnitContainerController {
   /**
    * Full Hierarchy
    *
-   * @param concernId Cookie with active Concern
+   * @param concern_id Cookie with active Concern
    * @return Top Container with full Hierarchy and spare Units in top.units
    */
-  @RequestMapping(value = "getWithSpare", produces = "application/json")
+  @RequestMapping(value = "getWithSpare", produces = "application/json", method = RequestMethod.GET)
   @ResponseBody
-  public UnitContainer getWithSpare(@CookieValue(value = "active_case", defaultValue = "0") int concernId) {
-    UnitContainer top = containerDao.getByConcernId(concernId);
-    top.getUnits().addAll(containerDao.getSpareUnits(concernId));
+  public UnitContainer getWithSpare(@CookieValue("concern") int concern_id) {
+    UnitContainer top = containerDao.getByConcernId(concern_id);
+    top.getUnits().addAll(containerDao.getSpareUnits(concern_id));
     return top;
   }
 
   /**
    * Full Hierarchy
    *
-   * @param concernId Cookie with active Concern
+   * @param concern_id Cookie with active Concern
    * @return Top Container with full Hierarchy, WITHOUT Spare Units
    */
-  @RequestMapping(value = "get", produces = "application/json")
+  @RequestMapping(value = "get", produces = "application/json", method = RequestMethod.GET)
   @ResponseBody
-  public UnitContainer get(@CookieValue(value = "active_case", defaultValue = "0") int concernId) {
-    return containerDao.getByConcernId(concernId);
+  public UnitContainer get(@CookieValue("concern") int concern_id) {
+    return containerDao.getByConcernId(concern_id);
   }
 
   /**
    * Full Hierarchy,
    *
-   * @param concernId Cookie with active Concern
+   * @param concern_id Cookie with active Concern
    * @return Top Slim Container with full Hierarchy, WITH Spare Units
    */
-  @RequestMapping(value = "getSlim", produces = "application/json")
+  @RequestMapping(value = "getSlim", produces = "application/json", method = RequestMethod.GET)
   @ResponseBody
-  public SlimUnitContainer getSlim(@CookieValue(value = "active_case", defaultValue = "0") int concernId) {
-    return new SlimUnitContainer(getWithSpare(concernId));
+  public SlimUnitContainer getSlim(@CookieValue("concern") int concern_id) {
+    return new SlimUnitContainer(getWithSpare(concern_id));
   }
 
   /**
    * No Hierarchy, only plain Container, spare Units NOT included
    *
-   * @param concernId Cookie with active Concern
+   * @param concern_id Cookie with active Concern
    * @return all Containers of Concern
    */
-  @RequestMapping(value = "getList", produces = "application/json")
+  @RequestMapping(value = "getList", produces = "application/json", method = RequestMethod.GET)
   @ResponseBody
-  public List<UnitContainer> getList(@CookieValue(value = "active_case", defaultValue = "0") int concernId) {
-    return containerDao.getByConcernSlim(concernId);
+  public List<UnitContainer> getList(@CookieValue("concern") int concern_id) {
+    return containerDao.getByConcernSlim(concern_id);
   }
 
   @RequestMapping(value = "getSpare", produces = "application/json")
   @ResponseBody
-  public List<SlimUnit> getSpare(@CookieValue(value = "active_case", defaultValue = "0") int concernId) {
-    return containerDao.getSpareUnits(concernId);
+  public List<SlimUnit> getSpare(@CookieValue("concern") int concern_id) {
+    return containerDao.getSpareUnits(concern_id);
   }
 
   /**
@@ -86,17 +84,18 @@ public class UnitContainerController {
    */
   @RequestMapping(value = "updateContainer", produces = "application/json", method = RequestMethod.POST)
   @ResponseBody
-  public ResponseEntity<String> updateContainer(@RequestBody UnitContainer container) {
-    if (containerService.update(container) == -1) {
-      return new ResponseEntity<String>("{\"success\": false, \"info\":\"Something went wrong on update\"}", HttpStatus.BAD_REQUEST);
+  public String updateContainer(@RequestBody UnitContainer container) {
+    int ret = containerService.update(container);
+    if (ret == -1) {
+      return "{\"success\": false, \"info\":\"Something went wrong on update\"}";
     }
-    return new ResponseEntity<String>("{\"success\": true}", HttpStatus.OK);
+    return "{\"success\": true, \"id\":" + ret + "}";
   }
 
-  @RequestMapping(value = "updateUnit/{containerId}/{unitId}/{ordering}", produces = "application/json", method = RequestMethod.POST)
+  @RequestMapping(value = "updateUnit", produces = "application/json", method = RequestMethod.POST)
   @ResponseBody
-  public String updateUnit(@PathVariable("containerId") int containerId,
-          @PathVariable("unitId") int unitId, @PathVariable("ordering") double ordering) {
+  public String updateUnit(@RequestParam("container_id") int containerId,
+          @RequestParam("unit_id") int unitId, @RequestParam("ordering") double ordering) {
     if (!containerService.updateUnit(containerId, unitId, ordering)) {
       return "{\"success\": false, \"info\":\"Something went wrong on update\"}";
     }

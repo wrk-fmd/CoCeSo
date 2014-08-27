@@ -3,14 +3,14 @@
   Creates a Dump of current Concern
   UNDER CONSTRUCTION
 --%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 <html>
 <head>
     <title>${concern.name}</title>
-    <meta charset="utf-8" />
+    <meta charset="utf-8"/>
 
     <style type="text/css">
         @media print{
@@ -22,7 +22,7 @@
 </head>
 <body>
 <header>
-    ${concern.name} (<fmt:formatDate type="both" dateStyle="short" timeStyle="short" value="${date}" />
+    ${concern.name} (<fmt:formatDate type="both" dateStyle="short" timeStyle="short" value="${date}"/>
 </header>
 <table>
     <thead>

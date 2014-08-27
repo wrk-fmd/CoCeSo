@@ -5,14 +5,12 @@ import at.wrk.coceso.entity.Operator;
 import at.wrk.coceso.entity.Patient;
 import at.wrk.coceso.service.IncidentService;
 import at.wrk.coceso.service.PatientService;
-import at.wrk.coceso.utils.CocesoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -28,8 +26,8 @@ public class PatientController implements IEntityController<Patient> {
   @Override
   @RequestMapping(value = "getAll", produces = "application/json", method = RequestMethod.GET)
   @ResponseBody
-  public List<Patient> getAll(@CookieValue(value = "active_case", defaultValue = "0") int concernId) {
-    return patientService.getAll(concernId);
+  public List<Patient> getAll(@CookieValue("concern") int concern_id) {
+    return patientService.getAll(concern_id);
   }
 
   @Override
@@ -43,8 +41,7 @@ public class PatientController implements IEntityController<Patient> {
   @RequestMapping(value = "update", produces = "application/json", method = RequestMethod.POST)
   @ResponseBody
   public String update(@RequestBody Patient patient, BindingResult result,
-          @CookieValue(value = "active_case", defaultValue = "0") int concernId, Principal principal) {
-    UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
+          @CookieValue("concern") int concern_id, UsernamePasswordAuthenticationToken token) {
     Operator user = (Operator) token.getPrincipal();
 
     if (result.hasErrors()) {
@@ -55,17 +52,17 @@ public class PatientController implements IEntityController<Patient> {
     if (incident == null) {
       return "{\"success\": false, \"info\":\"Invalid ID\"}";
     }
-    if (incident.getConcern() != concernId) {
+    if (incident.getConcern() != concern_id) {
       return "{\"success\": false, \"info\":\"Active Concern not valid\"}";
     }
 
     if (patientService.getById(patient.getId()) == null) {
 
-      int ret = patientService.add(patient, user, concernId);
+      int ret = patientService.add(patient, user, concern_id);
 
       return "{\"success\": " + (ret != -1) + ", \"new\": true}";
     }
 
-    return "{\"success\": " + patientService.update(patient, user, concernId) + ", \"new\": false}";
+    return "{\"success\": " + patientService.update(patient, user, concern_id) + ", \"new\": false}";
   }
 }

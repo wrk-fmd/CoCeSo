@@ -16,114 +16,96 @@ import java.util.Date;
 @Controller
 @RequestMapping("/main")
 public class MainController {
-    @Autowired
-    ConcernService concernService;
 
-    @Autowired
-    UnitService unitService;
+  @Autowired
+  ConcernService concernService;
 
-    @Autowired
-    IncidentService incidentService;
+  @Autowired
+  UnitService unitService;
 
-    @RequestMapping(value = "", method = RequestMethod.GET)
-    public String showMain(ModelMap model, @CookieValue("active_case") String c_id) {
-        String error_return = "redirect:/welcome?error=1";
+  @Autowired
+  IncidentService incidentService;
 
-        if(c_id == null || c_id.isEmpty())
-            return error_return;
+  @RequestMapping(value = "", method = RequestMethod.GET)
+  public String showMain(ModelMap map, @CookieValue(value = "concern", required = false) Integer concern_id) {
+    String error_return = "redirect:/home?error=1";
 
-        int concern_id;
-        try {
-            concern_id = Integer.parseInt(c_id);
-        } catch (NumberFormatException nfe) {
-            return error_return;
-        }
-        Concern c = concernService.getById(concern_id);
-        if(c == null || c.isClosed())
-            return error_return;
-
-        model.addAttribute("concern", c);
-
-        return "main";
+    if (concern_id == null) {
+      return error_return;
     }
 
-    @RequestMapping(value = "unit.html", method = RequestMethod.GET)
-    public String unit() {
-
-        return "main_content/unit";
+    Concern concern = concernService.getById(concern_id);
+    if (concern == null || concern.isClosed()) {
+      return error_return;
     }
 
-    @RequestMapping(value = "unit_hierarchy.html", method = RequestMethod.GET)
-    public String unitHierarchy() {
+    map.addAttribute("concern", concern);
 
-        return "main_content/unit_hierarchy";
+    return "main";
+  }
+
+  @RequestMapping(value = "unit", method = RequestMethod.GET)
+  public String unit() {
+    return "main_content/unit";
+  }
+
+  @RequestMapping(value = "unit_hierarchy", method = RequestMethod.GET)
+  public String unitHierarchy() {
+    return "main_content/unit_hierarchy";
+  }
+
+  @RequestMapping(value = "unit_form", method = RequestMethod.GET)
+  public String unitForm() {
+    return "main_content/unit_form";
+  }
+
+  @RequestMapping(value = "incident", method = RequestMethod.GET)
+  public String incident() {
+    return "main_content/incident";
+  }
+
+  @RequestMapping(value = "incident_form", method = RequestMethod.GET)
+  public String incidentForm() {
+    return "main_content/incident_form";
+  }
+
+  @RequestMapping(value = "log", method = RequestMethod.GET)
+  public String log() {
+    return "main_content/log";
+  }
+
+  @RequestMapping(value = "debug", method = RequestMethod.GET)
+  public String debug() {
+    return "main_content/debug";
+  }
+
+  @RequestMapping(value = "key", method = RequestMethod.GET)
+  public String key() {
+    return "main_content/key";
+  }
+
+  @RequestMapping(value = "patient_form", method = RequestMethod.GET)
+  public String patientForm() {
+    return "main_content/patient_form";
+  }
+
+  @RequestMapping(value = "log_add", method = RequestMethod.GET)
+  public String logAdd() {
+    return "main_content/log_add";
+  }
+
+  @RequestMapping(value = "dump", method = RequestMethod.GET)
+  public String dump(ModelMap map, @CookieValue("concern") int concern_id) {
+    Concern c = concernService.getById(concern_id);
+    if (c == null || c.isClosed()) {
+      return "redirect:/home?error=1";
     }
 
-    @RequestMapping(value = "unit_form.html", method = RequestMethod.GET)
-    public String unitForm() {
+    map.addAttribute("concern", c);
+    map.addAttribute("units", unitService.getAll(concern_id));
+    map.addAttribute("incidents", incidentService.getAllActive(concern_id));
+    map.addAttribute("date", new Date());
 
-        return "main_content/unit_form";
-    }
-
-    @RequestMapping(value = "incident.html", method = RequestMethod.GET)
-    public String incident() {
-
-        return "main_content/incident";
-    }
-
-    @RequestMapping(value = "incident_form.html", method = RequestMethod.GET)
-    public String incidentForm() {
-
-        return "main_content/incident_form";
-    }
-
-    /*@RequestMapping(value = "license.html", method = RequestMethod.GET)
-    public String license() {
-
-        return "main_content/license";
-    }*/
-
-    @RequestMapping(value = "log.html", method = RequestMethod.GET)
-    public String log() {
-
-        return "main_content/log";
-    }
-
-    @RequestMapping(value = "debug.html", method = RequestMethod.GET)
-    public String debug() {
-
-        return "main_content/debug";
-    }
-
-    @RequestMapping(value = "key.html", method = RequestMethod.GET)
-    public String key() {
-
-        return "main_content/key";
-    }
-
-    @RequestMapping(value = "patient_form.html", method = RequestMethod.GET)
-    public String patientForm() {
-
-        return "main_content/patient_form";
-    }
-
-    @RequestMapping(value = "log_add.html", method = RequestMethod.GET)
-    public String logAdd() {
-
-        return "main_content/log_add";
-    }
-
-    @RequestMapping(value = "dump.html", method = RequestMethod.GET)
-    public String dump(ModelMap map, @CookieValue("active_case") int concern_id) {
-        Concern c = concernService.getById(concern_id);
-        if(c == null || c.isClosed())
-            return "redirect:/welcome?error=1";
-
-        map.addAttribute("concern", c);
-        map.addAttribute("units", unitService.getAll(concern_id));
-        map.addAttribute("incidents", incidentService.getAllActive(concern_id));
-        map.addAttribute("date", new Date());
-
-        return "main_content/dump";
-    }
+    return "main_content/dump";
+  }
 }

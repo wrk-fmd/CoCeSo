@@ -1,23 +1,14 @@
 /**
  * CoCeSo
  * Client CSS
- * Copyright (c) WRK\Daniel Rohr
+ * Copyright (c) WRK\Coceso-Team
  *
- * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
+ * Licensed under the GNU General Public License, version 3 (GPL-3.0)
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) 2014 Daniel Rohr
- * @link          https://sourceforge.net/projects/coceso/
- * @package       coceso.client.css
- * @version       0.2
- * @since         0.1
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
- *
- * Dependencies:
- *	bootstrap.css
- *  jquery.ui.bootstrap.css
- *  coceso.client.winman
+ * @copyright Copyright (c) 2014 WRK\Coceso-Team
+ * @link https://sourceforge.net/projects/coceso/
+ * @license GPL-3.0 ( http://opensource.org/licenses/GPL-3.0 )
  */
 
 /**
@@ -70,10 +61,6 @@ body.login {
   bottom: 2px;
   left: 2px;
   right: 2px;
-}
-
-body > .ajax_content {
-  display: none;
 }
 
 /**
@@ -176,7 +163,6 @@ input[type="number"] {
   padding: 4px;
   font-size: 13px;
   line-height: 18px;
-  color: #808080;
   border: 1px solid #ccc;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
@@ -438,33 +424,59 @@ span.incident_blue {
 /**
  *   Unit Container definitions
  */
-.panel.unit-container {
-  margin-top: 10px;
+
+.unit_container:not(:empty) {
+  padding-top: 5px;
 }
 
-.unit_container {
-  display: block;
-  margin: 5px;
-  padding: 10px 5px;
-  /*border: solid 1px #888888;*/
+.unit_container .panel {
+  margin-bottom: 10px;
 }
 
-.highlight {
-  min-height: 40px;
-  background-color: #ff4444;
-}
-
-.panel {
+.unit_container .panel:last-child {
   margin-bottom: 0;
 }
 
-.panel-heading {
-  padding: 5px 15px;
+.unit_container .panel-heading {
+  padding: 5px 10px;
+}
+
+.unit_container .panel-body {
+  padding: 5px;
+}
+
+.panel-toggle-indicator {
+  margin-left: 10px;
+  color: #999;
+}
+
+.unit_list_edit {
+  background: #eeeeee;
+  padding: 10px 5px;
+}
+
+.unit_list_edit .unit_state span {
+  background: #aaaaaa;
+}
+
+.unit_container_edit {
+  padding-top: 20px;
+}
+
+.container-placeholder {
+  min-height: 40px;
+  background-color: #ff4444;
+  margin-bottom: 15px;
+}
+
+.container-placeholder:last-child {
+  margin-bottom: 0;
 }
 
 /**
  * Notifications
  */
+
 .notification-icon {
   font-size: larger;
   padding-bottom: 10px !important;
@@ -486,6 +498,7 @@ span.incident_blue {
 .connection-error {
   color: #dd0000;
 }
+
 .connection-ok {
   color: #00dd00;
 }
@@ -513,9 +526,11 @@ table[id*='keytable'] > tbody > tr > td:nth-child(2) {
 .modal-backdrop {
   z-index: 1530;
 }
+
 .modal {
   z-index: 1540;
 }
+
 .modal-dialog {
   margin-top: 80px;
   z-index: 1550;
@@ -524,6 +539,7 @@ table[id*='keytable'] > tbody > tr > td:nth-child(2) {
 /*
  * Highlight Text Fields
  */
+
 .form-highlight {
   border-color: #e94136;
   outline: 0;
