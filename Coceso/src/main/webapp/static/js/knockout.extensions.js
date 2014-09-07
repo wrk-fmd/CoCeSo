@@ -97,37 +97,6 @@ ko.bindingHandlers.droppable = uiBindingHandler("droppable");
 ko.bindingHandlers.popover = uiBindingHandler("popover");
 
 /**
- * Force value to be an integer
- *
- * @param {ko.observable} target
- * @param {void} active
- * @returns {ko.computed}
- */
-ko.extenders.integer = function(target, active) {
-  //create a writeable computed observable to intercept writes to our observable
-  var result = ko.computed({
-    read: target, //always return the original observables value
-    write: function(newValue) {
-      var current = target(),
-          newValueInt = (newValue && !isNaN(newValue)) ? parseInt(newValue) : 0;
-
-      //only write if it changed
-      if (newValueInt !== current) {
-        target(newValueInt);
-      } else if (newValue !== current) {
-        target.notifySubscribers(newValueInt);
-      }
-    }
-  }).extend({notify: 'always'});
-
-  //initialize with current value
-  result(target());
-
-  //return the new computed observable
-  return result;
-};
-
-/**
  * Allow change detection on observable
  *
  * @param {ko.observable} target
@@ -251,23 +220,20 @@ ko.extenders.filtered = function(target, options) {
    * filterObj has one of the following formats or may even be a mix of both:
    *
    *  {
-   *    conn: "and"/"or" (optional, define the logical connection of filters, "and" is default)
-   *    filter: {
-   *      key1: val1, (matching is done with ===)
-   *      key2: val2
-   *    }
+   *    conn: "and"/"or", (optional, define the logical connection of filters, "and" is default)
+   *    key1: filter1, (matching is done with ===)
+   *    key2: filter2
    *  }
    *
    *  {
    *    conn: "and"/"or"
-   *    filter: { (can also be an array)
-   *      someKey: filterObj1,
-   *      anotherKey: filterObj2,
-   *    }
+   *    someKey: filterObj1,
+   *    anotherKey: filterObj2
    *  }
    *
-   * Each filter may also be an object like
+   * Each filter may be just a value to compare to or an object like
    *  {op: "operator", val: "value"}
+   * where value can also be an array of possible values and op is optional
    *
    * @param {Object} filterObj
    * @param {ViewModelSingle} val The ViewModel to check
@@ -276,19 +242,21 @@ ko.extenders.filtered = function(target, options) {
   var applyFilter = function(filterObj, val) {
     var and = (filterObj.conn === "or") ? false : true;
     var i;
-    for (i in filterObj.filter) {
+    for (i in filterObj) {
       //Check all objects in filter
-      if (typeof filterObj.filter[i] !== "undefined") {
+      var filter = filterObj[i];
+      if (typeof filter !== "undefined") {
         var ret;
-        if (typeof filterObj.filter[i].filter !== "undefined") {
+        if (typeof filter.filter !== "undefined") {
           //Checked filter is actually another filterObj: Recursive call
-          ret = applyFilter(filterObj.filter[i], val);
+          ret = applyFilter(filter.filter, val);
         } else {
-          //Compare
-          if (typeof val[i] === "undefined") {
+          if (filter instanceof Function) {
+            ret = filter(val);
+          } else if (typeof val[i] === "undefined") {
             ret = false;
           } else {
-            var filter = filterObj.filter[i], op = "equal";
+            var op = "equal";
             if ((typeof filter.op !== "undefined") && (typeof filter.val !== "undefined")) {
               op = filter.op;
               filter = filter.val;
@@ -312,20 +280,46 @@ ko.extenders.filtered = function(target, options) {
     return and;
   };
 
-  return ko.computed(function() {
+  var field = null, asc = null;
+  if (options.sort === true) {
+    field = ko.observable(options.field || null);
+    asc = ko.observable(options.asc || true).extend({boolean: true});
+    options.sort = function(a, b) {
+      var f = field();
+      if (f && typeof a[f] !== "undefined" && typeof b[f] !== "undefined") {
+        a = ko.utils.unwrapObservable(a[f]);
+        b = ko.utils.unwrapObservable(b[f]);
+        if (typeof a === "string") {
+          a = a.toLowerCase();
+        }
+        if (typeof b === "string") {
+          b = b.toLowerCase();
+        }
+        if (a === null || a < b) {
+          return asc() ? -1 : 1;
+        }
+        if (b === null || a > b) {
+          return asc() ? 1 : -1;
+        }
+      }
+      return 0;
+    };
+  }
+
+  var ret = ko.computed(function() {
     var data = ko.utils.unwrapObservable(target) || [];
 
     if (!data.length) {
       return data;
     }
 
-    var filters = options.filters ? ko.utils.unwrapObservable(options.filters) || {} : {},
+    var filter = options.filter ? ko.utils.unwrapObservable(options.filter) : null,
         sort = options.sort ? ko.utils.unwrapObservable(options.sort) : null;
 
-    if (filters.filter) {
+    if (filter) {
       data = ko.utils.arrayFilter(data, function(val) {
         //Apply the filters to all child elements
-        return applyFilter(filters, val);
+        return applyFilter(filter, val);
       });
     }
 
@@ -335,6 +329,27 @@ ko.extenders.filtered = function(target, options) {
 
     return data;
   });
+
+  if (field && asc) {
+    ret.field = field;
+    ret.asc = asc;
+    ret.sort = function(field) {
+      if (this.field() === field) {
+        this.asc.toggle();
+      } else {
+        this.field(field);
+        this.asc(true);
+      }
+    };
+    ret.icon = function(f) {
+      if (field() === f) {
+        return asc() ? "glyphicon-sort-by-attributes" : "glyphicon-sort-by-attributes-alt";
+      }
+      return "glyphicon-sort";
+    };
+  }
+
+  return ret;
 };
 
 /**

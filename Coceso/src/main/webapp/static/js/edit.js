@@ -73,7 +73,7 @@ Coceso.Models.Concern = function(data, rootModel) {
   };
 
   this.close = function() {
-    Coceso.Ajax.save({concern_id: this.id}, "closeConcern.json", function() {
+    Coceso.Ajax.save({concern_id: this.id}, "concern/close.json", function() {
       rootModel.error(false);
       self.closed(true);
       if (self.isActive()) {
@@ -85,7 +85,7 @@ Coceso.Models.Concern = function(data, rootModel) {
   };
 
   this.reopen = function() {
-    Coceso.Ajax.save({concern_id: this.id}, "reopenConcern.json", function() {
+    Coceso.Ajax.save({concern_id: this.id}, "concern/reopen.json", function() {
       rootModel.error(false);
       self.closed(false);
     }, rootModel.saveError, rootModel.httpError);
@@ -403,6 +403,115 @@ Coceso.Models.Container = function(data, rootModel) {
 };
 
 /**
+ * Person model
+ *
+ * @constructor
+ * @param {Object} data
+ * @param {Coceso.ViewModels.Person} rootModel
+ */
+Coceso.Models.Person = function(data, rootModel) {
+  var self = this;
+
+  this.id = ko.observable(null);
+  this.givenname = ko.observable("").extend({observeChanges: {server: ""}});
+  this.surname = ko.observable(data.sur_name || "").extend({observeChanges: {server: ""}});
+  this.dnr = ko.observable(0).extend({integer: 0, observeChanges: {server: 0}});
+  this.contact = ko.observable("").extend({observeChanges: {server: ""}});
+  this.username = ko.observable("").extend({observeChanges: {server: ""}});
+  this.allowlogin = ko.observable(false).extend({boolean: true, observeChanges: {server: false}});
+
+  // Authorities
+  this.authorities = ko.observableArray([]);
+  this.authorities.orig = ko.observableArray([]);
+  this.authorities.localChange = ko.computed(function() {
+    var a = this(), b = this.orig();
+    return (a.length !== b.length || $(a).not(b).length !== 0 || $(b).not(a).length !== 0);
+  }, this.authorities);
+  this.authorities.reset = function() {
+    self.authorities(self.authorities.orig());
+  };
+
+  this.isOperator = ko.observable(false);
+
+  // Properties for sorting
+  this.sortdnr = this.dnr.orig;
+  this.sortusername = this.username.orig;
+  this.sortallowlogin = this.allowlogin.orig;
+
+  this.fullname = ko.computed(function() {
+    return this.surname.orig() + " " + this.givenname.orig();
+  }, this);
+
+  // Observe changes
+  this.dependencies = ko.observableArray([this.givenname, this.surname, this.dnr, this.contact, this.username, this.allowlogin, this.authorities]).extend({arrayChanges: true});
+  this.localChange = this.dependencies.localChange;
+  this.reset = this.dependencies.reset;
+
+  this.set = function(data) {
+    self.id(data.id || null);
+    self.givenname.setServer(data.given_name || "");
+    self.surname.setServer(data.sur_name || "");
+    self.dnr.setServer(data.dNr || 0);
+    self.contact.setServer(data.contact || "");
+
+    self.username.setServer(data.username || "");
+    self.allowlogin.setServer(data.allowLogin || false);
+    self.allowlogin(data.allowLogin || false);
+    self.authorities(data.internalAuthorities || []);
+    self.authorities.orig(data.internalAuthorities || []);
+
+    self.isOperator(typeof data.username !== "undefined" && data.username !== null);
+
+    if (self.dnr() === null) {
+      self.dnr(self.dnr.server);
+    }
+
+    rootModel.error(false);
+  };
+
+  if (data) {
+    this.set(data);
+  }
+
+  this.load = function() {
+    if (!self.id()) {
+      return;
+    }
+
+    $.getJSON(Coceso.Conf.jsonBase + "person/get/" + self.id(), function(data, status) {
+      if (status !== "notmodified" && data) {
+        self.set(data);
+      }
+    });
+  };
+
+  this.edit = function() {
+    rootModel.showForm(this);
+  };
+
+  this.save = function() {
+    Coceso.Ajax.save(JSON.stringify({
+      id: this.id(),
+      given_name: this.givenname(),
+      sur_name: this.surname(),
+      dNr: this.dnr(),
+      contact: this.contact(),
+      username: this.username() || this.isOperator() ? this.username() : null,
+      allowLogin: this.allowlogin(),
+      internalAuthorities: this.authorities()
+    }), "person/update.json", function(response) {
+      if (response.id) {
+        if (!self.id()) {
+          rootModel.persons.push(self);
+        }
+        self.id(response.id);
+      }
+      self.load();
+    }, rootModel.saveError, rootModel.httpError);
+  };
+};
+
+/**
  * Model for the home view
  *
  * @constructor
@@ -448,8 +557,8 @@ Coceso.ViewModels.Home = function(error) {
 
   // Concern lists
   this.concerns = ko.observableArray([]);
-  this.open = this.concerns.extend({filtered: {filters: {filter: {closed: false}}}});
-  this.closed = this.concerns.extend({filtered: {filters: {filter: {closed: true}}}});
+  this.open = this.concerns.extend({filtered: {filter: {closed: false}}});
+  this.closed = this.concerns.extend({filtered: {filter: {closed: true}}});
 
   this.concernName = ko.computed(function() {
     var id = this.concernId();
@@ -585,3 +694,82 @@ Coceso.ViewModels.Container = function() {
   this.load();
 };
 
+/**
+ * Viewmodel for the person list
+ *
+ * @constructor
+ */
+Coceso.ViewModels.Person = function() {
+  var self = this;
+
+  // Error Handling
+  this.error = ko.observable(false);
+  this.errorText = ko.computed(Coceso.Helpers.errorText, this);
+
+  this.saveError = function(response) {
+    self.error(response.error || 8);
+  };
+
+  this.httpError = function() {
+    self.error(7);
+  };
+
+  // Filtering
+  this.filter = ko.observable();
+  this.regex = ko.computed(function() {
+    var filter = this.filter();
+    if (!filter) {
+      return [];
+    }
+    return $.map(filter.split(" "), function(item) {
+      return new RegExp(RegExp.escape(item), "i");
+    });
+  }, this);
+
+  // List of persons
+  this.persons = ko.observableArray([]);
+  this.filtered = this.persons.extend({
+    filtered: {
+      filter: [
+        function(item) {
+          var regex = self.regex(), i;
+          for (i = 0; i < regex.length; i++) {
+            if (!regex[i].test(item.dnr()) && !regex[i].test(item.surname()) && !regex[i].test(item.givenname()) && !regex[i].test(item.username())) {
+              return false;
+            }
+          }
+          return true;
+        }
+      ],
+      sort: true,
+      field: "sortdnr"
+    }
+  });
+
+  // Person to edit
+  this.edit = ko.observable(null);
+
+  // Show the edit form
+  this.showForm = function(person) {
+    this.edit(person);
+    $("#edit_person").modal("show");
+  };
+
+  // Show an empty edit form
+  this.create = function() {
+    this.showForm(new Coceso.Models.Person({}, this));
+  };
+
+  // Load all persons
+  this.load = function() {
+    $.getJSON(Coceso.Conf.jsonBase + "person/getAll.json", function(data, status) {
+      if (status !== "notmodified") {
+        self.persons($.map(data, function(item) {
+          return new Coceso.Models.Person(item, self);
+        }));
+      }
+    });
+  };
+
+  this.load();
+};

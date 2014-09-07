@@ -17,10 +17,10 @@
  * @type Object
  */
 Coceso.Conf.listURLs = {
-    units: "unit/getAll.json",
-    incidents: "incident/getAllRelevant.json",
-    patients: "patient/getAll.json"
-  };
+  units: "unit/getAll.json",
+  incidents: "incident/getAllRelevant.json",
+  patients: "patient/getAll.json"
+};
 
 /**
  * Constants for some values (states, types)
@@ -1856,7 +1856,7 @@ Coceso.ViewModels.Filterable = function(options) {
    * @returns {Object}
    */
   this.activeFilters = ko.computed(function() {
-    var activeFilters = {filter: []};
+    var activeFilters = [];
 
     //Filters selected in user interface
     var i, filter = {};
@@ -1866,14 +1866,14 @@ Coceso.ViewModels.Filterable = function(options) {
         filter[i] = {val: unwrapped};
       }
     }
-    activeFilters.filter.push({
+    activeFilters.push({
       filter: filter
     });
 
     //Filters from options
     for (i in filterOption) {
       if (this.filters[filterOption[i]]) {
-        activeFilters.filter.push(this.filters[filterOption[i]]);
+        activeFilters.push(this.filters[filterOption[i]]);
       }
     }
 
@@ -2026,7 +2026,7 @@ Coceso.ViewModels.UnitContainer = function(data) {
   this.units = Coceso.Data.units.list.extend({
     filtered: {
       filters: {
-        filter: {id: {val: data.unitIds}}
+        id: {val: data.unitIds}
       },
       sort: function(a, b) {
         var t = data.unitIds;
@@ -3209,10 +3209,10 @@ Coceso.ViewModels.Notifications = function() {
    */
   this.connectionError = ko.observable(false);
 
-  var incidents = Coceso.Data.incidents.list.extend({filtered: {filters: {filter: {
-          type: {val: [Coceso.Constants.Incident.type.task, Coceso.Constants.Incident.type.transport, Coceso.Constants.Incident.type.relocation]},
-          isNewOrOpen: true
-        }}}});
+  var incidents = Coceso.Data.incidents.list.extend({filtered: {filters: {
+        type: {val: [Coceso.Constants.Incident.type.task, Coceso.Constants.Incident.type.transport, Coceso.Constants.Incident.type.relocation]},
+        isNewOrOpen: true
+      }}});
 
   /**
    * Open incidents
@@ -3246,7 +3246,7 @@ Coceso.ViewModels.Notifications = function() {
    * @returns {integer}
    */
   this.radioCounter = ko.computed(function() {
-    return Coceso.Data.units.list.extend({filtered: {filters: {filter: {hasAssigned: true}}}})().length;
+    return Coceso.Data.units.list.extend({filtered: {filters: {hasAssigned: true}}})().length;
   }, this);
 
   /**
@@ -3258,7 +3258,7 @@ Coceso.ViewModels.Notifications = function() {
    */
 
   this.freeCounter = ko.computed(function() {
-    return Coceso.Data.units.list.extend({filtered: {filters: {filter: {isFree: true}}}})().length;
+    return Coceso.Data.units.list.extend({filtered: {filters: {isFree: true}}})().length;
   }, this);
 
   /**

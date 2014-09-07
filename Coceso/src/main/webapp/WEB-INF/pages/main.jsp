@@ -122,7 +122,7 @@
               <%-- Concern Name, Clock --%>
               <li>
                 <a href="#" onclick="return false;" class="notification-icon">
-                  <span class="glyphicon glyphicon-info-sign tooltipped" title="<h5>${concern.name}</h5>"
+                  <span class="glyphicon glyphicon-info-sign tooltipped" title="<h5><c:out value="${concern.name}"/></h5>"
                         data-toggle="tooltip" data-html="true" data-placement="bottom"></span>
                 </a>
               </li>
@@ -237,7 +237,7 @@
                   </a>
                 </li>
                 <li>
-                  <a href="<c:url value="/dashboard"/>?concern=${concern.id}" target="_blank">
+                  <a href="<c:url value="/dashboard"/>" target="_blank">
                     <span class="glyphicon glyphicon-link"></span> <spring:message code="label.nav.dashboard"/>
                   </a>
                 </li>

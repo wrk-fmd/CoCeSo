@@ -1,6 +1,5 @@
 package at.wrk.coceso.service;
 
-import at.wrk.coceso.dao.CocesoDao;
 import at.wrk.coceso.dao.PersonDao;
 import at.wrk.coceso.entity.Person;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +19,10 @@ public class PersonService {
 
     public List<Person> getAll() {
         return personDao.getAll();
+    }
+
+    public List<? extends Person> getAll(boolean asOperator) {
+        return asOperator ? personDao.getAllAsOperator() : getAll();
     }
 
     public boolean update(Person person) {

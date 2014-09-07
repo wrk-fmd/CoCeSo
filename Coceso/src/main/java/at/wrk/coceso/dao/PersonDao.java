@@ -1,7 +1,9 @@
 package at.wrk.coceso.dao;
 
 
+import at.wrk.coceso.dao.mapper.OperatorMapper;
 import at.wrk.coceso.dao.mapper.PersonMapper;
+import at.wrk.coceso.entity.Operator;
 import at.wrk.coceso.entity.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -22,6 +24,9 @@ public class PersonDao extends CocesoDao<Person> {
 
     @Autowired
     PersonMapper personMapper;
+
+    @Autowired
+    OperatorMapper operatorMapper;
 
     @Autowired
     public PersonDao(DataSource dataSource) {
@@ -57,6 +62,12 @@ public class PersonDao extends CocesoDao<Person> {
         String q = "SELECT * FROM person";
 
         return jdbc.query(q, personMapper);
+    }
+
+    public List<Operator> getAllAsOperator() {
+        String q = "SELECT * FROM person p LEFT JOIN operator o ON (o.id = p.id)";
+
+        return jdbc.query(q, operatorMapper);
     }
 
     @Override

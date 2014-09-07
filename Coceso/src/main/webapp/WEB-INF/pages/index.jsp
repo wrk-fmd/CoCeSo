@@ -54,6 +54,8 @@
       <div>
         <a href="<c:url value="/static/license.html"/>" target="_blank"><spring:message code="text.license"/></a>
       </div>
+
+      <div class="page-header"></div>
     </div>
   </body>
 </html>

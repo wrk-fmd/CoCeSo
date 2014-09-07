@@ -73,7 +73,7 @@ public class WelcomeController {
     map.addAttribute("user", user);
 
     // Flag Authorized toggles visibility of close/reopen button
-    if (user.getInternalAuthorities().contains(CLOSE_AUTHORITY)) {
+    if (user.hasAuthority(CLOSE_AUTHORITY)) {
       map.addAttribute("authorized", true);
     }
 

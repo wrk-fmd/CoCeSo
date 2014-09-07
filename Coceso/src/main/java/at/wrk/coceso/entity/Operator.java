@@ -13,9 +13,9 @@ import java.util.List;
 
 public class Operator extends Person implements UserDetails {
 
+    @JsonIgnore
     private Concern activeConcern;
 
-    @JsonIgnore
     private boolean allowLogin;
 
     @JsonIgnore
@@ -31,9 +31,9 @@ public class Operator extends Person implements UserDetails {
         super(person);
     }
 
-    @JsonIgnore
     private List<CocesoAuthority> internalAuthorities;
 
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> ret = new ArrayList<GrantedAuthority>();
@@ -53,7 +53,6 @@ public class Operator extends Person implements UserDetails {
         return ret;
     }
 
-    @JsonIgnore
     public List<CocesoAuthority> getInternalAuthorities() {
         return internalAuthorities;
     }
@@ -69,6 +68,10 @@ public class Operator extends Person implements UserDetails {
 
     public boolean removeAuthority(CocesoAuthority authority) {
         return internalAuthorities.remove(authority);
+    }
+
+    public boolean hasAuthority(CocesoAuthority authority) {
+      return internalAuthorities.contains(authority);
     }
 
     @Override

@@ -42,7 +42,7 @@ Coceso.Conf = {
   jsonBase: "",
   langBase: "",
   language: "en",
-  debug: false,
+  debug: true,
   keyboardControl: false,
   keyMapping: {
     // 32: Space
@@ -53,6 +53,35 @@ Coceso.Conf = {
     noKey: 78
   },
   confirmStatusUpdate: true
+};
+
+/**
+ * Set error handling
+ *
+ * @param {String} msg Error msg
+ * @param {String} url URL of JS file
+ * @param {Integer} line Line with error
+ * @param {Integer} col Column with error
+ * @param {Object} error Error information
+ * @returns {void}
+ */
+window.onerror = function(msg, url, line, col, error) {
+  $.ajax({
+    type: "POST",
+    url: Coceso.Conf.jsonBase + "jslog",
+    dataType: "json",
+    contentType: "application/json",
+    data: JSON.stringify({
+      msg: msg,
+      url: url,
+      line: line,
+      col: col,
+      stack: error ? error.stack : null
+    }),
+    processData: false
+  });
+
+  return !Coceso.Conf.debug;
 };
 
 /**
@@ -289,4 +318,8 @@ Coceso.ViewModels.destroyComputed = function(obj) {
       obj[i].dispose();
     }
   }
+};
+
+RegExp.escape = function(s) {
+  return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 };

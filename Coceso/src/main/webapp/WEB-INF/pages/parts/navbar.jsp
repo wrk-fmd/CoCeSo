@@ -27,9 +27,9 @@
   <div class="navbar-collapse collapse">
     <ul class="nav navbar-nav">
       <li class="${nav_home}"><a href="<c:url value="/home"/>"><spring:message code="label.nav.home"/></a></li>
-      <li class="${nav_concern}"><a href="<c:url value="/edit/"/>"><spring:message code="label.nav.edit_concern"/></a></li>
-      <li class="${nav_person}"><a href="<c:url value="/edit/person/"/>"><spring:message code="label.nav.edit_person"/></a></li>
-      <li><a href="<c:url value="/main/"/>"><strong><spring:message code="label.nav.main"/></strong></a></li>
+      <li class="${nav_concern}"><a href="<c:url value="/edit"/>"><spring:message code="label.nav.edit_concern"/></a></li>
+      <li class="${nav_person}"><a href="<c:url value="/edit/person"/>"><spring:message code="label.nav.edit_person"/></a></li>
+      <li><a href="<c:url value="/main"/>"><strong><spring:message code="label.nav.main"/></strong></a></li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
       <li><a href="<c:url value="/dashboard"/>"><spring:message code="label.nav.dashboard"/></a></li>
