@@ -15,10 +15,10 @@ import java.util.List;
 public class UnitContainerController {
 
   @Autowired
-  UnitContainerDao containerDao;
+  private UnitContainerDao containerDao;
 
   @Autowired
-  ContainerService containerService;
+  private ContainerService containerService;
 
   /**
    * Full Hierarchy

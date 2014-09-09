@@ -19,7 +19,7 @@ public class EditController {
   private static final String error_return = "redirect:/home?error=1";
 
   @Autowired
-  ConcernService concernService;
+  private ConcernService concernService;
 
   @RequestMapping(value = "", method = RequestMethod.GET)
   public String editConcern(ModelMap model, @CookieValue(value = "concern", required = false) Integer concern_id) {

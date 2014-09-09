@@ -7,21 +7,21 @@ import at.wrk.coceso.entity.helper.BatchUnits;
 import at.wrk.coceso.entity.helper.UnitWithLocked;
 import at.wrk.coceso.service.TaskService;
 import at.wrk.coceso.service.UnitService;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Map;
+
 @Controller
 @RequestMapping("/data/unit")
 public class UnitController implements IEntityController<Unit> {
 
-  private static final Logger logger = Logger.getLogger("CoCeSo");
+  private static final Logger logger = Logger.getLogger(UnitController.class);
 
   @Autowired
   private UnitService unitService;
@@ -85,13 +85,13 @@ public class UnitController implements IEntityController<Unit> {
 
     if (unit.getId() <= 0) {
       //Adding units is not possible in "main" page, therefore not necessary here
-      logger.log(Level.WARNING, "UnitController.update(): User {0} tried to add unit, use updateFull!", user.getUsername());
+      logger.warn("UnitController.update(): User " + user.getUsername() + " tried to add unit, use updateFull!");
       return "{\"success\": false, \"info\":\"Adding not allowed\"}";
     }
 
     Unit u = unitService.getById(unit.getId());
     if (u.getConcern() != concern_id) {
-      logger.log(Level.WARNING, "UnitController.update(): User {0} tried to update Unit of wrong Concern", user.getUsername());
+      logger.warn("UnitController.update(): User " + user.getUsername() + " tried to update Unit of wrong Concern");
       return "{\"success\": false, \"info\":\"Active Concern not valid\"}";
     }
 
@@ -135,15 +135,14 @@ public class UnitController implements IEntityController<Unit> {
 
       boolean success = (editedUnit.getId() > 0);
       if (!success) {
-        logger.log(Level.WARNING, "UnitController.update(): User {0}:  Creating unit with call={1} failed. returned id={2}",
-                new Object[]{user.getUsername(), editedUnit.getCall(), editedUnit.getId()});
+        logger.warn("UnitController.updateFull(): User " + user.getUsername() + ": Creating unit with call=" + editedUnit.getCall() + " failed. returned id=" + editedUnit.getId());
       }
       return "{\"success\": " + success + ", \"new\": true, \"unit_id\":" + editedUnit.getId() + "}";
     }
 
     Unit unit = unitService.getById(editedUnit.getId());
     if (unit.getConcern() != concern_id) {
-      logger.log(Level.WARNING, "UnitController.update(): User {0} tried to update Unit of wrong Concern", user.getUsername());
+      logger.warn("UnitController.updateFull(): User " + user.getUsername() + " tried to update Unit of wrong Concern");
       return "{\"success\": false, \"info\":\"Active Concern not valid\"}";
     }
 

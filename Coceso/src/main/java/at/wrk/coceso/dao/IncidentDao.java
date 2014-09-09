@@ -190,7 +190,7 @@ public class IncidentDao extends CocesoDao<Incident> {
 
         // Nothing to update
         if(!comma) {
-            CocesoLogger.warning("Tried to update empty Incident: id="+incident.getId());
+            CocesoLogger.warn("Tried to update empty Incident: id="+incident.getId());
             return false;
         }
 

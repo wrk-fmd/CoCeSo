@@ -6,6 +6,7 @@ import at.wrk.coceso.entity.Person;
 import at.wrk.coceso.entity.enums.CocesoAuthority;
 import at.wrk.coceso.service.OperatorService;
 import at.wrk.coceso.service.PersonService;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
@@ -14,23 +15,21 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @Controller
 @RequestMapping("/data/person")
 public class PersonController {
 
-  private static final Logger logger = Logger.getLogger("CoCeSo");
+  private static final Logger logger = Logger.getLogger(PersonController.class);
 
   @Autowired
-  PersonService personService;
+  private PersonService personService;
 
   @Autowired
-  OperatorService operatorService;
+  private OperatorService operatorService;
 
   @Autowired
-  RoleDao roleDao;
+  private RoleDao roleDao;
 
   @ResponseBody
   @RequestMapping(value = "getAll", produces = "application/json", method = RequestMethod.GET)
@@ -100,13 +99,13 @@ public class PersonController {
       op.setUsername(operator.getUsername());
       op.setInternalAuthorities(new ArrayList<CocesoAuthority>());
 
-      logger.log(Level.INFO, "Creating Operator {0}(#{1}) by {2}", new Object[]{op.getUsername(), op.getId(), user.getUsername()});
+      logger.info("Creating Operator " + op.getUsername() + " (#" + op.getId() + ") by " + user.getUsername());
 
       if (operatorService.add(op) != id) {
         return "{\"success\":false,\"error\":\"addop\",\"id\":" + id + "}";
       }
     } else {
-      logger.log(Level.INFO, "Updating Operator {0}(#{1}) by {2}", new Object[]{op.getUsername(), op.getId(), user.getUsername()});
+      logger.info("Updating Operator " + op.getUsername() + " (#" + op.getId() + ") by " + user.getUsername());
 
       op.setAllowLogin(operator.isAllowLogin());
       op.setUsername(operator.getUsername());
@@ -120,13 +119,13 @@ public class PersonController {
     List<CocesoAuthority> new_authorities = operator.getInternalAuthorities();
     List<CocesoAuthority> old_authorities = op.getInternalAuthorities();
     if (new_authorities != null) {
-      logger.log(Level.FINE, "Updating Authorities of {0} by {1}", new Object[]{op.getUsername(), user.getUsername()});
+      logger.debug("Updating Authorities of " + op.getUsername() + " by " + user.getUsername());
       for (CocesoAuthority auth : CocesoAuthority.class.getEnumConstants()) {
         if (new_authorities.contains(auth) && !old_authorities.contains(auth)) {
           roleDao.add(id, auth);
         } else if (!new_authorities.contains(auth) && old_authorities.contains(auth)) {
           if (op.getId() == user.getId() && auth == CocesoAuthority.Root) {
-            logger.log(Level.WARNING, "Prevented removal of own root authority by {0}", op.getUsername());
+            logger.warn("Prevented removal of own root authority by " + op.getUsername());
           } else {
             roleDao.remove(id, auth);
           }

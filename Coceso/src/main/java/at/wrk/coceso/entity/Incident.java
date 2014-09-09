@@ -69,9 +69,7 @@ public class Incident {
         if(index < 0 || index > l.size() - 2)
             return null;
 
-        TaskState ret = l.get(index+1);
-
-        return ret;
+        return l.get(index+1);
     }
 
     public Incident slimCopy() {

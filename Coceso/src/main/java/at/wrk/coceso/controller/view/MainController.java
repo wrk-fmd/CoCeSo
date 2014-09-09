@@ -18,13 +18,13 @@ import java.util.Date;
 public class MainController {
 
   @Autowired
-  ConcernService concernService;
+  private ConcernService concernService;
 
   @Autowired
-  UnitService unitService;
+  private UnitService unitService;
 
   @Autowired
-  IncidentService incidentService;
+  private IncidentService incidentService;
 
   @RequestMapping(value = "", method = RequestMethod.GET)
   public String showMain(ModelMap map, @CookieValue(value = "concern", required = false) Integer concern_id) {

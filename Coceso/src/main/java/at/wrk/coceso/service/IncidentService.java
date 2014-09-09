@@ -14,10 +14,10 @@ import java.util.List;
 public class IncidentService {
 
     @Autowired
-    IncidentDao incidentDao;
+    private IncidentDao incidentDao;
 
     @Autowired
-    LogService logService;
+    private LogService logService;
 
     public Incident getById(int id) {
         return incidentDao.getById(id);

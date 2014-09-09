@@ -21,7 +21,7 @@ import java.util.List;
 public class RoleDao {
 
     @Autowired
-    RoleMapper roleMapper;
+    private RoleMapper roleMapper;
 
     private JdbcTemplate jdbc;
 

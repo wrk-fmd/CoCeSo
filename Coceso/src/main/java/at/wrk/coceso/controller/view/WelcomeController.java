@@ -26,7 +26,7 @@ public class WelcomeController {
   private static final Set<Integer> allowedErrors = new HashSet<Integer>(Arrays.asList(1));
 
   @Autowired
-  OperatorService operatorService;
+  private OperatorService operatorService;
 
   @RequestMapping("/")
   public String showIndex() {

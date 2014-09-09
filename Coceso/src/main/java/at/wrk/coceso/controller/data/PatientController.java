@@ -18,10 +18,10 @@ import java.util.List;
 public class PatientController implements IEntityController<Patient> {
 
   @Autowired
-  PatientService patientService;
+  private PatientService patientService;
 
   @Autowired
-  IncidentService incidentService;
+  private IncidentService incidentService;
 
   @Override
   @RequestMapping(value = "getAll", produces = "application/json", method = RequestMethod.GET)

@@ -18,10 +18,10 @@ import java.util.List;
 public class LogController {
 
   @Autowired
-  LogDao dao;
+  private LogDao dao;
 
   @Autowired
-  LogService logService;
+  private LogService logService;
 
   @RequestMapping(value = "getAll", produces = "application/json", method = RequestMethod.GET)
   @ResponseBody

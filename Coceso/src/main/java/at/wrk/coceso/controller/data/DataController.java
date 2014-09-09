@@ -18,13 +18,13 @@ import org.springframework.web.bind.annotation.*;
 public class DataController {
 
   @Autowired
-  TaskService taskService;
+  private TaskService taskService;
 
   @Autowired
-  ConcernService concernService;
+  private ConcernService concernService;
 
   @Autowired
-  OperatorService operatorService;
+  private OperatorService operatorService;
 
   @ResponseBody
   @RequestMapping(value = "assignUnit", produces = "application/json", method = RequestMethod.POST)

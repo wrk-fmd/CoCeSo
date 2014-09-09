@@ -4,6 +4,7 @@ import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Operator;
 import at.wrk.coceso.entity.enums.CocesoAuthority;
 import at.wrk.coceso.service.ConcernService;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
@@ -11,14 +12,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @Controller
 @RequestMapping("/data/concern")
 public class ConcernController {
 
-  private static final Logger logger = Logger.getLogger("CoCeSo");
+  private static final Logger logger = Logger.getLogger(ConcernController.class);
 
   // TODO Authority to Close and Reopen Concerns
   private static final CocesoAuthority CLOSE_AUTHORITY = CocesoAuthority.Root;
@@ -49,7 +48,7 @@ public class ConcernController {
   public String update(@RequestBody Concern concern, BindingResult result, UsernamePasswordAuthenticationToken token) {
     Operator user = (Operator) token.getPrincipal();
 
-    logger.log(Level.FINE, "Update request of Concern #{0} by User {1}", new Object[]{concern.getId(), user.getUsername()});
+    logger.debug("Update request of Concern # " + concern.getId() + " by User " + user.getUsername());
 
     if (result.hasErrors()) {
       return "{\"success\": false, description: \"Binding Error\"}";
@@ -71,11 +70,11 @@ public class ConcernController {
     }
 
     if (!user.hasAuthority(CLOSE_AUTHORITY)) {
-      logger.log(Level.WARNING, "User {0} tried to close Concern \"{1}\" without Authority \"{2}\"", new Object[]{user.getUsername(), concern.getName(), CLOSE_AUTHORITY});
+      logger.warn("User " + user.getUsername() + " tried to close Concern '" + concern.getName() + "' without Authority '" + CLOSE_AUTHORITY + "'");
       return "{\"success\":false,\"error\":5}";
     }
 
-    logger.log(Level.INFO, "/data/closeConcern[POST]: user {0} closed Concern #{1}", new Object[]{user.getUsername(), concern.getId()});
+    logger.info("/data/concern/close[POST]: user " + user.getUsername() + " closed Concern #" + concern.getId());
     concern.setClosed(true);
     return "{\"success\":" + concernService.update(concern, user) + "}";
   }
@@ -91,11 +90,11 @@ public class ConcernController {
     }
 
     if (!user.hasAuthority(CLOSE_AUTHORITY)) {
-      logger.log(Level.WARNING, "User {0} tried to reopen Concern \"{1}\" without Authority \"{2}\"", new Object[]{user.getUsername(), concern.getName(), CLOSE_AUTHORITY});
+      logger.warn("User " + user.getUsername() + " tried to reopen Concern '" + concern.getName() + "' without Authority '" + CLOSE_AUTHORITY + "'");
       return "{\"success\":false,\"error\":5}";
     }
 
-    logger.log(Level.INFO, "/data/reopenConcern[POST]: user {0} reopened Concern #{1}", new Object[]{user.getUsername(), concern.getId()});
+    logger.info("/data/concern/reopen[POST]: user " + user.getUsername() + " reopened Concern #" + concern.getId());
     concern.setClosed(false);
     return "{\"success\":" + concernService.update(concern, user) + "}";
   }

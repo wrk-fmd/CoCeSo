@@ -21,7 +21,7 @@ import java.util.List;
 public class PointDao extends CocesoDao<Point> {
 
     @Autowired
-    PointMapper pointMapper;
+    private PointMapper pointMapper;
 
     @Autowired
     public PointDao(DataSource dataSource) {

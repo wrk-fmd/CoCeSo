@@ -19,10 +19,10 @@ import java.util.Map;
 public class IncidentController implements IEntityController<Incident> {
 
   @Autowired
-  IncidentService incidentService;
+  private IncidentService incidentService;
 
   @Autowired
-  TaskService taskService;
+  private TaskService taskService;
 
   @Override
   @RequestMapping(value = "getAll", produces = "application/json", method = RequestMethod.GET)

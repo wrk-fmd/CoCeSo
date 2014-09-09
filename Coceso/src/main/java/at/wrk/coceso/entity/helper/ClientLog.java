@@ -1,8 +1,8 @@
 package at.wrk.coceso.entity.helper;
 
 import at.wrk.coceso.entity.Operator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 /**
  * JS logging functionality
@@ -10,8 +10,7 @@ import java.util.logging.Logger;
  */
 public class ClientLog {
 
-  //TODO: Log to a separate file
-  private static final Logger logger = Logger.getLogger("CoCeSo");
+  private static final Logger logger = Logger.getLogger(ClientLog.class);
 
   private String msg;
 
@@ -23,14 +22,14 @@ public class ClientLog {
 
   private String stack;
 
-  private Level level = Level.SEVERE;
+  private Level level = Level.ERROR;
 
   public void log() {
-    logger.log(level, "{0} in file {1} at line {2}:{3}{4}", new Object[]{msg, url, line, col, (stack != null) ? "\nStacktrace:\n"+stack : ""});
+    logger.log(level, "in file " + url + ":" + line + ":" + col + "\n" + msg + (stack != null ? "\nStacktrace:\n" + stack : ""));
   }
 
   public void log(Operator user) {
-    logger.log(level, "{0} in file {1} at line {2}:{3} with user {4}{5}", new Object[]{msg, url, line, col, user.getUsername(), (stack != null) ? "\nStacktrace:\n"+stack : ""});
+    logger.log(level, "in file " + url + ":" + line + ":" + col + " with user " + user.getUsername() + "\n" + msg + (stack != null ? "\nStacktrace:\n" + stack : ""));
   }
 
   public String getMsg() {

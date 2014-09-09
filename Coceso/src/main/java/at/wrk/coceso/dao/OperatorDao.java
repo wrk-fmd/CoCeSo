@@ -60,7 +60,7 @@ public class OperatorDao extends CocesoDao<Operator> {
         try {
             return jdbc.queryForObject(q, new Object[] {username}, operatorMapper);
         } catch(DataAccessException e) {
-            CocesoLogger.debug("PersonDAO.getByUsername "+e.getMessage());
+            CocesoLogger.debug("OperatorDAO.getByUsername "+e.getMessage());
             return null;
         }
     }

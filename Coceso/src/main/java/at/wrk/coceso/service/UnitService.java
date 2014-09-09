@@ -21,19 +21,19 @@ import java.util.List;
 public class UnitService {
 
     @Autowired
-    LogService logService;
+    private LogService logService;
 
     @Autowired
-    UnitDao unitDao;
+    private UnitDao unitDao;
 
     @Autowired
-    TaskDao taskDao;
+    private TaskDao taskDao;
 
     @Autowired
-    IncidentService incidentService;
+    private IncidentService incidentService;
 
     @Autowired
-    TaskService taskService;
+    private TaskService taskService;
 
     public Unit getById(int id) {
         return unitDao.getById(id);
@@ -45,7 +45,7 @@ public class UnitService {
     }
 
     public List<UnitWithLocked> getAllWithLocked(int concernId) {
-        return unitDao.getAllWithLocked(concernId);
+      return unitDao.getAllWithLocked(concernId);
     }
 
     public boolean update(Unit unit) {
