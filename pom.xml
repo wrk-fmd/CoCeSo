@@ -9,7 +9,7 @@
 	<artifactId>fmd-it</artifactId>
 	<packaging>pom</packaging>
 	<version>1.1.0</version>
-	<name>CoCeSo</name>
+	<name>fmd-it</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -17,7 +17,18 @@
 
 	<modules>
 		<module>coceso</module>
-        <module>selcall</module>
 	</modules>
 
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
