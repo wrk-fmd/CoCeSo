@@ -14,14 +14,30 @@
 --%>
 <script type="text/html" id="template-unit-row">
   <td>
-    <p><input type="text" maxlength="64" class="form-control" placeholder="${call}" data-bind="value: call, valueUpdate: 'input', css: {'form-changed': call.localChange}, attr: {form: 'table_form_' + id}" required></p>
-    <p><input type="text" maxlength="64" class="form-control" placeholder="${ani}" data-bind="value: ani, valueUpdate: 'input', css: {'form-changed': ani.localChange}, attr: {form: 'table_form_' + id}"></p>
+    <p>
+        <input type="text" maxlength="64" class="form-control" placeholder="${call}"
+               data-bind="value: call, valueUpdate: 'input', css: {'form-changed': call.localChange}, attr: {form: 'table_form_' + id}"
+               style="font-weight: bold;" required>
+    </p>
+    <p>
+        <input type="text" maxlength="64" class="form-control" placeholder="${ani}"
+               data-bind="value: ani, valueUpdate: 'input', css: {'form-changed': ani.localChange}, attr: {form: 'table_form_' + id}">
+    </p>
   </td>
   <td>
     <div class="btn-group btn-group-sm">
-      <button type="button" class="btn btn-default" data-bind="click: doc.toggle, css: {active: doc, 'form-changed': doc.localChange}, attr: {form: 'table_form_' + id}">${doc}</button>
-      <button type="button" class="btn btn-default" data-bind="click: vehicle.toggle, css: {active: vehicle, 'form-changed': vehicle.localChange}, attr: {form: 'table_form_' + id}">${vehicle}</button>
-      <button type="button" class="btn btn-default" data-bind="click: portable.toggle, css: {active: portable, 'form-changed': portable.localChange}, attr: {form: 'table_form_' + id}">${portable}</button>
+      <button type="button" class="btn btn-default"
+              data-bind="click: doc.toggle, css: {active: doc, 'form-changed': doc.localChange}, attr: {form: 'table_form_' + id}">
+              ${doc}
+      </button>
+      <button type="button" class="btn btn-default"
+              data-bind="click: vehicle.toggle, css: {active: vehicle, 'form-changed': vehicle.localChange}, attr: {form: 'table_form_' + id}">
+              ${vehicle}
+      </button>
+      <button type="button" class="btn btn-default"
+              data-bind="click: portable.toggle, css: {active: portable, 'form-changed': portable.localChange}, attr: {form: 'table_form_' + id}">
+              ${portable}
+      </button>
     </div>
   </td>
   <td>
