@@ -57,12 +57,12 @@ public class SelcallServiceMockup implements SelcallService {
         LOG.debug("Add Result to queue");
         queue.add(result);
 
-        if(SelcallHandler.getAllStackTraces().isEmpty()) {
+        //if(SelcallHandler.getAllStackTraces().isEmpty()) {
             LOG.info("Create new Thread");
             ( new SelcallHandler() ).start();
-        } else {
-            LOG.debug("Thread already running");
-        }
+        //} else {
+        //    LOG.debug("Thread already running");
+        //}
     }
 
     @Override
@@ -72,6 +72,13 @@ public class SelcallServiceMockup implements SelcallService {
 
     @Override
     public boolean sendSelcall(Selcall selcall) {
+        if(selcall == null || selcall.getAni() == null) {
+            LOG.info("Selcall or ANI is null");
+            return false;
+        }
+
+        LOG.debug(String.format("Try to send Selcall to '%s'", selcall.getAni()));
+
         selcall.setTimestamp(new Date());
 
         boolean success = true;

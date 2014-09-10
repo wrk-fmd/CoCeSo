@@ -61,7 +61,7 @@ public class SelcallServiceImpl implements SelcallService {
 
         for(DeferredResult<Selcall> result : queue) {
             LOG.debug("Set result");
-            result.setResult(incomingCall);
+            result.setResult(incomingCall); // TODO Remove Result?
         }
     }
 
@@ -77,6 +77,13 @@ public class SelcallServiceImpl implements SelcallService {
     }
 
     public boolean sendSelcall(Selcall selcall) {
+        if(selcall == null || selcall.getAni() == null) {
+            LOG.info("Selcall or ANI is null");
+            return false;
+        }
+
+        LOG.debug(String.format("Try to send Selcall to '%s'", selcall.getAni()));
+
         selcall.setTimestamp(new Date());
 
         boolean success;
