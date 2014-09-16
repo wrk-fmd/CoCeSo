@@ -27,7 +27,7 @@
     <%-- jQuery --%>
     <script src="<c:url value="/static/js/assets/jquery.min.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/assets/jquery.i18n.min.js"/>" type="text/javascript"></script>
-    <script src="<c:url value="/static/js/assets/jquery.ui.1.10.4.min.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/static/js/assets/jquery.ui.min.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/assets/jquery.ui.touch-punch.min.js"/>" type="text/javascript"></script>
     <%-- Knockout --%>
     <script src="<c:url value="/static/js/assets/knockout.min.js"/>" type="text/javascript"></script>
@@ -58,7 +58,7 @@
       <h2><spring:message code="label.nav.edit_concern"/>: <c:out value="${concern.name}"/></h2>
 
       <div class="page-header">
-        <h3>
+        <h3 class="clearfix">
           <spring:message code="label.container.edit"/>
           <a href="<c:url value="/edit/"/>" class="btn btn-warning btn-sm pull-right"><spring:message code="label.nav.back"/></a>
         </h3>
@@ -68,7 +68,7 @@
         <div class="unit-container" data-bind="template: {name: 'template-container', data: top}"></div>
         <div id="spare">
           <spring:message code="label.unit.spare"/>:
-          <ul class="unit_list unit_list_edit" data-bind="sortable: {data: spare, connectClass: 'unit_list', afterMove: dropUnit}">
+          <ul class="unit_list unit_list_edit" data-bind="sortable: {data: spare, connectClass: 'unit_list_edit', afterMove: $root.dropUnit, options: {placeholder: 'unit-placeholder ui-corner-all'}}">
             <li>
               <a href="#" class="unit_state">
                 <span class="ui-corner-all" data-bind="text: call"></span>
@@ -77,13 +77,13 @@
           </ul>
         </div>
       </div>
-      <div class="modal-footer"></div>
+      <div class="page-header"></div>
     </div>
 
     <script type="text/html" id="template-container">
       <div class="panel panel-default">
         <div class="panel-heading clearfix">
-          <span data-bind="text: name() ? name() : '---', click: selected.set, visible: !selected()"></span>
+          <span data-bind="text: name() || '---', click: selected.set, visible: !selected()"></span>
           <form data-bind="submit: selected.unset" style="display: inline;"><input type="text" data-bind="value: name, event: {blur: update}, visibleAndSelect: selected"/></form>
 
           <div class="pull-right">
@@ -93,7 +93,7 @@
         </div>
 
         <div class="panel-body">
-          <ul class="unit_list unit_list_edit" data-bind="sortable: {data: units, connectClass: 'unit_list', afterMove: dropUnit, options: {placeholder: ''}}">
+          <ul class="unit_list unit_list_edit" data-bind="sortable: {data: units, connectClass: 'unit_list_edit', afterMove: $root.dropUnit, options: {placeholder: 'unit-placeholder ui-corner-all'}}">
             <li>
               <a href="#" class="unit_state">
                 <span class="ui-corner-all" data-bind="text: call"></span>
@@ -101,7 +101,7 @@
             </li>
           </ul>
 
-          <div class="unit_container_edit" data-bind="sortable: {template: 'template-container', data: subContainer, connectClass: 'unit_container_edit', afterMove: drop, options: {placeholder: 'container-placeholder'}}"></div>
+          <div class="unit_container_edit" data-bind="sortable: {template: 'template-container', data: subContainer, connectClass: 'unit_container_edit', afterMove: $root.drop, options: {placeholder: 'container-placeholder'}}"></div>
         </div>
       </div>
     </script>

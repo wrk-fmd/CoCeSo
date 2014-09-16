@@ -28,17 +28,17 @@ public class WelcomeController {
   @Autowired
   private OperatorService operatorService;
 
-  @RequestMapping("/")
+  @RequestMapping(value = "/", method = RequestMethod.GET)
   public String showIndex() {
     return "index";
   }
 
-  @RequestMapping("/login")
+  @RequestMapping(value = "/login", method = RequestMethod.GET)
   public String login() {
     return "login";
   }
 
-  @RequestMapping("/loginfailed")
+  @RequestMapping(value = "/loginfailed", method = RequestMethod.GET)
   public String loginFailed(ModelMap model) {
     model.addAttribute("error", "true");
     return "login";

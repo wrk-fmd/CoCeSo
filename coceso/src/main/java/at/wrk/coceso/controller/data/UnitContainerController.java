@@ -70,7 +70,7 @@ public class UnitContainerController {
     return containerDao.getByConcernSlim(concern_id);
   }
 
-  @RequestMapping(value = "getSpare", produces = "application/json")
+  @RequestMapping(value = "getSpare", produces = "application/json", method = RequestMethod.GET)
   @ResponseBody
   public List<SlimUnit> getSpare(@CookieValue("concern") int concern_id) {
     return containerDao.getSpareUnits(concern_id);

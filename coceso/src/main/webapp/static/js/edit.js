@@ -103,8 +103,9 @@ Coceso.Models.CreateConcern = function(rootModel) {
 
   this.name = ko.observable("").extend({observeChanges: {server: ""}});
 
-  this.dependencies = ko.observableArray([this.name]).extend({arrayChanges: {}});
-  this.localChange = this.dependencies.localChange;
+  //this.dependencies = ko.observableArray([this.name]).extend({arrayChanges: {}});
+  //this.localChange = this.dependencies.localChange;
+  this.localChange = this.name.localChange;
 
   this.save = function() {
     if (!this.localChange()) {
@@ -126,7 +127,7 @@ Coceso.Models.CreateConcern = function(rootModel) {
  *
  * @constructor
  * @param {Object} data
- * @param {Coceso.ViewModels.Concern} rootModel
+ * @param {Coceso.ViewModels.EditUnits} rootModel
  */
 Coceso.Models.EditableUnit = function(data, rootModel) {
   var self = this;
@@ -142,9 +143,17 @@ Coceso.Models.EditableUnit = function(data, rootModel) {
   this.home = ko.observable(data.home && data.home.info ? data.home.info : "").extend({observeChanges: {server: data.home && data.home.info ? data.home.info : ""}});
   this.locked = data.locked;
 
+  this.crew = ko.observableArray(data.crew ? $.map(data.crew, function(item) {
+    return new Coceso.Models.SlimPerson(item);
+  }) : []);
+
   this.dependencies = ko.observableArray([this.call, this.ani, this.doc, this.vehicle,
     this.portable, this.info, this.home]).extend({arrayChanges: {}});
   this.localChange = this.dependencies.localChange;
+
+  this.editCrew = function() {
+    rootModel.showForm(this);
+  };
 
   this.save = function(success) {
     Coceso.Ajax.save(JSON.stringify({
@@ -173,15 +182,46 @@ Coceso.Models.EditableUnit = function(data, rootModel) {
       self.home.setServer(self.home());
     }, rootModel.saveError, rootModel.httpError);
   };
+
+  this.assignPerson = function() {
+    var person = this;
+    if (!(person instanceof Coceso.Models.SlimPerson) || !self.id || !person.id) {
+      return;
+    }
+
+    if (ko.utils.arrayFirst(self.crew(), function(item) {
+      return (item.id === person.id);
+    }) === null) {
+      Coceso.Ajax.save({unit_id: self.id, person_id: person.id}, "unit/assignPerson.json", function() {
+        self.crew.push(person);
+      });
+    }
+  };
+
+  this.removePerson = function() {
+    var person = this;
+    if (!(person instanceof Coceso.Models.SlimPerson) || !self.id || !person.id) {
+      return;
+    }
+
+    if (ko.utils.arrayFirst(self.crew(), function(item) {
+      return (item.id === person.id);
+    }) !== null) {
+      Coceso.Ajax.save({unit_id: self.id, person_id: person.id}, "unit/removePerson.json", function() {
+        self.crew.remove(function(item) {
+          return (item.id === person.id);
+        });
+      });
+    }
+  };
 };
 
 /**
  * Edit concern properties
  *
  * @constructor
- * @param {Object} data
  */
-Coceso.Models.EditableConcern = function(data) {
+Coceso.Models.EditableConcern = function() {
   var self = this;
 
   this.id = null;
@@ -207,10 +247,6 @@ Coceso.Models.EditableConcern = function(data) {
     }
   };
 
-  if (data) {
-    this.set(data);
-  }
-
   this.load = function() {
     $.getJSON(Coceso.Conf.jsonBase + "concern/get.json", function(data, status) {
       if (status !== "notmodified" && data) {
@@ -218,6 +254,8 @@ Coceso.Models.EditableConcern = function(data) {
       }
     });
   };
+
+  this.load();
 
   this.save = function() {
     Coceso.Ajax.save(
@@ -242,10 +280,10 @@ Coceso.Models.EditableConcern = function(data) {
 /**
  * Batch create units
  *
- * @param {Coceso.ViewModels.Concern} parent The parent Viewmodel (for reloading)
+ * @param {Coceso.ViewModels.Edit} rootModel The parent Viewmodel (for reloading)
  * @constructor
  */
-Coceso.Models.BatchUnit = function(parent) {
+Coceso.Models.BatchUnit = function(rootModel) {
   var self = this;
 
   this.call = ko.observable("");
@@ -284,7 +322,7 @@ Coceso.Models.BatchUnit = function(parent) {
           self.portable(false);
           self.home("");
           self.error(false);
-          parent.load();
+          rootModel.load();
         },
         function(response) {
           self.error(response.error || 8);
@@ -294,6 +332,18 @@ Coceso.Models.BatchUnit = function(parent) {
         }
     );
   };
+};
+
+/**
+ * Person model for adding crew
+ *
+ * @constructor
+ * @param {Object} data
+ */
+Coceso.Models.SlimPerson = function(data) {
+  this.id = data.id;
+  this.fullname = data.sur_name + " " + data.given_name;
+  this.dnr = data.dNr;
 };
 
 /**
@@ -316,6 +366,8 @@ Coceso.Models.SlimUnit = function(data) {
  * @param {Coceso.ViewModels.Container} rootModel
  */
 Coceso.Models.Container = function(data, rootModel) {
+  var self = this;
+
   this.id = data.id;
   this.name = ko.observable(data.name);
   this.ordering = data.ordering;
@@ -334,15 +386,14 @@ Coceso.Models.Container = function(data, rootModel) {
   this.units.model = this;
 
   this.save = function() {
-    var cont = this;
     Coceso.Ajax.save(JSON.stringify({
-      id: this.id,
-      name: this.name(),
-      head: this.head,
-      ordering: this.ordering
+      id: self.id,
+      name: self.name(),
+      head: self.head,
+      ordering: self.ordering
     }), "unitContainer/updateContainer.json", function(response) {
       if (response.id) {
-        cont.id = response.id;
+        self.id = response.id;
       }
     }, rootModel.load, rootModel.load);
   };
@@ -369,36 +420,8 @@ Coceso.Models.Container = function(data, rootModel) {
     }, rootModel);
     this.subContainer.push(newcont);
 
-    newcont.save.call(newcont);
+    newcont.save();
     newcont.selected.set();
-  };
-
-  this.drop = function(data) {
-    var parentModel = data.targetParent.model;
-
-    if (!(parentModel instanceof Coceso.Models.Container && data.item instanceof Coceso.Models.Container)) {
-      return;
-    }
-
-    data.item.head = parentModel.id;
-    data.item.ordering = Coceso.Helpers.computeOrdering(data.targetParent(), data.targetIndex);
-    data.item.save.call(data.item);
-  };
-
-  this.dropUnit = function(data) {
-    var parentModel = data.targetParent.model;
-
-    if (!(parentModel instanceof Coceso.Models.Container && data.item instanceof Coceso.Models.SlimUnit)) {
-      return;
-    }
-
-    data.item.ordering = Coceso.Helpers.computeOrdering(data.targetParent(), data.targetIndex);
-
-    Coceso.Ajax.save({
-      container_id: parentModel.id,
-      unit_id: data.item.id,
-      ordering: data.item.ordering
-    }, "unitContainer/updateUnit.json", null, rootModel.load, rootModel.load);
   };
 };
 
@@ -557,8 +580,8 @@ Coceso.ViewModels.Home = function(error) {
 
   // Concern lists
   this.concerns = ko.observableArray([]);
-  this.open = this.concerns.extend({filtered: {filter: {closed: false}}});
-  this.closed = this.concerns.extend({filtered: {filter: {closed: true}}});
+  this.open = this.concerns.extend({list: {filter: {closed: false}}});
+  this.closed = this.concerns.extend({list: {filter: {closed: true}}});
 
   this.concernName = ko.computed(function() {
     var id = this.concernId();
@@ -592,13 +615,81 @@ Coceso.ViewModels.Home = function(error) {
  *
  * @constructor
  */
-Coceso.ViewModels.Concern = function() {
+Coceso.ViewModels.Edit = function() {
+  this.units = new Coceso.ViewModels.EditUnits();
+  this.container = new Coceso.ViewModels.Container();
+  this.concern = new Coceso.Models.EditableConcern();
+  this.batch = new Coceso.Models.BatchUnit(this);
+
+  this.load = function() {
+    this.units.load();
+    this.container.load();
+  };
+
+};
+
+/**
+ * ViewModel for the edit unit view
+ *
+ * @constructor
+ */
+Coceso.ViewModels.EditUnits = function() {
   var self = this;
 
   this.units = ko.observableArray([]);
   this.newUnit = ko.observable(new Coceso.Models.EditableUnit(null, this));
-  this.concern = new Coceso.Models.EditableConcern();
-  this.batch = new Coceso.Models.BatchUnit(this);
+
+  // Crew editing
+  this.edit = ko.observable(null);
+
+  // Person filtering
+  this.filter = ko.observable();
+  this.regex = ko.computed(function() {
+    var filter = this.filter();
+    if (!filter) {
+      return [];
+    }
+    return $.map(filter.split(" "), function(item) {
+      return new RegExp(RegExp.escape(item), "i");
+    });
+  }, this);
+
+  // List of persons
+  this.persons = ko.observableArray([]);
+  this.filtered = this.persons.extend({
+    list: {
+      filter: {
+        regex: function(item) {
+          var regex = self.regex(), i;
+          for (i = 0; i < regex.length; i++) {
+            if (!regex[i].test(item.dnr) && !regex[i].test(item.fullname)) {
+              return false;
+            }
+          }
+          return true;
+        }
+      },
+      sort: true,
+      field: "sortdnr"
+    }
+  });
+
+  // Show the edit form
+  this.showForm = function(unit) {
+    this.edit(unit);
+    $("#edit_crew").modal("show");
+  };
+
+  // Load all persons
+  this.loadPersons = function() {
+    $.getJSON(Coceso.Conf.jsonBase + "person/getAll.json", function(data, status) {
+      if (status !== "notmodified") {
+        self.persons($.map(data, function(item) {
+          return new Coceso.Models.SlimPerson(item, self);
+        }));
+      }
+    });
+  };
 
   //Error handling for the unit list
   this.error = ko.observable(false);
@@ -625,7 +716,7 @@ Coceso.ViewModels.Concern = function() {
   };
 
   this.load();
-  this.concern.load();
+  this.loadPersons();
 
   // Remove Unit
   this.remove = function() {
@@ -677,15 +768,34 @@ Coceso.ViewModels.Container = function() {
     });
   };
 
-  this.dropUnit = function(data) {
-    if (data.targetParent !== self.spare || !(data.item instanceof Coceso.Models.SlimUnit)) {
+  this.drop = function(data) {
+    if (!(data.targetParent.model instanceof Coceso.Models.Container && data.item instanceof Coceso.Models.Container)) {
       return;
     }
 
+    data.item.head = data.targetParent.model.id;
     data.item.ordering = Coceso.Helpers.computeOrdering(data.targetParent(), data.targetIndex);
+    data.item.save();
+  };
+
+  this.dropUnit = function(data) {
+    if (!(data.item instanceof Coceso.Models.SlimUnit)) {
+      return;
+    }
+
+    var container_id;
+    if (data.targetParent === self.spare) {
+      data.item.ordering = -2;
+      container_id = 0;
+    } else if (data.targetParent.model instanceof Coceso.Models.Container) {
+      data.item.ordering = Coceso.Helpers.computeOrdering(data.targetParent(), data.targetIndex);
+      container_id = data.targetParent.model.id;
+    } else {
+      return;
+    }
 
     Coceso.Ajax.save({
-      container_id: 0,
+      container_id: container_id,
       unit_id: data.item.id,
       ordering: data.item.ordering
     }, "unitContainer/updateUnit.json", null, self.load, self.load);
@@ -729,18 +839,18 @@ Coceso.ViewModels.Person = function() {
   // List of persons
   this.persons = ko.observableArray([]);
   this.filtered = this.persons.extend({
-    filtered: {
-      filter: [
-        function(item) {
+    list: {
+      filter: {
+        regex: function(item) {
           var regex = self.regex(), i;
           for (i = 0; i < regex.length; i++) {
-            if (!regex[i].test(item.dnr()) && !regex[i].test(item.surname()) && !regex[i].test(item.givenname()) && !regex[i].test(item.username())) {
+            if (!regex[i].test(item.dnr.orig()) && !regex[i].test(item.fullname()) && !regex[i].test(item.username.orig())) {
               return false;
             }
           }
           return true;
         }
-      ],
+      },
       sort: true,
       field: "sortdnr"
     }

@@ -11,7 +11,12 @@
 
     <http pattern="/static/**" security="none" />
 
-    <http use-expressions="true">
+    <beans:bean id="jsonhandler" class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint"/>
+    <http pattern="/data/**" entry-point-ref="jsonhandler" use-expressions="true">
+        <intercept-url pattern="/**" access="hasAnyRole(${roles.main})"/>
+    </http>
+
+    <http pattern="/**" use-expressions="true">
         <intercept-url pattern="/" access="permitAll" />
         <intercept-url pattern="/login" access="permitAll" />
         <intercept-url pattern="/loginfailed" access="permitAll" />
@@ -21,7 +26,6 @@
 
         <intercept-url pattern="/main" access="hasAnyRole(${roles.main})"/>
         <intercept-url pattern="/main/**" access="hasAnyRole(${roles.main})"/>
-        <intercept-url pattern="/data/**" access="hasAnyRole(${roles.main})"/>
         <intercept-url pattern="/finalReport/**" access="hasAnyRole(${roles.main})"/>
         <intercept-url pattern="/pdfdump/**" access="hasAnyRole(${roles.main})"/>
 

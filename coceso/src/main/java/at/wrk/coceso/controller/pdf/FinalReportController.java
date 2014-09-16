@@ -22,6 +22,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletResponse;
@@ -60,7 +61,7 @@ public class FinalReportController {
 
     private static String dateFormat = "HH:mm:ss";
 
-    @RequestMapping(value = "report.pdf", produces = "application/pdf")
+    @RequestMapping(value = "report.pdf", produces = "application/pdf", method = RequestMethod.GET)
     public void print(HttpServletResponse response,
                       @RequestParam(value = "id") int id,
                       @RequestParam(value = "fullDate", required = false) Boolean fullDate,

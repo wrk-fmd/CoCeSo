@@ -46,7 +46,7 @@
       });
     </script>
   </head>
-  <body>
+  <body class="scroll">
     <div class="container">
       <c:set value="active" var="nav_person"/>
       <%@include file="parts/navbar.jsp"%>
@@ -69,7 +69,7 @@
               </th>
               <th>
                 <a href="#" data-bind="click: function() {filtered.sort('fullname');}"><span class="glyphicon" data-bind="css: filtered.icon('fullname')"></span></a>
-                  <spring:message code="label.person.sur_name"/>
+                  <spring:message code="label.person.name"/>
               </th>
               <c:if test="${not empty authorized}">
                 <th>
@@ -99,7 +99,7 @@
                 <td data-bind="text: authorities.orig().join(', ')"></td>
               </c:if>
               <td>
-                <button class="btn btn-primary btn-sm" data-bind="click: edit"><spring:message code="label.edit"/></button>
+                <button type="button" class="btn btn-primary btn-sm" data-bind="click: edit"><spring:message code="label.edit"/></button>
               </td>
             </tr>
           </tbody>
@@ -131,21 +131,21 @@
               <div class="row">
                 <div class="form-group col-md-4">
                   <label for="edit_surname"><spring:message code="label.person.sur_name"/></label>
-                  <input type="text" id="edit_surname" class="form-control" data-bind="value: surname, valueUpdate: 'input', css: {'form-changed': surname.localChange}"/>
+                  <input type="text" id="edit_surname" class="form-control" data-bind="value: surname, valueUpdate: 'input', css: surname.css"/>
                 </div>
                 <div class="form-group col-md-4">
                   <label for="edit_givenname"><spring:message code="label.person.given_name"/></label>
-                  <input type="text" id="edit_givenname" class="form-control" data-bind="value: givenname, valueUpdate: 'input', css: {'form-changed': givenname.localChange}"/>
+                  <input type="text" id="edit_givenname" class="form-control" data-bind="value: givenname, valueUpdate: 'input', css: givenname.css"/>
                 </div>
                 <div class="form-group col-md-4">
                   <label for="edit_dnr"><spring:message code="label.person.dnr"/></label>
-                  <input type="text" id="edit_dnr" class="form-control" data-bind="value: dnr, valueUpdate: 'input', css: {'form-changed': dnr.localChange}"/>
+                  <input type="text" id="edit_dnr" class="form-control" data-bind="value: dnr, valueUpdate: 'input', css: dnr.css"/>
                 </div>
               </div>
               <div class="row">
                 <div class="form-group col-md-8">
                   <label for="edit_contact"><spring:message code="label.person.contact"/></label>
-                  <textarea id="edit_contact" rows="3" class="form-control" data-bind="value: contact, valueUpdate: 'input', css: {'form-changed': contact.localChange}"></textarea>
+                  <textarea id="edit_contact" rows="3" class="form-control" data-bind="value: contact, valueUpdate: 'input', css: contact.css"></textarea>
                 </div>
               </div>
               <c:if test="${not empty authorized}">
@@ -162,12 +162,12 @@
                 <div class="row">
                   <div class="form-group col-md-4">
                     <label for="edit_username"><spring:message code="label.operator.username"/></label>
-                    <input type="text" id="edit_username" class="form-control" data-bind="value: username, valueUpdate: 'input', css: {'form-changed': username.localChange}"/>
+                    <input type="text" id="edit_username" class="form-control" data-bind="value: username, valueUpdate: 'input', css: username.css"/>
                   </div>
                   <div class="form-group col-md-3 col-md-offset-1">
                     <label for="edit_allowlogin"><spring:message code="label.operator.allowlogin"/></label><br/>
                     <button type="button" id="edit_allowlogin" class="btn"
-                            data-bind="click: allowlogin.toggle, css: {'form-changed': allowlogin.localChange, 'btn-success active': allowlogin, 'btn-default': !allowlogin()}">
+                            data-bind="click: allowlogin.toggle, css: (allowlogin() ? 'btn-success ' : 'btn-default ') + allowlogin.css()">
                       <span class="glyphicon" data-bind="css: allowlogin() ? 'glyphicon-ok-circle' : 'glyphicon-ban-circle'"></span>
                     </button>
                   </div>

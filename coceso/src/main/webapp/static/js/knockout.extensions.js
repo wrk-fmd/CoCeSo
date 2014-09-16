@@ -19,23 +19,20 @@
  */
 function uiBindingHandler(widget) {
   return {
-    init: function(element, valueAccessor) {
-      var options = ko.utils.unwrapObservable(valueAccessor()) || {};
-      setTimeout(function() {
-        $(element)[widget](options);
-      }, 0);
-
+    init: function(element) {
       ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
-        if ($(element).data("ui-" + widget)) {
-          $(element)[widget]("destroy");
+        var $element = $(element);
+        if ($element.data("ui-" + widget)) {
+          $element[widget]("destroy");
         }
       });
     },
     update: function(element, valueAccessor) {
-      var options = ko.utils.unwrapObservable(valueAccessor()) || {};
-      setTimeout(function() {
-        $(element)[widget]("destroy")[widget](options);
-      }, 0);
+      var $element = $(element), options = ko.utils.unwrapObservable(valueAccessor()) || {};
+      if ($element.data("ui-" + widget)) {
+        $element[widget]("destroy");
+      }
+      $element[widget](options);
     }
   };
 }
@@ -53,24 +50,10 @@ ko.bindingHandlers.accordion = uiBindingHandler("accordion");
  * @type {BindingHandler}
  */
 ko.bindingHandlers.accordionRefresh = {
-  init: function(element, valueAccessor) {
-    ko.utils.unwrapObservable(valueAccessor());
-  },
   update: function(element, valueAccessor) {
     ko.utils.unwrapObservable(valueAccessor());
     if ($(element).data("ui-accordion")) {
       $(element)["accordion"]("refresh");
-    }
-  }
-};
-
-ko.bindingHandlers.visibleAndSelect = {
-  update: function(element, valueAccessor) {
-    ko.bindingHandlers.visible.update(element, valueAccessor);
-    if (valueAccessor()) {
-      setTimeout(function() {
-        $(element).focus().select();
-      }, 0);
     }
   }
 };
@@ -96,6 +79,15 @@ ko.bindingHandlers.droppable = uiBindingHandler("droppable");
  */
 ko.bindingHandlers.popover = uiBindingHandler("popover");
 
+ko.bindingHandlers.visibleAndSelect = {
+  update: function(element, valueAccessor) {
+    ko.bindingHandlers.visible.update(element, valueAccessor);
+    if (ko.utils.unwrapObservable(valueAccessor())) {
+      $(element).focus().select();
+    }
+  }
+};
+
 /**
  * Allow change detection on observable
  *
@@ -117,6 +109,27 @@ ko.extenders.observeChanges = function(target, options) {
       return server;
     }
     return null;
+  }, target);
+
+  target.valid = ko.computed(options.validate instanceof Function ? options.valid : function() {
+    return true;
+  }, target);
+
+  target.parentcss = target.css || null;
+
+  target.css = ko.computed(function() {
+    var css = "";
+    if (target.parentcss) {
+      css = ko.utils.unwrapObservable(target.parentcss) || "";
+    }
+
+    if (!this.valid()) {
+      return css + " has-error";
+    }
+    if (this.localChange()) {
+      return css + " form-changed";
+    }
+    return css;
   }, target);
 
   target.reset = function() {
@@ -181,18 +194,33 @@ ko.extenders.arrayChanges = function(target, options) {
 };
 
 /**
- * Get a filtered selection of an array
+ * Get a filtered and sorted selection of an array
  *
  * @param {ko.observableArray} target
- * @param {Object} options A filterObject (documented below)
+ * @param {Object} options
  * @returns {ko.computed}
  * @see applyFilter
  */
-ko.extenders.filtered = function(target, options) {
+ko.extenders.list = function(target, options) {
+  /**
+   * Compare values
+   *
+   * @param {String} op Comparison operator ("equal"/"not" - defaults to "equal")
+   * @param {mixed|Array|RegExp} a Value, Array of values or RexExp
+   * @param {mixed} b Value to compare to
+   * @returns {Boolean}
+   */
   var compare = function(op, a, b) {
-    if (a instanceof Object) {
+    if (a instanceof RegExp) {
+      return a.test(b);
+    }
+
+    if (a instanceof Array) {
+      if (!a.length) {
+        return true;
+      }
       var i;
-      for (i in a) {
+      for (i = 0; i < a.length; i++) {
         if (compare(op, a[i], b)) {
           return true;
         }
@@ -217,64 +245,66 @@ ko.extenders.filtered = function(target, options) {
   /**
    * Recursively apply filters
    *
-   * filterObj has one of the following formats or may even be a mix of both:
-   *
+   * A filterObject has the following format:
    *  {
    *    conn: "and"/"or", (optional, define the logical connection of filters, "and" is default)
    *    key1: filter1, (matching is done with ===)
    *    key2: filter2
    *  }
    *
-   *  {
-   *    conn: "and"/"or"
-   *    someKey: filterObj1,
-   *    anotherKey: filterObj2
-   *  }
-   *
    * Each filter may be just a value to compare to or an object like
-   *  {op: "operator", val: "value"}
+   *  {val: "value", op: "not"}
    * where value can also be an array of possible values and op is optional
    *
-   * @param {Object} filterObj
+   * filterObj can also be an Array (with optional property "conn") containing multiple filterObjects
+   *
+   * @param {Object|Array} filterObj
    * @param {ViewModelSingle} val The ViewModel to check
    * @return {boolean} True if
    */
   var applyFilter = function(filterObj, val) {
-    var and = (filterObj.conn === "or") ? false : true;
-    var i;
-    for (i in filterObj) {
-      //Check all objects in filter
-      var filter = filterObj[i];
-      if (typeof filter !== "undefined") {
-        var ret;
-        if (typeof filter.filter !== "undefined") {
-          //Checked filter is actually another filterObj: Recursive call
-          ret = applyFilter(filter.filter, val);
-        } else {
-          if (filter instanceof Function) {
-            ret = filter(val);
-          } else if (typeof val[i] === "undefined") {
-            ret = false;
-          } else {
-            var op = "equal";
-            if ((typeof filter.op !== "undefined") && (typeof filter.val !== "undefined")) {
-              op = filter.op;
-              filter = filter.val;
-            } else if (typeof filter.val !== "undefined") {
-              filter = filter.val;
-            }
+    var and = (filterObj.conn === "or") ? false : true, i;
 
-            ret = compare(op, filter, ko.utils.unwrapObservable(val[i]));
-          }
-        }
-
-        if (ret !== and) {
-          //"and" connection and this result is false => return false
-          //"or" connection and this result is true => return true
-          return ret;
+    //Array of filterObj
+    if (filterObj instanceof Array) {
+      for (i = 0; i < filterObj.length; i++) {
+        if (applyFilter(filterObj[i], val) !== and) {
+          return !and;
         }
       }
+      return and;
     }
+
+    //Object with filter options
+    for (i in filterObj) {
+      if (!filterObj.hasOwnProperty(i) || (i === "conn")) {
+        continue;
+      }
+
+      var filter = filterObj[i], ret;
+      if (filter instanceof Function && !ko.isObservable(filter)) {
+        ret = filter(val);
+      } else if (typeof val[i] === "undefined") {
+        ret = false;
+      } else {
+        var op = null;
+        if ((typeof filter.op !== "undefined") && (typeof filter.val !== "undefined")) {
+          op = filter.op;
+          filter = filter.val;
+        } else if (typeof filter.val !== "undefined") {
+          filter = filter.val;
+        }
+
+        ret = compare(op, ko.utils.unwrapObservable(filter), ko.utils.unwrapObservable(val[i]));
+      }
+
+      if (ret !== and) {
+        //"and" connection and this result is false => return false
+        //"or" connection and this result is true => return true
+        return ret;
+      }
+    }
+
     //"and" connection: no result was false, so return true
     //"or" connection: no result was true, so return false
     return and;
@@ -365,6 +395,10 @@ ko.extenders.boolean = function(target) {
       target(!!val);
     }
   });
+
+  ret.css = ko.computed(function() {
+    return this() ? "active" : "";
+  }, ret);
 
   ret.toggle = function() {
     target(!target());

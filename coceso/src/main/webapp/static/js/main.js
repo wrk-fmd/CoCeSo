@@ -224,7 +224,7 @@ Coceso.UI = {
    * @param {Object} dialog Dialog options
    */
   openHierarchyUnits: function(title, dialog) {
-    var viewmodel = {top: ko.observable({name: "Loading...", unitIds: [], subContainer: []})};
+    var viewmodel = {top: ko.observable({name: "Loading...", units: [], subContainer: []})};
 
     $.getJSON(Coceso.Conf.jsonBase + "unitContainer/getSlim.json", function(topContainer) {
       viewmodel.top(new Coceso.ViewModels.UnitContainer(topContainer));
@@ -441,6 +441,8 @@ Coceso.Data.patients.list = ko.computed(function() {
  * @param {integer} unit The use to use
  */
 Coceso.Models.Task = function(taskState, incident, unit) {
+  incident = parseInt(incident);
+  unit = parseInt(unit);
 
   /**
    * The TaskState
@@ -456,14 +458,14 @@ Coceso.Models.Task = function(taskState, incident, unit) {
    *
    * @type Integer
    */
-  this.incident_id = isNaN(incident) ? incident : parseInt(incident);
+  this.incident_id = (incident && !isNaN(incident)) ? incident : null;
 
   /**
    * The unit id
    *
    * @type Integer
    */
-  this.unit_id = isNaN(unit) ? unit : parseInt(unit);
+  this.unit_id = (unit && !isNaN(unit)) ? unit : null;
 
   /**
    * Get the associated incident
@@ -473,7 +475,7 @@ Coceso.Models.Task = function(taskState, incident, unit) {
    * @returns {Coceso.Models.Incident}
    */
   this.incident = ko.computed(function() {
-    return Coceso.Data.getIncident(this.incident_id);
+    return Coceso.Data.getIncident(this.incident_id) || new Coceso.Models.Incident();
   }, this);
 
   /*
@@ -484,7 +486,7 @@ Coceso.Models.Task = function(taskState, incident, unit) {
    * @returns {Coceso.Models.Unit}
    */
   this.unit = ko.computed(function() {
-    return Coceso.Data.getUnit(this.unit_id);
+    return Coceso.Data.getUnit(this.unit_id) || new Coceso.Models.Unit();
   }, this);
 
   /**
@@ -711,7 +713,8 @@ Coceso.Models.Task.prototype = Object.create({}, /** @lends Coceso.Models.Task.p
  * @param {Object} data
  */
 Coceso.Models.Incident = function(data) {
-  var self = this, data = data || {};
+  var self = this;
+  data = data || {};
 
   //Create basic properties
   this.id = data.id;
@@ -1159,6 +1162,7 @@ Coceso.Models.Incident.prototype = Object.create({}, /** @lends Coceso.Models.In
  */
 Coceso.Models.Unit = function(data) {
   var self = this;
+  data = data || {};
 
   //Create basic properties
   this.id = data.id;
@@ -1709,8 +1713,7 @@ Coceso.Models.Unit.prototype = Object.create({}, /** @lends Coceso.Models.Unit.p
     value: {
       helper: "clone",
       appendTo: "body",
-      cursor: "move",
-      zIndex: 1500
+      cursor: "move"
     }
   }
 
@@ -1839,12 +1842,12 @@ Coceso.Models.Log = function(data) {
  * @param {Object} options
  */
 Coceso.ViewModels.Filterable = function(options) {
-  var filterOption = options.filter;
+  options = options || {};
 
   this.disableFilter = {};
-  for (var i in filterOption) {
-    if (this.filters[filterOption[i]] && this.filters[filterOption[i]].disable) {
-      this.disableFilter = $.extend(true, this.disableFilter, this.filters[filterOption[i]].disable);
+  for (var i in options.filter) {
+    if (this.filters[options.filter[i]] && this.filters[options.filter[i]].disable) {
+      this.disableFilter = $.extend(true, this.disableFilter, this.filters[options.filter[i]].disable);
     }
   }
 
@@ -1855,30 +1858,14 @@ Coceso.ViewModels.Filterable = function(options) {
    * @type ko.computed
    * @returns {Object}
    */
-  this.activeFilters = ko.computed(function() {
-    var activeFilters = [];
+  this.activeFilters = [this.filter];
 
-    //Filters selected in user interface
-    var i, filter = {};
-    for (i in this.filter) {
-      var unwrapped = ko.utils.unwrapObservable(this.filter[i]);
-      if (unwrapped.length) {
-        filter[i] = {val: unwrapped};
-      }
+  //Filters from options
+  for (var i in options.filter) {
+    if (this.filters[options.filter[i]]) {
+      this.activeFilters.push(this.filters[options.filter[i]].filter);
     }
-    activeFilters.push({
-      filter: filter
-    });
-
-    //Filters from options
-    for (i in filterOption) {
-      if (this.filters[filterOption[i]]) {
-        activeFilters.push(this.filters[filterOption[i]]);
-      }
-    }
-
-    return activeFilters;
-  }, this);
+  }
 };
 Coceso.ViewModels.Filterable.prototype = Object.create({}, /** @lends Coceso.ViewModels.Filterable.prototype */ {
   /**
@@ -1910,7 +1897,7 @@ Coceso.ViewModels.Incidents = function(options) {
   this.filters = {
     overview: {
       filter: {
-        type: {val: [Coceso.Constants.Incident.type.task, Coceso.Constants.Incident.type.transport, Coceso.Constants.Incident.type.relocation]}
+        type: [Coceso.Constants.Incident.type.task, Coceso.Constants.Incident.type.transport, Coceso.Constants.Incident.type.relocation]
       }
     },
     active: {
@@ -1960,7 +1947,7 @@ Coceso.ViewModels.Incidents = function(options) {
    * @type ko.computed
    * @returns {Array}
    */
-  this.filtered = Coceso.Data.incidents.list.extend({filtered: {filters: this.activeFilters}});
+  this.filtered = Coceso.Data.incidents.list.extend({list: {filter: this.activeFilters}});
 };
 Coceso.ViewModels.Incidents.prototype = Object.create(Coceso.ViewModels.Filterable.prototype, /** @lends Coceso.ViewModels.Incidents.prototype */ {});
 
@@ -2006,7 +1993,7 @@ Coceso.ViewModels.Units = function(options) {
    * @type ko.computed
    * @returns {Array}
    */
-  this.filtered = Coceso.Data.units.list.extend({filtered: {filters: this.activeFilters}});
+  this.filtered = Coceso.Data.units.list.extend({list: {filter: this.activeFilters}});
 };
 Coceso.ViewModels.Units.prototype = Object.create(Coceso.ViewModels.Filterable.prototype, /** @lends Coceso.ViewModels.Units.prototype */ {});
 
@@ -2024,9 +2011,9 @@ Coceso.ViewModels.UnitContainer = function(data) {
   }));
 
   this.units = Coceso.Data.units.list.extend({
-    filtered: {
-      filters: {
-        id: {val: data.unitIds}
+    list: {
+      filter: {
+        id: data.unitIds && data.unitIds.length ? data.unitIds : false
       },
       sort: function(a, b) {
         var t = data.unitIds;
@@ -2635,7 +2622,7 @@ Coceso.ViewModels.Incident.prototype = Object.create(Coceso.Models.Incident.prot
         if (task.taskState.localChange()) {
           data.units[task.unit_id] = task.taskState();
           if (task.isDetached()) {
-            units.remove(task);
+            //units.remove(task);
           }
         }
       });
@@ -3209,8 +3196,8 @@ Coceso.ViewModels.Notifications = function() {
    */
   this.connectionError = ko.observable(false);
 
-  var incidents = Coceso.Data.incidents.list.extend({filtered: {filters: {
-        type: {val: [Coceso.Constants.Incident.type.task, Coceso.Constants.Incident.type.transport, Coceso.Constants.Incident.type.relocation]},
+  var incidents = Coceso.Data.incidents.list.extend({list: {filter: {
+        type: [Coceso.Constants.Incident.type.task, Coceso.Constants.Incident.type.transport, Coceso.Constants.Incident.type.relocation],
         isNewOrOpen: true
       }}});
 
@@ -3246,7 +3233,9 @@ Coceso.ViewModels.Notifications = function() {
    * @returns {integer}
    */
   this.radioCounter = ko.computed(function() {
-    return Coceso.Data.units.list.extend({filtered: {filters: {hasAssigned: true}}})().length;
+    return ko.utils.arrayFilter(Coceso.Data.units.list(), function(u) {
+      return u.hasAssigned();
+    }).length;
   }, this);
 
   /**
@@ -3258,7 +3247,9 @@ Coceso.ViewModels.Notifications = function() {
    */
 
   this.freeCounter = ko.computed(function() {
-    return Coceso.Data.units.list.extend({filtered: {filters: {isFree: true}}})().length;
+    return ko.utils.arrayFilter(Coceso.Data.units.list(), function(u) {
+      return u.isFree();
+    }).length;
   }, this);
 
   /**
@@ -3352,7 +3343,7 @@ Coceso.ViewModels.Debug = function() {
    * @returns {Array}
    */
   this.filtered = this.errors.extend({
-    filtered: {
+    list: {
       sort: function(a, b) {
         return (b.timestamp - a.timestamp);
       }

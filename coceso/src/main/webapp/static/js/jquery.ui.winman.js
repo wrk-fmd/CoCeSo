@@ -33,10 +33,15 @@ $.ui.dialog.prototype._init = function() {
   });
 
   //Minimize button
-  this.uiDialogTitlebarMinimize = $("<a href='#'></a>")
-          .addClass("ui-dialog-titlebar-close ui-dialog-titlebar-minimize ui-corner-all")
-          .attr("role", "button").insertBefore(this.uiDialogTitlebarClose);
-  $("<span>").addClass("ui-icon ui-icon-minusthick").appendTo(this.uiDialogTitlebarMinimize);
+  this.uiDialogTitlebarMinimize = $("<button type='button'></button>")
+      .button({
+        icons: {
+          primary: "ui-icon-minusthick"
+        },
+        text: false
+      })
+      .addClass("ui-dialog-titlebar-close ui-dialog-titlebar-minimize")
+      .insertBefore(this.uiDialogTitlebarClose);
   this._on(this.uiDialogTitlebarMinimize, {
     click: function(event) {
       event.preventDefault();

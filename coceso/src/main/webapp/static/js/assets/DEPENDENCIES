@@ -1,32 +1,31 @@
 CSS and JS dependencies
 
 COMMON DEPENDENCIES
-Bootstrap-CSS: Typography, Grid, Tables, Forms, Buttons, Glyphicons, Button groups, Navbar, Alerts
-Bootstrap-JS:  Dropdowns, Basic and responsive utilities, Transitions/Animations
-Base jQuery
+Bootstrap-CSS: Typography, Grid, Tables, Forms, Buttons, Responsive utilities, Glyphicons, Button groups, Navbar, Alerts, Modals
+Bootstrap-JS:  Dropdowns, Transitions/Animations
+Base jQuery, jQuery.i18n
 
 ADDITIONAL DEPENDENCIES in some files
 Bootstrap-CSS
-Badges:        main/templates.jsp
-Panels:        edit_container.jsp, main/templates.jsp
-Close icon:    main/templates.jsp (for modal)
+Navs:          edit_concern.jsp
+Badges:        templates/main.jsp
+Panels:        edit_container.jsp, templates/main.jsp, templates/edit.jsp
+Close icon:    every Modal and dismissable Alert
 
 Bootstrap-JS:
-Tooltips:      edit.jsp, main.jsp, main/log_add.jsp
-Popovers:      main/templates.jsp
-Modals:        main/templates.jsp (called in main.js)
 Alert dismiss: home.jsp
-Collapse:      main/templates.jsp
-Buttons:       edit.jsp
+Modals:        edit_concern.jsp, edit_person.jsp, templates/main.jsp
+Tooltips:      edit_concern.jsp, main.jsp, main/log_add.jsp
+Popovers:      patient.jsp, templates/main.jsp
+Togglable tab: edit_concern.jsp
+Collapse:      templates/main.jsp
 
 jQuery:
-jquery.i18n:   main.jsp
 jquery.cookie: home.jsp
 
 jQuery UI:
-Autocomplete:  personmgmt.jsp
 Accordion:     main/incident.jsp (via knockout.extensions.js)
-Draggable:     main/templates.jsp (via knockout.extensions.js)
+Draggable:     templates/main.jsp (via knockout.extensions.js)
 Droppable:     main/incident.jsp, main/incident_form.jsp (via knockout.extensions.js)
 Sortable:      knockout.sortable.js
 Dialog:        main.jsp (via jquery.ui.winman.js): Version 1.9.2 with edit!
@@ -36,13 +35,14 @@ Winman:        main.jsp (via main.js)
 Fixes:         main.jsp (fixes draggable in combination with dialogs behind each other)
 
 Knockout:
-KO Base:       main.jsp, edit_container.jsp, search/patient.jsp
-KO Sortable:   edit_container.jsp
+KO Base:       edit_concern.jsp, edit_container.jsp, edit_person.jsp, home.jsp, main.jsp, search/patient.jsp
+KO Sortable:   edit_concern.jsp, edit_container.jsp
 
 
 USED VERSIONS
-Bootstrap:     3.1.1 custom
+Bootstrap:     3.2.0 custom
 jQuery:        1.11.1
+jQuery Cookie: 1.4.1
 jQuery i18n:   1.0.9
 jQuery UI:     1.10.4 custom (except dialog, see above)
 ui-bootstrap:  1.0 alpha (TODO: compile only necessary parts)
@@ -52,5 +52,5 @@ KO Sortable:   0.8.6
 
 CUSTOM OPTIONS
 Bootstrap:     all of the above Components, with @grid-gutter-width set to 10px
-jQuery UI:     1.10.4  Draggable, Droppable, Sortable, Accordion, Autocomplete with dependencies
+jQuery UI:     1.10.4  Draggable, Droppable, Sortable, Accordion
                1.9.2   Dialog with dependencies (edited afterwards)

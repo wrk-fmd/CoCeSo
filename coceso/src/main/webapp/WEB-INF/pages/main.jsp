@@ -32,8 +32,11 @@
       JQuery UI 1.9.2 needed for correct handling of Dialogs (=Windows)
       JQuery UI 1.10.4 needed for correct refresh of Accordions (Incident List)
     --%>
+    <script src="<c:url value="/static/js/assets/jquery.ui.js"/>" type="text/javascript"></script>
+    <%--
     <script src="<c:url value="/static/js/assets/jquery.ui.1.9.2.dialog.min.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/assets/jquery.ui.1.10.4.min.js"/>" type="text/javascript"></script>
+    --%>
     <script src="<c:url value="/static/js/assets/jquery.ui.touch-punch.min.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/jquery.ui.winman.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/jquery.ui.fixes.js"/>" type="text/javascript"></script>

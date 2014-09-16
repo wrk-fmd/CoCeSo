@@ -41,14 +41,14 @@ public class SearchPatientController {
     @Autowired
     ConcernService concernService;
 
-    @RequestMapping("")
+    @RequestMapping(value = "", method = RequestMethod.GET)
     public String index_(ModelMap map) {
         // Concern List for <select>
         map.addAttribute("concerns", concernService.getAllActive());
         return "search/patient";
     }
 
-    @RequestMapping("/{concernId}")
+    @RequestMapping(value = "/{concernId}", method = RequestMethod.GET)
     public String index(@PathVariable(value = "concernId") String cid, ModelMap map) {
         int concernId;
         try {

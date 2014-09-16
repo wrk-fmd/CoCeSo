@@ -1,10 +1,12 @@
 package at.wrk.coceso.controller.data;
 
+import at.wrk.coceso.dao.CrewDao;
 import at.wrk.coceso.entity.Operator;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entity.helper.BatchUnits;
 import at.wrk.coceso.entity.helper.UnitWithLocked;
+import at.wrk.coceso.service.PersonService;
 import at.wrk.coceso.service.TaskService;
 import at.wrk.coceso.service.UnitService;
 import org.apache.log4j.Logger;
@@ -28,6 +30,12 @@ public class UnitController implements IEntityController<Unit> {
 
   @Autowired
   private TaskService taskService;
+
+  @Autowired
+  private PersonService personService;
+
+  @Autowired
+  private CrewDao crewDao;
 
   @Override
   @RequestMapping(value = "getAll", produces = "application/json", method = RequestMethod.GET)
@@ -94,6 +102,7 @@ public class UnitController implements IEntityController<Unit> {
       logger.warn("UnitController.update(): User " + user.getUsername() + " tried to update Unit of wrong Concern");
       return "{\"success\": false, \"info\":\"Active Concern not valid\"}";
     }
+    unit.setConcern(concern_id);
 
     boolean ret = unitService.update(unit, user);
     String associated = "{}";
@@ -201,6 +210,24 @@ public class UnitController implements IEntityController<Unit> {
     Operator user = (Operator) token.getPrincipal();
 
     return "{\"success\":" + unitService.remove(unit_id, user) + "}";
+  }
+
+  @RequestMapping(value = "assignPerson", produces = "application/json", method = RequestMethod.POST)
+  @ResponseBody
+  public String assignPerson(@RequestParam("unit_id") int unit_id, @RequestParam("person_id") int person_id) {
+    if (!crewDao.add(unitService.getById(unit_id), personService.getById(person_id))) {
+      return "{\"success\":false}";
+    }
+    return "{\"success\":true}";
+  }
+
+  @RequestMapping(value = "removePerson", produces = "application/json", method = RequestMethod.POST)
+  @ResponseBody
+  public String removePerson(@RequestParam("unit_id") int unit_id, @RequestParam("person_id") int person_id) {
+    if (!crewDao.remove(unitService.getById(unit_id), personService.getById(person_id))) {
+      return "{\"success\":false}";
+    }
+    return "{\"success\":true}";
   }
 
 }

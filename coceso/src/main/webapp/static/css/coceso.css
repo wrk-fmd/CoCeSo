@@ -28,6 +28,10 @@ html, body {
   height: 100%;
 }
 
+body.scroll {
+  overflow-y: scroll;
+}
+
 body {
   padding: 10px;
   margin: 0;
@@ -53,7 +57,7 @@ body.login {
 }
 
 .navbar {
-  z-index: 1200;
+  z-index: 9930;
 }
 
 #taskbar {
@@ -97,11 +101,18 @@ body.login {
 }
 
 .ui-accordion .ui-accordion-header {
-  padding: 0.5em 0.6em 0.5em 2em;
+  margin-bottom: 0;
+  padding-left: 2em;
+  line-height: 1.3;
+  font-size: 100%;
 }
 
 .ui-accordion .ui-accordion-content {
   padding: 0.5em;
+}
+
+.ui-draggable-dragging {
+  z-index: 9970;
 }
 
 .ui-draggable-dragging, .ui-draggable-dragging * {
@@ -114,6 +125,10 @@ body.login {
 nav.navbar {
   padding-left: 10px;
   padding-right: 15px;
+}
+
+.nav-tabs {
+  margin-bottom: 15px;
 }
 
 .btn-default:active,
@@ -137,6 +152,10 @@ nav.navbar {
   left: 0;
 }
 
+.panel-default > .panel-heading .badge {
+  background-color: #777;
+}
+
 /**
  * Overflow has to be visible for Dropdown Menu in Unit List
  */
@@ -146,8 +165,11 @@ ul.dropdown-menu {
 
 .quicklink {
   height: 50px;
-  /* padding-top: 17px !important; */
   color: #ffffff !important;
+}
+
+.quicklink:hover, .quicklink:focus {
+  color: #dddddd !important;
 }
 
 .quicklink_incident {
@@ -194,7 +216,7 @@ textarea.form-control {
 
 .popover {
   position: fixed;
-  z-index: 2000;
+  z-index: 9960;
 }
 
 .popover .arrow {
@@ -210,6 +232,10 @@ textarea.form-control {
  * Forms
  */
 
+.incident_form, .unit_form, .patient_form {
+  min-width: 444px;
+}
+
 .assigned label.control-label {
   padding-top: 4px;
   text-align: center;
@@ -218,6 +244,7 @@ textarea.form-control {
 /**
  * Login
  */
+
 .login form {
   width: 300px;
   padding: 0;
@@ -290,27 +317,15 @@ textarea.form-control {
   margin-top: 0;
 }
 
-span.incident_priority {
+span.incident_type_text {
   display: block;
   text-align: center;
   margin-left: 1em;
+  margin-top: -3px;
   min-height: 1.4em;
   min-width: 1.4em;
   padding: 0.2em;
   float: right;
-  margin-top: -3px;
-}
-
-span.incident_type_text {
-  display: block;
-  text-align: center;
-  margin-left: 0.7em;
-  margin-top: -3px;
-  min-height: 1.4em;
-  min-width: 1.4em;
-  float: right;
-  border: solid 1px;
-  border-color: black;
 }
 
 span.incident_blue {
@@ -339,13 +354,6 @@ span.incident_blue {
 }
 
 /**
- * Forms
- */
-.incident_form, .unit_form, .patient_form {
-  min-width: 444px;
-}
-
-/**
  * Units list view
  */
 
@@ -358,6 +366,7 @@ span.incident_blue {
 .unit_list > li {
   display: inline-block;
   margin: 5px;
+  vertical-align: top;
 }
 
 .unit_state {
@@ -459,6 +468,12 @@ span.incident_blue {
   background: #aaaaaa;
 }
 
+.unit-placeholder {
+  min-width: 50px;
+  min-height: 30px;
+  background-color: #ff4444;
+}
+
 .unit_container_edit {
   padding-top: 20px;
 }
@@ -487,7 +502,7 @@ span.incident_blue {
 }
 
 .notification-ok {
-  background-color: #00dd00;
+  background-color: #00dd00 !important;
 }
 
 .notification-icon .badge {
@@ -524,16 +539,15 @@ table[id*='keytable'] > tbody > tr > td:nth-child(2) {
  * Fix to lay backdrop over windows
  */
 .modal-backdrop {
-  z-index: 1530;
+  z-index: 9940;
 }
 
 .modal {
-  z-index: 1540;
+  z-index: 9950;
 }
 
 .modal-dialog {
   margin-top: 80px;
-  z-index: 1550;
 }
 
 /*

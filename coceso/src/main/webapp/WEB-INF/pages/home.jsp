@@ -47,7 +47,7 @@
       });
     </script>
   </head>
-  <body>
+  <body class="scroll">
     <div class="container">
       <c:set value="active" var="nav_home"/>
       <%@include file="parts/navbar.jsp"%>

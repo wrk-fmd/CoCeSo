@@ -15,35 +15,65 @@
 <script type="text/html" id="template-unit-row">
   <td>
     <p>
-        <input type="text" maxlength="64" class="form-control" placeholder="${call}"
-               data-bind="value: call, valueUpdate: 'input', css: {'form-changed': call.localChange}, attr: {form: 'table_form_' + id}"
-               style="font-weight: bold;" required>
+      <strong>
+        <input type="text" maxlength="64" class="form-control" placeholder="${call}" required
+               data-bind="value: call, valueUpdate: 'input', css: call.css, attr: {form: 'table_form_' + id}">
+      </strong>
     </p>
     <p>
-        <input type="text" maxlength="64" class="form-control" placeholder="${ani}"
-               data-bind="value: ani, valueUpdate: 'input', css: {'form-changed': ani.localChange}, attr: {form: 'table_form_' + id}">
+      <input type="text" maxlength="64" class="form-control" placeholder="${ani}"
+             data-bind="value: ani, valueUpdate: 'input', css: ani.css, attr: {form: 'table_form_' + id}">
     </p>
   </td>
   <td>
-    <div class="btn-group btn-group-sm">
+    <p class="btn-group btn-group-sm">
       <button type="button" class="btn btn-default"
-              data-bind="click: doc.toggle, css: {active: doc, 'form-changed': doc.localChange}, attr: {form: 'table_form_' + id}">
-              ${doc}
+              data-bind="click: doc.toggle, css: doc.css, attr: {form: 'table_form_' + id}">
+        ${doc}
       </button>
       <button type="button" class="btn btn-default"
-              data-bind="click: vehicle.toggle, css: {active: vehicle, 'form-changed': vehicle.localChange}, attr: {form: 'table_form_' + id}">
-              ${vehicle}
+              data-bind="click: vehicle.toggle, css: vehicle.css, attr: {form: 'table_form_' + id}">
+        ${vehicle}
       </button>
       <button type="button" class="btn btn-default"
-              data-bind="click: portable.toggle, css: {active: portable, 'form-changed': portable.localChange}, attr: {form: 'table_form_' + id}">
-              ${portable}
+              data-bind="click: portable.toggle, css: portable.css, attr: {form: 'table_form_' + id}">
+        ${portable}
       </button>
+    </p>
+    <!-- ko if: id -->
+    <p><button type="button" class="btn btn-default btn-sm" data-bind="click: editCrew"><spring:message code="label.crew.edit"/></button></p>
+    <!-- /ko -->
+  </td>
+  <td>
+    <textarea rows="3" class="form-control" placeholder="${info}" data-bind="value: info, valueUpdate: 'input', css: info.css, attr: {form: 'table_form_' + id}"></textarea>
+  </td>
+  <td>
+    <textarea rows="3" class="form-control" placeholder="${home}" data-bind="value: home, valueUpdate: 'input', css: home.css, attr: {form: 'table_form_' + id}"></textarea>
+  </td>
+</script>
+
+<script type="text/html" id="template-container">
+  <div class="panel panel-default">
+    <div class="panel-heading clearfix">
+      <span data-bind="text: name() || '---', click: selected.set, visible: !selected()"></span>
+      <form data-bind="submit: selected.unset" style="display: inline;"><input type="text" data-bind="value: name, event: {blur: update}, visibleAndSelect: selected"/></form>
+
+      <div class="pull-right">
+        <button class="btn btn-danger btn-xs" data-bind="click: remove"><span class="glyphicon glyphicon-remove-sign"></span></button>
+        <button class="btn btn-success btn-xs" data-bind="click: add"><span class="glyphicon glyphicon-plus-sign"></span></button>
+      </div>
     </div>
-  </td>
-  <td>
-    <textarea rows="3" class="form-control" placeholder="${info}" data-bind="value: info, valueUpdate: 'input', css: {'form-changed': info.localChange}, attr: {form: 'table_form_' + id}"></textarea>
-  </td>
-  <td>
-    <textarea rows="3" class="form-control" placeholder="${home}" data-bind="value: home, valueUpdate: 'input', css: {'form-changed': home.localChange}, attr: {form: 'table_form_' + id}"></textarea>
-  </td>
+
+    <div class="panel-body">
+      <ul class="unit_list unit_list_edit" data-bind="sortable: {data: units, connectClass: 'unit_list_edit', afterMove: $root.container.dropUnit, options: {placeholder: 'unit-placeholder ui-corner-all'}}">
+        <li>
+          <a href="#" class="unit_state">
+            <span class="ui-corner-all" data-bind="text: call"></span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="unit_container_edit" data-bind="sortable: {template: 'template-container', data: subContainer, connectClass: 'unit_container_edit', afterMove: $root.container.drop, options: {placeholder: 'container-placeholder'}}"></div>
+    </div>
+  </div>
 </script>

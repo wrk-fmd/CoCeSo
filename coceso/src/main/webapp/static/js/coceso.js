@@ -159,7 +159,7 @@ Coceso.Ajax = {
       },
       error: function(xhr) {
         // 404: not found, 0: no connection to server, 200: error is thrown, because response is not a json (not authenticated)
-        if (xhr.status === 404 || xhr.status === 0 || xhr.status === 200) {
+        if (xhr.status === 404 || xhr.status === 0 || xhr.status === 200 || xhr.status === 403) {
           Coceso.UI.Notifications.connectionError(true);
         }
       }

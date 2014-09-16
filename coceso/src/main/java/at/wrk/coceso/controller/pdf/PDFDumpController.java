@@ -14,6 +14,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletResponse;
@@ -33,7 +34,7 @@ public class PDFDumpController {
 
     private static String dateFormat = "HH:mm:ss";
 
-    @RequestMapping(value = "dump.pdf", produces = "application/pdf")
+    @RequestMapping(value = "dump.pdf", produces = "application/pdf", method = RequestMethod.GET)
     public void print(HttpServletResponse response,
                       @RequestParam(value = "id") int id,
                       @RequestParam(value = "fullDate", required = false) Boolean fullDate,
@@ -85,7 +86,7 @@ public class PDFDumpController {
 
     }
 
-    @RequestMapping(value = "transportlist.pdf", produces = "application/pdf")
+    @RequestMapping(value = "transportlist.pdf", produces = "application/pdf", method = RequestMethod.GET)
     public void transportlist(HttpServletResponse response,
                       @RequestParam(value = "id") int id,
                       @RequestParam(value = "fullDate", required = false) Boolean fullDate,
