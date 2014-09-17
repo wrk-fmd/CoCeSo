@@ -87,8 +87,8 @@
           <form data-bind="submit: selected.unset" style="display: inline;"><input type="text" data-bind="value: name, event: {blur: update}, visibleAndSelect: selected"/></form>
 
           <div class="pull-right">
-            <button class="btn btn-danger btn-xs" data-bind="click: remove"><span class="glyphicon glyphicon-remove-sign"></span></button>
-            <button class="btn btn-success btn-xs" data-bind="click: add"><span class="glyphicon glyphicon-plus-sign"></span></button>
+            <button type="button" class="btn btn-danger btn-xs" data-bind="click: remove"><span class="glyphicon glyphicon-remove-sign"></span></button>
+            <button type="button" class="btn btn-success btn-xs" data-bind="click: add"><span class="glyphicon glyphicon-plus-sign"></span></button>
           </div>
         </div>
 

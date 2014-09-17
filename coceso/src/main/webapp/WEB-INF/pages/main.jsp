@@ -26,17 +26,8 @@
     <%-- jQuery --%>
     <script src="<c:url value="/static/js/assets/jquery.min.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/assets/jquery.i18n.min.js"/>" type="text/javascript"></script>
-    <%--
-      jQuery UI
-      See Bug #9166 of JQuery UI: http://bugs.jqueryui.com/ticket/9166
-      JQuery UI 1.9.2 needed for correct handling of Dialogs (=Windows)
-      JQuery UI 1.10.4 needed for correct refresh of Accordions (Incident List)
-    --%>
+    <%-- jQuery UI --%>
     <script src="<c:url value="/static/js/assets/jquery.ui.js"/>" type="text/javascript"></script>
-    <%--
-    <script src="<c:url value="/static/js/assets/jquery.ui.1.9.2.dialog.min.js"/>" type="text/javascript"></script>
-    <script src="<c:url value="/static/js/assets/jquery.ui.1.10.4.min.js"/>" type="text/javascript"></script>
-    --%>
     <script src="<c:url value="/static/js/assets/jquery.ui.touch-punch.min.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/jquery.ui.winman.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/jquery.ui.fixes.js"/>" type="text/javascript"></script>
@@ -55,7 +46,6 @@
         Coceso.Conf.contentBase = "<c:url value="/main/"/>";
         Coceso.Conf.langBase = "<c:url value="/static/i18n/"/>";
         Coceso.Conf.language = "<spring:message code="this.languageCode"/>";
-        Coceso.Lock.lock();
         Coceso.startup();
         Coceso.UI.openHierarchyUnits("<spring:message code="label.units"/>: " + "<spring:message code="label.main.unit.hierarchy"/>");
         Coceso.UI.openIncidents("<spring:message code="label.main.incident.active"/>", {filter: ['overview', 'active']}, {position: {at: "left+70% top"}});

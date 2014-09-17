@@ -136,7 +136,7 @@
 
             <!-- ko foreach: units -->
             <p>
-              <span class="key" data-bind="text: unit().call"></span>
+              <span class="key" data-bind="text: unit() && unit().call"></span>
               <span data-bind="text: localizedTaskState"></span>
               <button type="button" class="btn btn-xs btn-default" data-bind="click: nextState">
                 <span class="glyphicon glyphicon-forward"></span>
@@ -144,7 +144,7 @@
             </p>
             <!-- /ko -->
 
-            <p><button class="btn btn-default" data-bind="click: openForm"><spring:message code="label.edit"/></button></p>
+            <p><button type="button" class="btn btn-default" data-bind="click: openForm"><spring:message code="label.edit"/></button></p>
           </div>
         </li>
       </ul>

@@ -77,10 +77,7 @@
       <div class="tab-content">
         <div class="tab-pane active" id="units" data-bind="with: units">
           <div class="page-header sr-only">
-            <h3 class="clearfix">
-              <spring:message code="label.concern.edit.unit"/>
-              <a href="<c:url value="/edit/container"/>" class="btn btn-default btn-sm pull-right"><spring:message code="label.container.edit"/></a>
-            </h3>
+            <h3><spring:message code="label.concern.edit.unit"/></h3>
           </div>
           <div class="alert alert-danger" data-bind="visible: error">
             <strong><spring:message code="label.error"/>:</strong> <span data-bind="text: errorText"></span>

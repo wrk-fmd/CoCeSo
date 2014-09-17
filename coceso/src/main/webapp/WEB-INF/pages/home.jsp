@@ -84,11 +84,11 @@
         <div class="col-md-5 form-group">
           <label class="sr-only" for="create_name"><spring:message code="label.concern.name"/></label>
           <input type="text" id="create_name" maxlength="64" class="form-control"
-                 data-bind="value: name, valueUpdate: 'input', css: {'form-changed': name.localChange}"
+                 data-bind="value: name, valueUpdate: 'input', css: name.css"
                  placeholder="<spring:message code="label.concern.name"/>"/>
         </div>
         <div class="col-md-3">
-          <button class="btn btn-success" data-bind="enable: localChange"><spring:message code="label.create"/></button>
+          <button type="submit" class="btn btn-success" data-bind="enable: localChange"><spring:message code="label.create"/></button>
         </div>
       </form>
       <!-- /ko -->

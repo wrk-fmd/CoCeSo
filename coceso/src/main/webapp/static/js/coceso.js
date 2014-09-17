@@ -43,7 +43,7 @@ Coceso.Conf = {
   langBase: "",
   language: "en",
   debug: true,
-  keyboardControl: false,
+  keyboardControl: true,
   keyMapping: {
     // 32: Space
     openIncidentKey: 32,

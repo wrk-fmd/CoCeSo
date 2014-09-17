@@ -78,6 +78,9 @@ Coceso.startup = function() {
   //Initialize localization
   Coceso.initi18n();
 
+  //Lock concern changing
+  Coceso.Lock.lock();
+
   //Initialize window management
   $("#taskbar").winman();
 
@@ -92,17 +95,20 @@ Coceso.startup = function() {
   Coceso.Ajax.load("patients");
 
   //Initialize key handler
-  $("#next-state-confirm").keyup(function(event) {
-    if (event.which === Coceso.Conf.keyMapping.noKey) {
-      $("#next-state-confirm-no").click();
-    }
-    if (event.which === Coceso.Conf.keyMapping.yesKey) {
-      $("#next-state-confirm-yes").click();
-    }
-  });
   if (Coceso.Conf.keyboardControl) {
-    // TODO !! Prevent new Incident Window on Keydown in Input Tags
+    $("#next-state-confirm").keyup(function(event) {
+      if (event.which === Coceso.Conf.keyMapping.noKey) {
+        $("#next-state-confirm-no").click();
+      }
+      if (event.which === Coceso.Conf.keyMapping.yesKey) {
+        $("#next-state-confirm-yes").click();
+      }
+    });
     $("body").keyup(function(event) {
+      var t = event.target.tagName;
+      if (t === "INPUT" || t === "TEXTAREA" || t === "SELECT" || t === "BUTTON") {
+        return;
+      }
       if (event.which === Coceso.Conf.keyMapping.openIncidentKey) {
         Coceso.UI.openIncident(_("label.incident") + " / " + _("label.add"));
       }
@@ -158,7 +164,7 @@ Coceso.UI = {
    * @type ko.observable
    * @returns {Object}
    */
-  Dialog: ko.observable({title: "", info_text: "", elements: [], save: null}),
+  Dialog: ko.observable({title: "", info_text: "", button_text: "", elements: [], save: null}),
   /**
    * Add a window to the UI
    *
@@ -301,7 +307,7 @@ Coceso.UI = {
    * @returns {boolean}
    */
   openStatic: function(title, src, dialog) {
-    this.openWindow(title, Coceso.Conf.contentBase + src, {}, $.extend({position: {at: "left+10% center"}}, dialog));
+    this.openWindow(title, Coceso.Conf.contentBase + src, {}, $.extend({position: {at: "left+10% top+20%"}}, dialog));
     return false;
   },
   /**
@@ -475,7 +481,7 @@ Coceso.Models.Task = function(taskState, incident, unit) {
    * @returns {Coceso.Models.Incident}
    */
   this.incident = ko.computed(function() {
-    return Coceso.Data.getIncident(this.incident_id) || new Coceso.Models.Incident();
+    return Coceso.Data.getIncident(this.incident_id);
   }, this);
 
   /*
@@ -486,7 +492,7 @@ Coceso.Models.Task = function(taskState, incident, unit) {
    * @returns {Coceso.Models.Unit}
    */
   this.unit = ko.computed(function() {
-    return Coceso.Data.getUnit(this.unit_id) || new Coceso.Models.Unit();
+    return Coceso.Data.getUnit(this.unit_id);
   }, this);
 
   /**
@@ -496,9 +502,7 @@ Coceso.Models.Task = function(taskState, incident, unit) {
    * @type ko.computed
    * @returns {boolean}
    */
-  this.isAssigned = ko.computed(function() {
-    return (this.taskState() === Coceso.Constants.TaskState.assigned);
-  }, this);
+  this.isAssigned = this.taskState.extend({isValue: Coceso.Constants.TaskState.assigned});
 
   /**
    * Return if TaskState is "ZBO"
@@ -507,9 +511,7 @@ Coceso.Models.Task = function(taskState, incident, unit) {
    * @type ko.computed
    * @returns {boolean}
    */
-  this.isZBO = ko.computed(function() {
-    return (this.taskState() === Coceso.Constants.TaskState.zbo);
-  }, this);
+  this.isZBO = this.taskState.extend({isValue: Coceso.Constants.TaskState.zbo});
 
   /**
    * Return if TaskState is "ABO"
@@ -518,9 +520,7 @@ Coceso.Models.Task = function(taskState, incident, unit) {
    * @type ko.computed
    * @returns {boolean}
    */
-  this.isABO = ko.computed(function() {
-    return (this.taskState() === Coceso.Constants.TaskState.abo);
-  }, this);
+  this.isABO = this.taskState.extend({isValue: Coceso.Constants.TaskState.abo});
 
   /**
    * Return if TaskState is "ZAO"
@@ -529,9 +529,7 @@ Coceso.Models.Task = function(taskState, incident, unit) {
    * @type ko.computed
    * @returns {boolean}
    */
-  this.isZAO = ko.computed(function() {
-    return (this.taskState() === Coceso.Constants.TaskState.zao);
-  }, this);
+  this.isZAO = this.taskState.extend({isValue: Coceso.Constants.TaskState.zao});
 
   /**
    * Return if TaskState is "AAO"
@@ -540,9 +538,7 @@ Coceso.Models.Task = function(taskState, incident, unit) {
    * @type ko.computed
    * @returns {boolean}
    */
-  this.isAAO = ko.computed(function() {
-    return (this.taskState() === Coceso.Constants.TaskState.aao);
-  }, this);
+  this.isAAO = this.taskState.extend({isValue: Coceso.Constants.TaskState.aao});
 
   /**
    * Return if TaskState is "Detached"
@@ -551,9 +547,7 @@ Coceso.Models.Task = function(taskState, incident, unit) {
    * @type ko.computed
    * @returns {boolean}
    */
-  this.isDetached = ko.computed(function() {
-    return (this.taskState() === Coceso.Constants.TaskState.detached);
-  }, this);
+  this.isDetached = this.taskState.extend({isValue: Coceso.Constants.TaskState.detached});
 
   /**
    * Return the localized taskState
@@ -571,54 +565,6 @@ Coceso.Models.Task = function(taskState, incident, unit) {
 };
 Coceso.Models.Task.prototype = Object.create({}, /** @lends Coceso.Models.Task.prototype */ {
   /**
-   * Set task state to "assigned"
-   */
-  setAssigned: {
-    value: function() {
-      this.taskState(Coceso.Constants.TaskState.assigned);
-    }
-  },
-  /**
-   * Set task state to "assigned"
-   */
-  setZBO: {
-    value: function() {
-      this.taskState(Coceso.Constants.TaskState.zbo);
-    }
-  },
-  /**
-   * Set task state to "assigned"
-   */
-  setABO: {
-    value: function() {
-      this.taskState(Coceso.Constants.TaskState.abo);
-    }
-  },
-  /**
-   * Set task state to "assigned"
-   */
-  setZAO: {
-    value: function() {
-      this.taskState(Coceso.Constants.TaskState.zao);
-    }
-  },
-  /**
-   * Set task state to "assigned"
-   */
-  setAAO: {
-    value: function() {
-      this.taskState(Coceso.Constants.TaskState.aao);
-    }
-  },
-  /**
-   * Set task state to "assigned"
-   */
-  setDetached: {
-    value: function() {
-      this.taskState(Coceso.Constants.TaskState.detached);
-    }
-  },
-  /**
    * Handles the nextState request
    *
    * @function
@@ -629,37 +575,102 @@ Coceso.Models.Task.prototype = Object.create({}, /** @lends Coceso.Models.Task.p
       var incident = this.incident(), unit = this.unit();
 
       if (!incident || !unit) {
+        //Incident or unit not available
         console.error("Coceso.Models.TaskState.nextState(): invalid unit or incident!");
         return;
       }
 
-      // Return if AO not given and Action is "set to ZAO" (== Assigned if Relocation, else ==ABO)
-      if (!incident.ao.info() && (this.isABO() || (incident.isRelocation() && this.isAssigned())))
-      {
+      //Get next state
+
+      /*
+       * Allowed states for types
+       *
+       *  Task, Transport
+       *    Assigned, ZBO, ABO, ZAO, AAO, Detached
+       *  Relocation, ToHome
+       *    Assigned, ZAO, AAO -> Detached
+       *  Standby, HoldPosition
+       *    Assigned, AAO, Detached
+       */
+
+      var task = (incident.isTask() || incident.isTransport()),
+          reloc = (incident.isRelocation() || incident.isToHome()),
+          hold = (incident.isStandby() || incident.isHoldPosition());
+
+      var s = Coceso.Constants.TaskState;
+
+      var nextState = null, needAO = false;
+      if (this.isAssigned()) {
+        if (task) {
+          nextState = s.zbo;
+        } else if (reloc) {
+          needAO = incident.isRelocation();
+          nextState = s.zao;
+        } else if (hold) {
+          nextState = s.aao;
+        }
+      } else if (this.isZBO()) {
+        if (task) {
+          nextState = s.abo;
+        }
+      } else if (this.isABO()) {
+        if (task) {
+          needAO = true;
+          nextState = s.zao;
+        }
+      } else if (this.isZAO()) {
+        if (task || reloc) {
+          needAO = (!incident.isToHome());
+          nextState = s.aao;
+        }
+      } else if (this.isAAO()) {
+        if (task || hold) {
+          nextState = s.detached;
+        }
+      }
+
+      if (nextState === null) {
+        //Next state is not defined
+        console.error("No next state defined!");
+        return;
+      }
+
+      if (needAO && !incident.ao.info() && (nextState === s.zao || nextState === s.aao)) {
         console.info("No AO set, opening Incident Window");
         Coceso.UI.openIncident(_("label.incident.edit"), {id: incident.id});
         return;
       }
 
       if (Coceso.Conf.confirmStatusUpdate) {
-        var info = _("text.confirmation");
-        var elements = [];
+        var info = _("text.confirmation"), button = _("label.confirmation.yes"), elements = [];
 
         if (incident.isStandby()) {
-          if (this.isAssigned()) {
+          if (nextState === s.aao) {
             info = _("text.standby.send");
-          } else if (this.isAAO()) {
+          } else if (nextState === s.detached) {
             info = _("text.standby.end");
           }
 
           elements = [
             {key: _("label.unit.position"), val: unit.position.info()}
           ];
+        } else if (incident.isHoldPosition()) {
+          if (nextState === s.aao) {
+            info = _("text.holdposition.send");
+          } else if (nextState === s.detached) {
+            info = _("text.holdposition.end");
+          }
+
+          elements = [
+            {key: _("label.unit.position"), val: incident.ao.info()}
+          ];
         } else if (incident.isToHome()) {
           elements = [
             {key: _("label.incident.bo"), val: incident.bo.info()},
             {key: _("label.incident.ao"), val: incident.ao.info()}
           ];
+
+          button = (nextState === s.zao) ? _("label.task.state.zao") : _("label.task.state.ishome");
         } else if (incident.isRelocation()) {
           elements = [
             {key: _("text.confirmation.current"), val: _("label.task.state." + this.taskState().toLowerCase())},
@@ -667,10 +678,8 @@ Coceso.Models.Task.prototype = Object.create({}, /** @lends Coceso.Models.Task.p
             {key: _("label.incident.blue"), val: (incident.blue() ? _("label.yes") : _("label.no"))},
             {key: _("label.incident.info"), val: incident.info()}
           ];
-        } else if (incident.isHoldPosition()) {
-          elements = [
-            {key: _("label.unit.position"), val: incident.ao.info()}
-          ];
+
+          button = _("label.task.state." + nextState.toLowerCase());
         } else {
           elements = [
             {key: _("text.confirmation.current"), val: _("label.task.state." + this.taskState().toLowerCase())},
@@ -686,21 +695,23 @@ Coceso.Models.Task.prototype = Object.create({}, /** @lends Coceso.Models.Task.p
             elements.push({key: _("label.patient.insurance_number"), val: pp.insurance_number()});
             elements.push({key: _("label.patient.info"), val: pp.info()});
           }
+
+          button = _("label.task.state." + nextState.toLowerCase());
         }
 
         Coceso.UI.Dialog({
           title: "<strong>" + unit.call + "</strong>" + " - " + incident.localizedType(),
-          info_text: info, elements: elements,
+          info_text: info, button_text: button, elements: elements,
           save: function() {
             console.info("nextState() triggered on Server");
-            Coceso.Ajax.save({incident_id: incident.id, unit_id: unit.id}, "incident/nextState.json");
+            Coceso.Ajax.save({incident_id: incident.id, unit_id: unit.id, state: nextState}, "incident/setToState.json");
           }
         });
 
         $("#next-state-confirm").modal({backdrop: true, keyboard: true, show: true});
       } else {
         console.info("nextState() triggered on Server");
-        Coceso.Ajax.save({incident_id: incident.id, unit_id: unit.id}, "incident/nextState.json");
+        Coceso.Ajax.save({incident_id: incident.id, unit_id: unit.id, state: nextState}, "incident/setToState.json");
       }
     }
   }
@@ -746,22 +757,22 @@ Coceso.Models.Incident = function(data) {
       self.bo.info("");
     }
     if (data.units) {
-      var unit;
-      for (unit in data.units) {
-        if (!isNaN(unit)) {
-          unit = parseInt(unit);
+      ko.utils.objectForEach(data.units, function(unit, taskState) {
+        unit = parseInt(unit);
+        if (!unit || isNaN(unit)) {
+          return;
         }
         var task = ko.utils.arrayFirst(self.units(), function(item) {
           return (item.unit_id === unit);
         });
         if (task) {
           //Item exists, just set the new TaskState
-          task.taskState(data.units[unit]);
+          task.taskState(taskState);
         } else {
           //Create new Task model
-          self.units.push(new Coceso.Models.Task(data.units[unit], self.id, unit));
+          self.units.push(new Coceso.Models.Task(taskState, self.id, unit));
         }
-      }
+      });
       //Remove detached units
       self.units.remove(function(task) {
         return (!data.units[task.unit_id]);
@@ -791,9 +802,7 @@ Coceso.Models.Incident = function(data) {
      * @type ko.computed
      * @returns {boolean}
      */
-    this.isTask = ko.computed(function() {
-      return (this.type() === Coceso.Constants.Incident.type.task);
-    }, this);
+    this.isTask = this.type.extend({isValue: Coceso.Constants.Incident.type.task});
 
     /**
      * Incident is of type "Relocation"
@@ -802,20 +811,16 @@ Coceso.Models.Incident = function(data) {
      * @type ko.computed
      * @returns {boolean}
      */
-    this.isRelocation = ko.computed(function() {
-      return (this.type() === Coceso.Constants.Incident.type.relocation);
-    }, this);
+    this.isRelocation = this.type.extend({isValue: Coceso.Constants.Incident.type.relocation});
 
     /**
-     * Incident is of type "Relocation"
+     * Incident is of type "Transport"
      *
      * @function
      * @type ko.computed
      * @returns {boolean}
      */
-    this.isTransport = ko.computed(function() {
-      return (this.type() === Coceso.Constants.Incident.type.transport);
-    }, this);
+    this.isTransport = this.type.extend({isValue: Coceso.Constants.Incident.type.transport});
 
     /**
      * Incident is of type "ToHome"
@@ -824,9 +829,7 @@ Coceso.Models.Incident = function(data) {
      * @type ko.computed
      * @returns {boolean}
      */
-    this.isToHome = ko.computed(function() {
-      return (this.type() === Coceso.Constants.Incident.type.tohome);
-    }, this);
+    this.isToHome = this.type.extend({isValue: Coceso.Constants.Incident.type.tohome});
 
     /**
      * Incident is of type "HoldPosition"
@@ -835,9 +838,7 @@ Coceso.Models.Incident = function(data) {
      * @type ko.computed
      * @returns {boolean}
      */
-    this.isHoldPosition = ko.computed(function() {
-      return (this.type() === Coceso.Constants.Incident.type.holdposition);
-    }, this);
+    this.isHoldPosition = this.type.extend({isValue: Coceso.Constants.Incident.type.holdposition});
 
     /**
      * Incident is of type "Standby"
@@ -846,9 +847,7 @@ Coceso.Models.Incident = function(data) {
      * @type ko.computed
      * @returns {boolean}
      */
-    this.isStandby = ko.computed(function() {
-      return (this.type() === Coceso.Constants.Incident.type.standby);
-    }, this);
+    this.isStandby = this.type.extend({isValue: Coceso.Constants.Incident.type.standby});
   }
 
   /**
@@ -862,9 +861,7 @@ Coceso.Models.Incident = function(data) {
      * @type ko.computed
      * @returns {boolean}
      */
-    this.isNew = ko.computed(function() {
-      return (this.state() === Coceso.Constants.Incident.state.new);
-    }, this);
+    this.isNew = this.state.extend({isValue: Coceso.Constants.Incident.state.new});
 
     /**
      * Incident has state "Open"
@@ -873,9 +870,7 @@ Coceso.Models.Incident = function(data) {
      * @type ko.computed
      * @returns {boolean}
      */
-    this.isOpen = ko.computed(function() {
-      return (this.state() === Coceso.Constants.Incident.state.open);
-    }, this);
+    this.isOpen = this.state.extend({isValue: Coceso.Constants.Incident.state.open});
 
     /**
      * Incident has state "Dispo"
@@ -884,9 +879,7 @@ Coceso.Models.Incident = function(data) {
      * @type ko.computed
      * @returns {boolean}
      */
-    this.isDispo = ko.computed(function() {
-      return (this.state() === Coceso.Constants.Incident.state.dispo);
-    }, this);
+    this.isDispo = this.state.extend({isValue: Coceso.Constants.Incident.state.dispo});
 
     /**
      * Incident has state "Working"
@@ -895,9 +888,7 @@ Coceso.Models.Incident = function(data) {
      * @type ko.computed
      * @returns {boolean}
      */
-    this.isWorking = ko.computed(function() {
-      return (this.state() === Coceso.Constants.Incident.state.working);
-    }, this);
+    this.isWorking = this.state.extend({isValue: Coceso.Constants.Incident.state.working});
 
     /**
      * Incident has state "Done"
@@ -906,9 +897,7 @@ Coceso.Models.Incident = function(data) {
      * @type ko.computed
      * @returns {boolean}
      */
-    this.isDone = ko.computed(function() {
-      return (this.state() === Coceso.Constants.Incident.state.done);
-    }, this);
+    this.isDone = this.state.extend({isValue: Coceso.Constants.Incident.state.done});
   }
 
   /**
@@ -919,8 +908,8 @@ Coceso.Models.Incident = function(data) {
    * @returns {Coceso.Model.Patient}
    */
   this.patient = ko.computed(function() {
-    return Coceso.Data.getPatient(self.id);
-  });
+    return Coceso.Data.getPatient(this.id);
+  }, this);
 
   /**
    * Return the type as localized string
@@ -1197,22 +1186,22 @@ Coceso.Models.Unit = function(data) {
       self.position.info("");
     }
     if (data.incidents) {
-      var incident;
-      for (incident in data.incidents) {
-        if (!isNaN(incident)) {
-          incident = parseInt(incident);
+      ko.utils.objectForEach(data.incidents, function(incident, taskState) {
+        incident = parseInt(incident);
+        if (!incident || isNaN(incident)) {
+          return;
         }
         var task = ko.utils.arrayFirst(self.incidents(), function(item) {
           return (item.incident_id === incident);
         });
         if (task) {
           //Item exists, just set the new TaskState
-          task.taskState(data.incidents[incident]);
+          task.taskState(taskState);
         } else {
           //Create new Task model
-          self.incidents.push(new Coceso.Models.Task(data.incidents[incident], incident, self.id));
+          self.incidents.push(new Coceso.Models.Task(taskState, incident, self.id));
         }
-      }
+      });
       //Remove detached units
       self.incidents.remove(function(task) {
         return (!data.incidents[task.incident_id]);
@@ -1284,9 +1273,7 @@ Coceso.Models.Unit = function(data) {
    * @type ko.computed
    * @returns {boolean}
    */
-  this.isHome = ko.computed(function() {
-    return (this.hasHome() && this.position.info() === this.home.info());
-  }, this);
+  this.isHome = this.position.info.extend({isValue: this.home.info});
 
   /**
    * Unit has state "AD"
@@ -1295,9 +1282,7 @@ Coceso.Models.Unit = function(data) {
    * @type ko.computed
    * @returns {boolean}
    */
-  this.isAD = ko.computed(function() {
-    return (this.state() === Coceso.Constants.Unit.state.ad);
-  }, this);
+  this.isAD = this.state.extend({isValue: Coceso.Constants.Unit.state.ad});
 
   /**
    * Unit has state "EB"
@@ -1306,9 +1291,7 @@ Coceso.Models.Unit = function(data) {
    * @type ko.computed
    * @returns {boolean}
    */
-  this.isEB = ko.computed(function() {
-    return (this.state() === Coceso.Constants.Unit.state.eb);
-  }, this);
+  this.isEB = this.state.extend({isValue: Coceso.Constants.Unit.state.eb});
 
   /**
    * Unit has state "NEB"
@@ -1317,9 +1300,7 @@ Coceso.Models.Unit = function(data) {
    * @type ko.computed
    * @returns {boolean}
    */
-  this.isNEB = ko.computed(function() {
-    return (this.state() === Coceso.Constants.Unit.state.neb);
-  }, this);
+  this.isNEB = this.state.extend({isValue: Coceso.Constants.Unit.state.neb});
 
   /**
    * Unit has incident with TaskState "Assigned"
@@ -1590,45 +1571,6 @@ Coceso.Models.Unit = function(data) {
 };
 Coceso.Models.Unit.prototype = Object.create({}, /** @lends Coceso.Models.Unit.prototype */ {
   /**
-   * Set unit state to "AD"
-   *
-   * @function
-   * @returns {void}
-   */
-  setAD: {
-    value: function() {
-      if (this.id && !this.isAD()) {
-        Coceso.Ajax.save(JSON.stringify({id: this.id, state: Coceso.Constants.Unit.state.ad}), "unit/update.json");
-      }
-    }
-  },
-  /**
-   * Set unit state to "EB"
-   *
-   * @function
-   * @returns {void}
-   */
-  setEB: {
-    value: function() {
-      if (this.id && !this.isEB()) {
-        Coceso.Ajax.save(JSON.stringify({id: this.id, state: Coceso.Constants.Unit.state.eb}), "unit/update.json");
-      }
-    }
-  },
-  /**
-   * Set unit state to "NEB"
-   *
-   * @function
-   * @returns {void}
-   */
-  setNEB: {
-    value: function() {
-      if (this.id && !this.isNEB()) {
-        Coceso.Ajax.save(JSON.stringify({id: this.id, state: Coceso.Constants.Unit.state.neb}), "unit/update.json");
-      }
-    }
-  },
-  /**
    * Send unit home
    *
    * @function
@@ -1768,9 +1710,7 @@ Coceso.Models.Patient = function(data) {
    * @type ko.computed
    * @returns {boolean}
    */
-  this.isMale = ko.computed(function() {
-    return (this.sex() === Coceso.Constants.Patient.sex.male);
-  }, this);
+  this.isMale = this.sex.extend({isValue: Coceso.Constants.Patient.sex.male});
 
   /**
    * Patient is female
@@ -1779,9 +1719,7 @@ Coceso.Models.Patient = function(data) {
    * @type ko.computed
    * @returns {boolean}
    */
-  this.isFemale = ko.computed(function() {
-    return (this.sex() === Coceso.Constants.Patient.sex.female);
-  }, this);
+  this.isFemale = this.sex.extend({isValue: Coceso.Constants.Patient.sex.female});
 
   /**
    * Patient's sex is unknown
@@ -1793,6 +1731,15 @@ Coceso.Models.Patient = function(data) {
   this.isUnknown = ko.computed(function() {
     return (!this.isMale() && !this.isFemale());
   }, this);
+
+  /**
+   * Set sex to undefined
+   *
+   * @returns {void}
+   */
+  this.isUnknown.set = function() {
+    this.sex(Coceso.Constants.Patient.sex.unknown);
+  };
 };
 
 /**
@@ -1890,43 +1837,6 @@ Coceso.ViewModels.Filterable.prototype = Object.create({}, /** @lends Coceso.Vie
  */
 Coceso.ViewModels.Incidents = function(options) {
   /**
-   * Available filters
-   *
-   * @type Object
-   */
-  this.filters = {
-    overview: {
-      filter: {
-        type: [Coceso.Constants.Incident.type.task, Coceso.Constants.Incident.type.transport, Coceso.Constants.Incident.type.relocation]
-      }
-    },
-    active: {
-      disable: {state: {done: true}},
-      filter: {isDone: false}
-    },
-    "new": {
-      disable: {state: true},
-      filter: {isNew: true}
-    },
-    open: {
-      disable: {state: true},
-      filter: {isOpen: true}
-    },
-    new_or_open: {
-      disable: {state: true},
-      filter: {isNewOrOpen: true}
-    },
-    completed: {
-      disable: {state: true},
-      filter: {isDone: true}
-    },
-    transport: {
-      disable: {type: true},
-      filter: {isTransport: true}
-    }
-  };
-
-  /**
    * The selected filters
    *
    * @type Object
@@ -1949,7 +1859,46 @@ Coceso.ViewModels.Incidents = function(options) {
    */
   this.filtered = Coceso.Data.incidents.list.extend({list: {filter: this.activeFilters}});
 };
-Coceso.ViewModels.Incidents.prototype = Object.create(Coceso.ViewModels.Filterable.prototype, /** @lends Coceso.ViewModels.Incidents.prototype */ {});
+Coceso.ViewModels.Incidents.prototype = Object.create(Coceso.ViewModels.Filterable.prototype, /** @lends Coceso.ViewModels.Incidents.prototype */ {
+  /**
+   * Available filters
+   *
+   * @type Object
+   */
+  filters: {
+    value: {
+      overview: {
+        filter: {
+          type: [Coceso.Constants.Incident.type.task, Coceso.Constants.Incident.type.transport, Coceso.Constants.Incident.type.relocation]
+        }
+      },
+      active: {
+        disable: {state: {done: true}},
+        filter: {isDone: false}
+      },
+      "new": {
+        disable: {state: true},
+        filter: {isNew: true}
+      },
+      open: {
+        disable: {state: true},
+        filter: {isOpen: true}
+      },
+      new_or_open: {
+        disable: {state: true},
+        filter: {isNewOrOpen: true}
+      },
+      completed: {
+        disable: {state: true},
+        filter: {isDone: true}
+      },
+      transport: {
+        disable: {type: true},
+        filter: {isTransport: true}
+      }
+    }
+  }
+});
 
 /**
  * List of units
@@ -1959,23 +1908,6 @@ Coceso.ViewModels.Incidents.prototype = Object.create(Coceso.ViewModels.Filterab
  * @param {Object} options
  */
 Coceso.ViewModels.Units = function(options) {
-  /**
-   * Available filters
-   *
-   * @type Object
-   */
-  this.filters = {
-    radio: {
-      filter: {hasAssigned: true}
-    },
-    free: {
-      filter: {isFree: true}
-    },
-    available: {
-      filter: {isAvailable: true}
-    }
-  };
-
   /**
    * The selected filters
    *
@@ -1995,7 +1927,26 @@ Coceso.ViewModels.Units = function(options) {
    */
   this.filtered = Coceso.Data.units.list.extend({list: {filter: this.activeFilters}});
 };
-Coceso.ViewModels.Units.prototype = Object.create(Coceso.ViewModels.Filterable.prototype, /** @lends Coceso.ViewModels.Units.prototype */ {});
+Coceso.ViewModels.Units.prototype = Object.create(Coceso.ViewModels.Filterable.prototype, /** @lends Coceso.ViewModels.Units.prototype */ {
+  /**
+   * Available filters
+   *
+   * @type Object
+   */
+  filters: {
+    value: {
+      radio: {
+        filter: {hasAssigned: true}
+      },
+      free: {
+        filter: {isFree: true}
+      },
+      available: {
+        filter: {isAvailable: true}
+      }
+    }
+  }
+});
 
 /**
  * ViewModel for hierarchical view in Unit Window
@@ -2081,18 +2032,14 @@ Coceso.ViewModels.Form = function() {
    * @type ko.computed
    * @returns {boolean}
    */
-  this.localChange = ko.computed(function() {
-    return this.dependencies.localChange();
-  }, this);
+  this.localChange = this.dependencies.localChange;
 
   /**
    * Reset the form to its original state
    *
    * @returns {void}
    */
-  this.reset = function() {
-    self.dependencies.reset();
-  };
+  this.reset = this.dependencies.reset;
 
   /**
    * Callback on error saving
@@ -2110,11 +2057,8 @@ Coceso.ViewModels.Form = function() {
    * @returns {boolean}
    */
   this.ok = function() {
-    var result = this.save();
-    if (result) {
-      $("#" + this.ui).dialog("destroy");
-    }
-    return result;
+    this.save();
+    $("#" + this.ui).dialog("destroy");
   };
 };
 
@@ -2153,7 +2097,7 @@ Coceso.ViewModels.Incident = function(data) {
 
   //Initialize change detection
   this.ao.info.extend({observeChanges: {}});
-  this.blue.extend({observeChanges: {}});
+  this.blue = this.blue.extend({boolean: true, observeChanges: {}});
   this.bo.info.extend({observeChanges: {}});
   this.caller.extend({observeChanges: {}});
   this.casusNr.extend({observeChanges: {}});
@@ -2425,6 +2369,32 @@ Coceso.ViewModels.Incident = function(data) {
   };
 
   /**
+   * Duplicate the incident
+   *
+   * @function
+   * @param {Coceso.Models.Task} task Optional task to remove from current and bind to new incident
+   * @returns {void}
+   */
+  this.duplicate = function(task) {
+    var data = {
+      caller: self.caller(),
+      bo: {info: self.bo.info()},
+      ao: {info: self.ao.info()},
+      info: self.info(),
+      blue: self.blue(),
+      type: self.type()
+    };
+    if (task instanceof Coceso.Models.Task) {
+      data.units = {};
+      data.units[task.unit_id] = task.taskState();
+      task.taskState(Coceso.Constants.TaskState.detached);
+      data.autoSave = true;
+    }
+    Coceso.UI.openIncident(_("label.incident"), data);
+    this.save();
+  };
+
+  /**
    * Callback after saving
    *
    * @param {Object} data The data returned from server
@@ -2439,105 +2409,6 @@ Coceso.ViewModels.Incident = function(data) {
   };
 };
 Coceso.ViewModels.Incident.prototype = Object.create(Coceso.Models.Incident.prototype, /** @lends Coceso.ViewModels.Incident.prototype */ {
-  /**
-   * Set type to "task"
-   *
-   * @function
-   * @returns {void}
-   */
-  setTypeTask: {
-    value: function() {
-      this.type(Coceso.Constants.Incident.type.task);
-    }
-  },
-  /**
-   * Set type to "task"
-   *
-   * @function
-   * @returns {void}
-   */
-  setTypeTransport: {
-    value: function() {
-      this.type(Coceso.Constants.Incident.type.transport);
-    }
-  },
-  /**
-   * Set type to "task"
-   *
-   * @function
-   * @returns {void}
-   */
-  setTypeRelocation: {
-    value: function() {
-      this.type(Coceso.Constants.Incident.type.relocation);
-    }
-  },
-  /**
-   * Set incident state to "new"
-   *
-   * @function
-   * @returns {void}
-   */
-  setStateNew: {
-    value: function() {
-      this.state(Coceso.Constants.Incident.state.new);
-    }
-  },
-  /**
-   * Set incident state to "open"
-   *
-   * @function
-   * @returns {void}
-   */
-  setStateOpen: {
-    value: function() {
-      this.state(Coceso.Constants.Incident.state.open);
-    }
-  },
-  /**
-   * Set incident state to "dispo"
-   *
-   * @function
-   * @returns {void}
-   */
-  setStateDispo: {
-    value: function() {
-      this.state(Coceso.Constants.Incident.state.dispo);
-    }
-  },
-  /**
-   * Set incident state to "working"
-   *
-   * @function
-   * @returns {void}
-   */
-  setStateWorking: {
-    value: function() {
-      this.state(Coceso.Constants.Incident.state.working);
-    }
-  },
-  /**
-   * Set incident state to "done"
-   *
-   * @function
-   * @returns {void}
-   */
-  setStateDone: {
-    value: function() {
-      this.state(Coceso.Constants.Incident.state.done);
-    }
-  },
-  /**
-   * Toggle blue light active
-   *
-   * @function
-   * @returns {void}
-   */
-  toggleBlue: {
-    value: function() {
-      this.blue(!this.blue());
-    }
-  },
   /**
    * Set TaskState for unit
    *
@@ -2560,33 +2431,6 @@ Coceso.ViewModels.Incident.prototype = Object.create(Coceso.Models.Incident.prot
           assigned.taskState(taskState);
         }
       }
-    }
-  },
-  /**
-   * Duplicate the incident
-   *
-   * @function
-   * @param {Coceso.Models.Task} task Optional task to remove from current and bind to new incident
-   * @returns {void}
-   */
-  duplicate: {
-    value: function(task) {
-      var data = {
-        caller: this.caller(),
-        bo: {info: this.bo.info()},
-        ao: {info: this.ao.info()},
-        info: this.info(),
-        blue: this.blue(),
-        type: this.type()
-      };
-      if (task instanceof Coceso.Models.Task) {
-        data.units = {};
-        data.units[task.unit_id] = task.taskState();
-        task.taskState(Coceso.Constants.TaskState.detached);
-        data.autoSave = true;
-      }
-      Coceso.UI.openIncident(_("label.incident"), data);
-      this.save();
     }
   },
   /**
@@ -2617,18 +2461,20 @@ Coceso.ViewModels.Incident.prototype = Object.create(Coceso.Models.Incident.prot
         data.bo = {id: -2};
       }
 
-      var units = this.units;
+      var units = this.units, remove = [];
       ko.utils.arrayForEach(units(), function(task) {
         if (task.taskState.localChange()) {
           data.units[task.unit_id] = task.taskState();
-          if (task.isDetached()) {
-            //units.remove(task);
+          if (!task.taskState.orig() && task.isDetached()) {
+            remove.push(task);
           }
         }
       });
+      ko.utils.arrayForEach(remove, function(task) {
+        units.remove(task);
+      });
 
       Coceso.Ajax.save(JSON.stringify(data), "incident/update.json", this.afterSave, this.saveError, this.saveError);
-      return true;
     }
   },
   /**
@@ -2776,39 +2622,6 @@ Coceso.ViewModels.Unit = function(data) {
 };
 Coceso.ViewModels.Unit.prototype = Object.create(Coceso.Models.Unit.prototype, /** @lends Coceso.ViewModels.Unit.prototype */ {
   /**
-   * Set state in form to "eb"
-   *
-   * @function
-   * @returns {void}
-   */
-  setStateEB: {
-    value: function() {
-      this.state(Coceso.Constants.Unit.state.eb);
-    }
-  },
-  /**
-   * Set state in form to "neb"
-   *
-   * @function
-   * @returns {void}
-   */
-  setStateNEB: {
-    value: function() {
-      this.state(Coceso.Constants.Unit.state.neb);
-    }
-  },
-  /**
-   * Set state in form to "ad"
-   *
-   * @function
-   * @returns {void}
-   */
-  setStateAD: {
-    value: function() {
-      this.state(Coceso.Constants.Unit.state.ad);
-    }
-  },
-  /**
    * Save the form
    *
    * @function
@@ -2828,18 +2641,20 @@ Coceso.ViewModels.Unit.prototype = Object.create(Coceso.Models.Unit.prototype, /
         data.position = {id: -2};
       }
 
-      var incidents = this.incidents;
+      var incidents = this.incidents, remove = [];
       ko.utils.arrayForEach(incidents(), function(task) {
         if (task.taskState.localChange()) {
           data.incidents[task.incident_id] = task.taskState();
-          if (task.isDetached()) {
+          if (!task.taskState.orig() && task.isDetached()) {
             incidents.remove(task);
           }
         }
       });
+      ko.utils.arrayForEach(remove, function(task) {
+        incidents.remove(task);
+      });
 
       Coceso.Ajax.save(JSON.stringify(data), "unit/update.json", null, this.saveError, this.saveError);
-      return true;
     }
   },
   /**
@@ -2965,39 +2780,6 @@ Coceso.ViewModels.Patient = function(data) {
 };
 Coceso.ViewModels.Patient.prototype = Object.create(Coceso.Models.Patient.prototype, /** @lends Coceso.ViewModels.Patient.prototype */ {
   /**
-   * Set sex to undefined
-   *
-   * @function
-   * @returns {void}
-   */
-  setSexUnknown: {
-    value: function() {
-      this.sex(Coceso.Constants.Patient.sex.unknown);
-    }
-  },
-  /**
-   * Set sex to male
-   *
-   * @function
-   * @returns {void}
-   */
-  setSexMale: {
-    value: function() {
-      this.sex(Coceso.Constants.Patient.sex.male);
-    }
-  },
-  /**
-   * Set sex to female
-   *
-   * @function
-   * @returns {void}
-   */
-  setSexFemale: {
-    value: function() {
-      this.sex(Coceso.Constants.Patient.sex.female);
-    }
-  },
-  /**
    * Save the form
    *
    * @function
@@ -3018,7 +2800,6 @@ Coceso.ViewModels.Patient.prototype = Object.create(Coceso.Models.Patient.protot
       };
 
       Coceso.Ajax.save(JSON.stringify(data), "patient/update.json", null, this.saveError, this.saveError);
-      return true;
     }
   },
   /**

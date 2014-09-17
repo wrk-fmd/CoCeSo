@@ -17,7 +17,7 @@
   <li class="dropdown">
     <!-- ko if: portable -->
     <a href="#" class="unit_state dropdown-toggle" data-bind="draggable: dragOptions, popover: popover" data-toggle="dropdown" oncontextmenu="this.click(); return false;">
-      <span class="ui-corner-left" data-bind="text: call, css: stateCss"></span><span class="ui-corner-right" data-bind="html: taskText, css: taskCss, click: function() {nextState()}, clickBubble: incidentCount() !== 1"></span>
+      <span class="ui-corner-left" data-bind="text: call, css: stateCss"></span><span class="ui-corner-right" data-bind="html: taskText, css: taskCss, click: nextState, clickBubble: incidentCount() !== 1"></span>
     </a>
     <!-- /ko -->
     <!-- ko ifnot: portable -->
@@ -28,13 +28,13 @@
     <ul class="dropdown-menu">
       <li class="dropdown-header"><spring:message code="label.unit.state_set"/></li>
       <!-- ko ifnot: isNEB -->
-      <li><a href="#" title="<spring:message code="label.set"/>: <spring:message code="label.unit.state.neb"/>" data-bind="click: setNEB"><spring:message code="label.unit.state.neb"/></a></li>
+      <li><a href="#" title="<spring:message code="label.set"/>: <spring:message code="label.unit.state.neb"/>" data-bind="click: isNEB.set"><spring:message code="label.unit.state.neb"/></a></li>
       <!-- /ko -->
       <!-- ko ifnot: isEB -->
-      <li><a href="#" title="<spring:message code="label.set"/>: <spring:message code="label.unit.state.eb"/>" data-bind="click: setEB"><spring:message code="label.unit.state.eb"/></a></li>
+      <li><a href="#" title="<spring:message code="label.set"/>: <spring:message code="label.unit.state.eb"/>" data-bind="click: isEB.set"><spring:message code="label.unit.state.eb"/></a></li>
       <!-- /ko -->
       <!-- ko ifnot: isAD -->
-      <li><a href="#" title="<spring:message code="label.set"/>: <spring:message code="label.unit.state.ad"/>" data-bind="click: setAD"><spring:message code="label.unit.state.ad"/></a></li>
+      <li><a href="#" title="<spring:message code="label.set"/>: <spring:message code="label.unit.state.ad"/>" data-bind="click: isAD.set"><spring:message code="label.unit.state.ad"/></a></li>
       <!-- /ko -->
 
       <!-- ko if: portable && !( disableSendHome() && disableStandby() && disableHoldPosition() )  -->
@@ -112,7 +112,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" id="next-state-confirm-no" class="btn btn-danger btn-lg pull-left" data-dismiss="modal" autofocus><spring:message code="label.confirmation.no"/></button>
-        <button type="button" id="next-state-confirm-yes" class="btn btn-success btn-lg pull-right" data-dismiss="modal" data-bind="click: save"><spring:message code="label.confirmation.yes"/></button>
+        <button type="button" id="next-state-confirm-yes" class="btn btn-success btn-lg pull-right" data-dismiss="modal" data-bind="click: save, text: button_text"></button>
       </div>
     </div>
   </div>

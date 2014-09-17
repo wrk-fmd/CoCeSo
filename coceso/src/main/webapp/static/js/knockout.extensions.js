@@ -383,6 +383,29 @@ ko.extenders.list = function(target, options) {
 };
 
 /**
+ * Helper for comparing (isValue methods)
+ *
+ * @param {ko.observable} target
+ * @param {mixed} value
+ * @returns {ko.computed}
+ */
+ko.extenders.isValue = function(target, value) {
+  var ret = ko.computed(function() {
+    return (target() === ko.utils.unwrapObservable(value));
+  });
+
+  ret.css = ko.computed(function() {
+    return this() ? "active" : "";
+  }, ret);
+
+  ret.set = function() {
+    target(ko.utils.unwrapObservable(value));
+  };
+
+  return ret;
+};
+
+/**
  * Helper for boolean values
  *
  * @param {ko.observable} target
