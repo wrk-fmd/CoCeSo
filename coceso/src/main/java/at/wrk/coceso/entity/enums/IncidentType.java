@@ -29,7 +29,7 @@ public enum IncidentType {
     }
 
     IncidentType(TaskState[] possibleStates, boolean singleUnit) {
-        this.possibleStates = new ArrayList<TaskState>();
+        this.possibleStates = new ArrayList<>();
         Collections.addAll(this.possibleStates, possibleStates);
 
         this.singleUnit = singleUnit;

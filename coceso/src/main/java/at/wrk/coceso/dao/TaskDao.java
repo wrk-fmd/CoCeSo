@@ -4,7 +4,7 @@ import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.TaskState;
-import at.wrk.coceso.utils.CocesoLogger;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -21,6 +21,9 @@ import java.util.Map;
 public class TaskDao {
     private JdbcTemplate jdbc;
 
+    private final static
+    Logger LOG = Logger.getLogger(TaskDao.class);
+
     @Autowired
     public TaskDao(DataSource dataSource) {
         jdbc = new JdbcTemplate(dataSource);
@@ -31,7 +34,7 @@ public class TaskDao {
 
         SqlRowSet rs = jdbc.queryForRowSet(q, id);
 
-        Map<Integer, TaskState> ret = new HashMap<Integer, TaskState>();
+        Map<Integer, TaskState> ret = new HashMap<>();
 
         while(rs.next()) {
             ret.put(rs.getInt("unit_fk"), TaskState.valueOf(rs.getString("state")));
@@ -45,7 +48,7 @@ public class TaskDao {
 
         SqlRowSet rs = jdbc.queryForRowSet(q, id);
 
-        Map<Integer, TaskState> ret = new HashMap<Integer, TaskState>();
+        Map<Integer, TaskState> ret = new HashMap<>();
 
         while(rs.next()) {
             ret.put(rs.getInt("incident_fk"), TaskState.valueOf(rs.getString("state")));
@@ -60,7 +63,7 @@ public class TaskDao {
 
         SqlRowSet rs = jdbc.queryForRowSet(q, id);
 
-        List<Incident> ret = new LinkedList<Incident>();
+        List<Incident> ret = new LinkedList<>();
 
         while(rs.next()) {
 
@@ -82,11 +85,11 @@ public class TaskDao {
         String q = "INSERT INTO task (incident_fk, unit_fk, state) VALUES (?,?,?)";
 
         try {
-            CocesoLogger.debug("TaskDao.add(): Try to add unit #" + unit_id +
+            LOG.debug("TaskDao.add(): Try to add unit #" + unit_id +
                     ", incident #" + incident_id + " with new state '" + state + "'");
             jdbc.update(q, incident_id, unit_id, state.name());
         } catch(DataAccessException e) {
-            CocesoLogger.warn("TaskDao add: "+e);
+            LOG.warn("TaskDao add: "+e);
             return false;
         }
         return true;
@@ -96,11 +99,11 @@ public class TaskDao {
         String q = "UPDATE task SET state = ? WHERE incident_fk = ? AND unit_fk = ?";
 
         try {
-            CocesoLogger.debug("TaskDao.update(): Try to update unit #" + unit_id +
+            LOG.debug("TaskDao.update(): Try to update unit #" + unit_id +
                     ", incident #" + incident_id + " to new state '" + state + "'");
             jdbc.update(q, state.name(), incident_id, unit_id);
         } catch(DataAccessException e) {
-            CocesoLogger.warn("TaskDao.update(): ERROR "+e);
+            LOG.warn("TaskDao.update(): ERROR "+e);
             return false;
         }
         return true;
@@ -110,11 +113,11 @@ public class TaskDao {
         String q = "DELETE FROM task WHERE incident_fk = ? AND unit_fk = ?";
 
         try {
-            CocesoLogger.debug("TaskDao.remove(): Try to remove unit #" + unit_id +
+            LOG.debug("TaskDao.remove(): Try to remove unit #" + unit_id +
                     " and incident #" + incident_id);
             jdbc.update(q, incident_id, unit_id);
         } catch(DataAccessException e) {
-            CocesoLogger.warn("TaskDao.remove(): "+e);
+            LOG.warn("TaskDao.remove(): "+e);
         }
     }
 
@@ -122,10 +125,10 @@ public class TaskDao {
         String q = "DELETE FROM task WHERE unit_fk = ?";
 
         try {
-            CocesoLogger.debug("TaskDao.removeAllByUnit(): Try to remove all from unit #" + unit_id);
+            LOG.debug("TaskDao.removeAllByUnit(): Try to remove all from unit #" + unit_id);
             jdbc.update(q, unit_id);
         } catch(DataAccessException e) {
-            CocesoLogger.warn("TaskDao removeAllByUnit: "+e);
+            LOG.warn("TaskDao removeAllByUnit: "+e);
         }
     }
 
@@ -133,10 +136,10 @@ public class TaskDao {
         String q = "DELETE FROM task WHERE incident_fk = ?";
 
         try {
-            CocesoLogger.debug("TaskDao.removeAllByIncident(): Try to remove all from incident #" + incident_id);
+            LOG.debug("TaskDao.removeAllByIncident(): Try to remove all from incident #" + incident_id);
             jdbc.update(q, incident_id);
         } catch(DataAccessException e) {
-            CocesoLogger.debug("TaskDao removeAllByIncident: "+e);
+            LOG.debug("TaskDao removeAllByIncident: "+e);
         }
     }
 }

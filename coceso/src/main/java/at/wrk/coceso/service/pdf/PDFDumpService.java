@@ -7,10 +7,13 @@ import at.wrk.coceso.service.IncidentService;
 import at.wrk.coceso.service.LogService;
 import at.wrk.coceso.service.PatientService;
 import at.wrk.coceso.service.UnitService;
-import at.wrk.coceso.utils.CocesoLogger;
 import at.wrk.coceso.utils.PdfStyle;
-import com.itextpdf.text.*;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfPTable;
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -19,10 +22,13 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.*;
-import java.util.List;
 
 @Service
 public class PDFDumpService {
+
+    private final static
+    Logger LOG = Logger.getLogger(PDFDumpService.class);
+    
     private Date initialized = null;
 
     private String dateFormat;
@@ -58,12 +64,12 @@ public class PDFDumpService {
         this.user = user;
 
 
-        unitMap = new HashMap<Integer, Unit>();
+        unitMap = new HashMap<>();
         for(Unit unit : unitService.getAll(concern.getId())) {
             unitMap.put(unit.getId(), unit);
         }
 
-        incidentMap = new HashMap<Integer, Incident>();
+        incidentMap = new HashMap<>();
         for(Incident incident : incidentService.getAll(concern.getId())) {
             incidentMap.put(incident.getId(), incident);
         }
@@ -78,23 +84,23 @@ public class PDFDumpService {
      */
     public void create(Document document) throws DocumentException {
         if(initialized == null) {
-            CocesoLogger.warn("PDFDumpService.create(): Tried to run not initialized instance!");
+            LOG.warn("PDFDumpService.create(): Tried to run not initialized instance!");
             return;
         }
 
         // Create IncidentState filter (all except for 'Done')
         // Always call ArrayList ctor!! Arrays.asList(.) is read-only!
-        java.util.List<IncidentState> shownStates = new ArrayList<IncidentState>(Arrays.asList(IncidentState.class.getEnumConstants()));
+        java.util.List<IncidentState> shownStates = new ArrayList<>(Arrays.asList(IncidentState.class.getEnumConstants()));
         shownStates.remove(IncidentState.Done);
 
         // Create IncidentType filter (all non single-unit incidents)
-        java.util.List<IncidentType> shownTypes = new java.util.LinkedList<IncidentType>();
+        java.util.List<IncidentType> shownTypes = new java.util.LinkedList<>();
         for(IncidentType type : IncidentType.class.getEnumConstants()) {
             if(!type.isSingleUnit())
                 shownTypes.add(type);
         }
 
-        CocesoLogger.debug("Create PDF Dump of #" + concern.getId() + ", unitMap.size()=" + unitMap.size() +
+        LOG.debug("Create PDF Dump of #" + concern.getId() + ", unitMap.size()=" + unitMap.size() +
                 ", incidentMap.size()=" + incidentMap.size());
 
         addFrontPage(document);
@@ -112,7 +118,7 @@ public class PDFDumpService {
         document.add(new Paragraph(" "));
 
         // Sort alphabetically by 'call'
-        java.util.List<Unit> unitList = new ArrayList<Unit>(unitMap.values());
+        java.util.List<Unit> unitList = new ArrayList<>(unitMap.values());
         Collections.sort(unitList, new Comparator<Unit>() {
             @Override
             public int compare(Unit o1, Unit o2) {
@@ -146,7 +152,7 @@ public class PDFDumpService {
                             if(tUnit.getState() != current) {
                                 // No valid LogEntry with same State found before
                                 if(last == null) {
-                                    CocesoLogger.warn("PDFDumpService.addUnitStats(): CORRUPT DATA while parsing last UnitState Change!");
+                                    LOG.warn("PDFDumpService.addUnitStats(): CORRUPT DATA while parsing last UnitState Change!");
                                     break;
                                 }
                                 // Set Timestamp of last LogEntry with same State as 'current'
@@ -157,7 +163,7 @@ public class PDFDumpService {
                             }
                         }
                     } catch (IOException e) {
-                        CocesoLogger.warn(e.getMessage());
+                        LOG.warn(e.getMessage());
                     }
                 }
             }
@@ -202,7 +208,7 @@ public class PDFDumpService {
                                 if (logEntry.getState() == state) {
                                     lastChange = logEntry.getTimestamp();
                                 } else {
-                                    CocesoLogger.warn("PDFDumpService.addUnitStats(): CORRUPT DATA while parsing last TaskState Change!");
+                                    LOG.warn("PDFDumpService.addUnitStats(): CORRUPT DATA while parsing last TaskState Change!");
                                 }
                                 break;
                             }
@@ -216,7 +222,7 @@ public class PDFDumpService {
                         table.addCell(state == null ? "N/A" : messageSource.getMessage("label.task.state." + state.name().toLowerCase(), null, locale));
                         table.addCell(lastChange == null ? "N/A" : new java.text.SimpleDateFormat(dateFormat).format(lastChange));
                     } else {
-                        CocesoLogger.warn("PDFDumpService.addUnitStats(): assigned Incident with ID #" + incidentID + " not found.");
+                        LOG.warn("PDFDumpService.addUnitStats(): assigned Incident with ID #" + incidentID + " not found.");
                     }
 
                 }
@@ -245,7 +251,7 @@ public class PDFDumpService {
         document.add(new Paragraph(messageSource.getMessage("label.incidents", null, locale), PdfStyle.titleFont));
         document.add(new Paragraph(" "));
 
-        java.util.List<Incident> incidentList = new ArrayList<Incident>(incidentMap.values());
+        java.util.List<Incident> incidentList = new ArrayList<>(incidentMap.values());
 
         Collections.sort(incidentList, new Comparator<Incident>() {
             @Override
@@ -326,7 +332,7 @@ public class PDFDumpService {
             // If incidents with state 'Done' are shown, search for already detached units
             if(shownStates.contains(IncidentState.Done)) {
                 List<LogEntry> logs = logService.getByIncidentId(incident.getId());
-                List<Unit> units = new LinkedList<Unit>();
+                List<Unit> units = new LinkedList<>();
 
                 for(LogEntry log : logs) {
                     if(log.getType() == LogEntryType.UNIT_ASSIGN) {
@@ -389,13 +395,13 @@ public class PDFDumpService {
     }
 
     public void setDestructed() {
-        CocesoLogger.debug("PdfDumpService destructed");
+        LOG.debug("PdfDumpService destructed");
         initialized = null;
     }
 
     public void createTransportList(Document document) throws DocumentException {
         if(initialized == null) {
-            CocesoLogger.warn("PDFDumpService.createTransportList(): Tried to run not initialized instance!");
+            LOG.warn("PDFDumpService.createTransportList(): Tried to run not initialized instance!");
             return;
         }
 
@@ -403,7 +409,7 @@ public class PDFDumpService {
         List<IncidentState> shownStates = Arrays.asList(IncidentState.class.getEnumConstants());
 
         // Create IncidentType filter (only 'Transport')
-        List<IncidentType> shownTypes = new LinkedList<IncidentType>();
+        List<IncidentType> shownTypes = new LinkedList<>();
         shownTypes.add(IncidentType.Transport);
 
         addIncidentStats(document, shownTypes, shownStates);

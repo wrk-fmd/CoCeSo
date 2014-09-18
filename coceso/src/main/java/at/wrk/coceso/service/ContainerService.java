@@ -34,9 +34,6 @@ public class ContainerService {
      */
     public synchronized boolean updateUnit(int containerId, int unitId, double ordering) {
         containerDao.resetUnit(unitId);
-        if(ordering == -2) {
-            return true;
-        }
-        return containerDao.addUnit(containerId, unitId, ordering);
+        return ordering == -2 || containerDao.addUnit(containerId, unitId, ordering);
     }
 }

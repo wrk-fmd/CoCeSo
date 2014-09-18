@@ -9,12 +9,12 @@ import at.wrk.coceso.service.IncidentService;
 import at.wrk.coceso.service.LogService;
 import at.wrk.coceso.service.PatientService;
 import at.wrk.coceso.service.UnitService;
-import at.wrk.coceso.utils.CocesoLogger;
 import at.wrk.coceso.utils.PdfStyle;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -28,11 +28,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Locale;
 
 @Controller
 @RequestMapping("/finalReport")
 public class FinalReportController {
+
+    private final static
+    Logger LOG = Logger.getLogger(FinalReportController.class);
 
     @Autowired
     MessageSource messageSource;
@@ -83,7 +89,7 @@ public class FinalReportController {
             throw new ConcernNotFoundException();
         }
 
-        CocesoLogger.info("User " + user.getUsername() + " requested Final Report for Concern #" + id + " (" + concern.getName() + ")");
+        LOG.info("User " + user.getUsername() + " requested Final Report for Concern #" + id + " (" + concern.getName() + ")");
 
         // Load all data
 
@@ -115,16 +121,12 @@ public class FinalReportController {
 
             // TODO Custom Log History
 
-            CocesoLogger.info("Final Report for Concern #" + id + " (" + concern.getName() + ") completely written");
+            LOG.info("Final Report for Concern #" + id + " (" + concern.getName() + ") completely written");
 
         }
-        catch(IOException e) {
-            CocesoLogger.error("FinalReportController.print(): " + e.getMessage());
-        }
-        catch(DocumentException e) {
-            CocesoLogger.error("FinalReportController.print(): "+e.getMessage());
-        }
-        finally {
+        catch(IOException | DocumentException e) {
+            LOG.error("FinalReportController.print(): " + e.getMessage());
+        } finally {
             document.close();
         }
 
@@ -136,7 +138,7 @@ public class FinalReportController {
     }
 
 
-    private void addMeta(Document document) throws DocumentException {
+    private void addMeta(Document document) {
         document.addTitle("Abschlussbericht der Ambulanz\n" + concern.getName());
         document.addAuthor("CoCeSo");
         document.addCreator("CoCeSo - " + user.getUsername());
@@ -294,7 +296,7 @@ public class FinalReportController {
                     Incident tIncident = jsonContainer.getIncident();
 
                     if(tUnit == null) {
-                        CocesoLogger.debug("FinalReportController: Parsing Error???");
+                        LOG.debug("FinalReportController: Parsing Error???");
                         continue;
                     }
 
@@ -315,7 +317,7 @@ public class FinalReportController {
                     }
 
                 } catch (IOException e) {
-                    CocesoLogger.warn(e.getMessage());
+                    LOG.warn(e.getMessage());
                 }
 
 
@@ -456,7 +458,7 @@ public class FinalReportController {
                     Incident tIncident = jsonContainer.getIncident();
 
                     if(tIncident == null) {
-                        CocesoLogger.debug("FinalReportController: Parsing Error???");
+                        LOG.debug("FinalReportController: Parsing Error???");
                         continue;
                     }
 
@@ -481,7 +483,7 @@ public class FinalReportController {
                     }
 
                 } catch (IOException e) {
-                    CocesoLogger.warn(e.getMessage());
+                    LOG.warn(e.getMessage());
                 }
 
 

@@ -4,11 +4,11 @@ import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Operator;
 import at.wrk.coceso.service.ConcernService;
 import at.wrk.coceso.service.pdf.PDFDumpService;
-import at.wrk.coceso.utils.CocesoLogger;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.pdf.PdfWriter;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
@@ -25,6 +25,9 @@ import java.util.Locale;
 @Controller
 @RequestMapping("/pdfdump")
 public class PDFDumpController {
+
+    private final static
+    Logger LOG = Logger.getLogger(PDFDumpController.class);
 
     @Autowired
     ConcernService concernService;
@@ -59,7 +62,8 @@ public class PDFDumpController {
             throw new ConcernClosedException();
         }
 
-        CocesoLogger.info("User " + user.getUsername() + " requested PDF Dump for Concern #" + id + " (" + concern.getName() + ")");
+        LOG.info(String.format("User %s requested PDF Dump for Concern #%d (%s)",
+                user.getUsername(), concern.getId(), concern.getName()));
 
 
         Document document = new Document(PageSize.A4.rotate());
@@ -73,13 +77,9 @@ public class PDFDumpController {
             pdfDumpService.create(document);
 
         }
-        catch(IOException e) {
-            CocesoLogger.error("PDFDumpController.print(): " + e.getMessage());
-        }
-        catch(DocumentException e) {
-            CocesoLogger.error("PDFDumpController.print(): " + e.getMessage());
-        }
-        finally {
+        catch(IOException | DocumentException e) {
+            LOG.error("PDFDumpController.print(): " + e.getMessage());
+        } finally {
             document.close();
             pdfDumpService.setDestructed();
         }
@@ -106,7 +106,8 @@ public class PDFDumpController {
             throw new ConcernNotFoundException();
         }
 
-        CocesoLogger.info("User " + user.getUsername() + " requested Transport for Concern #" + id + " (" + concern.getName() + ")");
+        LOG.info(String.format("User %s requested Transport List for Concern #%d (%s)",
+                user.getUsername(), concern.getId(), concern.getName()));
 
 
         Document document = new Document(PageSize.A4);
@@ -121,13 +122,9 @@ public class PDFDumpController {
             pdfDumpService.createTransportList(document);
 
         }
-        catch(IOException e) {
-            CocesoLogger.error("PDFDumpController.transportlist(): " + e.getMessage());
-        }
-        catch(DocumentException e) {
-            CocesoLogger.error("PDFDumpController.transportlist(): " + e.getMessage());
-        }
-        finally {
+        catch(IOException | DocumentException e) {
+            LOG.error("PDFDumpController.transportlist(): " + e.getMessage());
+        } finally {
             document.close();
             pdfDumpService.setDestructed();
         }

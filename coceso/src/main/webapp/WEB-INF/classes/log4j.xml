@@ -66,11 +66,6 @@
         <appender-ref ref="file_selcall" />
     </logger>
 
-    <logger name="CoCeSo"> <!-- TODO Remove if utils.CocesoLogger is not used anymore -->
-        <level value="debug" />
-        <appender-ref ref="file_application" />
-    </logger>
-
     <!-- 3rdparty Loggers -->
     <logger name="org.springframework">
         <level value="info" />

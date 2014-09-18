@@ -21,7 +21,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class SelcallManager {
 
     private static final int MESSAGE_LENGTH = 5; // range: 1-8
-    private static Logger LOG = Logger.getLogger(SelcallManager.class);
+    private final static
+    Logger LOG = Logger.getLogger(SelcallManager.class);
 
     private static SelcallManager instance = null;
 
@@ -48,7 +49,7 @@ public class SelcallManager {
             }
         };
 
-        queue = new ConcurrentLinkedQueue<Byte>();
+        queue = new ConcurrentLinkedQueue<>();
 
         openSerialPort();
 
@@ -73,7 +74,7 @@ public class SelcallManager {
                 return false;
             }
         } catch (NoSuchPortException e) {
-            LOG.error(String.format("No Such Port: %s", PORT), e);
+            LOG.warn(String.format("No Such Port: %s", PORT));
             return false;
         }
 

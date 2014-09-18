@@ -7,7 +7,7 @@ import at.wrk.coceso.entity.Patient;
 import at.wrk.coceso.entity.enums.LogEntryType;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.service.*;
-import at.wrk.coceso.utils.CocesoLogger;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
@@ -25,6 +25,9 @@ import java.util.List;
 @Controller
 @RequestMapping("/search/patient")
 public class SearchPatientController {
+
+    private static final
+    Logger LOG = Logger.getLogger(SearchPatientController.class);
 
     @Autowired
     PatientService patientService;
@@ -74,21 +77,21 @@ public class SearchPatientController {
         try {
             concernId = Integer.parseInt(cid);
         } catch (NumberFormatException ne) {
-            CocesoLogger.debug(ne.getMessage());
-            return new LinkedList<PatientModel>();
+            LOG.warn(String.format("Incorrect concern ID. user: %s", user.getUsername()));
+            return new LinkedList<>();
         }
 
-        CocesoLogger.info("SearchPatient: User " + user.getUsername() + " loaded patientdata of concern #" + concernId);
+        LOG.info(String.format("SearchPatient: User %s loaded patientdata of concern #%d", user.getUsername(), concernId));
 
         List<Patient> patients = patientService.getAll(concernId);
 
-        List<PatientModel> models = new LinkedList<PatientModel>();
+        List<PatientModel> models = new LinkedList<>();
 
         for(Patient p : patients) {
             PatientModel tmp = new PatientModel(p);
             Incident i = incidentService.getById(p.getId());
             tmp.ao = i.getAo() == null ? null : i.getAo().getInfo();
-            tmp.history = new LinkedList<HistoryModel>();
+            tmp.history = new LinkedList<>();
 
             for(LogEntry log : logService.getByIncidentId(i.getId())) {
                 if(log.getType() == LogEntryType.TASKSTATE_CHANGED) {

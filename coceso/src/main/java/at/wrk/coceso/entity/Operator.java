@@ -36,7 +36,7 @@ public class Operator extends Person implements UserDetails {
     @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> ret = new ArrayList<GrantedAuthority>();
+        List<GrantedAuthority> ret = new ArrayList<>();
 
         if(internalAuthorities != null) for(final CocesoAuthority auth : internalAuthorities) {
             ret.add(new GrantedAuthority() {

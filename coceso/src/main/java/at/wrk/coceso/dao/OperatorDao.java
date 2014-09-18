@@ -4,7 +4,7 @@ package at.wrk.coceso.dao;
 import at.wrk.coceso.dao.mapper.OperatorMapper;
 import at.wrk.coceso.entity.Operator;
 import at.wrk.coceso.entity.Person;
-import at.wrk.coceso.utils.CocesoLogger;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -22,6 +22,9 @@ import java.util.List;
 
 @Repository
 public class OperatorDao extends CocesoDao<Operator> {
+
+    private final static
+    Logger LOG = Logger.getLogger(OperatorDao.class);
 
     @Autowired
     private OperatorMapper operatorMapper;
@@ -60,7 +63,7 @@ public class OperatorDao extends CocesoDao<Operator> {
         try {
             return jdbc.queryForObject(q, new Object[] {username}, operatorMapper);
         } catch(DataAccessException e) {
-            CocesoLogger.debug("OperatorDAO.getByUsername "+e.getMessage());
+            LOG.debug("OperatorDAO.getByUsername "+e.getMessage());
             return null;
         }
     }

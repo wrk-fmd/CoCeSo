@@ -4,9 +4,7 @@ package at.wrk.coceso.utils;
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.enums.IncidentType;
 import com.itextpdf.text.Font;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.stereotype.Component;
 
 import java.util.Locale;
 

@@ -35,7 +35,7 @@ public class CrewDao {
 
     public List<Person> getByUnitId(int unit_id) {
         List<Integer> keys = jdbc.query("SELECT * FROM crew WHERE unit_fk = ?", new Object[] {unit_id}, crewPersonMapper);
-        List<Person> persons = new ArrayList<Person>();
+        List<Person> persons = new ArrayList<>();
 
         for(Integer k : keys) {
             persons.add(personDao.getById(k));

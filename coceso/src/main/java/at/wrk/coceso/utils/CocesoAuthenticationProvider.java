@@ -3,6 +3,7 @@ package at.wrk.coceso.utils;
 
 import at.wrk.coceso.dao.OperatorDao;
 import at.wrk.coceso.entity.Operator;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -19,7 +20,6 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.Collection;
-import org.apache.log4j.Logger;
 
 @Service
 public class CocesoAuthenticationProvider implements AuthenticationProvider {
@@ -40,7 +40,7 @@ public class CocesoAuthenticationProvider implements AuthenticationProvider {
     private OperatorDao operatorDao;
 
 
-    private String thirdPartyAuthenticationURL;
+    private final String thirdPartyAuthenticationURL;
 
     @Autowired
     public CocesoAuthenticationProvider (String thirdPartyAuthenticationURL, Boolean useThirdPartyAuth, Boolean firstUse)

@@ -27,7 +27,7 @@ public class SelcallController {
     @RequestMapping(value = "receive", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public DeferredResult<Selcall> receive() {
-        DeferredResult<Selcall> result = new DeferredResult<Selcall>();
+        DeferredResult<Selcall> result = new DeferredResult<>();
 
         selcallService.receiveRequest(result);
 

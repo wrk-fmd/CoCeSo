@@ -2,7 +2,7 @@ package at.wrk.coceso.dao;
 
 import at.wrk.coceso.dao.mapper.ConcernMapper;
 import at.wrk.coceso.entity.Concern;
-import at.wrk.coceso.utils.CocesoLogger;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
@@ -22,6 +22,9 @@ import java.util.List;
 @Repository
 public class ConcernDao extends CocesoDao<Concern> {
 
+    private final static
+    Logger LOG = Logger.getLogger(ConcernDao.class);
+    
     private final String prefix = "SELECT * FROM concern ";
 
     @Autowired
@@ -46,12 +49,12 @@ public class ConcernDao extends CocesoDao<Concern> {
             caze = jdbc.queryForObject(q, new Integer[] {id}, concernMapper);
         }
         catch(IncorrectResultSizeDataAccessException e) {
-            CocesoLogger.debug("ConcernDao.getById(int): requested id: "+id
+            LOG.debug("ConcernDao.getById(int): requested id: "+id
                     +"; IncorrectResultSizeDataAccessException: "+e.getMessage());
             return null;
         }
         catch(DataAccessException dae) {
-            CocesoLogger.warn("CaseDao.getById(int): requested id: "+id+"; DataAccessException: "+dae.getMessage());
+            LOG.warn("CaseDao.getById(int): requested id: "+id+"; DataAccessException: "+dae.getMessage());
             return null;
         }
 
@@ -73,7 +76,7 @@ public class ConcernDao extends CocesoDao<Concern> {
             return jdbc.query(q, concernMapper);
         }
         catch(DataAccessException dae) {
-            CocesoLogger.error("UnitDao.getAll: DataAccessException: "+dae.getMessage());
+            LOG.error("UnitDao.getAll: DataAccessException: "+dae.getMessage());
             return null;
         }
     }
@@ -155,7 +158,7 @@ public class ConcernDao extends CocesoDao<Concern> {
             return jdbc.query(q, concernMapper);
         }
         catch(DataAccessException dae) {
-            CocesoLogger.error("UnitDao.getAll: DataAccessException: "+dae.getMessage());
+            LOG.error("UnitDao.getAll: DataAccessException: "+dae.getMessage());
             return null;
         }
     }

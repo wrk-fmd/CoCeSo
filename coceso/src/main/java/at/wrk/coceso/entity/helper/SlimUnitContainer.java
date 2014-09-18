@@ -22,12 +22,12 @@ public class SlimUnitContainer {
         this.id = container.getId();
         this.name = container.getName();
 
-        subContainer = new LinkedList<SlimUnitContainer>();
+        subContainer = new LinkedList<>();
         for(UnitContainer sub : container.getSubContainer()) {
             subContainer.add(new SlimUnitContainer(sub));
         }
 
-        unitIds = new LinkedList<Integer>();
+        unitIds = new LinkedList<>();
         for(SlimUnit unit : container.getUnits()) {
             unitIds.add(unit.getId());
         }

@@ -5,7 +5,7 @@ import at.wrk.coceso.dao.PointDao;
 import at.wrk.coceso.dao.TaskDao;
 import at.wrk.coceso.entity.enums.UnitState;
 import at.wrk.coceso.entity.helper.UnitWithLocked;
-import at.wrk.coceso.utils.CocesoLogger;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -15,6 +15,9 @@ import java.sql.SQLException;
 
 @Repository
 public class UnitMapperWithLocked implements RowMapper<UnitWithLocked> {
+
+    private final static
+    Logger LOG = Logger.getLogger(UnitMapperWithLocked.class);
 
   @Autowired
   private CrewDao crewDao;
@@ -41,7 +44,7 @@ public class UnitMapperWithLocked implements RowMapper<UnitWithLocked> {
     try {
       unit.setState(UnitState.valueOf(rs.getString("state")));
     } catch (IllegalArgumentException e) {
-      CocesoLogger.error("UnitMapper: unit_id:" + unit.getId() + ", Cant read UnitState, Reset To NULL");
+      LOG.error("UnitMapper: unit_id:" + unit.getId() + ", Cant read UnitState, Reset To NULL");
       unit.setState(null);
     }
 

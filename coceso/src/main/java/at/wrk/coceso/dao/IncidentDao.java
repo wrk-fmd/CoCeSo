@@ -4,10 +4,9 @@ import at.wrk.coceso.dao.mapper.IncidentMapper;
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.enums.IncidentType;
-import at.wrk.coceso.utils.CocesoLogger;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -23,6 +22,9 @@ import java.util.List;
 
 @Repository
 public class IncidentDao extends CocesoDao<Incident> {
+
+    private final static
+    Logger LOG = Logger.getLogger(IncidentDao.class);
 
     @Autowired
     private IncidentMapper incidentMapper;
@@ -41,7 +43,7 @@ public class IncidentDao extends CocesoDao<Incident> {
     @Override
     public Incident getById(int id) {
         if(id < 1) {
-            CocesoLogger.error("IncidentDao.getById(int): Invalid ID: "+id);
+            LOG.warn(String.format("Invalid ID: %d", id));
             return null;
         }
 
@@ -51,12 +53,8 @@ public class IncidentDao extends CocesoDao<Incident> {
         try {
             incident = jdbc.queryForObject(q, new Object[] {id}, incidentMapper);
         }
-        catch(IncorrectResultSizeDataAccessException e) {
-            CocesoLogger.error("IncidentDao.getById(int): requested id: " + id + "; "+e.getMessage());
-            return null;
-        }
-        catch(DataAccessException dae) {
-            CocesoLogger.error("IncidentDao.getById(int): requested id: "+id+"; DataAccessException: "+dae.getMessage());
+        catch(DataAccessException e) {
+            LOG.error(String.format("IncidentDao.getById(int): requested id: %d;\n%s", id, e.getMessage()));
             return null;
         }
 
@@ -126,7 +124,7 @@ public class IncidentDao extends CocesoDao<Incident> {
         final String suf_q = "WHERE id = ?";
 
         String q = pre_q;
-        List<Object> parameters = new ArrayList<Object>();
+        List<Object> parameters = new ArrayList<>();
         boolean comma = false;
 
         incident.setBo(unitDao.createPointIfNotExist(incident.getBo()));
@@ -190,7 +188,7 @@ public class IncidentDao extends CocesoDao<Incident> {
 
         // Nothing to update
         if(!comma) {
-            CocesoLogger.warn("Tried to update empty Incident: id="+incident.getId());
+            LOG.info(String.format("Tried to update empty Incident: id=%d", incident.getId()));
             return false;
         }
 

@@ -10,7 +10,7 @@ import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.LogEntryType;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entity.helper.UnitWithLocked;
-import at.wrk.coceso.utils.CocesoLogger;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +19,9 @@ import java.util.List;
 
 @Service
 public class UnitService {
+
+    private final static
+    Logger LOG = Logger.getLogger(UnitService.class);
 
     @Autowired
     private LogService logService;
@@ -55,7 +58,8 @@ public class UnitService {
     public boolean update(Unit unit, Operator operator) {
         boolean ret = update(unit);
         if(!ret) {
-            CocesoLogger.info("Update of Unit #" + unit.getId() + " by User " + operator.getUsername() + " failed");
+            LOG.info(String.format("Update of Unit #%d by User %s failed",
+                    unit.getId(), operator.getUsername()));
         }
         logService.logFull(operator, LogEntryType.UNIT_UPDATE, unit.getConcern(), unit, null, true);
         return ret;
@@ -68,7 +72,8 @@ public class UnitService {
     public boolean updateFull(Unit unit, Operator operator) {
         boolean ret = updateFull(unit);
         if(!ret) {
-            CocesoLogger.info("Full Update of Unit #" + unit.getId() + " by User " + operator.getUsername() + " failed");
+            LOG.info(String.format("Full Update of Unit #%d by User %s failed",
+                    unit.getId(), operator.getUsername()));
         }
         // UNIT_CREATE for difference in Log -> so it can be deleted, if Unit is only updated via Edit Page
         logService.logFull(operator, LogEntryType.UNIT_CREATE, unit.getConcern(), unit, null, true);

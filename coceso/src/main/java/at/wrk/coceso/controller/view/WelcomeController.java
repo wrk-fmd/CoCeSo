@@ -4,6 +4,7 @@ import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Operator;
 import at.wrk.coceso.entity.enums.CocesoAuthority;
 import at.wrk.coceso.service.OperatorService;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
@@ -24,6 +25,9 @@ public class WelcomeController {
   private static final CocesoAuthority CLOSE_AUTHORITY = CocesoAuthority.Root;
 
   private static final Set<Integer> allowedErrors = new HashSet<Integer>(Arrays.asList(1));
+
+    private final static
+    Logger LOG = Logger.getLogger(WelcomeController.class);
 
   @Autowired
   private OperatorService operatorService;
@@ -58,10 +62,13 @@ public class WelcomeController {
 
     // Read last active Concern
     Concern active = user.getActiveConcern();
+
     // Check if still active and valid
-    if (active != null && !active.isClosed()) {
+    if (active != null && !active.isClosed()) {  // concern active
       response.addCookie(new Cookie("concern", active.getId() + ""));
-    } else {
+    }
+    else {   // concern already closed
+        LOG.info("active concern already closed, clean up");
       // Delete Cookie
       response.addCookie(new Cookie("concern", null));
       // Delete Active Concern Reference
@@ -77,7 +84,11 @@ public class WelcomeController {
       map.addAttribute("authorized", true);
     }
 
-    return "home";
+      LOG.debug(String.format("User %s started CoCeSo, Home Screen",
+              user == null ? "N/A" : user.getUsername()));
+
+
+      return "home";
   }
 
 }

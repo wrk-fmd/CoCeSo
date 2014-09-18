@@ -2,7 +2,7 @@ package at.wrk.coceso.dao;
 
 import at.wrk.coceso.dao.mapper.PointMapper;
 import at.wrk.coceso.entity.Point;
-import at.wrk.coceso.utils.CocesoLogger;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -20,6 +20,9 @@ import java.util.List;
 @Repository
 public class PointDao extends CocesoDao<Point> {
 
+    private final static
+    Logger LOG = Logger.getLogger(PointDao.class);
+    
     @Autowired
     private PointMapper pointMapper;
 
@@ -42,7 +45,7 @@ public class PointDao extends CocesoDao<Point> {
             poi = jdbc.queryForObject(q, new Integer[] {id}, pointMapper);
         }
         catch(DataAccessException dae) {
-            CocesoLogger.error("PoiDao.getById(int): requested id: "+id+"; DataAccessException: "+dae.getMessage());
+            LOG.error("PoiDao.getById(int): requested id: "+id+"; DataAccessException: "+dae.getMessage());
             return null;
         }
 
@@ -67,7 +70,7 @@ public class PointDao extends CocesoDao<Point> {
             return list.get(0);
         }
         catch(DataAccessException dae) {
-            CocesoLogger.error("PoiDao.getByInfo: requested id: "+info+"; DataAccessException: "+dae.getMessage());
+            LOG.error("PoiDao.getByInfo: requested id: "+info+"; DataAccessException: "+dae.getMessage());
             return null;
         }
     }
@@ -86,7 +89,7 @@ public class PointDao extends CocesoDao<Point> {
             return jdbc.query(q, pointMapper);
         }
         catch(DataAccessException dae) {
-            CocesoLogger.error("PoiDao.getAll(): DataAccessException: "+dae.getMessage());
+            LOG.error("PoiDao.getAll(): DataAccessException: "+dae.getMessage());
             return null;
         }
 
@@ -95,7 +98,7 @@ public class PointDao extends CocesoDao<Point> {
     @Override
     public boolean update(Point poi) {
         if(poi == null) {
-            CocesoLogger.debug("PoiDao.update(): poi is NULL");
+            LOG.debug("PoiDao.update(): poi is NULL");
             return false;
         }
         if(poi.getId() <= 0) {
@@ -110,7 +113,7 @@ public class PointDao extends CocesoDao<Point> {
             jdbc.update(q, poi.getInfo(), poi.getLongitude(), poi.getLatitude(), poi.getId());
         }
         catch(DataAccessException dae) {
-            CocesoLogger.error("PoiDao.update(): DataAccessException: " + dae.getMessage());
+            LOG.error("PoiDao.update(): DataAccessException: " + dae.getMessage());
             return false;
         }
         return true;
@@ -119,7 +122,7 @@ public class PointDao extends CocesoDao<Point> {
     @Override
     public int add(final Point poi) {
         if(poi == null) {
-            CocesoLogger.debug("PoiDao.add(): poi is NULL");
+            LOG.debug("PoiDao.add(): poi is NULL");
             return -1;
         }
 
@@ -149,7 +152,7 @@ public class PointDao extends CocesoDao<Point> {
             return (Integer) holder.getKeys().get("id");
         }
         catch(DataAccessException dae) {
-            CocesoLogger.error("PoiDao.add(): DataAccessException: " + dae.getMessage());
+            LOG.error("PoiDao.add(): DataAccessException: " + dae.getMessage());
             return -1;
         }
     }
@@ -157,11 +160,11 @@ public class PointDao extends CocesoDao<Point> {
     @Override
     public boolean remove(Point poi) {
         if(poi == null) {
-            CocesoLogger.error("PoiDao.remove(): poi is NULL");
+            LOG.error("PoiDao.remove(): poi is NULL");
             return false;
         }
         if(poi.getId() <= 0) {
-            CocesoLogger.error("PoiDao.remove(): Invalid id: " + poi.getId());
+            LOG.error("PoiDao.remove(): Invalid id: " + poi.getId());
             return false;
         }
 
@@ -171,7 +174,7 @@ public class PointDao extends CocesoDao<Point> {
             jdbc.update(q, poi.getId());
         }
         catch(DataAccessException dae) {
-            CocesoLogger.error("PoiDao.update(): DataAccessException: " + dae.getMessage());
+            LOG.error("PoiDao.update(): DataAccessException: " + dae.getMessage());
             return false;
         }
         return true;

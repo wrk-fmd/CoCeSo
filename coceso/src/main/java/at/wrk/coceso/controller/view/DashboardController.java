@@ -90,7 +90,7 @@ public class DashboardController {
                     map.addAttribute("error", "No Incident Found");
                 }
                 else {
-                    Map<Integer, String> i_map = new HashMap<Integer, String>();
+                    Map<Integer, String> i_map = new HashMap<>();
                     for(Map.Entry<Integer, TaskState> entry : ret.getUnits().entrySet()) {
                         Unit u = unitService.getById(entry.getKey());
                         i_map.put(u.getId(), u.getCall());

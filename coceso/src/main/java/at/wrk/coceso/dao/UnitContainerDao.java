@@ -2,7 +2,7 @@ package at.wrk.coceso.dao;
 
 import at.wrk.coceso.entity.helper.SlimUnit;
 import at.wrk.coceso.entity.helper.UnitContainer;
-import at.wrk.coceso.utils.CocesoLogger;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -14,11 +14,17 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.*;
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 @Repository
 public class UnitContainerDao {
 
+    private final static
+    Logger LOG = Logger.getLogger(UnitContainerDao.class);
+    
     private JdbcTemplate jdbc;
 
     @Autowired
@@ -56,7 +62,7 @@ public class UnitContainerDao {
         if(top == null)
             return null;
 
-        Queue<UnitContainer> queue = new LinkedList<UnitContainer>();
+        Queue<UnitContainer> queue = new LinkedList<>();
         queue.offer(top);
 
         while(queue.peek() != null) {
@@ -99,7 +105,7 @@ public class UnitContainerDao {
             Collections.sort(ordered);
             container.setUnits(ordered);
         } catch (DataAccessException dae) {
-            CocesoLogger.error(dae.getMessage());
+            LOG.error(dae.getMessage());
         }
     }
 
@@ -172,7 +178,7 @@ public class UnitContainerDao {
             return (Integer) holder.getKeys().get("id");
 
         } catch (DataAccessException dae) {
-            CocesoLogger.warn(dae.getMessage());
+            LOG.warn(dae.getMessage());
             return -1;
         }
     }
@@ -206,7 +212,7 @@ public class UnitContainerDao {
             return (Integer) holder.getKeys().get("id");
 
         } catch (DataAccessException dae) {
-            CocesoLogger.warn(dae.getMessage());
+            LOG.warn(dae.getMessage());
             return -1;
         }
     }
@@ -230,7 +236,7 @@ public class UnitContainerDao {
             //Logger.debug("container updated: "+container);
             return true;
         } catch (DataAccessException dae) {
-            CocesoLogger.error(dae.getMessage());
+            LOG.error(dae.getMessage());
             return false;
         }
     }
@@ -250,7 +256,7 @@ public class UnitContainerDao {
         try {
             jdbc.update(q, containerId, unitId, ordering);
         } catch (DataAccessException dae) {
-            CocesoLogger.error(dae.getMessage());
+            LOG.error(dae.getMessage());
             return false;
         }
         return true;
@@ -261,7 +267,7 @@ public class UnitContainerDao {
         try {
             jdbc.update(q, unitId);
         } catch (DataAccessException dae) {
-            CocesoLogger.error(dae.getMessage());
+            LOG.error(dae.getMessage());
         }
     }
 
