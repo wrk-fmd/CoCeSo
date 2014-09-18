@@ -13,7 +13,7 @@
 
     <properties>
         <spring.version>4.0.2.RELEASE</spring.version>
-        <spring.security.version>3.1.4.RELEASE</spring.security.version>
+        <spring.security.version>3.2.4.RELEASE</spring.security.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -148,6 +148,12 @@
             <groupId>com.itextpdf</groupId>
             <artifactId>itextpdf</artifactId>
             <version>5.0.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>at.wrk</groupId>
+            <artifactId>selcall</artifactId>
+            <version>1.2.0</version>
         </dependency>
 
         <dependency>
