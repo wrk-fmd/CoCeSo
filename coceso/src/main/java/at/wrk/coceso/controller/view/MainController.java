@@ -50,8 +50,8 @@ public class MainController {
         }
 
 
-        LOG.debug(String.format("User %s started CoCeSo, Main Program",
-                user == null ? "N/A" : user.getUsername()));
+        LOG.debug(String.format("User %s started CoCeSo, Main Program. Concern #%d (%s)",
+                user == null ? "N/A" : user.getUsername(), concern.getId(), concern.getName()));
 
         map.addAttribute("concern", concern);
 
