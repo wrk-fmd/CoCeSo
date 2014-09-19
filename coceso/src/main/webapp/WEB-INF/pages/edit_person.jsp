@@ -94,7 +94,7 @@
               <c:if test="${not empty authorized}">
                 <td data-bind="text: username.orig"></td>
                 <td data-bind="if: isOperator">
-                  <span class="glyphicon" data-bind="css: allowlogin.orig() ? 'glyphicon-ok-circle' : 'glyphicon-ban-circle'"></span>
+                  <span class="glyphicon" data-bind="css: allowlogin.orig() ? 'glyphicon-ok-circle green' : 'glyphicon-ban-circle red'"></span>
                 </td>
                 <td data-bind="text: authorities.orig().join(', ')"></td>
               </c:if>

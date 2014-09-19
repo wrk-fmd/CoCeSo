@@ -596,3 +596,11 @@ table[id*='keytable'] > tbody > tr > td:nth-child(2) {
 .flag.flag-at {background-position: -16px 0}
 .flag.flag-de {background-position: 0 -11px}
 .flag.flag-us {background-position: -16px -11px}
+
+.green {
+    color: green;
+}
+
+.red {
+    color: red;
+}
