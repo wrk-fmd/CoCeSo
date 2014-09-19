@@ -1,6 +1,8 @@
 package at.wrk.coceso.entity;
 
-public class Concern {
+import java.io.Serializable;
+
+public class Concern implements Serializable {
 
     private int id;
 
