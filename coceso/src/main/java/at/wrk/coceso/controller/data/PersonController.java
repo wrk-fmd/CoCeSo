@@ -7,6 +7,8 @@ import at.wrk.coceso.entity.enums.CocesoAuthority;
 import at.wrk.coceso.entity.helper.SlimOperator;
 import at.wrk.coceso.service.OperatorService;
 import at.wrk.coceso.service.PersonService;
+import at.wrk.coceso.service.csv.CsvParseException;
+import at.wrk.coceso.service.csv.CsvService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/data/person")
@@ -33,6 +36,9 @@ public class PersonController {
 
     @Autowired
     private RoleDao roleDao;
+
+    @Autowired
+    CsvService csvService;
 
     @ResponseBody
     @RequestMapping(value = "getAll", produces = "application/json", method = RequestMethod.GET)
@@ -184,5 +190,25 @@ public class PersonController {
         return "{\"success\":true}";
     }
 
+    @ResponseBody
+    @RequestMapping(value = "uploadPerson", produces = "application/json",
+            consumes = "text/comma-separated-values", method = RequestMethod.POST)
+    public String uploadPerson(@RequestBody String body) {
+
+        final String errorMessage = "{\"success\":false,\"error\":%s}";
+
+        Set<Person> persons;
+        try {
+            persons = csvService.parsePersons(body);
+        } catch (CsvParseException e) {
+            logger.info("error while parsing csv");
+            return String.format(errorMessage, "parseerror");
+        }
+
+        personService.batchCreate(persons);
+
+
+        return "{\"success\":true}";
+    }
 
 }

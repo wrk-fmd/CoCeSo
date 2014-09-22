@@ -24,6 +24,13 @@ public class Person implements Serializable {
         this.contact = person.contact;
     }
 
+    public Person(String given_name, String sur_name, int dNr, String contact) {
+        this.given_name = given_name;
+        this.sur_name = sur_name;
+        this.dNr = dNr;
+        this.contact = contact;
+    }
+
     public String getGiven_name() {
         return given_name;
     }
@@ -62,5 +69,31 @@ public class Person implements Serializable {
 
     public void setContact(String contact) {
         this.contact = contact;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Person)) return false;
+
+        Person person = (Person) o;
+
+        if (this.id > 0 && person.id > 0 && this.id != person.id ) return false;
+
+        if (dNr != person.dNr) return false;
+        //if (contact != null ? !contact.equals(person.contact) : person.contact != null) return false;
+        if (given_name != null ? !given_name.equals(person.given_name) : person.given_name != null) return false;
+        if (sur_name != null ? !sur_name.equals(person.sur_name) : person.sur_name != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = given_name != null ? given_name.hashCode() : 0;
+        result = 31 * result + (sur_name != null ? sur_name.hashCode() : 0);
+        result = 31 * result + dNr;
+        //result = 31 * result + (contact != null ? contact.hashCode() : 0);
+        return result;
     }
 }

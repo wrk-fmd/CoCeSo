@@ -34,12 +34,14 @@
           <div class="form-group col-md-6">
             <label for="position"><spring:message code="label.unit.position"/>:</label>
             <a href="#" class="pull-right" data-bind="click: isHome.set">Set to home</a>
-            <textarea id="position" name="position" rows="3" class="form-control"data-bind="value: position.info, valueUpdate: 'input', css: position.info.css"></textarea>
+            <textarea id="position" name="position" rows="3" class="form-control"
+                      data-bind="value: position.info, valueUpdate: 'input', css: position.info.css"></textarea>
           </div>
 
           <div class="form-group col-md-6">
             <label for="home"><spring:message code="label.unit.home"/>:</label>
-            <textarea id="home" name="home" rows="3" class="form-control" data-bind="value: model() && model().home.info" readonly></textarea>
+            <textarea id="home" name="home" rows="3" class="form-control"
+                      data-bind="value: model() && model().home.info" readonly></textarea>
           </div>
         </div>
 
