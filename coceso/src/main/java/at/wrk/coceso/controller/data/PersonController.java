@@ -193,7 +193,9 @@ public class PersonController {
     @ResponseBody
     @RequestMapping(value = "uploadPerson", produces = "application/json",
             consumes = "text/comma-separated-values", method = RequestMethod.POST)
-    public String uploadPerson(@RequestBody String body) {
+    public String uploadPerson(@RequestBody String body, UsernamePasswordAuthenticationToken token) {
+        Operator user = (Operator) token.getPrincipal();
+        logger.debug(String.format("User %s started batch create of persons", user.getUsername()));
 
         final String errorMessage = "{\"success\":false,\"error\":%s}";
 
@@ -202,13 +204,28 @@ public class PersonController {
             persons = csvService.parsePersons(body);
         } catch (CsvParseException e) {
             logger.info("error while parsing csv");
+            logger.debug(e);
             return String.format(errorMessage, "parseerror");
         }
 
-        personService.batchCreate(persons);
+        int counter = personService.batchCreate(persons);
 
 
-        return "{\"success\":true}";
+        return "{\"success\":true,\"createdCounter\":" + counter + "}";
     }
 
+
+    @PreAuthorize("hasRole('Root')")
+    @RequestMapping(value = "deleteAllNonOperator", method = RequestMethod.POST, produces = "application/json")
+    @ResponseBody
+    public String deleteAllNonOperator(UsernamePasswordAuthenticationToken token) {
+        Operator user = (Operator) token.getPrincipal();
+
+        logger.info(String.format("User %s triggered deletion of all non-Operator Persons", user.getUsername()));
+
+
+        int counter = personService.removeAllNonOperator();
+
+        return "{\"success\":true,\"deletedCounter\":" + counter + "}";
+    }
 }

@@ -42,8 +42,10 @@ public class PersonService {
         return personDao.update(person);
     }
 
-    public void batchCreate(Set<Person> persons) {
+    public int batchCreate(Set<Person> persons) {
         List<Person> currentPersons = getAll();
+
+        int createdCounter = 0;
 
         for(Person person : persons) {
             if(currentPersons.contains(person)) {
@@ -53,7 +55,17 @@ public class PersonService {
                 add(person);
                 LOG.debug(String.format("create Person '%s %s' via csv batch",
                         person.getGiven_name(), person.getSur_name()));
+                createdCounter++;
             }
         }
+
+        LOG.info(String.format("created %d Person entries via csv batch", createdCounter));
+
+        return createdCounter;
+    }
+
+    public int removeAllNonOperator() {
+        // TODO implement me
+        return 0;
     }
 }
