@@ -110,20 +110,20 @@
                     <th>
                       <spring:message code="label.person.name"/>
                     </th>
-                    <th></th>
+                    <th>
+                        <spring:message code="label.person.contact"/>
+                    </th>
                   </tr>
                 </thead>
 
                 <!-- ko if: model -->
-                <tbody data-bind="foreach: model().crew"> <!-- TODO: make it working -->
+                <tbody data-bind="foreach: model().crew">
                   <tr>
                     <td data-bind="text: dNr"></td>
                     <td>
                       <strong data-bind="text: sur_name" ></strong> <span data-bind="text: given_name" ></span>
                     </td>
-                    <td>
-                      <span class="glyphicon glyphicon-info-sign"></span>
-                    </td>
+                    <td data-bind="text: contact"></td>
                   </tr>
                 </tbody>
                 <!-- /ko -->
