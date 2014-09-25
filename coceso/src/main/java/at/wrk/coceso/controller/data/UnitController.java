@@ -113,6 +113,12 @@ public class UnitController implements IEntityController<Unit> {
     return "{\"success\": " + ret + ", \"new\": false,\"associated\":" + associated + "}";
   }
 
+    /**
+     * Sets TaskStates of all assigned incidents.
+     * @param unit Unit, frontend provided, with Map "incidents" for TaskStates
+     * @param user User, who triggered the update
+     * @return JSON Object, id and return value (boolean) of TaskState update
+     */
   protected String setAssociated(Unit unit, Operator user) {
     String messages = "{";
     for (Map.Entry<Integer, TaskState> entry : unit.getIncidents().entrySet()) {
