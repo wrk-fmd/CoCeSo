@@ -149,6 +149,8 @@ public class TaskService {
                     incidentService.update(wIncident);
                 }
                 break;
+            case ZBO:
+                break;
             case ABO:
                 // TODO Auto-set Incident State to Working
                 // Set Position of Unit to BO
