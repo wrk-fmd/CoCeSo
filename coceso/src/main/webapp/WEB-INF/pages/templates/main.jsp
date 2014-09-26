@@ -28,13 +28,13 @@
     <ul class="dropdown-menu">
       <li class="dropdown-header"><spring:message code="label.unit.state_set"/></li>
       <!-- ko ifnot: isNEB -->
-      <li><a href="#" title="<spring:message code="label.set"/>: <spring:message code="label.unit.state.neb"/>" data-bind="click: isNEB.set"><spring:message code="label.unit.state.neb"/></a></li>
+      <li><a href="#" title="<spring:message code="label.set"/>: <spring:message code="label.unit.state.neb"/>" data-bind="click: setNEB"><spring:message code="label.unit.state.neb"/></a></li>
       <!-- /ko -->
       <!-- ko ifnot: isEB -->
-      <li><a href="#" title="<spring:message code="label.set"/>: <spring:message code="label.unit.state.eb"/>" data-bind="click: isEB.set"><spring:message code="label.unit.state.eb"/></a></li>
+      <li><a href="#" title="<spring:message code="label.set"/>: <spring:message code="label.unit.state.eb"/>" data-bind="click: setEB"><spring:message code="label.unit.state.eb"/></a></li>
       <!-- /ko -->
       <!-- ko ifnot: isAD -->
-      <li><a href="#" title="<spring:message code="label.set"/>: <spring:message code="label.unit.state.ad"/>" data-bind="click: isAD.set"><spring:message code="label.unit.state.ad"/></a></li>
+      <li><a href="#" title="<spring:message code="label.set"/>: <spring:message code="label.unit.state.ad"/>" data-bind="click: setAD"><spring:message code="label.unit.state.ad"/></a></li>
       <!-- /ko -->
 
       <!-- ko if: portable && !( disableSendHome() && disableStandby() && disableHoldPosition() )  -->
@@ -55,7 +55,7 @@
       <li class="divider"></li>
       <li class="dropdown-header"><spring:message code="label.incidents"/></li>
       <!-- ko foreach: dropdownIncidents -->
-      <li><a href="#" title="<spring:message code="label.incident.edit"/>" data-bind="click: incident().openForm, html: incident().dropdownTitle"></a></li>
+      <li><a href="#" title="<spring:message code="label.incident.edit"/>" data-bind="click: incident() && incident().openForm, html: incident() && incident().dropdownTitle"></a></li>
       <!-- /ko -->
       <!-- /ko -->
 

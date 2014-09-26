@@ -1571,6 +1571,45 @@ Coceso.Models.Unit = function(data) {
 };
 Coceso.Models.Unit.prototype = Object.create({}, /** @lends Coceso.Models.Unit.prototype */ {
   /**
+   * Set unit state to "AD"
+   *
+   * @function
+   * @returns {void}
+   */
+  setAD: {
+    value: function() {
+      if (this.id && !this.isAD()) {
+        Coceso.Ajax.save(JSON.stringify({id: this.id, state: Coceso.Constants.Unit.state.ad}), "unit/update.json");
+      }
+    }
+  },
+  /**
+   * Set unit state to "EB"
+   *
+   * @function
+   * @returns {void}
+   */
+  setEB: {
+    value: function() {
+      if (this.id && !this.isEB()) {
+        Coceso.Ajax.save(JSON.stringify({id: this.id, state: Coceso.Constants.Unit.state.eb}), "unit/update.json");
+      }
+    }
+  },
+  /**
+   * Set unit state to "NEB"
+   *
+   * @function
+   * @returns {void}
+   */
+  setNEB: {
+    value: function() {
+      if (this.id && !this.isNEB()) {
+        Coceso.Ajax.save(JSON.stringify({id: this.id, state: Coceso.Constants.Unit.state.neb}), "unit/update.json");
+      }
+    }
+  },
+  /**
    * Send unit home
    *
    * @function
