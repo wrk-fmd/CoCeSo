@@ -167,11 +167,12 @@ Coceso.Models.EditableUnit = function(data, rootModel) {
       home: {info: self.home()}
     }), "unit/updateFull.json", function(response) {
       rootModel.error(false);
-      if (success instanceof Function) {
-        success();
-      }
+      rootModel.loadContainer();
       if (response.unit_id) {
         self.id = response.unit_id;
+      }
+      if (success instanceof Function) {
+        success();
       }
       self.call.setServer(self.call());
       self.ani.setServer(self.ani());
@@ -616,7 +617,7 @@ Coceso.ViewModels.Home = function(error) {
  * @constructor
  */
 Coceso.ViewModels.Edit = function() {
-  this.units = new Coceso.ViewModels.EditUnits();
+  this.units = new Coceso.ViewModels.EditUnits(this);
   this.container = new Coceso.ViewModels.Container();
   this.concern = new Coceso.Models.EditableConcern();
   this.batch = new Coceso.Models.BatchUnit(this);
@@ -631,9 +632,10 @@ Coceso.ViewModels.Edit = function() {
 /**
  * ViewModel for the edit unit view
  *
+ * @param {Coceso.ViewModels.Edit} rootModel The parent Viewmodel (for reloading)
  * @constructor
  */
-Coceso.ViewModels.EditUnits = function() {
+Coceso.ViewModels.EditUnits = function(rootModel) {
   var self = this;
 
   this.units = ko.observableArray([]);
@@ -737,8 +739,12 @@ Coceso.ViewModels.EditUnits = function() {
 
     unit.save(function() {
       self.units.push(unit);
-      self.newUnit(new Coceso.Models.EditableUnit());
+      self.newUnit(new Coceso.Models.EditableUnit(null, self));
     });
+  };
+
+  this.loadContainer = function() {
+    rootModel.container.load();
   };
 };
 
