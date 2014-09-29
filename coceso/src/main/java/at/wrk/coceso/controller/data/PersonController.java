@@ -215,6 +215,12 @@ public class PersonController {
     }
 
 
+    /**
+     * @see at.wrk.coceso.dao.PersonDao#removeAllNonOperator()
+     * automatic csv import doesn't update existing users. so this action is used to clean up DB before new upload
+     * @param token (injected)
+     * @return JSON with counter of deleted persons
+     */
     @PreAuthorize("hasRole('Root')")
     @RequestMapping(value = "deleteAllNonOperator", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody

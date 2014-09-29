@@ -121,4 +121,12 @@ public class PersonDao extends CocesoDao<Person> {
 
         return true;
     }
+
+    /**
+     * Removes all Persons from DB, which have not status 'Operator' (User)
+     * @return count of affected rows
+     */
+    public int removeAllNonOperator() {
+        return jdbc.update("DELETE FROM person p WHERE p.id NOT IN (SELECT id FROM operator)");
+    }
 }

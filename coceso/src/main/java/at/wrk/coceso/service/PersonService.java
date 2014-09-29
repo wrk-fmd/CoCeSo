@@ -64,8 +64,11 @@ public class PersonService {
         return createdCounter;
     }
 
+    /**
+     * @see at.wrk.coceso.dao.PersonDao#removeAllNonOperator()
+     * @return count of deleted Persons
+     */
     public int removeAllNonOperator() {
-        // TODO implement me
-        return 0;
+        return personDao.removeAllNonOperator();
     }
 }
