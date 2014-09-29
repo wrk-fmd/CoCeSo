@@ -1533,7 +1533,7 @@ Coceso.Models.Unit = function(data) {
 
     return {
       trigger: "hover focus",
-      placement: "auto right",
+      placement: "auto left",
       html: true,
       container: "body",
       title: this.call,
@@ -2554,6 +2554,7 @@ Coceso.ViewModels.Unit = function(data) {
 
   //Initialize change detection
   this.position.info.extend({observeChanges: {}});
+  this.home.info.extend({observeChanges: {}});
   this.info.extend({observeChanges: {keepChanges: true}});
   this.state.extend({observeChanges: {}});
   this.incidents.extend({arrayChanges: {}});
@@ -2596,6 +2597,7 @@ Coceso.ViewModels.Unit = function(data) {
 
     //Update server reference for change detection
     this.position.info.setServer(this.model().position.info);
+    this.home.info.setServer(this.model().home.info);
     this.info.setServer(this.model().info);
     this.state.setServer(this.model().state);
 

@@ -77,7 +77,24 @@ ko.bindingHandlers.droppable = uiBindingHandler("droppable");
  *
  * @type {BindingHandler}
  */
-ko.bindingHandlers.popover = uiBindingHandler("popover");
+ko.bindingHandlers.popover = {
+  init: function(element, valueAccessor) {
+    var $element = $(element);
+    $element.popover(ko.utils.unwrapObservable(valueAccessor()) || {});
+    ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
+      $element.popover("destroy");
+    });
+  },
+  update: function(element, valueAccessor) {
+    var $element = $(element), data = $element.data("bs.popover");
+    ko.utils.objectForEach(ko.utils.unwrapObservable(valueAccessor()) || {}, function(key, val) {
+      data.options[key] = val;
+    });
+    if (data.tip().hasClass("in")) {
+      $element.popover("show");
+    }
+  }
+};
 
 ko.bindingHandlers.visibleAndSelect = {
   update: function(element, valueAccessor) {
