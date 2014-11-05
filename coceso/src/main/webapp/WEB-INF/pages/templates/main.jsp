@@ -79,10 +79,12 @@
     <div class="panel panel-default unit-container">
       <div class="panel-heading panel-toggle clearfix">
         <span data-bind="text: name"></span>
+        <span class="pull-left">
+          <span class="panel-toggle-indicator glyphicon glyphicon-chevron-up"></span>
+        </span>
         <span class="pull-right">
           <span class="badge notification-ok" data-bind="text: availableCounter"></span>
           <span class="badge" data-bind="text: totalCounter"></span>
-          <span class="panel-toggle-indicator glyphicon glyphicon-chevron-up"></span>
         </span>
       </div>
       <div class="panel-body">
