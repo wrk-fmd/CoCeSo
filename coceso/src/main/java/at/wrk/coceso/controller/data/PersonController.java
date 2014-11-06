@@ -192,7 +192,7 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping(value = "uploadPerson", produces = "application/json",
-            consumes = "text/comma-separated-values", method = RequestMethod.POST)
+            consumes = "text/csv", method = RequestMethod.POST)
     public String uploadPerson(@RequestBody String body, UsernamePasswordAuthenticationToken token) {
         Operator user = (Operator) token.getPrincipal();
         logger.debug(String.format("User %s started batch create of persons", user.getUsername()));

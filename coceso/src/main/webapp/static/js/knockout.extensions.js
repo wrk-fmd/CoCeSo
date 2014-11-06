@@ -105,6 +105,34 @@ ko.bindingHandlers.visibleAndSelect = {
   }
 };
 
+ko.bindingHandlers.file = {
+  init: function(element, valueAccessor) {
+    var fileContents = valueAccessor(), reader = new FileReader();
+    reader.onloadend = function() {
+      fileContents(reader.result);
+    };
+
+    ko.utils.registerEventHandler(element, 'change', function() {
+      fileContents(null);
+      var file = element.files[0];
+      if (file) {
+        reader.readAsBinaryString(file);
+      }
+    });
+  },
+  update: function(element, valueAccessor) {
+    if (!ko.utils.unwrapObservable(valueAccessor())) {
+      try {
+        element.value = null;
+        if (element.value) {
+          element.parentNode.replaceChild(element.cloneNode(true), element);
+        }
+      } catch (ex) {
+      }
+    }
+  }
+};
+
 /**
  * Allow change detection on observable
  *

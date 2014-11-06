@@ -59,12 +59,26 @@
           <button type="button" class="btn btn-success" data-bind="click: create"><spring:message code="label.person.create"/></button>
         </div>
       </div>
+      <form data-bind="submit: upload">
+        <label for="person_csv"><spring:message code="label.person.csv"/></label>
+        <div class="alert alert-danger" data-bind="visible: $root.error">
+          <strong><spring:message code="label.error"/>:</strong> <span data-bind="text: $root.errorText"></span>
+        </div>
+        <div class="clearfix">
+          <div class="form-group col-md-5">
+            <input id="person_csv" type="file" class="form-control" data-bind="file: csv"/>
+          </div>
+          <div class="form-group col-md-2">
+            <button type="submit" class="btn btn-success" data-bind="enable: csv"><spring:message code="label.person.import"/></button>
+          </div>
+        </div>
+      </form>
       <div class="table-responsive">
         <table class="table table-striped table-condensed">
           <thead>
             <tr>
               <th>
-                <a href="#" data-bind="click: function() {filtered.sort('sortdnr');}"><span class="glyphicon" data-bind="css: filtered.icon('sortdnr')"></span></a>
+                <a href="#" data-bind="click: function() {filtered.sort('dnr');}"><span class="glyphicon" data-bind="css: filtered.icon('dnr')"></span></a>
                   <spring:message code="label.person.dnr"/>
               </th>
               <th>
@@ -73,11 +87,11 @@
               </th>
               <c:if test="${not empty authorized}">
                 <th>
-                  <a href="#" data-bind="click: function() {filtered.sort('sortusername');}"><span class="glyphicon" data-bind="css: filtered.icon('sortusername')"></span></a>
+                  <a href="#" data-bind="click: function() {filtered.sort('username');}"><span class="glyphicon" data-bind="css: filtered.icon('username')"></span></a>
                     <spring:message code="label.username"/>
                 </th>
                 <th>
-                  <a href="#" data-bind="click: function() {filtered.sort('sortallowlogin');}"><span class="glyphicon" data-bind="css: filtered.icon('sortallowlogin')"></span></a>
+                  <a href="#" data-bind="click: function() {filtered.sort('allowlogin');}"><span class="glyphicon" data-bind="css: filtered.icon('allowlogin')"></span></a>
                     <spring:message code="label.operator.allowlogin"/>
                 </th>
                 <th>
@@ -89,14 +103,14 @@
           </thead>
           <tbody data-bind="foreach: filtered">
             <tr>
-              <td data-bind="text: dnr.orig"></td>
+              <td data-bind="text: dnr"></td>
               <td data-bind="text: fullname"></td>
               <c:if test="${not empty authorized}">
-                <td data-bind="text: username.orig"></td>
+                <td data-bind="text: username"></td>
                 <td data-bind="if: isOperator">
-                  <span class="glyphicon" data-bind="css: allowlogin.orig() ? 'glyphicon-ok-circle green' : 'glyphicon-ban-circle red'"></span>
+                  <span class="glyphicon" data-bind="css: allowlogin() ? 'glyphicon-ok-circle green' : 'glyphicon-ban-circle red'"></span>
                 </td>
-                <td data-bind="text: authorities.orig().join(', ')"></td>
+                <td data-bind="text: authorities().join(', ')"></td>
               </c:if>
               <td>
                 <button type="button" class="btn btn-primary btn-sm" data-bind="click: edit"><spring:message code="label.edit"/></button>
@@ -109,24 +123,24 @@
       <div class="page-header"></div>
     </div>
 
-    <div id="edit_person" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-bind="if: edit" data-backdrop="static">
+    <div id="edit_person" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
       <div class="modal-dialog modal-lg">
         <div class="modal-content" data-bind="with: edit">
           <form data-bind="submit: save">
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
               <h4 class="modal-title">
-                <!-- ko if: id -->
+                <!-- ko if: idObs -->
                 <spring:message code="label.person.edit"/>: <strong data-bind="text: fullname"></strong>
                 <!-- /ko -->
-                <!-- ko ifnot: id -->
+                <!-- ko ifnot: idObs -->
                 <spring:message code="label.person.create"/>
                 <!-- /ko -->
               </h4>
             </div>
             <div class="modal-body">
-              <div class="alert alert-danger" data-bind="visible: $root.error">
-                <strong><spring:message code="label.error"/>:</strong> <span data-bind="text: $root.errorText"></span>
+              <div class="alert alert-danger" data-bind="visible: error">
+                <strong><spring:message code="label.error"/>:</strong> <span data-bind="text: errorText"></span>
               </div>
               <div class="row">
                 <div class="form-group col-md-4" data-bind="css: surname.formcss">
@@ -181,11 +195,11 @@
                 </div>
                 <div class="row">
                   <div class="form-group col-md-4" data-bind="css: password.formcss">
-                    <label for="edit_password"><spring:message code="label.operator.username"/></label>
+                    <label for="edit_password"><spring:message code="label.operator.password"/></label>
                     <input type="password" id="edit_password" class="form-control" data-bind="value: password, valueUpdate: 'input'"/>
                   </div>
                   <div class="form-group col-md-4" data-bind="css: password2.formcss">
-                    <label for="edit_password2"><spring:message code="label.operator.username"/></label>
+                    <label for="edit_password2"><spring:message code="label.operator.password2"/></label>
                     <input type="password" id="edit_password2" class="form-control" data-bind="value: password2, valueUpdate: 'input'"/>
                   </div>
                 </div>

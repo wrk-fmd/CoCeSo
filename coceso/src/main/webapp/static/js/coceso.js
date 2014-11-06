@@ -150,7 +150,9 @@ Coceso.Ajax = {
             Coceso.Data[type].models.valueHasMutated();
           }
         }
-        Coceso.UI.Notifications.connectionError(false);
+        if (Coceso.UI) {
+          Coceso.UI.Notifications.connectionError(false);
+        }
       },
       complete: function() {
         if (options.interval) {
@@ -159,7 +161,7 @@ Coceso.Ajax = {
       },
       error: function(xhr) {
         // 404: not found, 0: no connection to server, 200: error is thrown, because response is not a json (not authenticated)
-        if (xhr.status === 404 || xhr.status === 0 || xhr.status === 200 || xhr.status === 403) {
+        if (Coceso.UI && (xhr.status === 404 || xhr.status === 0 || xhr.status === 200 || xhr.status === 403)) {
           Coceso.UI.Notifications.connectionError(true);
         }
       }
@@ -173,14 +175,15 @@ Coceso.Ajax = {
    * @param {Function} success
    * @param {Function} error
    * @param {Function} httperror
+   * @param {String} contentType Optional content type
    * @returns {void}
    */
-  save: function(data, url, success, error, httperror) {
+  save: function(data, url, success, error, httperror, contentType) {
     $.ajax({
       type: "POST",
       url: Coceso.Conf.jsonBase + url,
       dataType: "json",
-      contentType: (typeof data === "string") ? "application/json" : "application/x-www-form-urlencoded",
+      contentType: contentType || ((typeof data === "string") ? "application/json" : "application/x-www-form-urlencoded"),
       data: data,
       processData: (typeof data !== "string"),
       success: function(data) {

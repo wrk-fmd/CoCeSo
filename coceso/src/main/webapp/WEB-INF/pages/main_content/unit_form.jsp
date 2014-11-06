@@ -125,7 +125,7 @@
                     <td>
                       <strong data-bind="text: sur_name"></strong> <span data-bind="text: given_name"></span>
                     </td>
-                    <td data-bind="text: contact"></td>
+                    <td class="pre" data-bind="text: contact"></td>
                   </tr>
                 </tbody>
                 <!-- /ko -->

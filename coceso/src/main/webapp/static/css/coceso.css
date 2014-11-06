@@ -370,7 +370,7 @@ span.incident_blue {
   content: ":";
 }
 
-.ui-dialog p span {
+.ui-dialog p span, .pre {
   white-space: pre-wrap;
 }
 
