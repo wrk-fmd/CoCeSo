@@ -127,7 +127,7 @@
                   <!-- /ko -->
                   <td>
                     <form data-bind="attr: {id: 'table_form_' + id}, submit: save">
-                      <p><button type="submit" class="btn btn-success btn-sm" data-bind="enable: localChange"><spring:message code="label.update"/></button></p>
+                      <p><button type="submit" class="btn btn-success btn-sm" data-bind="enable: form.enable"><spring:message code="label.update"/></button></p>
                       <p><button type="button" class="btn btn-danger btn-sm" data-bind="visible: !locked, click: $parent.remove"><spring:message code="label.remove"/></button></p>
                     </form>
                   </td>
@@ -140,7 +140,7 @@
                   <!-- /ko -->
                   <td>
                     <form data-bind="attr: {id: 'table_form_' + id}, submit: $parent.create">
-                      <button type="submit" class="btn btn-success btn-sm" data-bind="enable: call.localChange"><spring:message code="label.create"/></button>
+                      <button type="submit" class="btn btn-success btn-sm" data-bind="enable: call.changed"><spring:message code="label.create"/></button>
                     </form>
                   </td>
                 </tr>
@@ -178,27 +178,27 @@
           <form data-bind="submit: save">
             <div class="clearfix">
               <div class="col-md-3">
-                <div class="form-group">
+                <div class="form-group" data-bind="css: name.formcss">
                   <label for="concern_name"><spring:message code="label.concern.name"/></label>
                   <input type="text" id="concern_name" class="form-control" maxlength="64" required
-                         data-bind="value: name, valueUpdate: 'input', css: name.css">
+                         data-bind="value: name, valueUpdate: 'input'">
                 </div>
-                <div class="form-group">
+                <div class="form-group" data-bind="css: pax.formcss">
                   <div><label for="concern_pax"><spring:message code="label.concern.pax"/></label></div>
                   <input type="number" id="concern_pax" class="form-control" min="0" max="1000000" step="1000"
-                         data-bind="value: pax, valueUpdate: 'input', css: pax.css">
+                         data-bind="value: pax, valueUpdate: 'input'">
                 </div>
               </div>
 
-              <div class="form-group col-md-5 col-md-offset-1">
+              <div class="form-group col-md-5 col-md-offset-1" data-bind="css: info.formcss">
                 <label for="concern_info"><spring:message code="label.concern.info"/></label>
                 <textarea id="concern_info" class="form-control" rows="5"
-                          data-bind="value: info, valueUpdate: 'input', css: info.css"></textarea>
+                          data-bind="value: info, valueUpdate: 'input'"></textarea>
               </div>
             </div>
 
             <div class="form-group">
-              <button type="submit" class="btn btn-success" data-bind="enable: localChange"><spring:message code="label.update"/></button>
+              <button type="submit" class="btn btn-success" data-bind="enable: form.enable"><spring:message code="label.update"/></button>
             </div>
           </form>
         </div>
@@ -255,9 +255,9 @@
                     </label>
                   </div>
                   <div class="btn-group">
-                    <button type="button" id="batch_doc" class="btn btn-default" data-bind="click: doc.toggle, css: doc.css">${doc}</button>
-                    <button type="button" id="batch_vehicle" class="btn btn-default" data-bind="click: vehicle.toggle, css: vehicle.css">${vehicle}</button>
-                    <button type="button" id="batch_portable" class="btn btn-default" data-bind="click: portable.toggle, css: portable.css">${portable}</button>
+                    <button type="button" id="batch_doc" class="btn btn-default" data-bind="click: doc.toggle, css: doc.state">${doc}</button>
+                    <button type="button" id="batch_vehicle" class="btn btn-default" data-bind="click: vehicle.toggle, css: vehicle.state">${vehicle}</button>
+                    <button type="button" id="batch_portable" class="btn btn-default" data-bind="click: portable.toggle, css: portable.state">${portable}</button>
                   </div>
                 </div>
               </div>

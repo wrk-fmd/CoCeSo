@@ -129,23 +129,23 @@
                 <strong><spring:message code="label.error"/>:</strong> <span data-bind="text: $root.errorText"></span>
               </div>
               <div class="row">
-                <div class="form-group col-md-4">
+                <div class="form-group col-md-4" data-bind="css: surname.formcss">
                   <label for="edit_surname"><spring:message code="label.person.sur_name"/></label>
-                  <input type="text" id="edit_surname" class="form-control" data-bind="value: surname, valueUpdate: 'input', css: surname.css"/>
+                  <input type="text" id="edit_surname" class="form-control" data-bind="value: surname, valueUpdate: 'input'"/>
                 </div>
-                <div class="form-group col-md-4">
+                <div class="form-group col-md-4" data-bind="css: givenname.formcss">
                   <label for="edit_givenname"><spring:message code="label.person.given_name"/></label>
-                  <input type="text" id="edit_givenname" class="form-control" data-bind="value: givenname, valueUpdate: 'input', css: givenname.css"/>
+                  <input type="text" id="edit_givenname" class="form-control" data-bind="value: givenname, valueUpdate: 'input'"/>
                 </div>
-                <div class="form-group col-md-4">
+                <div class="form-group col-md-4" data-bind="css: dnr.formcss">
                   <label for="edit_dnr"><spring:message code="label.person.dnr"/></label>
-                  <input type="text" id="edit_dnr" class="form-control" data-bind="value: dnr, valueUpdate: 'input', css: dnr.css"/>
+                  <input type="text" id="edit_dnr" class="form-control" data-bind="value: dnr, valueUpdate: 'input'"/>
                 </div>
               </div>
               <div class="row">
-                <div class="form-group col-md-8">
+                <div class="form-group col-md-8" data-bind="css: contact.formcss">
                   <label for="edit_contact"><spring:message code="label.person.contact"/></label>
-                  <textarea id="edit_contact" rows="3" class="form-control" data-bind="value: contact, valueUpdate: 'input', css: contact.css"></textarea>
+                  <textarea id="edit_contact" rows="3" class="form-control" data-bind="value: contact, valueUpdate: 'input'"></textarea>
                 </div>
               </div>
               <c:if test="${not empty authorized}">
@@ -160,31 +160,41 @@
                   </h5>
                 </div>
                 <div class="row">
-                  <div class="form-group col-md-4">
+                  <div class="form-group col-md-4" data-bind="css: username.formcss">
                     <label for="edit_username"><spring:message code="label.operator.username"/></label>
-                    <input type="text" id="edit_username" class="form-control" data-bind="value: username, valueUpdate: 'input', css: username.css"/>
+                    <input type="text" id="edit_username" class="form-control" data-bind="value: username, valueUpdate: 'input'"/>
                   </div>
-                  <div class="form-group col-md-3 col-md-offset-1">
+                  <div class="form-group col-md-3 col-md-offset-1" data-bind="css: allowlogin.formcss">
                     <label for="edit_allowlogin"><spring:message code="label.operator.allowlogin"/></label><br/>
                     <button type="button" id="edit_allowlogin" class="btn"
-                            data-bind="click: allowlogin.toggle, css: (allowlogin() ? 'btn-success ' : 'btn-default ') + allowlogin.css()">
+                            data-bind="click: allowlogin.toggle, css: (allowlogin() ? 'btn-success active' : 'btn-default')">
                       <span class="glyphicon" data-bind="css: allowlogin() ? 'glyphicon-ok-circle' : 'glyphicon-ban-circle'"></span>
                     </button>
                   </div>
-                  <div class="form-group col-md-4">
-                    <select id="edit_auth" multiple class="form-control" data-bind="selectedOptions: authorities, css: {'form-changed': authorities.localChange}">
+                  <div class="form-group col-md-4" data-bind="css: {'has-change': authorities.changed}">
+                    <select id="edit_auth" multiple class="form-control" data-bind="selectedOptions: authorities">
                       <c:forEach items="${authorities}" var="authority">
                         <option>${authority}</option>
                       </c:forEach>
                     </select>
                   </div>
                 </div>
+                <div class="row">
+                  <div class="form-group col-md-4" data-bind="css: password.formcss">
+                    <label for="edit_password"><spring:message code="label.operator.username"/></label>
+                    <input type="password" id="edit_password" class="form-control" data-bind="value: password, valueUpdate: 'input'"/>
+                  </div>
+                  <div class="form-group col-md-4" data-bind="css: password2.formcss">
+                    <label for="edit_password2"><spring:message code="label.operator.username"/></label>
+                    <input type="password" id="edit_password2" class="form-control" data-bind="value: password2, valueUpdate: 'input'"/>
+                  </div>
+                </div>
               </c:if>
             </div>
             <div class="modal-footer">
               <div class="pull-right">
-                <button type="submit" class="btn btn-success" data-bind="enable: localChange"><spring:message code="label.save"/></button>
-                <button type="button" class="btn btn-warning" data-bind="enable: localChange, click: reset"><spring:message code="label.reset"/></button>
+                <button type="submit" class="btn btn-success" data-bind="enable: form.enable"><spring:message code="label.save"/></button>
+                <button type="button" class="btn btn-warning" data-bind="enable: form.changed, click: form.reset"><spring:message code="label.reset"/></button>
               </div>
             </div>
           </form>

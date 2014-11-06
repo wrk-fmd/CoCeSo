@@ -14,29 +14,29 @@
 --%>
 <script type="text/html" id="template-unit-row">
   <td>
-    <p>
+    <p data-bind="css: call.formcss">
       <strong>
         <input type="text" maxlength="64" class="form-control" placeholder="${call}" required
-               data-bind="value: call, valueUpdate: 'input', css: call.css, attr: {form: 'table_form_' + id}">
+               data-bind="value: call, valueUpdate: 'input', attr: {form: 'table_form_' + id}">
       </strong>
     </p>
-    <p>
+    <p data-bind="css: ani.formcss">
       <input type="text" maxlength="64" class="form-control" placeholder="${ani}"
-             data-bind="value: ani, valueUpdate: 'input', css: ani.css, attr: {form: 'table_form_' + id}">
+             data-bind="value: ani, valueUpdate: 'input', attr: {form: 'table_form_' + id}">
     </p>
   </td>
   <td>
     <p class="btn-group btn-group-sm">
       <button type="button" class="btn btn-default"
-              data-bind="click: doc.toggle, css: doc.css, attr: {form: 'table_form_' + id}">
+              data-bind="click: doc.toggle, css: doc.state, attr: {form: 'table_form_' + id}">
         ${doc}
       </button>
       <button type="button" class="btn btn-default"
-              data-bind="click: vehicle.toggle, css: vehicle.css, attr: {form: 'table_form_' + id}">
+              data-bind="click: vehicle.toggle, css: vehicle.state, attr: {form: 'table_form_' + id}">
         ${vehicle}
       </button>
       <button type="button" class="btn btn-default"
-              data-bind="click: portable.toggle, css: portable.css, attr: {form: 'table_form_' + id}">
+              data-bind="click: portable.toggle, css: portable.state, attr: {form: 'table_form_' + id}">
         ${portable}
       </button>
     </p>
@@ -44,11 +44,11 @@
     <p><button type="button" class="btn btn-default btn-sm" data-bind="click: editCrew"><spring:message code="label.crew.edit"/></button></p>
     <!-- /ko -->
   </td>
-  <td>
-    <textarea rows="3" class="form-control" placeholder="${info}" data-bind="value: info, valueUpdate: 'input', css: info.css, attr: {form: 'table_form_' + id}"></textarea>
+  <td data-bind="css: info.formcss">
+    <textarea rows="3" class="form-control" placeholder="${info}" data-bind="value: info, valueUpdate: 'input', attr: {form: 'table_form_' + id}"></textarea>
   </td>
-  <td>
-    <textarea rows="3" class="form-control" placeholder="${home}" data-bind="value: home, valueUpdate: 'input', css: home.css, attr: {form: 'table_form_' + id}"></textarea>
+  <td data-bind="css: home.formcss">
+    <textarea rows="3" class="form-control" placeholder="${home}" data-bind="value: home, valueUpdate: 'input', attr: {form: 'table_form_' + id}"></textarea>
   </td>
 </script>
 

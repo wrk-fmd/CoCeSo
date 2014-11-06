@@ -116,7 +116,7 @@ ko.extenders.observeChanges = function(target, options) {
   target.server = options.server;
   target.orig = (typeof options.orig !== "undefined") ? ko.observable(options.orig) : ko.observable(ko.utils.unwrapObservable(target.server));
 
-  target.localChange = ko.computed(function() {
+  target.changed = ko.computed(function() {
     return (typeof this.orig() !== "undefined" && this() !== this.orig());
   }, target);
 
@@ -128,29 +128,22 @@ ko.extenders.observeChanges = function(target, options) {
     return null;
   }, target);
 
-  target.valid = ko.computed(options.validate instanceof Function ? options.valid : function() {
+  target.valid = ko.computed(options.validate instanceof Function ? options.validate : function() {
     return true;
   }, target);
 
-  target.parentcss = target.css || null;
-
-  target.css = ko.computed(function() {
-    var css = "";
-    if (target.parentcss) {
-      css = ko.utils.unwrapObservable(target.parentcss) || "";
-    }
-
+  target.formcss = ko.computed(function() {
     if (!this.valid()) {
-      return css + " has-error";
+      return "has-error";
     }
-    if (this.localChange()) {
-      return css + " form-changed";
+    if (this.changed()) {
+      return "has-change";
     }
-    return css;
+    return "";
   }, target);
 
   target.reset = function() {
-    if (target.localChange()) {
+    if (target.changed()) {
       target(target.orig());
     }
   };
@@ -163,7 +156,7 @@ ko.extenders.observeChanges = function(target, options) {
   target.tmp = ko.computed(function() {
     var server = ko.utils.unwrapObservable(this.server), orig = this.orig();
     if (typeof server !== "undefined" && server !== orig) {
-      if (!options.keepChanges || !this.localChange() || server === this()) {
+      if (!options.keepChanges || !this.changed() || server === this()) {
         this.orig(server);
         this(server);
       }
@@ -185,14 +178,29 @@ ko.extenders.arrayChanges = function(target, options) {
   target.orig = ko.observable(null);
   target.serverChange = ko.observable(null);
 
-  target.localChange = ko.computed(function() {
+  target.changed = ko.computed(function() {
     var items = ko.utils.unwrapObservable(this);
     if (!items instanceof Array) {
       return false;
     }
-    return (ko.utils.arrayFirst(items, function(item) {
-      return ko.utils.unwrapObservable(item.localChange);
-    }) ? true : false);
+    return !!ko.utils.arrayFirst(items, function(item) {
+      return ko.utils.unwrapObservable(item.changed);
+    });
+  }, target);
+
+  target.valid = ko.computed(function() {
+    var items = ko.utils.unwrapObservable(this);
+    if (!items instanceof Array) {
+      return false;
+    }
+
+    return !ko.utils.arrayFirst(items, function(item) {
+      return typeof item.valid === "undefined" ? false : !ko.utils.unwrapObservable(item.valid);
+    });
+  }, target);
+
+  target.enable = ko.computed(function() {
+    return (this.changed() && this.valid());
   }, target);
 
   target.reset = function() {
@@ -411,7 +419,7 @@ ko.extenders.isValue = function(target, value) {
     return (target() === ko.utils.unwrapObservable(value));
   });
 
-  ret.css = ko.computed(function() {
+  ret.state = ko.computed(function() {
     return this() ? "active" : "";
   }, ret);
 
@@ -436,7 +444,7 @@ ko.extenders.boolean = function(target) {
     }
   });
 
-  ret.css = ko.computed(function() {
+  ret.state = ko.computed(function() {
     return this() ? "active" : "";
   }, ret);
 

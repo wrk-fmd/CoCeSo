@@ -81,14 +81,14 @@
       </div>
       <!-- ko with: create -->
       <form class="clearfix" data-bind="submit: save">
-        <div class="col-md-5 form-group">
+        <div class="col-md-5 form-group" data-bind="css: name.formcss">
           <label class="sr-only" for="create_name"><spring:message code="label.concern.name"/></label>
           <input type="text" id="create_name" maxlength="64" class="form-control"
-                 data-bind="value: name, valueUpdate: 'input', css: name.css"
+                 data-bind="value: name, valueUpdate: 'input'"
                  placeholder="<spring:message code="label.concern.name"/>"/>
         </div>
         <div class="col-md-3">
-          <button type="submit" class="btn btn-success" data-bind="enable: localChange"><spring:message code="label.create"/></button>
+          <button type="submit" class="btn btn-success" data-bind="enable: name.changed"><spring:message code="label.create"/></button>
         </div>
       </form>
       <!-- /ko -->

@@ -31,11 +31,11 @@
         </div>
 
         <div class="clearfix">
-          <div class="form-group col-md-6">
+          <div class="form-group col-md-6" data-bind="css: position.info.formcss">
             <label for="position"><spring:message code="label.unit.position"/>:</label>
             <a href="#" class="pull-right" data-bind="click: isHome.set">Set to home</a>
             <textarea id="position" name="position" rows="3" class="form-control"
-                      data-bind="value: position.info, valueUpdate: 'input', css: position.info.css"></textarea>
+                      data-bind="value: position.info, valueUpdate: 'input'"></textarea>
           </div>
 
           <div class="form-group col-md-6">
@@ -45,14 +45,14 @@
           </div>
         </div>
 
-        <div class="form-group col-md-12">
+        <div class="form-group col-md-12" data-bind="css: info.formcss">
           <label for="info" class="sr-only"><spring:message code="label.unit.info"/>:</label>
           <div class="alert alert-warning" data-bind="visible: info.serverChange">
             Field has changed on server!<br>
             New Value: <a href="#" title="Apply new value" data-bind="text: info.serverChange, click: info.reset"></a>
           </div>
           <textarea id="info" name="info" rows="3" class="form-control" placeholder="<spring:message code="label.unit.info"/>"
-                    data-bind="value: info, valueUpdate: 'input', css: info.css">
+                    data-bind="value: info, valueUpdate: 'input'">
           </textarea>
         </div>
 
@@ -60,13 +60,13 @@
           <div class="form-group col-md-offset-4 col-md-8">
             <label class="sr-only"><spring:message code="label.unit.state"/>:</label>
             <div class="btn-group btn-group-sm">
-              <button type="button" class="btn btn-default" data-bind="click: isEB.set, css: isEB.css">
+              <button type="button" class="btn btn-default" data-bind="click: isEB.set, css: isEB.state">
                 <spring:message code="label.unit.state.eb"/>
               </button>
-              <button type="button" class="btn btn-default" data-bind="click: isNEB.set, css: isNEB.css">
+              <button type="button" class="btn btn-default" data-bind="click: isNEB.set, css: isNEB.state">
                 <spring:message code="label.unit.state.neb"/>
               </button>
-              <button type="button" class="btn btn-default" data-bind="click: isAD.set, css: isAD.css">
+              <button type="button" class="btn btn-default" data-bind="click: isAD.set, css: isAD.state">
                 <spring:message code="label.unit.state.ad"/>
               </button>
             </div>
@@ -77,22 +77,22 @@
           <div class="form-group clearfix" data-bind="if: incident">
             <label class="col-md-4 control-label" data-bind="html: incident().assignedTitle"></label>
             <div class="col-md-8 btn-group btn-group-sm">
-              <button type="button" class="btn btn-default" data-bind="disable: incident().disableAssigned, click: isAssigned.set, css: isAssigned.css">
+              <button type="button" class="btn btn-default" data-bind="disable: incident().disableAssigned, click: isAssigned.set, css: isAssigned.state">
                 <spring:message code="label.task.state.assigned"/>
               </button>
-              <button type="button" class="btn btn-default" data-bind="disable: incident().disableBO, click: isZBO.set, css: isZBO.css">
+              <button type="button" class="btn btn-default" data-bind="disable: incident().disableBO, click: isZBO.set, css: isZBO.state">
                 <spring:message code="label.task.state.zbo"/>
               </button>
-              <button type="button" class="btn btn-default" data-bind="disable: incident().disableBO, click: isABO.set, css: isABO.css">
+              <button type="button" class="btn btn-default" data-bind="disable: incident().disableBO, click: isABO.set, css: isABO.state">
                 <spring:message code="label.task.state.abo"/>
               </button>
-              <button type="button" class="btn btn-default" data-bind="disable: incident().disableZAO, click: isZAO.set, css: isZAO.css">
+              <button type="button" class="btn btn-default" data-bind="disable: incident().disableZAO, click: isZAO.set, css: isZAO.state">
                 <spring:message code="label.task.state.zao"/>
               </button>
-              <button type="button" class="btn btn-default" data-bind="disable: incident().disableAAO, click: isAAO.set, css: isAAO.css">
+              <button type="button" class="btn btn-default" data-bind="disable: incident().disableAAO, click: isAAO.set, css: isAAO.state">
                 <spring:message code="label.task.state.aao"/>
               </button>
-              <button type="button" class="btn btn-default" data-bind="click: isDetached.set, css: isDetached.css">
+              <button type="button" class="btn btn-default" data-bind="click: isDetached.set, css: isDetached.state">
                 <spring:message code="label.task.state.detached"/>
               </button>
             </div>
@@ -123,7 +123,7 @@
                   <tr>
                     <td data-bind="text: dNr"></td>
                     <td>
-                      <strong data-bind="text: sur_name" ></strong> <span data-bind="text: given_name" ></span>
+                      <strong data-bind="text: sur_name"></strong> <span data-bind="text: given_name"></span>
                     </td>
                     <td data-bind="text: contact"></td>
                   </tr>
@@ -136,14 +136,14 @@
 
         <div class="clearfix">
           <div class="form-group col-md-offset-2 col-md-10">
-            <button type="button" class="btn btn-success" data-bind="enable: localChange, click: ok">
+            <button type="button" class="btn btn-success" data-bind="enable: form.enable, click: ok">
               <spring:message code="label.ok"/>
             </button>
-            <button type="submit" class="btn btn-primary" data-bind="enable: localChange">
+            <button type="submit" class="btn btn-primary" data-bind="enable: form.enable">
               <spring:message code="label.save"/>
             </button>
-            <button type="button" class="btn btn-warning" data-bind="enable: localChange, click: reset">
-              Reset
+            <button type="button" class="btn btn-warning" data-bind="enable: form.changed, click: form.reset">
+              <spring:message code="label.reset"/>
             </button>
           </div>
         </div>

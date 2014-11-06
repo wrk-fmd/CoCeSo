@@ -204,10 +204,31 @@ input.form-control, textarea.form-control {
   padding-right: 6px;
 }
 
-.form-control.form-changed, .btn.form-changed {
+.has-change .help-block,
+.has-change .control-label,
+.has-change .radio,
+.has-change .checkbox,
+.has-change .radio-inline,
+.has-change .checkbox-inline {
+  color: #f3ea00;
+}
+.has-change .form-control, .has-change .btn {
   border-color: #f3ea00;
-  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 10px rgba(243, 234, 0, 0.60);
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 10px rgba(243, 234, 0, 0.60);
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+}
+.has-change .form-control:focus {
+  border-color: #f3ea00;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #e5e643;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #e5e643;
+}
+.has-change .input-group-addon {
+  color: #f3ea00;
+  border-color: #f3ea00;
+  background-color: #f2dede;
+}
+.has-change .form-control-feedback {
+  color: #f3ea00;
 }
 
 textarea.form-control {

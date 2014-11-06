@@ -1779,6 +1779,15 @@ Coceso.Models.Patient = function(data) {
   this.isUnknown.set = function() {
     this.sex(Coceso.Constants.Patient.sex.unknown);
   };
+
+  /**
+   * State css for undefined sex
+   *
+   * @returns {void}
+   */
+  this.isUnknown.state = ko.computed(function() {
+    return this() ? "active" : "";
+  }, this.isUnknown);
 };
 
 /**
@@ -2062,23 +2071,7 @@ Coceso.ViewModels.Form = function() {
    *
    * @type ko.observableArray
    */
-  this.dependencies = ko.observableArray().extend({arrayChanges: {}});
-
-  /**
-   * Return if data has been changed by the user
-   *
-   * @function
-   * @type ko.computed
-   * @returns {boolean}
-   */
-  this.localChange = this.dependencies.localChange;
-
-  /**
-   * Reset the form to its original state
-   *
-   * @returns {void}
-   */
-  this.reset = this.dependencies.reset;
+  this.form = ko.observableArray().extend({arrayChanges: {}});
 
   /**
    * Callback on error saving
@@ -2144,7 +2137,7 @@ Coceso.ViewModels.Incident = function(data) {
   this.state.extend({observeChanges: {}});
   this.type.extend({observeChanges: {}});
   this.units.extend({arrayChanges: {}});
-  this.dependencies.push(this.units, this.type, this.blue, this.bo.info, this.ao.info, this.info, this.caller, this.casusNr, this.state);
+  this.form.push(this.units, this.type, this.blue, this.bo.info, this.ao.info, this.info, this.caller, this.casusNr, this.state);
 
   /**
    * "Virtual" computed observable:
@@ -2243,14 +2236,14 @@ Coceso.ViewModels.Incident = function(data) {
         if (local.taskState.server !== task.taskState) {
           //Local element exists, but does not match global model: Recreate local taskState observable
           local.taskState.setServer(task.taskState);
-          local.localChange = local.taskState.localChange;
+          local.changed = local.taskState.changed;
           local.reset = local.taskState.reset;
         }
       } else {
         //Local task does not exist at all: Create complete Task model
         local = new Coceso.Models.Task(task.taskState.peek(), task.incident_id, task.unit_id);
         local.taskState.extend({observeChanges: {server: task.taskState}});
-        local.localChange = local.taskState.localChange;
+        local.changed = local.taskState.changed;
         local.reset = local.taskState.reset;
         self.units.push(local);
       }
@@ -2463,7 +2456,7 @@ Coceso.ViewModels.Incident.prototype = Object.create(Coceso.Models.Incident.prot
         if (assigned === null) {
           assigned = new Coceso.Models.Task(taskState ? taskState : Coceso.Constants.TaskState.assigned, this.id, unit);
           assigned.taskState.extend({observeChanges: {server: null, orig: null}});
-          assigned.localChange = assigned.taskState.localChange;
+          assigned.changed = assigned.taskState.changed;
           assigned.reset = assigned.taskState.reset;
           this.units.push(assigned);
         } else if (taskState && assigned.taskState() !== taskState) {
@@ -2502,7 +2495,7 @@ Coceso.ViewModels.Incident.prototype = Object.create(Coceso.Models.Incident.prot
 
       var units = this.units, remove = [];
       ko.utils.arrayForEach(units(), function(task) {
-        if (task.taskState.localChange()) {
+        if (task.taskState.changed()) {
           data.units[task.unit_id] = task.taskState();
           if (!task.taskState.orig() && task.isDetached()) {
             remove.push(task);
@@ -2558,7 +2551,7 @@ Coceso.ViewModels.Unit = function(data) {
   this.info.extend({observeChanges: {keepChanges: true}});
   this.state.extend({observeChanges: {}});
   this.incidents.extend({arrayChanges: {}});
-  this.dependencies.push(this.position.info, this.info, this.state, this.incidents);
+  this.form.push(this.position.info, this.info, this.state, this.incidents);
 
   /**
    * "Virtual" computed observable:
@@ -2638,14 +2631,14 @@ Coceso.ViewModels.Unit = function(data) {
         if (local.taskState.server !== task.taskState) {
           //Local element exists, but does not match global model: Recreate local taskState observable
           local.taskState.setServer(task.taskState);
-          local.localChange = local.taskState.localChange;
+          local.changed = local.taskState.changed;
           local.reset = local.taskState.reset;
         }
       } else {
         //Local task does not exist at all: Create complete Task model
         local = new Coceso.Models.Task(task.taskState.peek(), task.incident_id, task.unit_id);
         local.taskState.extend({observeChanges: {server: task.taskState}});
-        local.localChange = local.taskState.localChange;
+        local.changed = local.taskState.changed;
         local.reset = local.taskState.reset;
         self.incidents.push(local);
       }
@@ -2684,7 +2677,7 @@ Coceso.ViewModels.Unit.prototype = Object.create(Coceso.Models.Unit.prototype, /
 
       var incidents = this.incidents, remove = [];
       ko.utils.arrayForEach(incidents(), function(task) {
-        if (task.taskState.localChange()) {
+        if (task.taskState.changed()) {
           data.incidents[task.incident_id] = task.taskState();
           if (!task.taskState.orig() && task.isDetached()) {
             incidents.remove(task);
@@ -2742,7 +2735,7 @@ Coceso.ViewModels.Patient = function(data) {
   this.info.extend({observeChanges: {keepChanges: true}});
   this.sex.extend({observeChanges: {}});
 
-  this.dependencies.push(this.given_name, this.sur_name, this.insurance_number,
+  this.form.push(this.given_name, this.sur_name, this.insurance_number,
       this.externalID, this.diagnosis, this.erType, this.info, this.sex);
 
   /**

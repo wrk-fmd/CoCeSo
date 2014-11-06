@@ -103,12 +103,8 @@ Coceso.Models.CreateConcern = function(rootModel) {
 
   this.name = ko.observable("").extend({observeChanges: {server: ""}});
 
-  //this.dependencies = ko.observableArray([this.name]).extend({arrayChanges: {}});
-  //this.localChange = this.dependencies.localChange;
-  this.localChange = this.name.localChange;
-
   this.save = function() {
-    if (!this.localChange()) {
+    if (!this.name.changed()) {
       return false;
     }
 
@@ -147,9 +143,8 @@ Coceso.Models.EditableUnit = function(data, rootModel) {
     return new Coceso.Models.SlimPerson(item);
   }) : []);
 
-  this.dependencies = ko.observableArray([this.call, this.ani, this.doc, this.vehicle,
+  this.form = ko.observableArray([this.call, this.ani, this.doc, this.vehicle,
     this.portable, this.info, this.home]).extend({arrayChanges: {}});
-  this.localChange = this.dependencies.localChange;
 
   this.editCrew = function() {
     rootModel.showForm(this);
@@ -230,8 +225,7 @@ Coceso.Models.EditableConcern = function() {
   this.pax = ko.observable(0).extend({integer: 0, observeChanges: {server: 0}});
   this.info = ko.observable("").extend({observeChanges: {server: ""}});
 
-  this.dependencies = ko.observableArray([this.name, this.pax, this.info]).extend({arrayChanges: {}});
-  this.localChange = this.dependencies.localChange;
+  this.form = ko.observableArray([this.name, this.pax, this.info]).extend({arrayChanges: {}});
 
   this.error = ko.observable(false);
   this.errorText = ko.computed(Coceso.Helpers.errorText, this);
@@ -443,11 +437,20 @@ Coceso.Models.Person = function(data, rootModel) {
   this.contact = ko.observable("").extend({observeChanges: {server: ""}});
   this.username = ko.observable("").extend({observeChanges: {server: ""}});
   this.allowlogin = ko.observable(false).extend({boolean: true, observeChanges: {server: false}});
+  this.password = ko.observable("").extend({observeChanges: {server: ""}});
+  this.password2 = ko.observable("").extend({
+    observeChanges: {
+      server: "",
+      validate: function() {
+        return (this() === self.password());
+      }
+    }
+  });
 
   // Authorities
   this.authorities = ko.observableArray([]);
   this.authorities.orig = ko.observableArray([]);
-  this.authorities.localChange = ko.computed(function() {
+  this.authorities.changed = ko.computed(function() {
     var a = this(), b = this.orig();
     return (a.length !== b.length || $(a).not(b).length !== 0 || $(b).not(a).length !== 0);
   }, this.authorities);
@@ -467,9 +470,9 @@ Coceso.Models.Person = function(data, rootModel) {
   }, this);
 
   // Observe changes
-  this.dependencies = ko.observableArray([this.givenname, this.surname, this.dnr, this.contact, this.username, this.allowlogin, this.authorities]).extend({arrayChanges: true});
-  this.localChange = this.dependencies.localChange;
-  this.reset = this.dependencies.reset;
+  this.form = ko.observableArray([
+    this.givenname, this.surname, this.dnr, this.contact, this.username, this.allowlogin, this.authorities, this.password, this.password2
+  ]).extend({arrayChanges: true});
 
   this.set = function(data) {
     self.id(data.id || null);
@@ -483,6 +486,9 @@ Coceso.Models.Person = function(data, rootModel) {
     self.allowlogin(data.allowLogin || false);
     self.authorities(data.internalAuthorities || []);
     self.authorities.orig(data.internalAuthorities || []);
+
+    self.password("");
+    self.password2("");
 
     self.isOperator(typeof data.username !== "undefined" && data.username !== null);
 
@@ -530,6 +536,15 @@ Coceso.Models.Person = function(data, rootModel) {
         }
         self.id(response.id);
       }
+
+      if (self.password.changed() && self.id() && self.username()) {
+        Coceso.Ajax.save(JSON.stringify({
+          id: self.id(),
+          username: self.username(),
+          password: self.password()
+        }), "person/setTemporaryPassword.json", null, rootModel.saveError, rootModel.httpError);
+      }
+
       self.load();
     }, rootModel.saveError, rootModel.httpError);
   };
