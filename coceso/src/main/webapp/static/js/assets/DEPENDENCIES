@@ -47,7 +47,7 @@ jQuery i18n:   1.0.9
 jQuery UI:     1.10.4 custom (except dialog, see above)
 ui-bootstrap:  1.0 alpha (TODO: compile only necessary parts)
 Touch-Punch:   0.2.3
-KO Base:       3.1.0
+KO Base:       3.2.0
 KO Sortable:   0.8.6
 
 CUSTOM OPTIONS

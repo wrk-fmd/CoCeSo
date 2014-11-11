@@ -30,7 +30,7 @@
               <button type="button" class="btn btn-default" data-bind="disable: disableTask, click: isTask.set, css: isTask.state">
                 <spring:message code="label.incident.type.task"/>
               </button>
-              <button type="button" class="btn btn-default" data-bind="disable: disableTransport, click: isTransport.set, css: isTransport.state">
+              <button type="button" class="btn btn-default" data-bind="disable: disableTask, click: isTransport.set, css: isTransport.state">
                 <spring:message code="label.incident.type.transport"/>
               </button>
               <button type="button" class="btn btn-default" data-bind="disable: disableRelocation, click: isRelocation.set, css: isRelocation.state">

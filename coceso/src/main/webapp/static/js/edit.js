@@ -31,7 +31,7 @@ Coceso.Helpers = {
   },
   initErrorHandling: function(obj, error, load) {
     obj.error = ko.observable(error || false);
-    obj.errorText = ko.computed(Coceso.Helpers.errorText, obj);
+    obj.errorText = ko.pureComputed(Coceso.Helpers.errorText, obj);
 
     obj.saveError = function(response) {
       obj.error(response.error || 8);
@@ -55,20 +55,6 @@ Coceso.Helpers = {
     }
 
     return "";
-  }
-};
-
-/**
- * AJAX options
- *
- * @type Object
- */
-Coceso.Ajax.loadOptions = {
-  persons: {
-    url: "person/getAll.json",
-    model: "Person",
-    interval: false,
-    id: null
   }
 };
 
@@ -201,13 +187,13 @@ Coceso.Models.EditableUnit = function(data, rootModel) {
       if (success instanceof Function) {
         success();
       }
-      self.call.setServer(self.call());
-      self.ani.setServer(self.ani());
-      self.doc.setServer(self.doc());
-      self.vehicle.setServer(self.vehicle());
-      self.portable.setServer(self.portable());
-      self.info.setServer(self.info());
-      self.home.setServer(self.home());
+      self.call.server(self.call());
+      self.ani.server(self.ani());
+      self.doc.server(self.doc());
+      self.vehicle.server(self.vehicle());
+      self.portable.server(self.portable());
+      self.info.server(self.info());
+      self.home.server(self.home());
     }, rootModel.saveError, rootModel.httpError);
   };
 
@@ -263,9 +249,9 @@ Coceso.Models.EditableConcern = function() {
 
   this.set = function(data) {
     self.id = data.id;
-    self.name.setServer(data.name || "");
-    self.pax.setServer(data.pax || 0);
-    self.info.setServer(data.info || "");
+    self.name.server(data.name || "");
+    self.pax.server(data.pax || 0);
+    self.info.server(data.info || "");
     self.error(false);
 
     if (self.pax() === null) {
@@ -443,7 +429,7 @@ Coceso.Models.Person = function(data) {
   this.id = data.id;
   this.givenname = ko.observable("");
   this.surname = ko.observable("");
-  this.dnr = ko.observable(0);
+  this.dnr = ko.observable(null);
   this.contact = ko.observable("");
   this.username = ko.observable("");
   this.allowlogin = ko.observable(false);
@@ -460,7 +446,7 @@ Coceso.Models.Person = function(data) {
   this.setData = function(data) {
     self.givenname(data.given_name || "");
     self.surname(data.sur_name || "");
-    self.dnr(data.dNr || 0);
+    self.dnr(data.dNr || null);
     self.contact(data.contact || "");
 
     self.username(data.username || "");
@@ -511,7 +497,7 @@ Coceso.Models.EditablePerson = function(data) {
   //Initialize change detection
   this.givenname.extend({observeChanges: {}});
   this.surname.extend({observeChanges: {}});
-  this.dnr = this.dnr.extend({integer: 0, observeChanges: {server: 0}});
+  this.dnr = this.dnr.extend({integer: 0, observeChanges: {}});
   this.contact.extend({observeChanges: {}});
   this.username.extend({observeChanges: {}});
   this.allowlogin = this.allowlogin.extend({boolean: true, observeChanges: {}});
@@ -578,12 +564,12 @@ Coceso.Models.EditablePerson = function(data) {
     this.model();
 
     //Update server reference for change detection
-    this.givenname.setServer(this.model().givenname);
-    this.surname.setServer(this.model().surname);
-    this.dnr.setServer(this.model().dnr);
-    this.contact.setServer(this.model().contact);
-    this.username.setServer(this.model().username);
-    this.allowlogin.setServer(this.model().allowlogin);
+    this.givenname.server(this.model().givenname);
+    this.surname.server(this.model().surname);
+    this.dnr.server(this.model().dnr);
+    this.contact.server(this.model().contact);
+    this.username.server(this.model().username);
+    this.allowlogin.server(this.model().allowlogin);
     this.authorities(this.model() && this.model().authorities() || []);
     this.authorities.orig(this.authorities.peek());
   }, this);
@@ -655,6 +641,15 @@ Coceso.ViewModels.Home = function(error) {
   }
   localStorage.concern = concernId || "";
   this.concernId = ko.observable(concernId);
+  $(window).on("storage", function(e) {
+    if (e.originalEvent.key === "concern") {
+      var newId = parseInt(e.originalEvent.newValue);
+      if (!newId || isNaN(newId)) {
+        newId = null;
+      }
+      self.concernId(newId);
+    }
+  });
 
   // Concern lists
   this.concerns = ko.observableArray([]);
@@ -902,6 +897,16 @@ Coceso.ViewModels.Person = function() {
       return new RegExp(RegExp.escape(item), "i");
     });
   }, this);
+
+  // AJAX options
+  Coceso.Ajax.loadOptions = {
+    persons: {
+      url: "person/getAll.json",
+      model: "Person",
+      interval: false,
+      id: null
+    }
+  };
 
   // List of persons
   Coceso.Data = {

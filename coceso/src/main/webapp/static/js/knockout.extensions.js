@@ -138,29 +138,29 @@ ko.bindingHandlers.file = {
  *
  * @param {ko.observable} target
  * @param {Object} options
- * @returns {ko.computed}
+ * @returns {ko.observable}
  */
 ko.extenders.observeChanges = function(target, options) {
-  target.server = options.server;
-  target.orig = (typeof options.orig !== "undefined") ? ko.observable(options.orig) : ko.observable(ko.utils.unwrapObservable(target.server));
+  target.server = ko.observable(options.server);
+  target.orig = (typeof options.orig !== "undefined") ? ko.observable(options.orig) : ko.observable(ko.utils.unwrapObservable(target.server()));
 
-  target.changed = ko.computed(function() {
+  target.changed = ko.pureComputed(function() {
     return (typeof this.orig() !== "undefined" && this() !== this.orig());
   }, target);
 
-  target.serverChange = ko.computed(function() {
-    var server = ko.utils.unwrapObservable(this.server), orig = this.orig();
+  target.serverChange = ko.pureComputed(function() {
+    var server = ko.utils.unwrapObservable(this.server()), orig = this.orig();
     if (typeof server !== "undefined" && server !== orig) {
       return server;
     }
     return null;
   }, target);
 
-  target.valid = ko.computed(options.validate instanceof Function ? options.validate : function() {
+  target.valid = options.validate instanceof Function ? ko.pureComputed(options.validate, target) : function() {
     return true;
-  }, target);
+  };
 
-  target.formcss = ko.computed(function() {
+  target.formcss = ko.pureComputed(function() {
     if (!this.valid()) {
       return "has-error";
     }
@@ -176,13 +176,8 @@ ko.extenders.observeChanges = function(target, options) {
     }
   };
 
-  target.setServer = function(server) {
-    target.server = server;
-    target.orig.valueHasMutated();
-  };
-
   target.tmp = ko.computed(function() {
-    var server = ko.utils.unwrapObservable(this.server), orig = this.orig();
+    var server = ko.utils.unwrapObservable(this.server()), orig = this.orig();
     if (typeof server !== "undefined" && server !== orig) {
       if (!options.keepChanges || !this.changed() || server === this()) {
         this.orig(server);
@@ -206,7 +201,7 @@ ko.extenders.arrayChanges = function(target, options) {
   target.orig = ko.observable(null);
   target.serverChange = ko.observable(null);
 
-  target.changed = ko.computed(function() {
+  target.changed = ko.pureComputed(function() {
     var items = ko.utils.unwrapObservable(this);
     if (!items instanceof Array) {
       return false;
@@ -216,7 +211,7 @@ ko.extenders.arrayChanges = function(target, options) {
     });
   }, target);
 
-  target.valid = ko.computed(function() {
+  target.valid = ko.pureComputed(function() {
     var items = ko.utils.unwrapObservable(this);
     if (!items instanceof Array) {
       return false;
@@ -227,7 +222,7 @@ ko.extenders.arrayChanges = function(target, options) {
     });
   }, target);
 
-  target.enable = ko.computed(function() {
+  target.enable = ko.pureComputed(function() {
     return (this.changed() && this.valid());
   }, target);
 
@@ -440,14 +435,14 @@ ko.extenders.list = function(target, options) {
  *
  * @param {ko.observable} target
  * @param {mixed} value
- * @returns {ko.computed}
+ * @returns {ko.pureComputed}
  */
 ko.extenders.isValue = function(target, value) {
-  var ret = ko.computed(function() {
+  var ret = ko.pureComputed(function() {
     return (target() === ko.utils.unwrapObservable(value));
   });
 
-  ret.state = ko.computed(function() {
+  ret.state = ko.pureComputed(function() {
     return this() ? "active" : "";
   }, ret);
 
@@ -462,17 +457,17 @@ ko.extenders.isValue = function(target, value) {
  * Helper for boolean values
  *
  * @param {ko.observable} target
- * @returns {ko.computed}
+ * @returns {ko.pureComputed}
  */
 ko.extenders.boolean = function(target) {
-  var ret = ko.computed({
+  var ret = ko.pureComputed({
     read: target,
     write: function(val) {
       target(!!val);
     }
   });
 
-  ret.state = ko.computed(function() {
+  ret.state = ko.pureComputed(function() {
     return this() ? "active" : "";
   }, ret);
 
@@ -496,10 +491,10 @@ ko.extenders.boolean = function(target) {
  *
  * @param {ko.observable} target
  * @param {Integer} length
- * @returns {ko.computed}
+ * @returns {ko.pureComputed}
  */
 ko.extenders.integer = function(target, length) {
-  var ret = ko.computed({
+  var ret = ko.pureComputed({
     read: target,
     write: function(newValue) {
       var current = target(),

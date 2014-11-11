@@ -477,10 +477,10 @@ Coceso.Models.Task = function(taskState, incident, unit) {
    * Get the associated incident
    *
    * @function
-   * @type ko.computed
+   * @type ko.pureComputed
    * @returns {Coceso.Models.Incident}
    */
-  this.incident = ko.computed(function() {
+  this.incident = ko.pureComputed(function() {
     return Coceso.Data.getIncident(this.incident_id);
   }, this);
 
@@ -488,10 +488,10 @@ Coceso.Models.Task = function(taskState, incident, unit) {
    * Get the associated unit
    *
    * @function
-   * @type ko.computed
+   * @type ko.pureComputed
    * @returns {Coceso.Models.Unit}
    */
-  this.unit = ko.computed(function() {
+  this.unit = ko.pureComputed(function() {
     return Coceso.Data.getUnit(this.unit_id);
   }, this);
 
@@ -499,7 +499,7 @@ Coceso.Models.Task = function(taskState, incident, unit) {
    * Return if TaskState is "Assigned"
    *
    * @function
-   * @type ko.computed
+   * @type ko.pureComputed
    * @returns {boolean}
    */
   this.isAssigned = this.taskState.extend({isValue: Coceso.Constants.TaskState.assigned});
@@ -508,7 +508,7 @@ Coceso.Models.Task = function(taskState, incident, unit) {
    * Return if TaskState is "ZBO"
    *
    * @function
-   * @type ko.computed
+   * @type ko.pureComputed
    * @returns {boolean}
    */
   this.isZBO = this.taskState.extend({isValue: Coceso.Constants.TaskState.zbo});
@@ -517,7 +517,7 @@ Coceso.Models.Task = function(taskState, incident, unit) {
    * Return if TaskState is "ABO"
    *
    * @function
-   * @type ko.computed
+   * @type ko.pureComputed
    * @returns {boolean}
    */
   this.isABO = this.taskState.extend({isValue: Coceso.Constants.TaskState.abo});
@@ -526,7 +526,7 @@ Coceso.Models.Task = function(taskState, incident, unit) {
    * Return if TaskState is "ZAO"
    *
    * @function
-   * @type ko.computed
+   * @type ko.pureComputed
    * @returns {boolean}
    */
   this.isZAO = this.taskState.extend({isValue: Coceso.Constants.TaskState.zao});
@@ -535,7 +535,7 @@ Coceso.Models.Task = function(taskState, incident, unit) {
    * Return if TaskState is "AAO"
    *
    * @function
-   * @type ko.computed
+   * @type ko.pureComputed
    * @returns {boolean}
    */
   this.isAAO = this.taskState.extend({isValue: Coceso.Constants.TaskState.aao});
@@ -544,7 +544,7 @@ Coceso.Models.Task = function(taskState, incident, unit) {
    * Return if TaskState is "Detached"
    *
    * @function
-   * @type ko.computed
+   * @type ko.pureComputed
    * @returns {boolean}
    */
   this.isDetached = this.taskState.extend({isValue: Coceso.Constants.TaskState.detached});
@@ -553,10 +553,10 @@ Coceso.Models.Task = function(taskState, incident, unit) {
    * Return the localized taskState
    *
    * @function
-   * @type ko.computed
+   * @type ko.pureComputed
    * @returns {String}
    */
-  this.localizedTaskState = ko.computed(function() {
+  this.localizedTaskState = ko.pureComputed(function() {
     if (this.taskState()) {
       return _("label.task.state." + this.taskState().toLowerCase());
     }
@@ -792,122 +792,112 @@ Coceso.Models.Incident = function(data) {
   this.setData(data);
 
   /**
-   * is$Type methods
+   * Incident is of type "Task"
+   *
+   * @function
+   * @type ko.pureComputed
+   * @returns {boolean}
    */
-  {
-    /**
-     * Incident is of type "Task"
-     *
-     * @function
-     * @type ko.computed
-     * @returns {boolean}
-     */
-    this.isTask = this.type.extend({isValue: Coceso.Constants.Incident.type.task});
-
-    /**
-     * Incident is of type "Relocation"
-     *
-     * @function
-     * @type ko.computed
-     * @returns {boolean}
-     */
-    this.isRelocation = this.type.extend({isValue: Coceso.Constants.Incident.type.relocation});
-
-    /**
-     * Incident is of type "Transport"
-     *
-     * @function
-     * @type ko.computed
-     * @returns {boolean}
-     */
-    this.isTransport = this.type.extend({isValue: Coceso.Constants.Incident.type.transport});
-
-    /**
-     * Incident is of type "ToHome"
-     *
-     * @function
-     * @type ko.computed
-     * @returns {boolean}
-     */
-    this.isToHome = this.type.extend({isValue: Coceso.Constants.Incident.type.tohome});
-
-    /**
-     * Incident is of type "HoldPosition"
-     *
-     * @function
-     * @type ko.computed
-     * @returns {boolean}
-     */
-    this.isHoldPosition = this.type.extend({isValue: Coceso.Constants.Incident.type.holdposition});
-
-    /**
-     * Incident is of type "Standby"
-     *
-     * @function
-     * @type ko.computed
-     * @returns {boolean}
-     */
-    this.isStandby = this.type.extend({isValue: Coceso.Constants.Incident.type.standby});
-  }
+  this.isTask = this.type.extend({isValue: Coceso.Constants.Incident.type.task});
 
   /**
-   * is$State methods
+   * Incident is of type "Relocation"
+   *
+   * @function
+   * @type ko.pureComputed
+   * @returns {boolean}
    */
-  {
-    /**
-     * Incident has state "New"
-     *
-     * @function
-     * @type ko.computed
-     * @returns {boolean}
-     */
-    this.isNew = this.state.extend({isValue: Coceso.Constants.Incident.state.new});
+  this.isRelocation = this.type.extend({isValue: Coceso.Constants.Incident.type.relocation});
 
-    /**
-     * Incident has state "Open"
-     *
-     * @function
-     * @type ko.computed
-     * @returns {boolean}
-     */
-    this.isOpen = this.state.extend({isValue: Coceso.Constants.Incident.state.open});
+  /**
+   * Incident is of type "Transport"
+   *
+   * @function
+   * @type ko.pureComputed
+   * @returns {boolean}
+   */
+  this.isTransport = this.type.extend({isValue: Coceso.Constants.Incident.type.transport});
 
-    /**
-     * Incident has state "Dispo"
-     *
-     * @function
-     * @type ko.computed
-     * @returns {boolean}
-     */
-    this.isDispo = this.state.extend({isValue: Coceso.Constants.Incident.state.dispo});
+  /**
+   * Incident is of type "ToHome"
+   *
+   * @function
+   * @type ko.pureComputed
+   * @returns {boolean}
+   */
+  this.isToHome = this.type.extend({isValue: Coceso.Constants.Incident.type.tohome});
 
-    /**
-     * Incident has state "Working"
-     *
-     * @function
-     * @type ko.computed
-     * @returns {boolean}
-     */
-    this.isWorking = this.state.extend({isValue: Coceso.Constants.Incident.state.working});
+  /**
+   * Incident is of type "HoldPosition"
+   *
+   * @function
+   * @type ko.pureComputed
+   * @returns {boolean}
+   */
+  this.isHoldPosition = this.type.extend({isValue: Coceso.Constants.Incident.type.holdposition});
 
-    /**
-     * Incident has state "Done"
-     *
-     * @function
-     * @type ko.computed
-     * @returns {boolean}
-     */
-    this.isDone = this.state.extend({isValue: Coceso.Constants.Incident.state.done});
-  }
+  /**
+   * Incident is of type "Standby"
+   *
+   * @function
+   * @type ko.pureComputed
+   * @returns {boolean}
+   */
+  this.isStandby = this.type.extend({isValue: Coceso.Constants.Incident.type.standby});
+
+  /**
+   * Incident has state "New"
+   *
+   * @function
+   * @type ko.pureComputed
+   * @returns {boolean}
+   */
+  this.isNew = this.state.extend({isValue: Coceso.Constants.Incident.state.new});
+
+  /**
+   * Incident has state "Open"
+   *
+   * @function
+   * @type ko.pureComputed
+   * @returns {boolean}
+   */
+  this.isOpen = this.state.extend({isValue: Coceso.Constants.Incident.state.open});
+
+  /**
+   * Incident has state "Dispo"
+   *
+   * @function
+   * @type ko.pureComputed
+   * @returns {boolean}
+   */
+  this.isDispo = this.state.extend({isValue: Coceso.Constants.Incident.state.dispo});
+
+  /**
+   * Incident has state "Working"
+   *
+   * @function
+   * @type ko.pureComputed
+   * @returns {boolean}
+   */
+  this.isWorking = this.state.extend({isValue: Coceso.Constants.Incident.state.working});
+
+  /**
+   * Incident has state "Done"
+   *
+   * @function
+   * @type ko.pureComputed
+   * @returns {boolean}
+   */
+  this.isDone = this.state.extend({isValue: Coceso.Constants.Incident.state.done});
 
   /**
    * The associated patient
    *
    * @function
-   * @type ko.computed
+   * @type ko.pureComputed
    * @returns {Coceso.Model.Patient}
    */
-  this.patient = ko.computed(function() {
+  this.patient = ko.pureComputed(function() {
     return Coceso.Data.getPatient(this.id);
   }, this);
 
@@ -915,10 +905,10 @@ Coceso.Models.Incident = function(data) {
    * Return the type as localized string
    *
    * @function
-   * @type ko.computed
+   * @type ko.pureComputed
    * @returns {String}
    */
-  this.localizedType = ko.computed(function() {
+  this.localizedType = ko.pureComputed(function() {
     if (this.type()) {
       if (this.isTask() && this.blue()) {
         return _("label.incident.type.task.blue");
@@ -998,10 +988,10 @@ Coceso.Models.Incident = function(data) {
    * Number of assigned units
    *
    * @function
-   * @type ko.computed
+   * @type ko.pureComputed
    * @returns {integer}
    */
-  this.unitCount = ko.computed(function() {
+  this.unitCount = ko.pureComputed(function() {
     return this.units().length;
   }, this);
 
@@ -1009,10 +999,10 @@ Coceso.Models.Incident = function(data) {
    * Return the title string
    *
    * @function
-   * @type ko.computed
+   * @type ko.pureComputed
    * @returns {String}
    */
-  this.title = ko.computed(function() {
+  this.title = ko.pureComputed(function() {
     if (!this.disableBO()) {
       return (this.bo.info()) ? this.bo.info() : _("label.incident.nobo");
     }
@@ -1023,10 +1013,10 @@ Coceso.Models.Incident = function(data) {
    * Return a one-letter representation of type
    *
    * @function
-   * @type ko.computed
+   * @type ko.pureComputed
    * @returns {String}
    */
-  this.typeString = ko.computed(function() {
+  this.typeString = ko.pureComputed(function() {
     if (this.isTask()) {
       return this.blue() ? _("label.incident.stype.task.blue") : _("label.incident.stype.task");
     }
@@ -1052,10 +1042,10 @@ Coceso.Models.Incident = function(data) {
    * Title in unit dropdown
    *
    * @function
-   * @type ko.computed
+   * @type ko.pureComputed
    * @returns {String}
    */
-  this.dropdownTitle = ko.computed(function() {
+  this.dropdownTitle = ko.pureComputed(function() {
     var title = this.title();
     if (!title) {
       title = "";
@@ -1071,10 +1061,10 @@ Coceso.Models.Incident = function(data) {
    * Title for unit form
    *
    * @function
-   * @type ko.computed
+   * @type ko.pureComputed
    * @returns {String}
    */
-  this.assignedTitle = ko.computed(function() {
+  this.assignedTitle = ko.pureComputed(function() {
     if (this.isTask() || this.isTransport() || this.isRelocation()) {
       return this.typeString() + ": " + this.title().split("\n")[0];
     }
@@ -1220,10 +1210,10 @@ Coceso.Models.Unit = function(data) {
    * Return the number of assigned incidents
    *
    * @function
-   * @type ko.computed
+   * @type ko.pureComputed
    * @returns {Integer}
    */
-  this.incidentCount = ko.computed(function() {
+  this.incidentCount = ko.pureComputed(function() {
     return this.incidents().length;
   }, this);
 
@@ -1231,10 +1221,10 @@ Coceso.Models.Unit = function(data) {
    * List of incidents showing up in dropdown
    *
    * @function
-   * @type ko.computed
+   * @type ko.pureComputed
    * @returns {Array}
    */
-  this.dropdownIncidents = ko.computed(function() {
+  this.dropdownIncidents = ko.pureComputed(function() {
     if (this.incidentCount() <= 0) {
       return [];
     }
@@ -1248,10 +1238,10 @@ Coceso.Models.Unit = function(data) {
    * Returns if some incidents should show up in dropdown
    *
    * @function
-   * @type ko.computed
+   * @type ko.pureComputed
    * @returns {boolean}
    */
-  this.dropdownActive = ko.computed(function() {
+  this.dropdownActive = ko.pureComputed(function() {
     return (this.dropdownIncidents().length > 0);
   }, this);
 
@@ -1259,10 +1249,10 @@ Coceso.Models.Unit = function(data) {
    * Home is set
    *
    * @function
-   * @type ko.computed
+   * @type ko.pureComputed
    * @returns {boolean}
    */
-  this.hasHome = ko.computed(function() {
+  this.hasHome = ko.pureComputed(function() {
     return (this.home.info() !== "");
   }, this);
 
@@ -1270,7 +1260,7 @@ Coceso.Models.Unit = function(data) {
    * Last known position is home
    *
    * @function
-   * @type ko.computed
+   * @type ko.pureComputed
    * @returns {boolean}
    */
   this.isHome = this.position.info.extend({isValue: this.home.info});
@@ -1279,7 +1269,7 @@ Coceso.Models.Unit = function(data) {
    * Unit has state "AD"
    *
    * @function
-   * @type ko.computed
+   * @type ko.pureComputed
    * @returns {boolean}
    */
   this.isAD = this.state.extend({isValue: Coceso.Constants.Unit.state.ad});
@@ -1288,7 +1278,7 @@ Coceso.Models.Unit = function(data) {
    * Unit has state "EB"
    *
    * @function
-   * @type ko.computed
+   * @type ko.pureComputed
    * @returns {boolean}
    */
   this.isEB = this.state.extend({isValue: Coceso.Constants.Unit.state.eb});
@@ -1297,7 +1287,7 @@ Coceso.Models.Unit = function(data) {
    * Unit has state "NEB"
    *
    * @function
-   * @type ko.computed
+   * @type ko.pureComputed
    * @returns {boolean}
    */
   this.isNEB = this.state.extend({isValue: Coceso.Constants.Unit.state.neb});
@@ -1310,7 +1300,7 @@ Coceso.Models.Unit = function(data) {
    * @returns {boolean}
    */
   this.hasAssigned = ko.computed(function() {
-    if (this.incidentCount() <= 0) {
+    if (!this.portable || this.incidentCount() <= 0) {
       return false;
     }
 
@@ -1357,10 +1347,10 @@ Coceso.Models.Unit = function(data) {
    * Disable the send home method
    *
    * @function
-   * @type ko.computed
+   * @type ko.pureComputed
    * @returns {boolean}
    */
-  this.disableSendHome = ko.computed(function() {
+  this.disableSendHome = ko.pureComputed(function() {
     if (!this.hasHome() || this.isHome() || (this.incidentCount() > 1)) {
       return true;
     }
@@ -1376,10 +1366,10 @@ Coceso.Models.Unit = function(data) {
    * Disable the standby method
    *
    * @function
-   * @type ko.computed
+   * @type ko.pureComputed
    * @returns {boolean}
    */
-  this.disableStandby = ko.computed(function() {
+  this.disableStandby = ko.pureComputed(function() {
     if (this.incidentCount() === 1) {
       var i = this.incidents()[0].incident();
       return (i !== null && !i.isHoldPosition());
@@ -1391,10 +1381,10 @@ Coceso.Models.Unit = function(data) {
    * Disable the hold position method
    *
    * @function
-   * @type ko.computed
+   * @type ko.pureComputed
    * @returns {boolean}
    */
-  this.disableHoldPosition = ko.computed(function() {
+  this.disableHoldPosition = ko.pureComputed(function() {
     if (this.isHome() || (this.position.info() === "") || (this.incidentCount() > 1)) {
       return true;
     }
@@ -1430,10 +1420,10 @@ Coceso.Models.Unit = function(data) {
    * Text based on the unit's assigned tasks
    *
    * @function
-   * @type ko.computed
+   * @type ko.pureComputed
    * @returns {string} The text
    */
-  this.taskText = ko.computed(function() {
+  this.taskText = ko.pureComputed(function() {
     if (this.incidentCount() < 0) {
       return "";
     }
@@ -1464,10 +1454,10 @@ Coceso.Models.Unit = function(data) {
    * CSS class based on the unit's task
    *
    * @function
-   * @type ko.computed
+   * @type ko.pureComputed
    * @returns {string} The CSS class
    */
-  this.taskCss = ko.computed(function() {
+  this.taskCss = ko.pureComputed(function() {
     if (this.incidentCount() < 0) {
       return "";
     }
@@ -1505,10 +1495,10 @@ Coceso.Models.Unit = function(data) {
    * Options for the tooltip
    *
    * @function
-   * @type ko.computed
+   * @type ko.pureComputed
    * @returns {Object} The popover options
    */
-  this.popover = ko.computed(function() {
+  this.popover = ko.pureComputed(function() {
     // Bugfix orphaned Popovers (Ticket #17)
     var content = "<div onmouseout=\"$('.popover').remove();\">";
     if (this.ani !== "") {
@@ -1746,7 +1736,7 @@ Coceso.Models.Patient = function(data) {
    * Patient is male
    *
    * @function
-   * @type ko.computed
+   * @type ko.pureComputed
    * @returns {boolean}
    */
   this.isMale = this.sex.extend({isValue: Coceso.Constants.Patient.sex.male});
@@ -1755,7 +1745,7 @@ Coceso.Models.Patient = function(data) {
    * Patient is female
    *
    * @function
-   * @type ko.computed
+   * @type ko.pureComputed
    * @returns {boolean}
    */
   this.isFemale = this.sex.extend({isValue: Coceso.Constants.Patient.sex.female});
@@ -1764,10 +1754,10 @@ Coceso.Models.Patient = function(data) {
    * Patient's sex is unknown
    *
    * @function
-   * @type ko.computed
+   * @type ko.pureComputed
    * @returns {boolean}
    */
-  this.isUnknown = ko.computed(function() {
+  this.isUnknown = ko.pureComputed(function() {
     return (!this.isMale() && !this.isFemale());
   }, this);
 
@@ -1783,9 +1773,11 @@ Coceso.Models.Patient = function(data) {
   /**
    * State css for undefined sex
    *
-   * @returns {void}
+   * @function
+   * @type ko.pureComputed
+   * @returns {String}
    */
-  this.isUnknown.state = ko.computed(function() {
+  this.isUnknown.state = ko.pureComputed(function() {
     return this() ? "active" : "";
   }, this.isUnknown);
 };
@@ -1849,9 +1841,7 @@ Coceso.ViewModels.Filterable = function(options) {
   /**
    * Generate a list of active filters
    *
-   * @function
-   * @type ko.computed
-   * @returns {Object}
+   * @type {Array}
    */
   this.activeFilters = [this.filter];
 
@@ -2175,14 +2165,14 @@ Coceso.ViewModels.Incident = function(data) {
     this.model();
 
     //Update server reference for change detection
-    this.ao.info.setServer(this.model().ao.info);
-    this.blue.setServer(this.model().blue);
-    this.bo.info.setServer(this.model().bo.info);
-    this.caller.setServer(this.model().caller);
-    this.casusNr.setServer(this.model().casusNr);
-    this.info.setServer(this.model().info);
-    this.state.setServer(this.model().state);
-    this.type.setServer(this.model().type);
+    this.ao.info.server(this.model().ao.info);
+    this.blue.server(this.model().blue);
+    this.bo.info.server(this.model().bo.info);
+    this.caller.server(this.model().caller);
+    this.casusNr.server(this.model().casusNr);
+    this.info.server(this.model().info);
+    this.state.server(this.model().state);
+    this.type.server(this.model().type);
 
     //Set initial data
     if (ko.computedContext.isInitial()) {
@@ -2235,7 +2225,7 @@ Coceso.ViewModels.Incident = function(data) {
       if (local) {
         if (local.taskState.server !== task.taskState) {
           //Local element exists, but does not match global model: Recreate local taskState observable
-          local.taskState.setServer(task.taskState);
+          local.taskState.server(task.taskState);
           local.changed = local.taskState.changed;
           local.reset = local.taskState.reset;
         }
@@ -2274,7 +2264,7 @@ Coceso.ViewModels.Incident = function(data) {
    * @returns {boolean}
    */
   this.disableTask = ko.computed(function() {
-    return (this.id && !this.isTask());
+    return (this.id && !this.isTask() && !this.isTransport());
   }, this);
 
   /**
@@ -2286,50 +2276,6 @@ Coceso.ViewModels.Incident = function(data) {
    */
   this.disableRelocation = ko.computed(function() {
     return (this.id && !this.isRelocation());
-  }, this);
-
-  /**
-   * Disable the "Transport" type button
-   *
-   * @function
-   * @type ko.computed
-   * @returns {boolean}
-   */
-  this.disableTransport = ko.computed(function() {
-    return (this.id && !this.isTransport());
-  }, this);
-
-  /**
-   * Disable "Assigned" state
-   *
-   * @function
-   * @type ko.computed
-   * @returns {boolean}
-   */
-  this.disableAssigned = ko.computed(function() {
-    return (this.isStandby() || this.isHoldPosition());
-  }, this);
-
-  /**
-   * Disable "AAO" state
-   *
-   * @function
-   * @type ko.computed
-   * @returns {boolean}
-   */
-  this.disableAAO = ko.computed(function() {
-    return (this.ao.info() === "");
-  }, this);
-
-  /**
-   * Disable "ZAO" state
-   *
-   * @function
-   * @type ko.computed
-   * @returns {boolean}
-   */
-  this.disableZAO = ko.computed(function() {
-    return (this.isStandby() || this.isHoldPosition() || this.ao.info() === "");
   }, this);
 
   /**
@@ -2589,10 +2535,10 @@ Coceso.ViewModels.Unit = function(data) {
     this.model();
 
     //Update server reference for change detection
-    this.position.info.setServer(this.model().position.info);
-    this.home.info.setServer(this.model().home.info);
-    this.info.setServer(this.model().info);
-    this.state.setServer(this.model().state);
+    this.position.info.server(this.model().position.info);
+    this.home.info.server(this.model().home.info);
+    this.info.server(this.model().info);
+    this.state.server(this.model().state);
 
     //Set initial data
     if (ko.computedContext.isInitial()) {
@@ -2630,7 +2576,7 @@ Coceso.ViewModels.Unit = function(data) {
       if (local) {
         if (local.taskState.server !== task.taskState) {
           //Local element exists, but does not match global model: Recreate local taskState observable
-          local.taskState.setServer(task.taskState);
+          local.taskState.server(task.taskState);
           local.changed = local.taskState.changed;
           local.reset = local.taskState.reset;
         }
@@ -2774,14 +2720,14 @@ Coceso.ViewModels.Patient = function(data) {
     this.model();
 
     //Update server reference for change detection
-    this.given_name.setServer(this.model().given_name);
-    this.sur_name.setServer(this.model().sur_name);
-    this.insurance_number.setServer(this.model().insurance_number);
-    this.externalID.setServer(this.model().externalID);
-    this.diagnosis.setServer(this.model().diagnosis);
-    this.erType.setServer(this.model().erType);
-    this.info.setServer(this.model().info);
-    this.sex.setServer(this.model().sex);
+    this.given_name.server(this.model().given_name);
+    this.sur_name.server(this.model().sur_name);
+    this.insurance_number.server(this.model().insurance_number);
+    this.externalID.server(this.model().externalID);
+    this.diagnosis.server(this.model().diagnosis);
+    this.erType.server(this.model().erType);
+    this.info.server(this.model().info);
+    this.sex.server(this.model().sex);
 
     //Set initial data
     if (ko.computedContext.isInitial()) {
@@ -3036,7 +2982,7 @@ Coceso.ViewModels.Notifications = function() {
    */
   this.openTransportCounter = ko.computed(function() {
     return ko.utils.arrayFilter(incidents(), function(i) {
-      return (i.isTransport());
+      return i.isTransport();
     }).length;
   }, this);
 
