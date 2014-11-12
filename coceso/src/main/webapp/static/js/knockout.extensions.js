@@ -148,13 +148,15 @@ ko.extenders.observeChanges = function(target, options) {
     return (typeof this.orig() !== "undefined" && this() !== this.orig());
   }, target);
 
-  target.serverChange = ko.pureComputed(function() {
-    var server = ko.utils.unwrapObservable(this.server()), orig = this.orig();
-    if (typeof server !== "undefined" && server !== orig) {
-      return server;
-    }
-    return null;
-  }, target);
+  if (options.keepChanges) {
+    target.serverChange = ko.pureComputed(function() {
+      var server = ko.utils.unwrapObservable(this.server()), orig = this.orig();
+      if (typeof server !== "undefined" && server !== orig) {
+        return server;
+      }
+      return null;
+    }, target);
+  }
 
   target.valid = options.validate instanceof Function ? ko.pureComputed(options.validate, target) : function() {
     return true;
@@ -171,8 +173,12 @@ ko.extenders.observeChanges = function(target, options) {
   }, target);
 
   target.reset = function() {
-    if (target.changed()) {
-      target(target.orig());
+    var server = ko.utils.unwrapObservable(target.server()), orig = target.orig();
+    if (options.keepChanges && typeof server !== "undefined" && server !== orig) {
+      target(server);
+      target.orig(server);
+    } else if (target.changed()) {
+      target(orig);
     }
   };
 

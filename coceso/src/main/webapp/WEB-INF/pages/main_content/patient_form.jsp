@@ -21,8 +21,8 @@
   <body style="display: none">
     <div class="ajax_content patient_form">
       <form data-bind="submit: save">
-        <div class="alert alert-danger" id="error" style="display: none"><strong>Saving failed</strong><br/>Try again or see
-          <em>Debug</em> for further information.
+        <div class="alert alert-danger" data-bind="visible: error">
+          <strong><spring:message code="label.error"/>:</strong> <span data-bind="text: errorText"></span>
         </div>
 
         <div class="clearfix">
@@ -83,8 +83,8 @@
           <label for="info" class="sr-only"><spring:message code="label.patient.info"/>:</label>
 
           <div class="alert alert-warning" data-bind="visible: info.serverChange">
-            Field has changed on server!<br>
-            New Value: <a href="#" title="Apply new value" data-bind="text: info.serverChange, click: info.reset"></a>
+            <spring:message code="label.serverchange"/>
+            <a href="#" title="<spring:message code="label.serverchange.apply"/>" data-bind="text: info.serverChange, click: info.reset"></a>
           </div>
           <textarea id="info" name="info" rows="3" class="form-control" placeholder="<spring:message code="label.patient.info"/>"
                     data-bind="value: info, valueUpdate: 'input'">

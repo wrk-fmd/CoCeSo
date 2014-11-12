@@ -100,6 +100,49 @@ Coceso.initi18n = function() {
 };
 
 /**
+ * Contains helpers
+ *
+ * @type Object
+ */
+Coceso.Helpers = {
+  /**
+   * Create error observables
+   *
+   * @param {Object} obj The object to add the properties to
+   * @param {Integer} error Initialize with error
+   * @param {Function} load Reloading function called on error
+   * @returns {void}
+   */
+  initErrorHandling: function(obj, error, load) {
+    obj.error = ko.observable(error || false);
+    obj.errorText = ko.pureComputed(Coceso.Helpers.errorText, obj);
+
+    obj.saveError = function(response) {
+      obj.error(response.error || 8);
+      if (load instanceof Function) {
+        load.call(obj);
+      }
+    };
+
+    obj.httpError = function() {
+      obj.error(7);
+      if (load instanceof Function) {
+        load.call(obj);
+      }
+    };
+  },
+  errorText: function() {
+    var error = this.error();
+
+    if (error >= 1 && error <= 8) {
+      return _("label.error." + error);
+    }
+
+    return "";
+  }
+};
+
+/**
  * AJAX related functions and data
  *
  * @namespace Coceso.Ajax

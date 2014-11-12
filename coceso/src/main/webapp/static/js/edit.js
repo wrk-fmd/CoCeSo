@@ -12,50 +12,23 @@
  */
 
 /**
- * Contains helpers
+ * Get ordering for array position
  *
- * @type Object
+ * @param {Array} array
+ * @param {Integer} index
+ * @returns {Float} Position in array
  */
-Coceso.Helpers = {
-  computeOrdering: function(array, index) {
-    if (!(array instanceof Array) || index < 0 || index >= array.length) {
-      return 0.0;
-    }
-    if (index === 0) {
-      return (array.length > 1) ? array[1].ordering / 2.0 : 10.0;
-    }
-    if (index === array.length - 1) {
-      return array[array.length - 2].ordering + 10.0;
-    }
-    return (array[index - 1].ordering + array[index + 1].ordering) / 2.0;
-  },
-  initErrorHandling: function(obj, error, load) {
-    obj.error = ko.observable(error || false);
-    obj.errorText = ko.pureComputed(Coceso.Helpers.errorText, obj);
-
-    obj.saveError = function(response) {
-      obj.error(response.error || 8);
-      if (load instanceof Function) {
-        load.call(obj);
-      }
-    };
-
-    obj.httpError = function() {
-      obj.error(7);
-      if (load instanceof Function) {
-        load.call(obj);
-      }
-    };
-  },
-  errorText: function() {
-    var error = this.error();
-
-    if (error >= 1 && error <= 8) {
-      return _("label.error." + error);
-    }
-
-    return "";
+Coceso.Helpers.computeOrdering = function(array, index) {
+  if (!(array instanceof Array) || index < 0 || index >= array.length) {
+    return 0.0;
   }
+  if (index === 0) {
+    return (array.length > 1) ? array[1].ordering / 2.0 : 10.0;
+  }
+  if (index === array.length - 1) {
+    return array[array.length - 2].ordering + 10.0;
+  }
+  return (array[index - 1].ordering + array[index + 1].ordering) / 2.0;
 };
 
 /**

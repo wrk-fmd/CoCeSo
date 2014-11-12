@@ -21,6 +21,9 @@
   <body style="display: none">
     <div class="ajax_content">
       <div>
+        <div class="alert alert-danger" data-bind="visible: error">
+          <strong><spring:message code="label.error"/>:</strong> <span data-bind="text: errorText"></span>
+        </div>
         <div class="col-md-8">
           <textarea class="form-control" data-bind="value: text, valueUpdate: 'input'" rows="3" autofocus></textarea>
         </div>
@@ -29,8 +32,6 @@
         </div>
         <div class="col-md-2">
           <input type="submit" class="btn btn-success" data-bind="click: ok, enable: text().trim()" value="<spring:message code="label.ok"/>">
-          <span class="glyphicon glyphicon-warning-sign tooltipped" style="color: #ff0000; font-size: x-large" data-bind="visible: error"
-                title="<spring:message code="label.error.2"/>" data-toggle="tooltip" data-placement="top"></span>
         </div>
       </div>
     </div>

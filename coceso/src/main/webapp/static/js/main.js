@@ -2063,14 +2063,7 @@ Coceso.ViewModels.Form = function() {
    */
   this.form = ko.observableArray().extend({arrayChanges: {}});
 
-  /**
-   * Callback on error saving
-   *
-   * @returns {void}
-   */
-  this.saveError = function() {
-    $("#" + self.ui + "-error").stop(true).show().fadeOut(7000);
-  };
+  Coceso.Helpers.initErrorHandling(this);
 
   /**
    * Save modified data and close the window
@@ -2379,6 +2372,7 @@ Coceso.ViewModels.Incident = function(data) {
    * @returns {void}
    */
   this.afterSave = function(data) {
+    self.error(false);
     if (data.incident_id && data.incident_id !== self.id) {
       //ID has changed
       self.id = data.incident_id;
@@ -2452,7 +2446,7 @@ Coceso.ViewModels.Incident.prototype = Object.create(Coceso.Models.Incident.prot
         units.remove(task);
       });
 
-      Coceso.Ajax.save(JSON.stringify(data), "incident/update.json", this.afterSave, this.saveError, this.saveError);
+      Coceso.Ajax.save(JSON.stringify(data), "incident/update.json", this.afterSave, this.saveError, this.httpError);
     }
   },
   /**
@@ -2599,6 +2593,16 @@ Coceso.ViewModels.Unit = function(data) {
       }));
     });
   }, this);
+
+  /**
+   * Callback after saving
+   *
+   * @param {Object} data The data returned from server
+   * @returns {void}
+   */
+  this.afterSave = function(data) {
+    self.error(false);
+  };
 };
 Coceso.ViewModels.Unit.prototype = Object.create(Coceso.Models.Unit.prototype, /** @lends Coceso.ViewModels.Unit.prototype */ {
   /**
@@ -2634,7 +2638,7 @@ Coceso.ViewModels.Unit.prototype = Object.create(Coceso.Models.Unit.prototype, /
         incidents.remove(task);
       });
 
-      Coceso.Ajax.save(JSON.stringify(data), "unit/update.json", null, this.saveError, this.saveError);
+      Coceso.Ajax.save(JSON.stringify(data), "unit/update.json", this.afterSave, this.saveError, this.httpError);
     }
   },
   /**
@@ -2757,6 +2761,16 @@ Coceso.ViewModels.Patient = function(data) {
       }
     }
   }, this);
+
+  /**
+   * Callback after saving
+   *
+   * @param {Object} data The data returned from server
+   * @returns {void}
+   */
+  this.afterSave = function(data) {
+    self.error(false);
+  };
 };
 Coceso.ViewModels.Patient.prototype = Object.create(Coceso.Models.Patient.prototype, /** @lends Coceso.ViewModels.Patient.prototype */ {
   /**
@@ -2779,7 +2793,7 @@ Coceso.ViewModels.Patient.prototype = Object.create(Coceso.Models.Patient.protot
         sex: this.sex()
       };
 
-      Coceso.Ajax.save(JSON.stringify(data), "patient/update.json", null, this.saveError, this.saveError);
+      Coceso.Ajax.save(JSON.stringify(data), "patient/update.json", this.afterSave, this.saveError, this.httpError);
     }
   },
   /**
@@ -2876,9 +2890,10 @@ Coceso.ViewModels.Logs.prototype = Object.create({}, /** @lends Coceso.ViewModel
 Coceso.ViewModels.CustomLogEntry = function(data) {
   var self = this;
 
+  Coceso.Helpers.initErrorHandling(this);
+
   this.text = ko.observable(data.text || "");
   this.unit = ko.observable(data.unit || 0);
-  this.error = ko.observable(false);
   this.unitList = Coceso.Data.units.list;
 
   this.ok = function() {
@@ -2887,11 +2902,7 @@ Coceso.ViewModels.CustomLogEntry = function(data) {
           text: this.text(),
           unit: this.unit() ? {id: this.unit()} : null
         }),
-        "log/add.json", this.afterSave, this.saveError, this.saveError);
-  };
-
-  this.saveError = function() {
-    self.error(true);
+        "log/add.json", this.afterSave, this.saveError, this.httpError);
   };
 
   this.afterSave = function() {
