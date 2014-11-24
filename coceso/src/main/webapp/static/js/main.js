@@ -562,6 +562,29 @@ Coceso.Models.Task = function(taskState, incident, unit) {
     }
     return "";
   }, this);
+
+  /**
+   * Text based on the incident's type
+   *
+   * @function
+   * @type ko.pureComputed
+   * @returns {string} The text
+   */
+  this.taskText = ko.pureComputed(function() {
+    var i = this.incident();
+    if (i === null) {
+      return this.localizedTaskState();
+    }
+    if (i.isTask() || i.isTransport() || i.isRelocation() || i.isToHome()) {
+      return i.typeChar() + ": " + this.localizedTaskState();
+    }
+
+    if (i.isStandby() || i.isHoldPosition()) {
+      return i.typeChar() + (this.isAssigned() ? ": " + this.localizedTaskState() : "");
+    }
+
+    return "";
+  }, this);
 };
 Coceso.Models.Task.prototype = Object.create({}, /** @lends Coceso.Models.Task.prototype */ {
   /**
@@ -700,7 +723,7 @@ Coceso.Models.Task.prototype = Object.create({}, /** @lends Coceso.Models.Task.p
         }
 
         Coceso.UI.Dialog({
-          title: "<strong>" + unit.call + "</strong>" + " - " + incident.localizedType(),
+          title: "<strong>" + unit.call + "</strong>" + " - " + incident.typeString(),
           info_text: info, button_text: button, elements: elements,
           save: function() {
             console.info("nextState() triggered on Server");
@@ -901,23 +924,6 @@ Coceso.Models.Incident = function(data) {
     return Coceso.Data.getPatient(this.id);
   }, this);
 
-  /**
-   * Return the type as localized string
-   *
-   * @function
-   * @type ko.pureComputed
-   * @returns {String}
-   */
-  this.localizedType = ko.pureComputed(function() {
-    if (this.type()) {
-      if (this.isTask() && this.blue()) {
-        return _("label.incident.type.task.blue");
-      }
-      return _("label.incident.type." + this.type().toLowerCase());
-    }
-    return "";
-  }, this);
-
   /*
    * True, if current Incident will be cancelled on next assign
    *
@@ -1010,13 +1016,30 @@ Coceso.Models.Incident = function(data) {
   }, this);
 
   /**
-   * Return a one-letter representation of type
+   * Return the type as localized string
    *
    * @function
    * @type ko.pureComputed
    * @returns {String}
    */
   this.typeString = ko.pureComputed(function() {
+    if (this.type()) {
+      if (this.isTask() && this.blue()) {
+        return _("label.incident.type.task.blue");
+      }
+      return _("label.incident.type." + this.type().toLowerCase());
+    }
+    return "";
+  }, this);
+
+  /**
+   * Return a one-letter representation of type
+   *
+   * @function
+   * @type ko.pureComputed
+   * @returns {String}
+   */
+  this.typeChar = ko.pureComputed(function() {
     if (this.isTask()) {
       return this.blue() ? _("label.incident.stype.task.blue") : _("label.incident.stype.task");
     }
@@ -1039,6 +1062,33 @@ Coceso.Models.Incident = function(data) {
   }, this);
 
   /**
+   * CSS class based on the incident's type
+   *
+   * @function
+   * @type ko.pureComputed
+   * @returns {string} The CSS class
+   */
+  this.typeCss = ko.pureComputed(function() {
+    if (this.isTask() || this.isTransport()) {
+      return (this.blue()) ? "unit_state_task_blue" : "unit_state_task";
+    }
+    if (this.isRelocation()) {
+      return "unit_state_relocation";
+    }
+    if (this.isHoldPosition()) {
+      return "unit_state_holdposition";
+    }
+    if (this.isToHome()) {
+      return "unit_state_tohome";
+    }
+    if (this.isStandby()) {
+      return "unit_state_standby";
+    }
+
+    return "";
+  }, this);
+
+  /**
    * Title in unit dropdown
    *
    * @function
@@ -1054,7 +1104,7 @@ Coceso.Models.Incident = function(data) {
       title = title.substring(0, 30) + "...";
     }
     return "<span class='incident_type_text" + (this.blue() ? " incident_blue" : "")
-        + "'>" + this.typeString() + "</span>" + title.split("\n")[0];
+        + "'>" + this.typeChar() + "</span>" + title.split("\n")[0];
   }, this);
 
   /**
@@ -1066,10 +1116,10 @@ Coceso.Models.Incident = function(data) {
    */
   this.assignedTitle = ko.pureComputed(function() {
     if (this.isTask() || this.isTransport() || this.isRelocation()) {
-      return this.typeString() + ": " + this.title().split("\n")[0];
+      return this.typeChar() + ": " + this.title().split("\n")[0];
     }
     if (this.isToHome() || this.isStandby() || this.isHoldPosition()) {
-      return this.typeString();
+      return this.typeChar();
     }
     return this.title();
   }, this);
@@ -1417,81 +1467,6 @@ Coceso.Models.Unit = function(data) {
   }, this);
 
   /**
-   * Text based on the unit's assigned tasks
-   *
-   * @function
-   * @type ko.pureComputed
-   * @returns {string} The text
-   */
-  this.taskText = ko.pureComputed(function() {
-    if (this.incidentCount() < 0) {
-      return "";
-    }
-    if (this.incidentCount() > 1) {
-      return "<span class='glyphicon glyphicon-plus'></span>";
-    }
-    if (this.incidentCount() === 0) {
-      return "<span class='glyphicon glyphicon-" + (this.isHome() ? "home" : "exclamation-sign") + "'></span>";
-    }
-
-
-    var i = this.incidents()[0].incident();
-    if (i === null) {
-      return "";
-    }
-    if (i.isTask() || i.isTransport() || i.isRelocation() || i.isToHome()) {
-      return i.typeString() + ": " + _("label.task.state." + this.incidents()[0].taskState().toLowerCase());
-    }
-
-    if (i.isStandby() || i.isHoldPosition()) {
-      return i.typeString() + (this.incidents()[0].isAssigned() ? ": " + _("label.task.state.assigned") : "");
-    }
-
-    return "";
-  }, this);
-
-  /**
-   * CSS class based on the unit's task
-   *
-   * @function
-   * @type ko.pureComputed
-   * @returns {string} The CSS class
-   */
-  this.taskCss = ko.pureComputed(function() {
-    if (this.incidentCount() < 0) {
-      return "";
-    }
-    if (this.incidentCount() > 1) {
-      return "unit_state_multiple";
-    }
-    if (this.incidentCount() === 0) {
-      return this.isFree() ? "unit_state_free" : this.stateCss();
-    }
-
-    var i = this.incidents()[0].incident();
-    if (i === null) {
-      return "";
-    }
-    if (i.isTask() || i.isTransport()) {
-      return (i.blue()) ? "unit_state_task_blue" : "unit_state_task";
-    }
-    if (i.isRelocation()) {
-      return "unit_state_relocation";
-    }
-    if (i.isHoldPosition()) {
-      return "unit_state_holdposition";
-    }
-    if (i.isToHome()) {
-      return "unit_state_tohome";
-    }
-    if (i.isStandby()) {
-      return "unit_state_standby";
-    }
-
-    return "";
-  }, this);
-
-  /**
    * Options for the tooltip
    *
    * @function
@@ -1635,6 +1610,19 @@ Coceso.Models.Unit.prototype = Object.create({}, /** @lends Coceso.Models.Unit.p
     value: function() {
       if (this.id && !this.disableHoldPosition()) {
         Coceso.Ajax.save({id: this.id}, "unit/holdPosition.json");
+      }
+    }
+  },
+  /**
+   * Send selcall to unit
+   *
+   * @function
+   * @returns {void}
+   */
+  sendCall: {
+    value: function() {
+      if (this.ani) {
+        Coceso.Ajax.save(JSON.stringify({ani: this.ani}), "selcall/send.json");
       }
     }
   },

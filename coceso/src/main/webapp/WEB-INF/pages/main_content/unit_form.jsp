@@ -35,7 +35,7 @@
         <div class="clearfix">
           <div class="form-group col-md-6" data-bind="css: position.info.formcss">
             <label for="position"><spring:message code="label.unit.position"/>:</label>
-            <a href="#" class="pull-right" data-bind="click: isHome.set">Set to home</a>
+            <a href="#" class="pull-right" data-bind="click: isHome.set"><spring:message code="label.unit.settohome"/></a>
             <textarea id="position" name="position" rows="3" class="form-control"
                       data-bind="value: position.info, valueUpdate: 'input'"></textarea>
           </div>

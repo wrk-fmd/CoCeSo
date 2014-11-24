@@ -401,6 +401,15 @@ span.incident_blue {
   color: #555;
 }
 
+.unit_state > span:last-child {
+  -webkit-border-top-right-radius: 4px; /* Safari 4 */
+  -moz-border-radius-topright: 4px; /* Firefox 3.6 */
+  border-top-right-radius: 4px;
+  -webkit-border-bottom-right-radius: 4px; /* Safari 4 */
+  -moz-border-radius-bottomright: 4px; /* Firefox 3.6 */
+  border-bottom-right-radius: 4px;
+}
+
 .unit_state .unit_state_eb {
   background-color: #33ff66;
 }
@@ -619,9 +628,9 @@ table[id*='keytable'] > tbody > tr > td:nth-child(2) {
 .flag.flag-us {background-position: -16px -11px}
 
 .green {
-    color: green;
+  color: green;
 }
 
 .red {
-    color: red;
+  color: red;
 }

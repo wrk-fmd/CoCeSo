@@ -16,8 +16,13 @@
 <script type="text/html" id="unit-list-entry-template">
   <li class="dropdown">
     <!-- ko if: portable -->
-    <a href="#" class="unit_state dropdown-toggle" data-bind="draggable: dragOptions, popover: popover" data-toggle="dropdown" oncontextmenu="this.click(); return false;">
-      <span class="ui-corner-left" data-bind="text: call, css: stateCss"></span><span class="ui-corner-right" data-bind="html: taskText, css: taskCss, click: nextState, clickBubble: incidentCount() !== 1"></span>
+    <a href="#" class="unit_state dropdown-toggle last-child-corner-right" data-bind="draggable: dragOptions, popover: popover" data-toggle="dropdown" oncontextmenu="this.click(); return false;">
+      <span class="ui-corner-left" data-bind="text: call, css: stateCss"></span><!--
+      --><!-- ko if: incidentCount() === 0
+      --><span data-bind="css: isFree() ? 'unit_state_free' : stateCss()">
+        <span class="glyphicon" data-bind="css: isHome() ? 'glyphicon-home' : 'glyphicon-exclamation-sign'"></span>
+      </span><!-- /ko
+      --><!-- ko foreach: incidents --><span data-bind="html: taskText, css: incident() && incident().typeCss(), click: nextState, clickBubble: false"></span><!-- /ko -->
     </a>
     <!-- /ko -->
     <!-- ko ifnot: portable -->
@@ -49,6 +54,11 @@
       <!-- ko ifnot: disableHoldPosition -->
       <li><a href="#" title="<spring:message code="label.incident.type.holdposition"/>" data-bind="click: holdPosition"><spring:message code="label.incident.type.holdposition"/></a></li>
       <!-- /ko -->
+      <!-- /ko -->
+
+      <!-- ko if: ani -->
+      <li class="divider"></li>
+      <li><a href="#" title="<spring:message code="label.selcall.send"/>" data-bind="click: sendCall"><spring:message code="label.selcall.send"/></a></li>
       <!-- /ko -->
 
       <!-- ko if: portable && dropdownActive  -->
