@@ -50,7 +50,8 @@ public class ConcernService {
             return false;
         }
 
-        logService.logFull(user, LogEntryType.CONCERN_UPDATE, concern.getId(), null, null, true);
+        // TODO json
+        logService.logAuto(user, LogEntryType.CONCERN_UPDATE, concern.getId(), null);
         return concernDao.update(concern);
     }
 
@@ -69,7 +70,8 @@ public class ConcernService {
         }
 
         concern.setId(concernDao.add(concern));
-        logService.logFull(user, LogEntryType.CONCERN_CREATE, concern.getId(), null, null, true);
+        // TODO json
+        logService.logAuto(user, LogEntryType.CONCERN_CREATE, concern.getId(), null);
         return concern.getId();
     }
 
@@ -98,7 +100,8 @@ public class ConcernService {
         }
 
         LOG.warn("Concern #" + concern.getId() + " DELETION TRY! User " + user.getUsername());
-        logService.logFull(user, LogEntryType.CONCERN_REMOVE, concern.getId(), null, null, true);
+        // TODO json
+        logService.logAuto(user, LogEntryType.CONCERN_REMOVE, concern.getId(), null);
 
         boolean ret = concernDao.remove(concern);
         if(ret) {

@@ -2,8 +2,12 @@ package at.wrk.coceso.entity;
 
 import at.wrk.coceso.entity.enums.LogEntryType;
 import at.wrk.coceso.entity.enums.TaskState;
+import at.wrk.coceso.entity.helper.JsonContainer;
+import java.io.IOException;
 
 import java.sql.Timestamp;
+import org.apache.log4j.Logger;
+import org.codehaus.jackson.map.ObjectMapper;
 
 public class LogEntry {
 
@@ -62,6 +66,23 @@ public class LogEntry {
         return json;
     }
 
+    public JsonContainer getChanges() {
+      if (json == null) {
+        return null;
+      }
+
+      ObjectMapper mapper = new ObjectMapper();
+      JsonContainer changes;
+      try {
+        changes = mapper.readValue(json, JsonContainer.class);
+      } catch (IOException e) {
+        Logger.getLogger(LogEntry.class).error(null, e);
+        changes = null;
+      }
+
+      return changes;
+    }
+
     public int getId() {
         return id;
     }
@@ -108,6 +129,20 @@ public class LogEntry {
 
     public void setJson(String json) {
         this.json = json;
+    }
+
+    public void setChanges(JsonContainer changes) {
+      if (changes == null) {
+        this.json = null;
+      } else {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+          json = mapper.writeValueAsString(changes);
+        } catch (IOException e) {
+          Logger.getLogger(LogEntry.class).error(null, e);
+          json = null;
+        }
+      }
     }
 
     public LogEntryType getType() {

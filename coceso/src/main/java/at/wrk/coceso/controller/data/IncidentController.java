@@ -31,6 +31,7 @@ public class IncidentController implements IEntityController<Incident> {
     return incidentService.getAll(concern_id);
   }
 
+  // Unused
   @RequestMapping(value = "getAllActive", produces = "application/json", method = RequestMethod.GET)
   @ResponseBody
   public List<Incident> getAllActive(@CookieValue("concern") int concern_id) {
@@ -43,6 +44,7 @@ public class IncidentController implements IEntityController<Incident> {
     return incidentService.getAllRelevant(concern_id);
   }
 
+  // Unused
   @RequestMapping(value = "getAllByState/{state}", produces = "application/json", method = RequestMethod.GET)
   @ResponseBody
   public List<Incident> getAllByState(@CookieValue("concern") int concern_id, @PathVariable("state") IncidentState state) {
@@ -90,11 +92,9 @@ public class IncidentController implements IEntityController<Incident> {
         associated = setAssociated(incident, user);
       }
 
-      //log.logFull(user, "Incident created", concern_id, null, incident, true);
       return "{\"success\": " + (incident.getId() > 0) + ", \"new\": true, \"incident_id\":" + incident.getId() + ",\"associated\":" + associated + "}";
     }
 
-    //log.logFull(user, "Incident updated", concern_id, null, incident, true);
     boolean ret = incidentService.update(incident, user);
     String associated = "{}";
 
@@ -117,28 +117,6 @@ public class IncidentController implements IEntityController<Incident> {
     }
     messages += "}";
     return messages;
-  }
-
-  @RequestMapping(value = "nextState", produces = "application/json", method = RequestMethod.POST)
-  @ResponseBody
-  public String nextState(@RequestParam("incident_id") int incident_id, @RequestParam("unit_id") int unit_id,
-          UsernamePasswordAuthenticationToken token) {
-    Operator user = (Operator) token.getPrincipal();
-
-    Incident incident = incidentService.getById(incident_id);
-    TaskState newState = incident.nextState(unit_id);
-
-    // Don't set State to ZAO if no AO is present. Except for SingleUnit Incidents (TODO Home can be null, remove middle statement if not)
-    if (newState == TaskState.ZAO && !incident.getType().isSingleUnit() && Point.isEmpty(incident.getAo())) {
-      return "{\"success\":false,\"message\":\"No AO in Incident given\"}";
-    }
-
-    if (newState == null) {
-      return "{\"success\":false,\"message\":\"Next State not possible, no Next State defined\"}";
-    }
-
-    taskService.changeState(incident_id, unit_id, newState, user);
-    return "{\"success\":true}";
   }
 
   @RequestMapping(value = "setToState", produces = "application/json", method = RequestMethod.POST)

@@ -14,12 +14,10 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfPTable;
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -28,7 +26,7 @@ public class PDFDumpService {
 
     private final static
     Logger LOG = Logger.getLogger(PDFDumpService.class);
-    
+
     private Date initialized = null;
 
     private String dateFormat;
@@ -112,8 +110,6 @@ public class PDFDumpService {
     }
 
     private void addUnitStats(Document document) throws DocumentException {
-        ObjectMapper mapper = new ObjectMapper();
-
         document.add(new Paragraph(messageSource.getMessage("label.units", null, locale), PdfStyle.titleFont));
         document.add(new Paragraph(" "));
 
@@ -141,29 +137,23 @@ public class PDFDumpService {
             while(current != null && iterator.hasNext() && stateChange == null) {
                 LogEntry log = iterator.next();
 
-                if(log.getJson() != null) {
-                    JsonContainer jsonContainer;
+                if(log.getChanges() != null) {
+                    JsonContainer jsonContainer = log.getChanges();
+                    Unit tUnit = new Unit(); //jsonContainer.getUnit();
 
-                    try {
-                        jsonContainer = mapper.readValue(log.getJson(), JsonContainer.class);
-                        Unit tUnit = jsonContainer.getUnit();
-
-                        if( log != null && tUnit.getState() != null ) {
-                            if(tUnit.getState() != current) {
-                                // No valid LogEntry with same State found before
-                                if(last == null) {
-                                    LOG.warn("PDFDumpService.addUnitStats(): CORRUPT DATA while parsing last UnitState Change!");
-                                    break;
-                                }
-                                // Set Timestamp of last LogEntry with same State as 'current'
-                                stateChange = last.getTimestamp();
-                            } else {
-                                // Save last LogEntry with same State as 'current'
-                                last = log;
+                    if( log != null && tUnit.getState() != null ) {
+                        if(tUnit.getState() != current) {
+                            // No valid LogEntry with same State found before
+                            if(last == null) {
+                                LOG.warn("PDFDumpService.addUnitStats(): CORRUPT DATA while parsing last UnitState Change!");
+                                break;
                             }
+                            // Set Timestamp of last LogEntry with same State as 'current'
+                            stateChange = last.getTimestamp();
+                        } else {
+                            // Save last LogEntry with same State as 'current'
+                            last = log;
                         }
-                    } catch (IOException e) {
-                        LOG.warn(e.getMessage());
                     }
                 }
             }

@@ -58,9 +58,9 @@ public class UnitController implements IEntityController<Unit> {
     }
 
     // TODO Error Handling
-    @RequestMapping(value = "createUnitBatch", produces = "application/json", method = RequestMethod.POST)
+    @RequestMapping(value = "createBatch", produces = "application/json", method = RequestMethod.POST)
     @ResponseBody
-    public String createUnitBatch(@RequestBody BatchUnits batch, BindingResult result,
+    public String createBatch(@RequestBody BatchUnits batch, BindingResult result,
                                   @CookieValue("concern") int concern_id, UsernamePasswordAuthenticationToken token) {
         Operator user = (Operator) token.getPrincipal();
 

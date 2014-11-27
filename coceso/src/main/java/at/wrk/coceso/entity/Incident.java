@@ -4,35 +4,13 @@ package at.wrk.coceso.entity;
 import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.TaskState;
+import at.wrk.coceso.entity.helper.ChangePair;
+import java.util.HashMap;
 
-import java.util.List;
 import java.util.Map;
+import org.apache.log4j.Logger;
 
 public class Incident {
-
-    //private static HashMap<IncidentType, List<TaskState>> possibleStates;
-
-    /*static {
-        possibleStates = new HashMap<IncidentType, List<TaskState>>();
-        List<TaskState> tmp = new ArrayList<TaskState>();
-
-        tmp.add(TaskState.Assigned);
-        tmp.add(TaskState.AAO);
-        tmp.add(TaskState.Detached);
-
-        possibleStates.put(IncidentType.HoldPosition, new ArrayList<TaskState>(tmp));
-        possibleStates.put(IncidentType.Standby, new ArrayList<TaskState>(tmp));
-
-        tmp.add(1, TaskState.ZAO);
-
-        possibleStates.put(IncidentType.Relocation, new ArrayList<TaskState>(tmp));
-        possibleStates.put(IncidentType.ToHome, new ArrayList<TaskState>(tmp));
-
-        tmp.add(1, TaskState.ZBO);
-        tmp.add(2, TaskState.ABO);
-
-        possibleStates.put(IncidentType.Task, new ArrayList<TaskState>(tmp));
-    }*/
 
     private int id;
 
@@ -58,18 +36,11 @@ public class Incident {
 
     private IncidentType type;
 
-    public TaskState nextState(int unit_id) {
-        if(getState() == null || getType() == null || !getUnits().containsKey(unit_id))
-            return null;
+    public Incident() {
+    }
 
-        List<TaskState> l = getType().getPossibleStates();
-        if(l == null)
-            return null;
-        int index = l.indexOf(getUnits().get(unit_id));
-        if(index < 0 || index > l.size() - 2)
-            return null;
-
-        return l.get(index+1);
+    public Incident(int id) {
+      this.id = id;
     }
 
     public Incident slimCopy() {
@@ -79,6 +50,86 @@ public class Incident {
         ret.setType(this.type);
 
         return ret;
+    }
+
+    public Map<String, ChangePair<Object>> changes(Incident old) {
+      Map<String, ChangePair<Object>> changes = new HashMap<>();
+
+      if (old == null) {
+        if (state != null) {
+          changes.put("state", new ChangePair(null, state));
+        }
+        if (priority != null) {
+          changes.put("priority", new ChangePair(null, priority));
+        }
+        if (blue != null) {
+          changes.put("blue", new ChangePair(null, blue));
+        }
+        if (!Point.isEmpty(bo)) {
+          changes.put("bo", new ChangePair(null, bo));
+        }
+        if (!Point.isEmpty(ao)) {
+          changes.put("ao", new ChangePair(null, ao));
+        }
+        if (casusNr != null && !casusNr.isEmpty()) {
+          changes.put("casusNr", new ChangePair(null, casusNr));
+        }
+        if (info != null && !info.isEmpty()) {
+          changes.put("info", new ChangePair(null, info));
+        }
+        if (caller != null && !caller.isEmpty()) {
+          changes.put("caller", new ChangePair(null, caller));
+        }
+        if (type != null) {
+          changes.put("type", new ChangePair(null, type));
+        }
+      } else {
+        if (state != null && state != old.state) {
+          changes.put("state", new ChangePair(old.state, state));
+        }
+        if (priority != null && !priority.equals(old.priority)) {
+          changes.put("priority", new ChangePair(old.priority, priority));
+        }
+        if (blue != null && !blue.equals(old.blue)) {
+          changes.put("blue", new ChangePair(old.blue, blue));
+        }
+        if (bo != null && !bo.equals(old.bo)) {
+          changes.put("bo", new ChangePair(old.bo, bo));
+        }
+        if (ao != null && !ao.equals(old.ao)) {
+          changes.put("ao", new ChangePair(old.ao, ao));
+        }
+        if (casusNr != null && !casusNr.equals(old.casusNr)) {
+          changes.put("casusNr", new ChangePair(old.casusNr, casusNr));
+        }
+        if (info != null && !info.equals(old.info)) {
+          changes.put("info", new ChangePair(old.info, info));
+        }
+        if (caller != null && !caller.equals(old.caller)) {
+          changes.put("caller", new ChangePair(old.caller, caller));
+        }
+        if (type != null && type != old.type) {
+          changes.put("type", new ChangePair(old.type, type));
+        }
+      }
+
+      return changes;
+    }
+
+    public Map<String, ChangePair<Object>> changesState(Incident old) {
+      Map<String, ChangePair<Object>> changes = new HashMap<>();
+
+      if (old == null) {
+        // Should not compare to empty unit, because no state auto set occurs on new incidents
+        Logger.getLogger(Incident.class).warn("Incident.changesState(): Tried to compare to null!");
+        return null;
+      }
+
+      if (state != null && !state.equals(old.state)) {
+        changes.put("state", new ChangePair(old.state, state));
+      }
+
+      return changes;
     }
 
     public int getId() {

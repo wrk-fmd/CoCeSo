@@ -14,4 +14,8 @@ public enum TaskState {
     public static TaskState[] orderedValues() {
         return new TaskState[]{Assigned, ZBO, ABO, ZAO, AAO, Detached};
     }
+
+    public boolean isWorking() {
+      return this == ABO || this == ZAO || this == AAO;
+    }
 }

@@ -16,6 +16,13 @@ public class Concern implements Serializable {
 
     private boolean closed;
 
+    public Concern() {
+    }
+
+    public Concern(int id) {
+      this.id = id;
+    }
+
     public void prepareNotNull() {
         if(name == null) name = "";
         if(info == null) info = "";

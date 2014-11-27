@@ -5,10 +5,13 @@ import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.Operator;
 import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.enums.LogEntryType;
+import at.wrk.coceso.entity.helper.ChangePair;
+import at.wrk.coceso.entity.helper.JsonContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class IncidentService {
@@ -45,8 +48,9 @@ public class IncidentService {
     }
 
     public boolean update(Incident incident, Operator operator) {
+        Map<String, ChangePair<Object>> changes = incident.changes(getById(incident.getId()));
         boolean ret = update(incident);
-        logService.logFull(operator, LogEntryType.INCIDENT_UPDATE, incident.getConcern(), null, incident, true);
+        logService.logAuto(operator, LogEntryType.INCIDENT_UPDATE, incident.getConcern(), null, incident, new JsonContainer("incident", changes));
         return ret;
     }
 
@@ -56,7 +60,7 @@ public class IncidentService {
 
     public int add(Incident incident, Operator operator) {
         incident.setId(add(incident));
-        logService.logFull(operator, LogEntryType.INCIDENT_CREATE, incident.getConcern(), null, incident, true);
+        logService.logAuto(operator, LogEntryType.INCIDENT_CREATE, incident.getConcern(), null, incident, new JsonContainer("incident", incident.changes(null)));
         return incident.getId();
     }
 
@@ -65,7 +69,7 @@ public class IncidentService {
     }
 
     public boolean remove(Incident incident, Operator operator) {
-        logService.logFull(operator, LogEntryType.INCIDENT_DELETE, incident.getConcern(), null, incident, true);
+        logService.logAuto(operator, LogEntryType.INCIDENT_DELETE, incident.getConcern(), null, incident, new JsonContainer("incident", incident.changes(null)));
         return remove(incident);
     }
 }

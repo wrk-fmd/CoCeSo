@@ -15,7 +15,6 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -233,9 +232,6 @@ public class FinalReportController {
     }
 
     private void addUnitStats(Document document) throws DocumentException {
-
-        ObjectMapper mapper = new ObjectMapper();
-
         document.add(new Paragraph(messageSource.getMessage("label.units", null, locale), PdfStyle.titleFont));
         document.add(new Paragraph(" "));
 
@@ -269,7 +265,7 @@ public class FinalReportController {
             String lastState = "";
 
             for(LogEntry log : logs) {
-                if(log.getJson() == null || log.getType() == LogEntryType.CUSTOM) {
+                if(log.getChanges() == null || log.getType() == LogEntryType.CUSTOM) {
                     table.addCell(new java.text.SimpleDateFormat(dateFormat).format(log.getTimestamp()));
                     table.addCell(log.getUser().getUsername());
 
@@ -289,38 +285,30 @@ public class FinalReportController {
                     continue;
                 }
 
-                JsonContainer jsonContainer;
-                try {
-                    jsonContainer = mapper.readValue(log.getJson(), JsonContainer.class);
-                    Unit tUnit = jsonContainer.getUnit();
-                    Incident tIncident = jsonContainer.getIncident();
+                JsonContainer jsonContainer = log.getChanges();
+                Unit tUnit = new Unit(); //jsonContainer.getUnit();
+                Incident tIncident = new Incident(); //jsonContainer.getIncident();
 
-                    if(tUnit == null) {
-                        LOG.debug("FinalReportController: Parsing Error???");
-                        continue;
-                    }
-
-
-                    table.addCell(new java.text.SimpleDateFormat(dateFormat).format(log.getTimestamp()));
-                    table.addCell(log.getUser().getUsername());
-                    table.addCell(messageSource.getMessage("descr."+log.getType().name(), null, locale));
-                    table.addCell(tUnit.getState() == null ? "" : ( tUnit.getState().name().equals(lastState) ? "" : ( lastState = tUnit.getState().name() ) ) );
-                    table.addCell(tUnit.getPosition() == null ? "" : ( tUnit.getPosition().toString().equals(lastPosition) ? "" : ( lastPosition = tUnit.getPosition()+"" ) ) );
-                    table.addCell(tUnit.getInfo() == null ? "" : ( tUnit.getInfo().equals(lastInfo) ? "" : ( lastInfo = tUnit.getInfo() ) ) );
-
-                    if(tIncident == null) {
-                        table.addCell("");
-                        table.addCell("");
-                    } else {
-                        table.addCell(incidentTitle(tIncident));
-                        table.addCell(log.getState() == null ? "-" : messageSource.getMessage("label.task.state." + log.getState().name().toLowerCase(), null, locale));
-                    }
-
-                } catch (IOException e) {
-                    LOG.warn(e.getMessage());
+                if(tUnit == null) {
+                    LOG.debug("FinalReportController: Parsing Error???");
+                    continue;
                 }
 
 
+                table.addCell(new java.text.SimpleDateFormat(dateFormat).format(log.getTimestamp()));
+                table.addCell(log.getUser().getUsername());
+                table.addCell(messageSource.getMessage("descr."+log.getType().name(), null, locale));
+                table.addCell(tUnit.getState() == null ? "" : ( tUnit.getState().name().equals(lastState) ? "" : ( lastState = tUnit.getState().name() ) ) );
+                table.addCell(tUnit.getPosition() == null ? "" : ( tUnit.getPosition().toString().equals(lastPosition) ? "" : ( lastPosition = tUnit.getPosition()+"" ) ) );
+                table.addCell(tUnit.getInfo() == null ? "" : ( tUnit.getInfo().equals(lastInfo) ? "" : ( lastInfo = tUnit.getInfo() ) ) );
+
+                if(tIncident == null) {
+                    table.addCell("");
+                    table.addCell("");
+                } else {
+                    table.addCell(incidentTitle(tIncident));
+                    table.addCell(log.getState() == null ? "-" : messageSource.getMessage("label.task.state." + log.getState().name().toLowerCase(), null, locale));
+                }
             }
 
             p.add(table);
@@ -372,8 +360,6 @@ public class FinalReportController {
 
     // TODO History of Patientdata changes
     private void addIncidentStats(Document document) throws DocumentException {
-        ObjectMapper mapper = new ObjectMapper();
-
         document.add(new Paragraph(messageSource.getMessage("label.incidents", null, locale), PdfStyle.titleFont));
         document.add(new Paragraph(" "));
 
@@ -439,7 +425,7 @@ public class FinalReportController {
 
             for(LogEntry log : logs)
             {
-                if(log.getJson() == null || log.getType() == LogEntryType.CUSTOM) {
+                if(log.getChanges() == null || log.getType() == LogEntryType.CUSTOM) {
                     table.addCell(new java.text.SimpleDateFormat(dateFormat).format(log.getTimestamp()));
                     table.addCell(log.getUser().getUsername());
 
@@ -451,42 +437,34 @@ public class FinalReportController {
                     continue;
                 }
 
-                JsonContainer jsonContainer;
-                try {
-                    jsonContainer = mapper.readValue(log.getJson(), JsonContainer.class);
-                    Unit tUnit = jsonContainer.getUnit();
-                    Incident tIncident = jsonContainer.getIncident();
+                JsonContainer jsonContainer = log.getChanges();
+                Unit tUnit = new Unit(); //jsonContainer.getUnit();
+                Incident tIncident = new Incident(); //jsonContainer.getIncident();
 
-                    if(tIncident == null) {
-                        LOG.debug("FinalReportController: Parsing Error???");
-                        continue;
-                    }
-
-                    if(tUnit == null) {
-                        table.addCell(new java.text.SimpleDateFormat(dateFormat).format(log.getTimestamp()));
-                        table.addCell(log.getUser().getUsername());
-                        table.addCell(messageSource.getMessage("descr." + log.getType().name(), null, locale));
-                        table.addCell(tIncident.getState() == null ? "" : ( tIncident.getState().name().equals(lastState) ? "" :
-                                ( messageSource.getMessage("label.incident.state." + ( lastState = tIncident.getState().name() ).toLowerCase(), null, locale) ) ) );
-                        table.addCell(tIncident.getBo() == null ? "" : ( tIncident.getBo().toString().equals(lastBO) ? "" : ( lastBO = tIncident.getBo()+"" ) ) );
-                        table.addCell(tIncident.getAo() == null ? "" : ( tIncident.getAo().toString().equals(lastAO) ? "" : ( lastAO = tIncident.getAo()+"" ) ) );
-                        table.addCell(tIncident.getInfo() == null ? "" : ( tIncident.getInfo().equals(lastInfo) ? "" : ( lastInfo = tIncident.getInfo() ) ) );
-                        table.addCell(tIncident.getCasusNr() == null ? "" : ( tIncident.getCasusNr().equals(lastCasus) ? "" : ( lastCasus = tIncident.getCasusNr() ) ) );
-                        table.addCell(tIncident.getBlue() == null ? "" : ( tIncident.getBlue() ? "J" : "N" ) );
-                    } else {
-                        table2.addCell(new java.text.SimpleDateFormat(dateFormat).format(log.getTimestamp()));
-                        table2.addCell(log.getUser().getUsername());
-                        table2.addCell(messageSource.getMessage("descr." + log.getType().name(), null, locale));
-                        table2.addCell("#" + tUnit.getId() + (tUnit.getCall() !=  null ? ": " + tUnit.getCall() : ""));
-                        table2.addCell(log.getState() + "");
-
-                    }
-
-                } catch (IOException e) {
-                    LOG.warn(e.getMessage());
+                if(tIncident == null) {
+                    LOG.debug("FinalReportController: Parsing Error???");
+                    continue;
                 }
 
+                if(tUnit == null) {
+                    table.addCell(new java.text.SimpleDateFormat(dateFormat).format(log.getTimestamp()));
+                    table.addCell(log.getUser().getUsername());
+                    table.addCell(messageSource.getMessage("descr." + log.getType().name(), null, locale));
+                    table.addCell(tIncident.getState() == null ? "" : ( tIncident.getState().name().equals(lastState) ? "" :
+                            ( messageSource.getMessage("label.incident.state." + ( lastState = tIncident.getState().name() ).toLowerCase(), null, locale) ) ) );
+                    table.addCell(tIncident.getBo() == null ? "" : ( tIncident.getBo().toString().equals(lastBO) ? "" : ( lastBO = tIncident.getBo()+"" ) ) );
+                    table.addCell(tIncident.getAo() == null ? "" : ( tIncident.getAo().toString().equals(lastAO) ? "" : ( lastAO = tIncident.getAo()+"" ) ) );
+                    table.addCell(tIncident.getInfo() == null ? "" : ( tIncident.getInfo().equals(lastInfo) ? "" : ( lastInfo = tIncident.getInfo() ) ) );
+                    table.addCell(tIncident.getCasusNr() == null ? "" : ( tIncident.getCasusNr().equals(lastCasus) ? "" : ( lastCasus = tIncident.getCasusNr() ) ) );
+                    table.addCell(tIncident.getBlue() == null ? "" : ( tIncident.getBlue() ? "J" : "N" ) );
+                } else {
+                    table2.addCell(new java.text.SimpleDateFormat(dateFormat).format(log.getTimestamp()));
+                    table2.addCell(log.getUser().getUsername());
+                    table2.addCell(messageSource.getMessage("descr." + log.getType().name(), null, locale));
+                    table2.addCell("#" + tUnit.getId() + (tUnit.getCall() !=  null ? ": " + tUnit.getCall() : ""));
+                    table2.addCell(log.getState() + "");
 
+                }
             }
 
             p.add(table);

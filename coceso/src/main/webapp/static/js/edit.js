@@ -284,7 +284,7 @@ Coceso.Models.BatchUnit = function(rootModel) {
       transportVehicle: this.vehicle(),
       portable: this.portable(),
       home: {info: this.home()}
-    }), "unit/createUnitBatch.json", function() {
+    }), "unit/createBatch.json", function() {
       self.call("");
       self.from(null);
       self.to(null);

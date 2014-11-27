@@ -1,6 +1,5 @@
 package at.wrk.coceso.controller.data;
 
-import at.wrk.coceso.dao.LogDao;
 import at.wrk.coceso.entity.LogEntry;
 import at.wrk.coceso.entity.Operator;
 import at.wrk.coceso.entity.enums.LogEntryType;
@@ -18,15 +17,12 @@ import java.util.List;
 public class LogController {
 
   @Autowired
-  private LogDao dao;
-
-  @Autowired
   private LogService logService;
 
   @RequestMapping(value = "getAll", produces = "application/json", method = RequestMethod.GET)
   @ResponseBody
   public List<LogEntry> getLog(@CookieValue("concern") int concern_id) {
-    return dao.getAll(concern_id);
+    return logService.getAll(concern_id);
   }
 
   @RequestMapping(value = "getCustom", produces = "application/json", method = RequestMethod.GET)
@@ -38,7 +34,7 @@ public class LogController {
   @RequestMapping(value = "getAll/{concern_id}", produces = "application/json", method = RequestMethod.GET)
   @ResponseBody
   public List<LogEntry> getLogWithoutCookie(@PathVariable("concern_id") int concern_id) {
-    return dao.getAll(concern_id);
+    return logService.getAll(concern_id);
   }
 
   @RequestMapping(value = "getLast/{count}", produces = "application/json", method = RequestMethod.GET)
@@ -56,7 +52,7 @@ public class LogController {
   @RequestMapping(value = "getLastByUnit/{id}/{limit}", produces = "application/json", method = RequestMethod.GET)
   @ResponseBody
   public List<LogEntry> getLastByUnit(@PathVariable("id") int unit, @PathVariable("limit") int limit) {
-    return dao.getLimitedByUnitId(unit, limit);
+    return logService.getLimitedByUnitId(unit, limit);
   }
 
   @RequestMapping(value = "getByIncident/{id}", produces = "application/json", method = RequestMethod.GET)
@@ -75,7 +71,7 @@ public class LogController {
       return "{\"success\":false, \"error\":\"Binding Error\"}";
     }
 
-    logService.logFull(user, LogEntryType.CUSTOM.customMessage(logEntry.getText()), concern_id, logEntry.getUnit(), logEntry.getIncident(), false);
+    logService.logCustom(user, logEntry.getText(), concern_id, logEntry.getUnit(), logEntry.getIncident());
     return "{\"success\":true}";
   }
 }

@@ -9,6 +9,8 @@ import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.LogEntryType;
 import at.wrk.coceso.entity.enums.TaskState;
+import at.wrk.coceso.entity.helper.ChangePair;
+import at.wrk.coceso.entity.helper.JsonContainer;
 import at.wrk.coceso.entity.helper.UnitWithLocked;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UnitService {
@@ -56,12 +59,13 @@ public class UnitService {
     }
 
     public boolean update(Unit unit, Operator operator) {
+        Map<String, ChangePair<Object>> changes = unit.changes(getById(unit.getId()));
         boolean ret = update(unit);
         if(!ret) {
             LOG.info(String.format("Update of Unit #%d by User %s failed",
                     unit.getId(), operator.getUsername()));
         }
-        logService.logFull(operator, LogEntryType.UNIT_UPDATE, unit.getConcern(), unit, null, true);
+        logService.logAuto(operator, LogEntryType.UNIT_UPDATE, unit.getConcern(), unit, null, new JsonContainer("unit", changes));
         return ret;
     }
 
@@ -70,13 +74,14 @@ public class UnitService {
     }
 
     public boolean updateFull(Unit unit, Operator operator) {
+        Map<String, ChangePair<Object>> changes = unit.changesFull(getById(unit.getId()));
         boolean ret = updateFull(unit);
         if(!ret) {
             LOG.info(String.format("Full Update of Unit #%d by User %s failed",
                     unit.getId(), operator.getUsername()));
         }
         // UNIT_CREATE for difference in Log -> so it can be deleted, if Unit is only updated via Edit Page
-        logService.logFull(operator, LogEntryType.UNIT_CREATE, unit.getConcern(), unit, null, true);
+        logService.logAuto(operator, LogEntryType.UNIT_CREATE, unit.getConcern(), unit, null, new JsonContainer("unit", changes));
         return ret;
     }
 
@@ -85,9 +90,8 @@ public class UnitService {
     }
 
     public int add(Unit unit, Operator operator) {
-
         unit.setId(add(unit));
-        logService.logFull(operator, LogEntryType.UNIT_CREATE, unit.getConcern(), unit, null, true);
+        logService.logAuto(operator, LogEntryType.UNIT_CREATE, unit.getConcern(), unit, null, new JsonContainer("unit", unit.changesFull(null)));
         return unit.getId();
     }
 
@@ -97,7 +101,6 @@ public class UnitService {
 
     public boolean remove(int unitId, Operator operator) {
         // Changed to REMOVED Flag on LogEntry:Create
-        //logService.logFull(operator, LogEntryType.UNIT_DELETE, unit.getConcern(), unit, null, true);
         return remove(unitId);
     }
 

@@ -634,3 +634,12 @@ table[id*='keytable'] > tbody > tr > td:nth-child(2) {
 .red {
   color: red;
 }
+
+.blue {
+  font-weight: bold;
+  color: #0064cd;
+}
+
+.dashboard-list .key {
+  min-width: 15em;
+}

@@ -1,34 +1,27 @@
 package at.wrk.coceso.entity.helper;
 
-import at.wrk.coceso.entity.Incident;
-import at.wrk.coceso.entity.Unit;
+import java.util.Map;
 
 public class JsonContainer {
-    private Unit unit;
-    private Incident incident;
 
-    public JsonContainer() {
-        super();
-    }
+  private String type;
+  private Map<String, ChangePair<Object>> data;
 
-    public JsonContainer(Unit unit, Incident incident) {
-        this.unit = unit;
-        this.incident = incident;
-    }
+  public JsonContainer() {
+    this(null, null);
+  }
 
-    public Unit getUnit() {
-        return unit;
-    }
+  public JsonContainer(String type, Map<String, ChangePair<Object>> data) {
+    this.type = type;
+    this.data = data;
+  }
 
-    public void setUnit(Unit unit) {
-        this.unit = unit;
-    }
+  public String getType() {
+    return type;
+  }
 
-    public Incident getIncident() {
-        return incident;
-    }
+  public Map<String, ChangePair<Object>> getData() {
+    return data;
+  }
 
-    public void setIncident(Incident incident) {
-        this.incident = incident;
-    }
 }

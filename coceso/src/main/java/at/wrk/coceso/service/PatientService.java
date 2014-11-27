@@ -5,6 +5,7 @@ import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.Operator;
 import at.wrk.coceso.entity.Patient;
 import at.wrk.coceso.entity.enums.LogEntryType;
+import at.wrk.coceso.entity.helper.JsonContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,14 +38,16 @@ public class PatientService {
         if(ret <= 0) {
             return ret;
         }
-        logService.logWithIDs(user.getId(), LogEntryType.PATIENT_CREATE, caseId, 0, patient.getId(), true);
+        // TODO json
+        logService.logAuto(user, LogEntryType.PATIENT_CREATE, caseId, null, new Incident(patient.getId()), (JsonContainer)null);
         return ret;
     }
 
     public boolean update(Patient patient, Operator user, int caseId) {
 
         if(patientDao.update(patient)) {
-            logService.logWithIDs(user.getId(), LogEntryType.PATIENT_UPDATE, caseId, 0, patient.getId(), true);
+            // TODO json
+            logService.logAuto(user, LogEntryType.PATIENT_UPDATE, caseId, null, new Incident(patient.getId()), (JsonContainer)null);
             return true;
         }
         return false;

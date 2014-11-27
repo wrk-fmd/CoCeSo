@@ -3,9 +3,12 @@ package at.wrk.coceso.entity;
 
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entity.enums.UnitState;
+import at.wrk.coceso.entity.helper.ChangePair;
+import java.util.HashMap;
 
 import java.util.List;
 import java.util.Map;
+import org.apache.log4j.Logger;
 
 public class Unit {
 
@@ -35,6 +38,13 @@ public class Unit {
 
     private Map<Integer, TaskState> incidents;
 
+    public Unit() {
+    }
+
+    public Unit(int id) {
+      this.id = id;
+    }
+
     /**
      * Default Values for Insert in Database
      */
@@ -43,6 +53,90 @@ public class Unit {
         if(call == null) call = "";
         if(ani == null) ani = "";
         if(info == null) info = "";
+    }
+
+    public Map<String, ChangePair<Object>> changes(Unit old) {
+      Map<String, ChangePair<Object>> changes = new HashMap<>();
+
+      if (old == null) {
+        // Should not compare to empty unit, because no adding is done in main
+        Logger.getLogger(Unit.class).warn("Unit.changes(): Tried to compare to null!");
+        return null;
+      }
+
+      if (state != null && state != old.state) {
+        changes.put("state", new ChangePair(old.state, state));
+      }
+      if (info != null && !info.equals(old.info)) {
+        changes.put("info", new ChangePair(old.info, info));
+      }
+      if (position != null && !position.equals(old.position)) {
+        changes.put("position", new ChangePair(old.position != null ? old.position.getInfo() : null, position.getInfo()));
+      }
+
+      return changes;
+    }
+
+    public Map<String, ChangePair<Object>> changesPosition(Unit old) {
+      Map<String, ChangePair<Object>> changes = new HashMap<>();
+
+      if (old == null) {
+        // Should not compare to empty unit, because no adding is done in main
+        Logger.getLogger(Unit.class).warn("Unit.changesPosition(): Tried to compare to null!");
+        return null;
+      }
+
+      if (position != null && !position.equals(old.position)) {
+        changes.put("position", new ChangePair(old.position != null ? old.position.getInfo() : null, position.getInfo()));
+      }
+
+      return changes;
+    }
+
+    public Map<String, ChangePair<Object>> changesFull(Unit old) {
+      Map<String, ChangePair<Object>> changes = new HashMap<>();
+
+      if (old == null) {
+        if (call != null && !call.isEmpty()) {
+          changes.put("call", new ChangePair(null, call));
+        }
+        if (ani != null && !ani.isEmpty()) {
+          changes.put("ani", new ChangePair(null, ani));
+        }
+        if (info != null && !info.isEmpty()) {
+          changes.put("info", new ChangePair(null, info));
+        }
+        if (!Point.isEmpty(home)) {
+          changes.put("home", new ChangePair(null, home.getInfo()));
+        }
+        changes.put("withDoc", new ChangePair(null, withDoc));
+        changes.put("portable", new ChangePair(null, portable));
+        changes.put("transportVehicle", new ChangePair(null, transportVehicle));
+      } else {
+        if (call != null && !call.equals(old.call)) {
+          changes.put("call", new ChangePair(old.call, call));
+        }
+        if (ani != null && !ani.equals(old.ani)) {
+          changes.put("ani", new ChangePair(old.ani, ani));
+        }
+        if (withDoc != old.withDoc) {
+          changes.put("withDoc", new ChangePair(old.withDoc, withDoc));
+        }
+        if (portable != old.portable) {
+          changes.put("portable", new ChangePair(old.portable, portable));
+        }
+        if (transportVehicle != old.transportVehicle) {
+          changes.put("transportVehicle", new ChangePair(old.transportVehicle, transportVehicle));
+        }
+        if (info != null && !info.equals(old.info)) {
+          changes.put("info", new ChangePair(old.info, info));
+        }
+        if (home != null && !home.equals(old.home)) {
+          changes.put("home", new ChangePair(old.home != null ? old.home.getInfo() : null, home.getInfo()));
+        }
+      }
+
+      return changes;
     }
 
     public int getId() {
