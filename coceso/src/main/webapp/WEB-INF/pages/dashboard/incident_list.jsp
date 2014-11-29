@@ -1,12 +1,10 @@
-<%@page import="at.wrk.coceso.entity.Unit"%>
-<%@page import="java.util.Map"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%--
 /**
  * CoCeSo
- * Client HTML dashboard unit list view
+ * Client HTML dashboard incident list view
  * Copyright (c) WRK\Coceso-Team
  *
  * Licensed under the GNU General Public License, version 3 (GPL-3.0)
@@ -19,12 +17,13 @@
 --%>
 
 <c:url var="get_inc" value="?iid="/>
-<table class="table table-striped">
+<table class="table table-striped table-hover">
   <thead>
     <tr>
-      <th><spring:message code="label.unit.call"/></th>
+      <th>#</th>
       <th><spring:message code="label.incident.type"/></th>
       <th><spring:message code="label.incident.bo"/>/<spring:message code="label.incident.ao"/></th>
+      <th><spring:message code="label.incident.info"/></th>
       <th><spring:message code="label.incident.state"/></th>
     </tr>
   </thead>
@@ -48,23 +47,28 @@
         <td>
           <c:choose>
             <c:when test="${inc.type == 'Task' || inc.type == 'Transport'}">
-              <c:choose>
-                <c:when test="${not empty inc.bo}"><c:out value="${inc.bo}"/></c:when>
-                <c:otherwise><spring:message code="label.incident.nobo"/></c:otherwise>
-              </c:choose>
-              <c:if test="${not empty inc.ao}">
-                <span class="glyphicon glyphicon-arrow-right"></span>
-                <c:out value="${inc.ao}"/>
-              </c:if>
+              <div class="clearfix">
+                <div class="pull-left">
+                  <c:choose>
+                    <c:when test="${not empty inc.bo}"><span class="pre"><c:out value="${inc.bo}"/></span></c:when>
+                    <c:otherwise><spring:message code="label.incident.nobo"/></c:otherwise>
+                  </c:choose>
+                </div>
+                <c:if test="${not empty inc.ao}">
+                  <div class="glyphicon glyphicon-arrow-right pull-left"></div>
+                  <div class="pre pull-left"><c:out value="${inc.ao}"/></div>
+                </c:if>
+              </div>
             </c:when>
             <c:otherwise>
               <c:choose>
-                <c:when test="${not empty inc.ao}"><c:out value="${inc.ao}"/></c:when>
+                <c:when test="${not empty inc.ao}"><span class="pre"><c:out value="${inc.ao}"/></span></c:when>
                 <c:otherwise><spring:message code="label.incident.noao"/></c:otherwise>
               </c:choose>
             </c:otherwise>
           </c:choose>
         </td>
+        <td class="pre"><c:out value="${inc.info}"/></td>
         <td><spring:message code="label.incident.state.${fn:toLowerCase(inc.state)}"/></td>
       </tr>
     </c:forEach>

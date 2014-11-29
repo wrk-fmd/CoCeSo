@@ -4,12 +4,15 @@ import at.wrk.coceso.dao.mapper.IncidentMapper;
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.enums.IncidentType;
+import at.wrk.coceso.entity.enums.TaskState;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.jdbc.support.rowset.ResultSetWrappingSqlRowSet;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -18,7 +21,9 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class IncidentDao extends CocesoDao<Incident> {
@@ -110,6 +115,31 @@ public class IncidentDao extends CocesoDao<Incident> {
         return jdbc.query(q, new Object[] {case_id, state.name()}, incidentMapper);
     }
 
+    public Map<Incident, TaskState> getRelated(int unit_id) {
+      String q = "SELECT i.*, t.state AS taskState FROM log l "
+              + "LEFT OUTER JOIN incident i ON i.id = l.incident_fk "
+              + "LEFT OUTER JOIN task t ON t.incident_fk = l.incident_fk AND t.unit_fk = l.unit_fk "
+              + "WHERE l.unit_fk = ? AND l.incident_fk IS NOT NULL "
+              + "GROUP BY l.unit_fk, i.id, t.state "
+              + "ORDER BY (t.state IS NULL) ASC";
+
+      SqlRowSet rs = jdbc.queryForRowSet(q, unit_id);
+
+      Map<Incident, TaskState> ret = new LinkedHashMap<>();
+
+      while (rs.next()) {
+        try {
+          ret.put(
+                  incidentMapper.mapRow(((ResultSetWrappingSqlRowSet) rs).getResultSet(), unit_id),
+                  rs.getString("taskState") == null ? TaskState.Detached : TaskState.valueOf(rs.getString("taskState"))
+          );
+        } catch (SQLException e) {
+          LOG.warn(null, e);
+        }
+      }
+
+      return ret;
+    }
 
     /**
      * Incident.priority and .blue are written on every method-call! All other vars only if != NULL

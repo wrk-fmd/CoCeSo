@@ -66,10 +66,10 @@ public class Incident {
           changes.put("blue", new ChangePair(null, blue));
         }
         if (!Point.isEmpty(bo)) {
-          changes.put("bo", new ChangePair(null, bo));
+          changes.put("bo", new ChangePair(null, bo.getInfo()));
         }
         if (!Point.isEmpty(ao)) {
-          changes.put("ao", new ChangePair(null, ao));
+          changes.put("ao", new ChangePair(null, ao.getInfo()));
         }
         if (casusNr != null && !casusNr.isEmpty()) {
           changes.put("casusNr", new ChangePair(null, casusNr));
@@ -93,11 +93,11 @@ public class Incident {
         if (blue != null && !blue.equals(old.blue)) {
           changes.put("blue", new ChangePair(old.blue, blue));
         }
-        if (bo != null && !bo.equals(old.bo)) {
-          changes.put("bo", new ChangePair(old.bo, bo));
+        if (bo != null && !bo.equals(old.bo) && (old.bo != null || !Point.isEmpty(bo))) {
+          changes.put("bo", new ChangePair(old.bo != null ? old.bo.getInfo() : null, bo.getInfo()));
         }
-        if (ao != null && !ao.equals(old.ao)) {
-          changes.put("ao", new ChangePair(old.ao, ao));
+        if (ao != null && !ao.equals(old.ao) && (old.ao != null || !Point.isEmpty(ao))) {
+          changes.put("ao", new ChangePair(old.ao != null ? old.ao.getInfo() : null, ao.getInfo()));
         }
         if (casusNr != null && !casusNr.equals(old.casusNr)) {
           changes.put("casusNr", new ChangePair(old.casusNr, casusNr));

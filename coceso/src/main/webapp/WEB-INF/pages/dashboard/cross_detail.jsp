@@ -6,7 +6,7 @@
 <%--
 /**
  * CoCeSo
- * Client HTML dashboard unit detail view
+ * Client HTML dashboard incident/unit crossdetail view
  * Copyright (c) WRK\Coceso-Team
  *
  * Licensed under the GNU General Public License, version 3 (GPL-3.0)
@@ -18,25 +18,15 @@
  */
 --%>
 
-<c:url var="get_inc" value="?uid=${unit.id}&amp;iid="/>
-
-<h2><spring:message code="label.unit"/> #<c:out value="${unit.id}"/></h2>
-
-<div class="clearfix">
+<div class="dashboard-list clearfix">
   <div class="col-md-6">
+    <h3><a href="<c:url value="?iid=${incident.id}"/>"><spring:message code="label.incident"/> #<c:out value="${incident.id}"/></a></h3>
+    <%@include file="incident_props.jsp"%>
+  </div>
+  <div class="col-md-5">
+    <h3><a href="<c:url value="?uid=${unit.id}"/>"><spring:message code="label.unit"/> #<c:out value="${unit.id}"/></a></h3>
     <%@include file="unit_props.jsp"%>
   </div>
-  <c:if test="${not empty incidents}">
-    <div class="col-md-6">
-      <h4><spring:message code="label.incidents"/></h4>
-      <dl class="dashboard-list dl-horizontal no-colon">
-        <c:forEach items="${incidents}" var="task">
-          <dt><t:inctitle incident="${task.key}"/></dt>
-          <dd><a href="${get_inc}${task.key.id}"><spring:message code="label.task.state.${fn:toLowerCase(task.value)}" text="${task.value}"/></a></dd>
-          </c:forEach>
-      </dl>
-    </div>
-  </c:if>
 </div>
 
 <h3><spring:message code="label.log"/></h3>
@@ -46,7 +36,6 @@
       <th><spring:message code="label.log.timestamp"/></th>
       <th><spring:message code="label.operator"/></th>
       <th><spring:message code="label.log.text"/></th>
-      <th><spring:message code="label.incident"/></th>
       <th><spring:message code="label.task.state"/></th>
       <th><spring:message code="label.log.changes"/></th>
     </tr>
@@ -57,11 +46,6 @@
         <td><fmt:formatDate type="both" dateStyle="short" timeStyle="medium" value="${log.timestamp}"/></td>
         <td><c:out value="${log.user.username}"/></td>
         <td><t:logtext log="${log}"/></td>
-        <td>
-          <c:if test="${not empty log.incident}">
-            <a href="${get_inc}${log.incident.id}"><t:inctitle incident="${log.incident}"/></a>
-          </c:if>
-        </td>
         <td>
           <c:if test="${not empty log.state}">
             <spring:message code="label.task.state.${fn:toLowerCase(log.state)}" text="${log.state}"/>

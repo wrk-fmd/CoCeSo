@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class LogService {
@@ -136,10 +135,6 @@ public class LogService {
 
   public List<LogEntry> getByIncidentAndUnit(int incident_id, int unit_id) {
     return logDao.getByIncidentAndUnit(incident_id, unit_id);
-  }
-
-  public Map<Unit, TaskState> getRelatedUnits(int incident_id) {
-    return logDao.getRelatedUnits(incident_id);
   }
 
   public List<LogEntry> getAll(int concern_id) {

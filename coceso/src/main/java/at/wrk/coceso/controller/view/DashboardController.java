@@ -48,10 +48,8 @@ public class DashboardController {
       if (iid != null && uid != null) {
         crossDetail(map, iid, uid);
       } else if (iid != null) {
-        map.addAttribute("incident_menu", "active");
         incidentDetail(map, iid);
       } else if (uid != null) {
-        map.addAttribute("unit_menu", "active");
         unitDetail(map, uid);
       } else {
         if (concern_id == null) {
@@ -61,16 +59,13 @@ public class DashboardController {
 
         switch (view) {
           case "unit":
-            map.addAttribute("unit_menu", "active");
             this.unitList(map, concern_id);
             break;
           case "incident":
-            map.addAttribute("incident_menu", "active");
             this.incidentList(map, concern_id, active);
             break;
           default:
-            map.addAttribute("log_menu", "active");
-            map.addAttribute("logs", logService.getAll(concern_id));
+            this.logList(map, concern_id);
             break;
         }
       }
@@ -81,13 +76,21 @@ public class DashboardController {
     return "dashboard";
   }
 
+  private void logList(ModelMap map, Integer concern_id) {
+    map.addAttribute("template", "log_table");
+    map.addAttribute("log_menu", "active");
+    map.addAttribute("logs", logService.getAll(concern_id));
+  }
+
   private void incidentList(ModelMap map, int concern_id, boolean active) {
     map.addAttribute("template", "incident_list");
+    map.addAttribute("incident_menu", "active");
     map.addAttribute("incidents", active ? incidentService.getAllActive(concern_id) : incidentService.getAll(concern_id));
   }
 
   private void unitList(ModelMap map, int concern_id) {
     map.addAttribute("template", "unit_list");
+    map.addAttribute("unit_menu", "active");
     map.addAttribute("units", unitService.getAll(concern_id));
   }
 
@@ -98,7 +101,7 @@ public class DashboardController {
       throw new NotFoundException("");
     }
 
-    map.addAttribute("template", "unit_detail");
+    map.addAttribute("template", "cross_detail");
     map.addAttribute("concern", incident.getConcern());
     map.addAttribute("incident", incident);
     map.addAttribute("unit", unit);
@@ -112,9 +115,10 @@ public class DashboardController {
     }
 
     map.addAttribute("template", "incident_detail");
+    map.addAttribute("incident_menu", "active");
     map.addAttribute("concern", incident.getConcern());
     map.addAttribute("incident", incident);
-    map.addAttribute("units", logService.getRelatedUnits(incident_id));
+    map.addAttribute("units", unitService.getRelated(incident_id));
     map.addAttribute("logs", logService.getByIncidentId(incident_id));
   }
 
@@ -125,8 +129,10 @@ public class DashboardController {
     }
 
     map.addAttribute("template", "unit_detail");
+    map.addAttribute("unit_menu", "active");
     map.addAttribute("concern", unit.getConcern());
     map.addAttribute("unit", unit);
+    map.addAttribute("incidents", incidentService.getRelated(unit_id));
     map.addAttribute("logs", logService.getByUnitId(unit_id));
   }
 

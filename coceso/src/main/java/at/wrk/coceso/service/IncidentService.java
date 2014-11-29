@@ -5,6 +5,7 @@ import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.Operator;
 import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.enums.LogEntryType;
+import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entity.helper.ChangePair;
 import at.wrk.coceso.entity.helper.JsonContainer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,10 @@ public class IncidentService {
 
     public List<Incident> getAllByState(int id, IncidentState state) {
         return incidentDao.getAllByState(id, state);
+    }
+
+    public Map<Incident, TaskState> getRelated(int unit_id) {
+      return incidentDao.getRelated(unit_id);
     }
 
     public boolean update(Incident incident) {

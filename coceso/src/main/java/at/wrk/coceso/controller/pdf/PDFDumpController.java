@@ -24,6 +24,7 @@ import java.util.Locale;
 
 @Controller
 @RequestMapping("/pdfdump")
+@Deprecated
 public class PDFDumpController {
 
     private final static

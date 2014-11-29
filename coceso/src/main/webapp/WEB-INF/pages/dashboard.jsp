@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%--
 /**
  * CoCeSo
@@ -27,12 +26,6 @@
 
     <script src="<c:url value="/static/js/assets/jquery.min.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/assets/bootstrap.min.js"/>" type="text/javascript"></script>
-
-    <script type="text/javascript">
-      $(document).ready(function() {
-        $('[data-toggle="popover"]').popover();
-      });
-    </script>
   </head>
   <body>
     <div class="container">
@@ -95,112 +88,11 @@
       <c:choose>
         <c:when test="${template == 'incident_list'}"><%@include file="dashboard/incident_list.jsp"%></c:when>
         <c:when test="${template == 'unit_list'}"><%@include file="dashboard/unit_list.jsp"%></c:when>
+        <c:when test="${template == 'cross_detail'}"><%@include file="dashboard/cross_detail.jsp"%></c:when>
         <c:when test="${template == 'incident_detail'}"><%@include file="dashboard/incident_detail.jsp"%></c:when>
         <c:when test="${template == 'unit_detail'}"><%@include file="dashboard/unit_detail.jsp"%></c:when>
+        <c:when test="${template == 'log_table'}"><%@include file="dashboard/log_table.jsp"%></c:when>
       </c:choose>
-      <%--
-            <c:url var="get_inc" value="/dashboard?concern=${concern}&amp;sub=Incident&amp;iid="/>
-            <c:url var="get_unit" value="/dashboard?concern=${concern}&amp;sub=Unit&amp;uid="/>
-
-      <c:if test="${not empty i_incident}">
-        <div class="alert alert-success">
-          <strong>${i_incident.id}: </strong> <c:out value="${i_incident.caller}"/><!-- TODO -->
-        </div>
-        <div class="page-header">
-          <h3>
-            Assigned Units:
-          </h3>
-        </div>
-        <c:forEach var="unts" items="${i_incident.units}">
-          <div class="alert alert-info">
-            ID:
-            <a href="${get_unit}${unts.key}" class="btn btn-primary"><c:out value="${i_map[unts.key]}"/></a> : <c:out value="${unts.value}"/>
-          </div>
-        </c:forEach>
-      </c:if>
-
-      <c:if test="${not empty incidents || not empty tasks}">
-        <table class="table table-striped">
-          <thead>
-            <c:if test="${not empty incidents}">
-              <tr>
-                <th>
-                  ID
-                </th>
-                <th>
-                  <spring:message code="label.incident.type"/>
-                </th>
-                <th>
-                  <spring:message code="label.incident.bo"/>
-                </th>
-                <th>
-                  <spring:message code="label.incident.ao"/>
-                </th>
-                <th>
-                  <spring:message code="label.incident.info"/>
-                </th>
-                <th>
-                  <spring:message code="label.incident.casus"/>
-                </th>
-                <th>
-                  <spring:message code="label.incident.state"/>
-                </th>
-              </tr>
-            </c:if>
-            <c:if test="${not empty tasks}">
-              <tr>
-                <th>
-                  ID
-                </th>
-                <th>
-                  <spring:message code="label.task.state"/>
-                </th>
-              </tr>
-            </c:if>
-          </thead>
-          <tbody>
-            <c:if test="${not empty incidents}">
-              <c:forEach items="${incidents}" var="eIncident">
-                <tr>
-                  <td>
-                    <c:out value="${eIncident.id}"/>
-                  </td>
-                  <td>
-                    <c:out value="${eIncident.type}"/>
-                  </td>
-                  <td>
-                    <c:out value="${eIncident.bo}"/>
-                  </td>
-                  <td>
-                    <c:out value="${eIncident.ao}"/>
-                  </td>
-                  <td>
-                    <c:out value="${eIncident.info}"/>
-                  </td>
-                  <td>
-                    <c:out value="${eIncident.casusNr}"/>
-                  </td>
-                  <td>
-                    <c:out value="${eIncident.state}"/>
-                  </td>
-                </tr>
-              </c:forEach>
-            </c:if>
-            <c:if test="${not empty tasks}">
-              <c:forEach items="${tasks}" var="etask">
-                <tr>
-                  <td>
-                    <c:out value="${etask.key}"/>
-                  </td>
-                  <td>
-                    <c:out value="${etask.value}"/>
-                  </td>
-                </tr>
-              </c:forEach>
-            </c:if>
-          </tbody>
-        </table>
-      </c:if>
-    </div>--%>
+    </div>
   </body>
 </html>

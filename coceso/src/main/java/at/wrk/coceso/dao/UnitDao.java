@@ -6,6 +6,7 @@ import at.wrk.coceso.dao.mapper.UnitMapperWithLocked;
 import at.wrk.coceso.entity.Person;
 import at.wrk.coceso.entity.Point;
 import at.wrk.coceso.entity.Unit;
+import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entity.enums.UnitState;
 import at.wrk.coceso.entity.helper.UnitWithLocked;
 import org.apache.log4j.Logger;
@@ -21,7 +22,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import org.springframework.jdbc.support.rowset.ResultSetWrappingSqlRowSet;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 @Repository
 public class UnitDao extends CocesoDao<Unit> {
@@ -109,6 +115,32 @@ public class UnitDao extends CocesoDao<Unit> {
             LOG.error(dae.getMessage());
             return null;
         }
+    }
+
+    public Map<Unit, TaskState> getRelated(int incident_id) {
+      String q = "SELECT u.*, t.state AS taskState FROM log l "
+              + "LEFT OUTER JOIN unit u ON u.id = l.unit_fk "
+              + "LEFT OUTER JOIN task t ON t.incident_fk = l.incident_fk AND t.unit_fk = l.unit_fk "
+              + "WHERE l.incident_fk = ? AND l.unit_fk IS NOT NULL "
+              + "GROUP BY l.incident_fk, u.id, t.state "
+              + "ORDER BY (t.state IS NULL) ASC";
+
+      SqlRowSet rs = jdbc.queryForRowSet(q, incident_id);
+
+      Map<Unit, TaskState> ret = new LinkedHashMap<>();
+
+      while (rs.next()) {
+        try {
+          ret.put(
+                  unitMapper.mapRow(((ResultSetWrappingSqlRowSet) rs).getResultSet(), incident_id),
+                  rs.getString("taskState") == null ? TaskState.Detached : TaskState.valueOf(rs.getString("taskState"))
+          );
+        } catch (SQLException e) {
+          LOG.warn(null, e);
+        }
+      }
+
+      return ret;
     }
 
     //TODO move to PointService

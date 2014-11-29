@@ -1,48 +1,38 @@
 package at.wrk.coceso.dao;
 
 import at.wrk.coceso.dao.mapper.LogMapper;
-import at.wrk.coceso.dao.mapper.UnitMapper;
 import at.wrk.coceso.entity.LogEntry;
-import at.wrk.coceso.entity.Unit;
-import at.wrk.coceso.entity.enums.TaskState;
-import java.sql.SQLException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.Timestamp;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.springframework.jdbc.support.rowset.ResultSetWrappingSqlRowSet;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 @Repository
 public class LogDao extends CocesoDao<LogEntry> {
 
-  // REFERENCES NOT RESOLVED BY THIS MAPPER
   @Autowired
   private LogMapper logMapper;
-
-  @Autowired
-  private UnitMapper unitMapper;
 
   @Autowired
   public LogDao(DataSource dataSource) {
     super(dataSource);
   }
 
-  private static final String getPrefix = "SELECT u.id as uid, u.call, l.*, p.id AS pid, p.sur_name, "
-          + "p.given_name, p.dnr, p.contact, o.username FROM "
-          + "log l "
-          + "LEFT OUTER JOIN operator o ON l.operator_fk = o.id "
-          + "LEFT OUTER JOIN person p ON l.operator_fk = p.id "
-          + "LEFT OUTER JOIN unit u ON l.unit_fk = u.id ";
+  private static final String getPrefix = "SELECT l.*, u.call, "
+          + "p.sur_name, p.given_name, p.dnr, p.contact, o.username, "
+          + "i.blue, i.type AS itype, bo.info AS bo, ao.info AS ao "
+          + "FROM log l "
+          + "LEFT JOIN operator o ON o.id = l.operator_fk  "
+          + "LEFT JOIN person p   ON p.id = l.operator_fk  "
+          + "LEFT JOIN unit u     ON u.id = l.unit_fk "
+          + "LEFT JOIN incident i ON i.id = l.incident_fk "
+          + "LEFT JOIN point bo   ON bo.id = i.bo_point_fk "
+          + "LEFT JOIN point ao   ON ao.id = i.ao_point_fk ";
 
-  private static final String sortSuffix = " ORDER BY timestamp DESC";
+  private static final String sortSuffix = " ORDER BY l.timestamp DESC, l.id DESC";
 
   @Override
   public LogEntry getById(int id) {
@@ -69,16 +59,6 @@ public class LogDao extends CocesoDao<LogEntry> {
     return jdbc.query(q, new Object[]{id}, logMapper);
   }
 
-  public List<LogEntry> getByIncidentAndUnit(int incident_id, int unit_id) {
-    if (unit_id <= 0 || incident_id <= 0) {
-      return null;
-    }
-
-    String q = getPrefix + "WHERE l.incident_fk = ? AND l.unit_fk = ?" + sortSuffix;
-
-    return jdbc.query(q, new Object[]{incident_id, unit_id}, logMapper);
-  }
-
   public List<LogEntry> getLimitedByUnitId(int id, int limit) {
     if (id <= 0) {
       return null;
@@ -99,36 +79,17 @@ public class LogDao extends CocesoDao<LogEntry> {
     return jdbc.query(q, new Object[]{id}, logMapper);
   }
 
-  public Map<Unit, TaskState> getRelatedUnits(int incident_id) {
-    String q = "SELECT u.*, t.state AS taskState FROM log l "
-            + "LEFT OUTER JOIN unit u ON u.id = l.unit_fk "
-            + "LEFT OUTER JOIN task t ON t.incident_fk = l.incident_fk AND t.unit_fk = l.unit_fk "
-            + "WHERE l.incident_fk = ? AND l.unit_fk IS NOT NULL "
-            + "GROUP BY l.incident_fk, u.id, t.state "
-            + "ORDER BY (t.state IS NULL) ASC";
-
-    SqlRowSet rs = jdbc.queryForRowSet(q, incident_id);
-
-    Map<Unit, TaskState> ret = new LinkedHashMap<>();
-
-    while (rs.next()) {
-      Unit unit;
-      try {
-        unit = unitMapper.mapRow(((ResultSetWrappingSqlRowSet) rs).getResultSet(), incident_id);
-        TaskState state = rs.getString("taskState") == null ? TaskState.Detached : TaskState.valueOf(rs.getString("taskState"));
-        ret.put(unit, state);
-      } catch (SQLException ex) {
-        Logger.getLogger(LogDao.class.getName()).log(Level.SEVERE, null, ex);
-      }
+  public List<LogEntry> getByIncidentAndUnit(int incident_id, int unit_id) {
+    if (unit_id <= 0 || incident_id <= 0) {
+      return null;
     }
 
-    return ret;
+    String q = getPrefix + "WHERE l.incident_fk = ? AND l.unit_fk = ?" + sortSuffix;
+
+    return jdbc.query(q, new Object[]{incident_id, unit_id}, logMapper);
   }
 
-  ;
-
-
-    @Override
+  @Override
   public List<LogEntry> getAll(int id) {
     if (id <= 0) {
       return null;
@@ -145,7 +106,7 @@ public class LogDao extends CocesoDao<LogEntry> {
   }
 
   protected boolean updateForRemoval(int unitId) {
-    String q = "UPDATE log SET unit_fk = NULL, text = 'Unit created - REMOVED' WHERE type = 'UNIT_CREATE' AND unit_fk = ?";
+    String q = "UPDATE log SET unit_fk = NULL, text = 'Unit created - REMOVED', type = 'UNIT_CREATE_REMOVED' WHERE type = 'UNIT_CREATE' AND unit_fk = ?";
     jdbc.update(q, unitId);
     return true;
   }
@@ -186,7 +147,7 @@ public class LogDao extends CocesoDao<LogEntry> {
       return null;
     }
 
-    String q = getPrefix + "WHERE type = 'CUSTOM' AND l.concern_fk = ?" + sortSuffix;
+    String q = getPrefix + "WHERE l.type = 'CUSTOM' AND l.concern_fk = ?" + sortSuffix;
 
     return jdbc.query(q, new Object[]{concernId}, logMapper);
   }

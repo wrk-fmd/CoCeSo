@@ -156,6 +156,10 @@ nav.navbar {
   background-color: #777;
 }
 
+td dl:last-child {
+  margin-bottom: 0;
+}
+
 /**
  * Overflow has to be visible for Dropdown Menu in Unit List
  */
@@ -247,6 +251,14 @@ textarea.form-control {
 .popover .arrow:after{
   left: initial;
   top: initial;
+}
+
+.dl-horizontal dt {
+  text-align: left;
+}
+
+.dl-horizontal dt:after {
+  content: ":";
 }
 
 /**
@@ -640,6 +652,28 @@ table[id*='keytable'] > tbody > tr > td:nth-child(2) {
   color: #0064cd;
 }
 
-.dashboard-list .key {
-  min-width: 15em;
+.dashboard-list dd {
+  margin-bottom: 10px;
+}
+
+.no-colon dt:after {
+  content: initial;
+}
+
+div.pull-left.glyphicon {
+  margin: 1px 0.5em;
+}
+
+div.pull-left.glyphicon.small {
+  margin-top: 2px;
+}
+
+@media (min-width: 768px) {
+  .dl-horizontal.change-list dt {
+    width: 100px;
+  }
+
+  .dl-horizontal.change-list dd {
+    margin-left: 120px;
+  }
 }

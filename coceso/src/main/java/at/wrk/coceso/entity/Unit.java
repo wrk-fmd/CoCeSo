@@ -70,7 +70,7 @@ public class Unit {
       if (info != null && !info.equals(old.info)) {
         changes.put("info", new ChangePair(old.info, info));
       }
-      if (position != null && !position.equals(old.position)) {
+      if (position != null && !position.equals(old.position) && (old.position != null || !Point.isEmpty(position))) {
         changes.put("position", new ChangePair(old.position != null ? old.position.getInfo() : null, position.getInfo()));
       }
 
@@ -86,7 +86,7 @@ public class Unit {
         return null;
       }
 
-      if (position != null && !position.equals(old.position)) {
+      if (position != null && !position.equals(old.position) && (old.position != null || !Point.isEmpty(position))) {
         changes.put("position", new ChangePair(old.position != null ? old.position.getInfo() : null, position.getInfo()));
       }
 
@@ -131,7 +131,7 @@ public class Unit {
         if (info != null && !info.equals(old.info)) {
           changes.put("info", new ChangePair(old.info, info));
         }
-        if (home != null && !home.equals(old.home)) {
+        if (home != null && !home.equals(old.home) && (old.home != null || !Point.isEmpty(home))) {
           changes.put("home", new ChangePair(old.home != null ? old.home.getInfo() : null, home.getInfo()));
         }
       }

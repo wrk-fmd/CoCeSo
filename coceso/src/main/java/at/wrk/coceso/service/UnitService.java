@@ -54,6 +54,10 @@ public class UnitService {
       return unitDao.getAllWithLocked(concernId);
     }
 
+    public Map<Unit, TaskState> getRelated(int incident_id) {
+      return unitDao.getRelated(incident_id);
+    }
+
     public boolean update(Unit unit) {
         return unitDao.update(unit);
     }

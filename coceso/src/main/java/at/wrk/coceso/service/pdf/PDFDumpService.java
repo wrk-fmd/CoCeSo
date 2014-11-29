@@ -22,6 +22,7 @@ import java.sql.Timestamp;
 import java.util.*;
 
 @Service
+@Deprecated
 public class PDFDumpService {
 
     private final static
@@ -205,7 +206,7 @@ public class PDFDumpService {
                         }
 
                         table.addCell(incidentID+"");
-                        table.addCell(PdfStyle.humanreadableIncidentType(messageSource, locale, incident));
+                        //table.addCell(PdfStyle.humanreadableIncidentType(messageSource, locale, incident));
                         table.addCell(incident.getBo() == null ? "" : incident.getBo().getInfo());
                         table.addCell(incident.getAo() == null ? "" : incident.getAo().getInfo());
                         table.addCell(incident.getInfo() == null ? "" : incident.getInfo());
@@ -260,8 +261,8 @@ public class PDFDumpService {
 
             Paragraph p = new Paragraph();
 
-            Paragraph h = new Paragraph("#" + incident.getId() + " - " + PdfStyle.humanreadableIncidentType(messageSource, locale, incident),
-                    PdfStyle.title2Font);
+            //Paragraph h = new Paragraph("#" + incident.getId() + " - " + PdfStyle.humanreadableIncidentType(messageSource, locale, incident),
+            //        PdfStyle.title2Font);
 
             Paragraph s = new Paragraph(messageSource.getMessage("label.incident.bo", null, locale) + ": " +
                     (incident.getBo() == null ? "N/A" : incident.getBo()) + "\n" +
@@ -284,7 +285,7 @@ public class PDFDumpService {
                             messageSource.getMessage("label.no", null, locale) ) ),
 
                     PdfStyle.descrFont);
-            p.add(h);
+            //p.add(h);
             p.add(s);
 
             Patient patient = patientService.getById(incident.getId());

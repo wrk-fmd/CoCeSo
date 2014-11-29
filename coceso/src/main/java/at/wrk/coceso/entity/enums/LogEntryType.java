@@ -12,6 +12,7 @@ public enum LogEntryType {
     PATIENT_UPDATE("Patient updated"),
 
     UNIT_CREATE("Unit created"),
+    UNIT_CREATE_REMOVED("Unit created - REMOVED"),
     UNIT_UPDATE("Unit updated"),
     UNIT_DELETE("Unit deleted"),
     UNIT_ASSIGN("Unit assigned"),

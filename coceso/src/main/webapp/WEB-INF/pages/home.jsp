@@ -107,8 +107,8 @@
                 <c:if test="${not empty authorized}">
                   <button type="button" class="btn btn-sm btn-danger" data-bind="click: close"><spring:message code="label.close"/></button>
                 </c:if>
-                <a target="_blank" class="btn btn-sm btn-success" data-bind="attr: {href: '<c:url value="/finalReport/report.pdf?id="/>' + id}"><spring:message code="label.print"/></a>
-                <a target="_blank" class="btn btn-sm btn-warning" data-bind="attr: {href: '<c:url value="/pdfdump/dump.pdf?id="/>' + id}"><spring:message code="label.dump"/></a>
+                <a target="_blank" class="btn btn-sm btn-success" data-bind="attr: {href: '<c:url value="/pdf/report.pdf?id="/>' + id}"><spring:message code="label.print"/></a>
+                <a target="_blank" class="btn btn-sm btn-warning" data-bind="attr: {href: '<c:url value="/pdf/dump.pdf?id="/>' + id}"><spring:message code="label.dump"/></a>
               </td>
             </tr>
           </tbody>
@@ -135,8 +135,8 @@
             <tr>
               <td data-bind="text: name"></td>
               <td>
-                <a target="_blank" class="btn btn-sm btn-success" data-bind="attr: {href: '<c:url value="/finalReport/report.pdf?id="/>' + id}"><spring:message code="label.print"/></a>
-                <a target="_blank" class="btn btn-sm btn-warning" data-bind="attr: {href: '<c:url value="/pdfdump/transportlist.pdf?id="/>' + id}"><spring:message code="label.transportlist"/></a>
+                <a target="_blank" class="btn btn-sm btn-success" data-bind="attr: {href: '<c:url value="/pdf/report.pdf?id="/>' + id}"><spring:message code="label.print"/></a>
+                <a target="_blank" class="btn btn-sm btn-warning" data-bind="attr: {href: '<c:url value="/pdf/transport.pdf?id="/>' + id}"><spring:message code="label.transportlist"/></a>
                 <c:if test="${not empty authorized}">
                   <button type="button" class="btn btn-sm btn-danger" data-bind="click: reopen"><spring:message code="label.reopen"/></button>
                 </c:if>

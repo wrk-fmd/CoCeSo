@@ -74,7 +74,7 @@ public class Point {
         if(this.id > 0 && that.id > 0)
             ret = this.id == that.id;
 
-        ret = ret && this.info.equals(that.info) &&
+        ret = ret && (this.info == null ? that.info == null : this.info.equals(that.info)) &&
                 this.latitude == that.latitude &&
                 this.longitude == that.longitude;
 
