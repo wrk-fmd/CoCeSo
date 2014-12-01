@@ -212,7 +212,7 @@
               <ul class="dropdown-menu">
                 <li>
                   <a href="#" title="<spring:message code="label.log.custom"/>"
-                     onclick="return Coceso.UI.openLogs(this.title, {url: 'log/getCustom', autoload: true});">
+                     onclick="return Coceso.UI.openLogs(this.title, {url: 'log/getCustom.json', autoload: true});">
                     <span class="glyphicon glyphicon-info-sign"></span> <spring:message code="label.log.custom"/>
                   </a>
                 </li>

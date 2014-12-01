@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%--
 /**
@@ -145,6 +146,10 @@
             <!-- /ko -->
 
             <p><button type="button" class="btn btn-default" data-bind="click: openForm"><spring:message code="label.edit"/></button></p>
+            <p>
+              <a href="#" class="btn btn-default btn-xs" title="<spring:message code="label.log.add"/>" data-bind="click: addLog"><spring:message code="label.log.add"/></a>
+              <a href="#" target="_blank" class="btn btn-default btn-xs" title="<spring:message code="label.log.view"/>" data-bind="attr: {href: '<c:url value="/dashboard?iid="/>' + id}"><spring:message code="label.log.view"/></a>
+            </p>
           </div>
         </li>
       </ul>

@@ -269,6 +269,10 @@ textarea.form-control {
   min-width: 444px;
 }
 
+.log_form {
+  min-width: 380px;
+}
+
 .assigned label.control-label {
   padding-top: 4px;
   text-align: center;

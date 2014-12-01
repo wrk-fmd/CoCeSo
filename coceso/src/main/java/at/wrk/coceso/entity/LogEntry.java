@@ -6,7 +6,11 @@ import at.wrk.coceso.entity.helper.JsonContainer;
 import java.io.IOException;
 
 import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.ObjectMapper;
 
 public class LogEntry {
@@ -42,8 +46,18 @@ public class LogEntry {
         return unit;
     }
 
+    @JsonProperty("unit")
+    public Integer getSlimUnit() {
+      return unit != null ? unit.getId() : null;
+    }
+
     public Incident getIncident() {
         return incident;
+    }
+
+    @JsonProperty("incident")
+    public Integer getSlimIncident() {
+      return incident != null ? incident.getId() : null;
     }
 
     public TaskState getState() {
@@ -58,10 +72,22 @@ public class LogEntry {
         return user;
     }
 
+    @JsonProperty("user")
+    public Map<String, Object> getSlimUser() {
+      if (user == null) {
+        return null;
+      }
+
+      Map<String, Object> map = new HashMap<>();
+      map.put("username", user.getUsername());
+      return map;
+    }
+
     public String getText() {
         return text;
     }
 
+    @JsonIgnore
     public String getJson() {
         return json;
     }
@@ -91,6 +117,7 @@ public class LogEntry {
         this.id = id;
     }
 
+    @JsonIgnore
     public Concern getConcern() {
         return concern;
     }

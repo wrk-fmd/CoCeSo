@@ -19,21 +19,39 @@
     <title>No direct access</title>
   </head>
   <body style="display: none">
-    <div class="ajax_content">
-      <div>
+    <div class="ajax_content log_form">
+      <form class="clearfix" data-bind="submit: ok">
         <div class="alert alert-danger" data-bind="visible: error">
           <strong><spring:message code="label.error"/>:</strong> <span data-bind="text: errorText"></span>
         </div>
-        <div class="col-md-8">
-          <textarea class="form-control" data-bind="value: text, valueUpdate: 'input'" rows="3" autofocus></textarea>
+
+        <div class="clearfix">
+          <div class="col-md-6 form-group">
+            <label for="unit"><spring:message code="label.unit"/>:</label>
+            <select id="unit" class="form-control"
+                    data-bind="options: unitList, optionsText: 'call', optionsValue: 'id', value: unit, optionsCaption: '<spring:message code="label.unit.select"/>'">
+            </select>
+          </div>
+          <!-- ko if: incidentTitle -->
+          <div class="col-md-6 form-group">
+            <label><spring:message code="label.incident"/>:</label>
+            <input type="text" class="form-control" readonly data-bind="value: incidentTitle"/>
+          </div>
+          <!-- /ko -->
         </div>
-        <div class="col-md-3">
-          <select class="form-control" data-bind="options: unitList, optionsText: 'call', optionsValue: 'id', value: unit, optionsCaption: '<spring:message code="label.unit.select"/>'"></select>
+
+        <div class="col-md-12 form-group">
+          <label for="text"><spring:message code="label.log.text"/>:</label>
+          <textarea id="text" rows="3" class="form-control" placeholder="<spring:message code="label.log.text"/>" autofocus
+                    data-bind="value: text, valueUpdate: 'input'"></textarea>
         </div>
-        <div class="col-md-2">
-          <input type="submit" class="btn btn-success" data-bind="click: ok, enable: text().trim()" value="<spring:message code="label.ok"/>">
+
+        <div class="form-group col-md-12">
+          <button type="submit" class="btn btn-success" data-bind="enable: text().trim()">
+            <spring:message code="label.ok"/>
+          </button>
         </div>
-      </div>
+      </form>
     </div>
   </body>
 </html>
