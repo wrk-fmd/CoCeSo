@@ -12,6 +12,7 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -79,6 +80,14 @@ public class TaskDao {
         }
 
         return ret;
+    }
+
+    public Timestamp getLastUpdate(int incident_id, int unit_id) {
+      String q = "SELECT timestamp FROM log WHERE incident_fk = ? AND unit_fk = ? "
+              + "AND type IN ('TASKSTATE_CHANGED', 'UNIT_ASSIGN', 'UNIT_DETACH', 'UNIT_AUTO_DETACH') "
+              + "ORDER BY timestamp DESC LIMIT 1";
+
+     return jdbc.queryForObject(q, new Object[]{incident_id, unit_id}, Timestamp.class);
     }
 
     public boolean add(int incident_id, int unit_id, TaskState state) {

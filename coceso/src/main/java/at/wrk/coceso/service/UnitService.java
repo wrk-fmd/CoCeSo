@@ -118,14 +118,15 @@ public class UnitService {
                 return false;
         }
 
-        Unit unit = getById(unitId);
+//        Unit unit = getById(unitId);
 
-        for(Incident i : list) {
-            i.setState(IncidentState.Done);
-
-            incidentService.update(i);
-            taskDao.remove(i.getId(), unitId);
-        }
+        // As of now this method is only used with single unit incidents, which are handled and properly logged by TaskService.assignUnit
+//        for(Incident i : list) {
+//            i.setState(IncidentState.Done);
+//
+//            incidentService.update(i);
+//            taskDao.remove(i.getId(), unitId);
+//        }
         return true;
     }
 

@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Iterator;
+import java.sql.Timestamp;
 import java.util.Map;
 
 @Service
@@ -45,37 +45,18 @@ public class TaskService {
     }
 
     // Auto-Detach from all SingleUnit Incidents and Relocation
-    // TODO Logging
     for (Integer incId : u.getIncidents().keySet()) {
       Incident inc = incidentService.getById(incId);
       if (inc.getType().isSingleUnit() || inc.getType() == IncidentType.Relocation) {
         LOG.debug(String.format("TaskService.assignUnit(): Auto-detach unit #%d, incident #%d", u.getId(), incId));
-        if (inc.getType() != IncidentType.Relocation) {
-          LOG.debug(String.format("TaskService.assignUnit(): Auto-set incident #%d to state 'Done'", incId));
-          inc.setState(IncidentState.Done);
-          incidentService.update(inc, user);
-        }
+        logService.logAuto(user, LogEntryType.UNIT_AUTO_DETACH, u.getConcern(), u, inc, TaskState.Detached);
         taskDao.remove(inc.getId(), u.getId());
+        checkEmpty(inc.getId(), user);
       }
     }
 
     logService.logAuto(user, LogEntryType.UNIT_ASSIGN, u.getConcern(), u, i, state);
     return taskDao.add(i.getId(), u.getId(), state);
-  }
-
-  private void detachUnit(int incident_id, int unit_id, Operator user) {
-    Incident i = incidentService.getById(incident_id);
-    Unit u = unitService.getById(unit_id);
-
-    if (!i.getConcern().equals(u.getConcern())) {  // Not in same Concern
-      return;
-    }
-
-    if (user != null) {
-      logService.logAuto(user, LogEntryType.UNIT_DETACH, i.getConcern(), u, i, TaskState.Detached);
-    }
-
-    taskDao.remove(incident_id, unit_id);
   }
 
   public synchronized boolean changeState(int incident_id, int unit_id, TaskState state, Operator user) {
@@ -132,7 +113,7 @@ public class TaskService {
 
     if (tmp != null) {
       // Log only if not already done by assignment
-      logService.logAuto(user, LogEntryType.TASKSTATE_CHANGED, i.getConcern(), u, i, state);
+      logService.logAuto(user, state == TaskState.Detached ? LogEntryType.UNIT_DETACH : LogEntryType.TASKSTATE_CHANGED, i.getConcern(), u, i, state);
     }
 
     LOG.debug("state = " + state);
@@ -219,64 +200,51 @@ public class TaskService {
     if (state == TaskState.Detached) {
       LOG.debug("Try to detach Unit");
       taskDao.remove(i.getId(), u.getId());
+      checkEmpty(i.getId(), user);
     } else if (tmp != null) {
       // Only save if not already done by assignUnit
       LOG.debug("Try to update TaskState");
       taskDao.update(i.getId(), u.getId(), state);
     }
 
-    checkStates(i.getId(), user);
     return true;
   }
 
   /**
-   * Deletes Relations of all Units in TaskState 'Detached'. Calls #checkEmpty(Incident, Operator) to close the Incident
-   * if no Units are attached anymore
+   * Remove all units when incident state is set to done
    *
-   * @param incident_id ID of Incident, that will be checked
-   * @param user must not be null. Operator to write LogEntries
+   * @param incident_id
+   * @param user
    */
-  public void checkStates(int incident_id, Operator user) {
-    Incident i = incidentService.getById(incident_id);
-
-    checkEmpty(i, user);
-
-    Iterator<Integer> iterator = i.getUnits().keySet().iterator();
-
-    while (iterator.hasNext()) {
-      Integer unitId = iterator.next();
-
-      if (i.getState() == IncidentState.Done) {
-        logService.logAuto(user, LogEntryType.UNIT_AUTO_DETACH, i.getConcern(), new Unit(unitId), i, TaskState.Detached);
-        detachUnit(i.getId(), unitId, null);
-
-        iterator.remove();
-      } else {
-        TaskState state = i.getUnits().get(unitId);
-        if (state == TaskState.Detached) {
-          logService.logAuto(user, LogEntryType.UNIT_AUTO_DETACH, i.getConcern(), new Unit(unitId), i, TaskState.Detached);
-          detachUnit(i.getId(), unitId, null);
-
-          iterator.remove();
-        }
-      }
+  public void removeAllUnits(int incident_id, Operator user) {
+    Incident inc = incidentService.getById(incident_id);
+    if (inc == null || inc.getState() != IncidentState.Done) {
+      return;
     }
 
-    checkEmpty(i, user);
+    for (Map.Entry<Integer, TaskState> entry : inc.getUnits().entrySet()) {
+      if (entry.getValue() != TaskState.Detached) {
+        logService.logAuto(user, LogEntryType.UNIT_AUTO_DETACH, inc.getConcern(), new Unit(entry.getKey()), inc, TaskState.Detached);
+      }
+    }
+    taskDao.removeAllByIncident(inc.getId());
   }
 
   /**
-   * Sets State of Incident to 'Done' if no Units are attached
+   * Set incident state to 'Done' if no units are attached anymore
    *
-   * @param i Incident to check
-   * @param user Operator to write LogEntries
+   * @param incident_id
+   * @param user
    */
-  private void checkEmpty(Incident i, Operator user) {
-    // TODO Avoid that new or open incidents are closed (e.g. after undo of incorrect assigning)
-    if (i.getUnits().isEmpty() && i.getState() != IncidentState.Done) {
-      Incident write = i.slimCopy();
+  private void checkEmpty(int incident_id, Operator user) {
+    Incident inc = incidentService.getById(incident_id);
+    if ((inc.getState() == IncidentState.New || inc.getState() == IncidentState.Open) && !inc.getType().isSingleUnit()) {
+      return;
+    }
+    if (inc.getUnits().isEmpty() && inc.getState() != IncidentState.Done) {
+      Incident write = inc.slimCopy();
       write.setState(IncidentState.Done);
-      logService.logAuto(user, LogEntryType.INCIDENT_AUTO_DONE, i.getConcern(), null, write, new JsonContainer("incident", write.changesState(i)));
+      logService.logAuto(user, LogEntryType.INCIDENT_AUTO_DONE, inc.getConcern(), null, write, new JsonContainer("incident", write.changesState(inc)));
       incidentService.update(write);
     }
   }
@@ -287,5 +255,9 @@ public class TaskService {
 
   public Map<Integer, TaskState> getAllByIncidentId(Integer iid) {
     return taskDao.getAllByIncidentId(iid);
+  }
+
+  public Timestamp getLastUpdate(int incident_id, int unit_id) {
+    return taskDao.getLastUpdate(incident_id, unit_id);
   }
 }

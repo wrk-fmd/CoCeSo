@@ -13,6 +13,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -34,6 +35,9 @@ public class PdfService {
 
   @Autowired
   private PatientService patientService;
+
+  @Autowired
+  private TaskService taskService;
 
   @Autowired
   private UnitService unitService;
@@ -110,5 +114,8 @@ public class PdfService {
     return unitService.getRelated(id);
   }
 
+  public Timestamp getLastUpdate(int incident_id, int unit_id) {
+    return taskService.getLastUpdate(incident_id, unit_id);
+  }
 
 }

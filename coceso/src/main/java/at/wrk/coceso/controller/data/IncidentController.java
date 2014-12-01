@@ -99,7 +99,7 @@ public class IncidentController implements IEntityController<Incident> {
     String associated = "{}";
 
     if (ret && incident.getState() == IncidentState.Done) {
-      taskService.checkStates(incident.getId(), user);
+      taskService.removeAllUnits(incident.getId(), user);
     } else if (ret) {
       associated = setAssociated(incident, user);
     }

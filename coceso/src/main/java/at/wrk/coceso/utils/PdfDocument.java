@@ -445,7 +445,6 @@ public class PdfDocument extends Document {
     return p;
   }
 
-  // TODO last state update missing
   private Element printIncidentUnits(Incident inc) {
     if (inc.getUnits() == null || inc.getUnits().isEmpty()) {
       return null;
@@ -465,14 +464,13 @@ public class PdfDocument extends Document {
 
       table.addCell(unit != null ? getUnitTitle(unit) : "#" + entry.getKey());
       table.addCell(getTaskState(entry.getValue()));
-      table.addCell("");
+      table.addCell(getFormattedTime(pdfService.getLastUpdate(inc.getId(), entry.getKey())));
     }
 
     p.add(table);
     return p;
   }
 
-  // TODO last state update missing
   private Element printRelatedUnits(Incident inc) {
     Map<Unit, TaskState> units = pdfService.getRelatedUnits(inc.getId());
     if (units == null || units.isEmpty()) {
@@ -491,9 +489,9 @@ public class PdfDocument extends Document {
     for (Map.Entry<Unit, TaskState> entry : units.entrySet()) {
       Unit unit = entry.getKey();
 
-      table.addCell(unit != null ? getUnitTitle(unit) : "#" + entry.getKey());
+      table.addCell(getUnitTitle(unit));
       table.addCell(getTaskState(entry.getValue()));
-      table.addCell("");
+      table.addCell(getFormattedTime(pdfService.getLastUpdate(inc.getId(), unit.getId())));
     }
 
     p.add(table);
@@ -578,7 +576,6 @@ public class PdfDocument extends Document {
     return table;
   }
 
-  // TODO last state update missing
   private Element printUnitIncidents(Unit unit) {
     if (unit.getIncidents() == null || unit.getIncidents().isEmpty()) {
       return null;
@@ -602,7 +599,7 @@ public class PdfDocument extends Document {
       table.addCell(getBoAo(inc));
       table.addCell(inc != null ? inc.getInfo() : "");
       table.addCell(getTaskState(entry.getValue()));
-      table.addCell("");
+      table.addCell(getFormattedTime(pdfService.getLastUpdate(entry.getKey(), unit.getId())));
     }
 
     p.add(table);

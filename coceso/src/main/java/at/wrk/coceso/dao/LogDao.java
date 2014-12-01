@@ -54,7 +54,7 @@ public class LogDao extends CocesoDao<LogEntry> {
       return null;
     }
 
-    String q = getPrefix + "WHERE l.unit_fk = ?" + sortSuffix;
+    String q = getPrefix + "WHERE l.unit_fk = ? AND l.type != 'INCIDENT_AUTO_STATE'" + sortSuffix;
 
     return jdbc.query(q, new Object[]{id}, logMapper);
   }
@@ -64,7 +64,7 @@ public class LogDao extends CocesoDao<LogEntry> {
       return null;
     }
 
-    String q = getPrefix + "WHERE l.unit_fk = ?" + sortSuffix + "  LIMIT ?";
+    String q = getPrefix + "WHERE l.unit_fk = ? AND l.type != 'INCIDENT_AUTO_STATE'" + sortSuffix + "  LIMIT ?";
 
     return jdbc.query(q, new Object[]{id, limit}, logMapper);
   }
@@ -74,7 +74,7 @@ public class LogDao extends CocesoDao<LogEntry> {
       return null;
     }
 
-    String q = getPrefix + "WHERE l.incident_fk = ?" + sortSuffix;
+    String q = getPrefix + "WHERE l.incident_fk = ? AND l.type != 'UNIT_AUTOSET_POSITION'" + sortSuffix;
 
     return jdbc.query(q, new Object[]{id}, logMapper);
   }
