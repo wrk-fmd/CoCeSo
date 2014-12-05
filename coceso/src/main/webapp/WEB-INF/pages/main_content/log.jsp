@@ -33,7 +33,7 @@
         <tr>
           <td data-bind="text: time"></td>
           <td data-bind="text: user.username"></td>
-          <td data-bind="text: text" style="white-space: pre-line"></td>
+          <td class="log_text" data-bind="text: text" style="white-space: pre-line"></td>
           <td data-bind="if: unit"><a href="#" data-bind="text: unit.call, click: openUnitForm"></a></td>
           <td data-bind="if: incident"><a href="#"  data-bind="text: incident.id, click: openIncidentForm"></a></td>
           <td data-bind="text: state"></td>

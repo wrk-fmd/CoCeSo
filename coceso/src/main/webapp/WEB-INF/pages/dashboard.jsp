@@ -73,7 +73,7 @@
                 </c:forEach>
               </ul>
             </li>
-            <li><a href="${back_link}"><spring:message code="label.nav.back"/></a></li>
+            <li><a href="${back_link}"><spring:message code="label.nav.home"/></a></li>
             <li><a href="${logout_link}"><spring:message code="label.nav.logout"/></a></li>
           </ul>
         </div><!--/.nav-collapse -->

@@ -681,3 +681,7 @@ div.pull-left.glyphicon.small {
     margin-left: 120px;
   }
 }
+
+.log_text {
+  max-width: 400px;
+}

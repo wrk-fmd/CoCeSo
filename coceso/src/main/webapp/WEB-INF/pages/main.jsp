@@ -257,6 +257,7 @@
                 </li>
               </ul>
             </li>
+            <li><a href="<c:url value="/home"/>"><spring:message code="label.exit"/></a></li>
           </ul>
 
           <div class="navbar-hide-on-1000px">
