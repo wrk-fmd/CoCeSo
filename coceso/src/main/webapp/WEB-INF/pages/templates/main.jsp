@@ -75,6 +75,7 @@
       <li><a href="#" title="<spring:message code="label.unit.new_incident"/>" data-bind="click: addIncident"><spring:message code="label.unit.new_incident"/></a></li>
       <!-- /ko -->
       <li><a href="#" title="<spring:message code="label.unit.report_incident"/>" data-bind="click: reportIncident"><spring:message code="label.unit.report_incident"/></a></li>
+      <li><a href="#" title="<spring:message code="label.unit.details"/>" data-bind="click: openDetails"><spring:message code="label.unit.details"/></a></li>
       <li><a href="#" title="<spring:message code="label.unit.edit"/>" data-bind="click: openForm"><spring:message code="label.unit.edit"/></a></li>
       <li><a href="#" target="_blank" title="<spring:message code="label.log.view"/>" data-bind="attr: {href: '<c:url value="/dashboard?uid="/>' + id}"><spring:message code="label.log.view"/></a></li>
       <li><a href="#" title="<spring:message code="label.log.add"/>" data-bind="click: addLog"><spring:message code="label.log.add"/></a></li>

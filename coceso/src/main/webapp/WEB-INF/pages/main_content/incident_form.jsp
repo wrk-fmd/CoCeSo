@@ -113,7 +113,7 @@
           <!-- /ko -->
           <!-- ko ifnot: patient -->
           <div class="form-group col-md-5">
-            <button type="button" class="btn btn-danger btn-sm" data-bind="click: openPatient, enable: id"><spring:message code="label.patient.add"/></button>
+            <button type="button" class="btn btn-danger btn-sm" data-bind="click: openPatient, enable: idObs"><spring:message code="label.patient.add"/></button>
           </div>
           <!-- /ko -->
         </div>

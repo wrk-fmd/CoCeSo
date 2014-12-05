@@ -656,7 +656,7 @@ table[id*='keytable'] > tbody > tr > td:nth-child(2) {
   color: #0064cd;
 }
 
-.dashboard-list dd {
+.dashboard-list dd, .property-list dd {
   margin-bottom: 10px;
 }
 

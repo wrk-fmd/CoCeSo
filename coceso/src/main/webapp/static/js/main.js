@@ -110,7 +110,7 @@ Coceso.startup = function() {
         return;
       }
       if (event.which === Coceso.Conf.keyMapping.openIncidentKey) {
-        Coceso.UI.openIncident(_("label.incident") + " / " + _("label.add"));
+        Coceso.UI.openIncident();
       }
     });
   }
@@ -120,9 +120,6 @@ Coceso.startup = function() {
     $(this).parent(".panel").children(".panel-body").slideToggle();
     $(this).find(".glyphicon").toggleClass("glyphicon-chevron-down glyphicon-chevron-up");
   });
-
-  //Load the debug view model
-  Coceso.UI.Debug = new Coceso.ViewModels.Debug();
 
   //Load Bindings for Notifications
   Coceso.UI.Notifications = new Coceso.ViewModels.Notifications();
@@ -141,16 +138,11 @@ Coceso.startup = function() {
 Coceso.UI = {
   /**
    * A list of all opened windows
+   * Only used for debugging (global access to all viewmodels)
    *
    * @type Object
    */
   windows: {},
-  /**
-   * Debugging information, such as HTTP errors
-   *
-   * @type Coceso.ViewModels.Debug
-   */
-  Debug: null,
   /**
    * Notifications
    *
@@ -168,21 +160,14 @@ Coceso.UI = {
   /**
    * Add a window to the UI
    *
-   * @param {String} title The title of the window
    * @param {String} src The source to load the HTML from
    * @param {Object} viewmodel The viewmodel to bind with
    * @param {Object} options
+   * @param {String} title The title of the window
    * @returns {void}
    */
-  openWindow: function(title, src, viewmodel, options) {
-    var id = $("#taskbar").winman("addWindow", title, src, options, function(el, id) {
-      viewmodel.ui = id;
-      ko.applyBindings(viewmodel, el);
-    }, function(el, id) {
-      if (viewmodel.destroy instanceof Function) {
-        viewmodel.destroy.call(viewmodel);
-      }
-      ko.cleanNode(el);
+  openWindow: function(src, viewmodel, options, title) {
+    var id = $("#taskbar").winman("addWindow", src, options, viewmodel, title, function(el, id) {
       delete Coceso.UI.windows[id];
     });
     this.windows[id] = viewmodel;
@@ -190,112 +175,101 @@ Coceso.UI = {
   /**
    * Open the incidents overview
    *
-   * @param {String} title
    * @param {Object} options
    * @param {Object} dialog Dialog options
    * @returns {boolean} false
    */
-  openIncidents: function(title, options, dialog) {
-    this.openWindow(title, Coceso.Conf.contentBase + "incident.html", new Coceso.ViewModels.Incidents(options || {}), $.extend({position: {at: "left+70% top+30%"}}, dialog));
+  openIncidents: function(options, dialog) {
+    this.openWindow(Coceso.Conf.contentBase + "incident.html", new Coceso.ViewModels.Incidents(options || {}), $.extend({position: {at: "left+70% top+30%"}}, dialog));
     return false;
   },
   /**
    * Open a specific incident
    *
-   * @param {String} title
    * @param {Object} data Additional incident data
    * @param {Object} dialog Dialog options
    * @returns {boolean} false
    */
-  openIncident: function(title, data, dialog) {
-    this.openWindow(title, Coceso.Conf.contentBase + "incident_form.html", new Coceso.ViewModels.Incident(data || {}), $.extend({position: {at: "left+30% top+10%"}}, dialog));
+  openIncident: function(data, dialog) {
+    this.openWindow(Coceso.Conf.contentBase + "incident_form.html", new Coceso.ViewModels.Incident(data || {}), $.extend({position: {at: "left+30% top+10%"}}, dialog));
     return false;
   },
   /**
    * Open the units overview
    *
-   * @param {String} title
    * @param {Object} options Viewmodel options
    * @param {Object} dialog Dialog options
    * @returns {boolean}
    */
-  openUnits: function(title, options, dialog) {
-    this.openWindow(title, Coceso.Conf.contentBase + "unit.html", new Coceso.ViewModels.Units(options || {}), $.extend({position: {at: "left+20% bottom"}}, dialog));
+  openUnits: function(options, dialog) {
+    this.openWindow(Coceso.Conf.contentBase + "unit.html", new Coceso.ViewModels.Units(options || {}), $.extend({position: {at: "left+20% bottom"}}, dialog));
     return false;
   },
   /**
    * Open the units overview with hierarchical View
    *
-   * @param {String} title
    * @param {Object} dialog Dialog options
+   * @returns {boolean}
    */
-  openHierarchyUnits: function(title, dialog) {
-    var viewmodel = {top: ko.observable({name: "Loading...", units: [], subContainer: []})};
-
-    $.getJSON(Coceso.Conf.jsonBase + "unitContainer/getSlim.json", function(topContainer) {
-      viewmodel.top(new Coceso.ViewModels.UnitContainer(topContainer));
-    });
-
-    this.openWindow(title, Coceso.Conf.contentBase + "unit_hierarchy.html", viewmodel, $.extend({position: {at: "left top"}}, dialog));
+  openHierarchyUnits: function(dialog) {
+    this.openWindow(Coceso.Conf.contentBase + "unit_hierarchy.html", new Coceso.ViewModels.Hierarchical(), $.extend({position: {at: "left top"}}, dialog));
     return false;
   },
   /**
    * Open the unit edit Window
    *
-   * @param {String} title
    * @param {Object} data Additional unit data
    * @param {Object} dialog Dialog options
    * @returns {boolean}
    */
-  openUnit: function(title, data, dialog) {
-    this.openWindow(title, Coceso.Conf.contentBase + "unit_form.html", new Coceso.ViewModels.Unit(data || {}), $.extend({position: {at: "left+10% top+20%"}}, dialog));
+  openUnit: function(data, dialog) {
+    this.openWindow(Coceso.Conf.contentBase + "unit_form.html", new Coceso.ViewModels.Unit(data || {}), $.extend({position: {at: "left+10% top+20%"}}, dialog));
+    return false;
+  },
+  /**
+   * Open the unit edit Window
+   *
+   * @param {Integer} id Unit id
+   * @param {Object} dialog Dialog options
+   * @returns {boolean}
+   */
+  openUnitDetail: function(id, dialog) {
+    if (id) {
+      this.openWindow(Coceso.Conf.contentBase + "unit_detail.html", new Coceso.ViewModels.UnitDetail(id), $.extend({position: {at: "left+10% top+20%"}}, dialog));
+    }
     return false;
   },
   /**
    * Open Add-Log Window
    *
-   * @param {String} title
    * @param {Object} data Additional log data
    * @param {Object} dialog Dialog options
    * @returns {boolean}
    */
-  openLogAdd: function(title, data, dialog) {
-    this.openWindow(title, Coceso.Conf.contentBase + "log_add.html", new Coceso.ViewModels.CustomLogEntry(data || {}), $.extend({position: {at: "left+20% top+20%"}}, dialog));
+  openLogAdd: function(data, dialog) {
+    this.openWindow(Coceso.Conf.contentBase + "log_add.html", new Coceso.ViewModels.CustomLogEntry(data || {}), $.extend({position: {at: "left+20% top+20%"}}, dialog));
     return false;
   },
   /**
    * Open a list of log entries
    *
-   * @param {String} title
    * @param {Object} options Viewmodel options
    * @param {Object} dialog Dialog options
    * @returns {boolean}
    */
-  openLogs: function(title, options, dialog) {
-    this.openWindow(title, Coceso.Conf.contentBase + "log.html", new Coceso.ViewModels.Logs(options || {}), $.extend({position: {at: "left+30% center"}}, dialog));
+  openLogs: function(options, dialog) {
+    this.openWindow(Coceso.Conf.contentBase + "log.html", new Coceso.ViewModels.Logs(options || {}), $.extend({position: {at: "left+30% top+10%"}}, dialog));
     return false;
   },
   /**
    * Open the patient edit Window
    *
-   * @param {String} title
    * @param {Object} data Additional patient data
    * @param {Object} dialog Dialog options
    * @returns {boolean}
    */
-  openPatient: function(title, data, dialog) {
-    this.openWindow(title, Coceso.Conf.contentBase + "patient_form.html", new Coceso.ViewModels.Patient(data || {}), $.extend({position: {at: "left+40% top+30%"}}, dialog));
-    return false;
-  },
-  /**
-   * Open debug window
-   *
-   * @param {String} title
-   * @param {Object} dialog Dialog options
-   * @returns {boolean}
-   */
-  openDebug: function(title, dialog) {
-    this.openWindow(title, Coceso.Conf.contentBase + "debug.html", this.Debug, $.extend({position: {at: "left+10% center"}}, dialog));
+  openPatient: function(data, dialog) {
+    this.openWindow(Coceso.Conf.contentBase + "patient_form.html", new Coceso.ViewModels.Patient(data || {}), $.extend({position: {at: "left+40% top+30%"}}, dialog));
     return false;
   },
   /**
@@ -307,7 +281,7 @@ Coceso.UI = {
    * @returns {boolean}
    */
   openStatic: function(title, src, dialog) {
-    this.openWindow(title, Coceso.Conf.contentBase + src, {}, $.extend({position: {at: "left+10% top+20%"}}, dialog));
+    this.openWindow(Coceso.Conf.contentBase + src, {}, $.extend({position: {at: "left+10% top+20%"}}, dialog), title);
     return false;
   },
   /**
@@ -319,7 +293,7 @@ Coceso.UI = {
    * @returns {boolean}
    */
   openExternalStatic: function(title, src, dialog) {
-    this.openWindow(title, src, {}, $.extend({position: {at: "left+30% center"}}, dialog));
+    this.openWindow(src, {}, $.extend({position: {at: "left+30% top+10%"}}, dialog), title);
     return false;
   }
 };
@@ -660,7 +634,7 @@ Coceso.Models.Task.prototype = Object.create({}, /** @lends Coceso.Models.Task.p
 
       if (needAO && !incident.ao.info() && (nextState === s.zao || nextState === s.aao)) {
         console.info("No AO set, opening Incident Window");
-        Coceso.UI.openIncident(_("label.incident.edit"), {id: incident.id});
+        Coceso.UI.openIncident({id: incident.id});
         return;
       }
 
@@ -1155,7 +1129,7 @@ Coceso.Models.Incident.prototype = Object.create({}, /** @lends Coceso.Models.In
         id = this.incident_id;
       }
       if (id) {
-        Coceso.UI.openIncident(_("label.incident.edit"), {id: id});
+        Coceso.UI.openIncident({id: id});
       }
     }
   },
@@ -1168,7 +1142,7 @@ Coceso.Models.Incident.prototype = Object.create({}, /** @lends Coceso.Models.In
   addLog: {
     value: function() {
       if (this.id) {
-        Coceso.UI.openLogAdd(_("label.log.add"), {incident: this.id});
+        Coceso.UI.openLogAdd({incident: this.id});
       }
     }
   },
@@ -1180,7 +1154,7 @@ Coceso.Models.Incident.prototype = Object.create({}, /** @lends Coceso.Models.In
   openLog: {
     value: function() {
       if (this.id) {
-        Coceso.UI.openLogs("Incident-Log", {url: "log/getByIncident/" + this.id});
+        Coceso.UI.openLogs({url: "log/getByIncident/" + this.id, title: "Incident-Log"});
       }
     }
   },
@@ -1191,7 +1165,7 @@ Coceso.Models.Incident.prototype = Object.create({}, /** @lends Coceso.Models.In
    */
   openPatient: {
     value: function() {
-      Coceso.UI.openPatient(_("label.patient.edit"), {id: this.id});
+      Coceso.UI.openPatient({id: this.id});
     }
   }
 });
@@ -1527,7 +1501,7 @@ Coceso.Models.Unit = function(data) {
   this.addIncident = function() {
     var data = {units: {}};
     data.units[this.id] = Coceso.Constants.TaskState.assigned;
-    Coceso.UI.openIncident(_("label.unit.new_incident"), data);
+    Coceso.UI.openIncident(data);
   };
 
   /**
@@ -1544,7 +1518,7 @@ Coceso.Models.Unit = function(data) {
       data.units = {};
       data.units[self.id] = Coceso.Constants.TaskState.abo;
     }
-    Coceso.UI.openIncident(_("label.unit.report_incident"), data);
+    Coceso.UI.openIncident(data);
   };
 };
 Coceso.Models.Unit.prototype = Object.create({}, /** @lends Coceso.Models.Unit.prototype */ {
@@ -1660,7 +1634,18 @@ Coceso.Models.Unit.prototype = Object.create({}, /** @lends Coceso.Models.Unit.p
    */
   openForm: {
     value: function() {
-      Coceso.UI.openUnit(this.call + " - " + _("label.unit.edit"), {id: this.id});
+      Coceso.UI.openUnit({id: this.id});
+    }
+  },
+  /**
+   * Open details
+   *
+   * @function
+   * @returns {void}
+   */
+  openDetails: {
+    value: function() {
+      Coceso.UI.openUnitDetail(this.id);
     }
   },
   /**
@@ -1672,7 +1657,7 @@ Coceso.Models.Unit.prototype = Object.create({}, /** @lends Coceso.Models.Unit.p
   addLog: {
     value: function() {
       if (this.id) {
-        Coceso.UI.openLogAdd(_("label.log.add"), {unit: this.id});
+        Coceso.UI.openLogAdd({unit: this.id});
       }
     }
   },
@@ -1685,7 +1670,7 @@ Coceso.Models.Unit.prototype = Object.create({}, /** @lends Coceso.Models.Unit.p
   openLog: {
     value: function() {
       if (this.id) {
-        Coceso.UI.openLogs("Unit-Log", {url: "log/getLastByUnit/" + this.id + "/" + Coceso.Conf.logEntryLimit});
+        Coceso.UI.openLogs({url: "log/getLastByUnit/" + this.id + "/" + Coceso.Conf.logEntryLimit, title: "Unit-Log"});
       }
     }
   },
@@ -1910,6 +1895,16 @@ Coceso.ViewModels.Incidents = function(options) {
    * @returns {Array}
    */
   this.filtered = Coceso.Data.incidents.list.extend({list: {filter: this.activeFilters}});
+
+  var title = options.title || _("label.incidents");
+  this.dialogTitle = ko.computed(function() {
+    var open = ko.utils.arrayFilter(this.filtered(), function(i) {
+      return i.isNewOrOpen();
+    }).length,
+        total = this.filtered().length;
+
+    return {dialog: title + " (" + open + "/" + total + ")", button: title};
+  }, this);
 };
 Coceso.ViewModels.Incidents.prototype = Object.create(Coceso.ViewModels.Filterable.prototype, /** @lends Coceso.ViewModels.Incidents.prototype */ {
   /**
@@ -1978,6 +1973,11 @@ Coceso.ViewModels.Units = function(options) {
    * @returns {Array}
    */
   this.filtered = Coceso.Data.units.list.extend({list: {filter: this.activeFilters}});
+
+  var title = options.title || _("label.units");
+  this.dialogTitle = ko.computed(function() {
+    return {dialog: title + " (" + this.filtered().length + ")", button: title};
+  }, this);
 };
 Coceso.ViewModels.Units.prototype = Object.create(Coceso.ViewModels.Filterable.prototype, /** @lends Coceso.ViewModels.Units.prototype */ {
   /**
@@ -2002,6 +2002,26 @@ Coceso.ViewModels.Units.prototype = Object.create(Coceso.ViewModels.Filterable.p
 
 /**
  * ViewModel for hierarchical view in Unit Window
+ *
+ * @constructor
+ */
+Coceso.ViewModels.Hierarchical = function() {
+  var self = this;
+
+  this.top = ko.observable(new Coceso.ViewModels.UnitContainer({name: "Loading...", subContainer: []}));
+
+  $.getJSON(Coceso.Conf.jsonBase + "unitContainer/getSlim.json", function(topContainer) {
+    self.top(new Coceso.ViewModels.UnitContainer(topContainer));
+  });
+
+  var title = _("label.units") + ": " + _("label.main.unit.hierarchy");
+  this.dialogTitle = ko.pureComputed(function() {
+    return {dialog: title + " (" + this.top().availableCounter() + "/" + this.top().totalCounter() + ")", button: title};
+  }, this);
+};
+
+/**
+ * Container for hierarchical view in Unit Window
  *
  * @constructor
  * @param {Object} data
@@ -2068,8 +2088,6 @@ Coceso.ViewModels.UnitContainer.prototype = Object.create({}, /** @lends Coceso.
  * @constructor
  */
 Coceso.ViewModels.Form = function() {
-  var self = this;
-
   /**
    * Watch dependencies
    *
@@ -2119,6 +2137,16 @@ Coceso.ViewModels.Incident = function(data) {
    * @returns {Coceso.Models.Incident}
    */
   this.model = ko.observable(null);
+
+  this.dialogTitle = ko.computed(function() {
+    if (!this.idObs()) {
+      return _("label.incident.add");
+    }
+    if (!this.model()) {
+      return _("label.incident.edit");
+    }
+    return {dialog: _("label.incident.edit") + ": " + this.model().title(), button: this.model().assignedTitle()};
+  }, this);
 
   //Call parent constructors
   Coceso.Models.Incident.call(this, {id: this.idObs()});
@@ -2375,7 +2403,7 @@ Coceso.ViewModels.Incident = function(data) {
       task.taskState(Coceso.Constants.TaskState.detached);
       data.autoSave = true;
     }
-    Coceso.UI.openIncident(_("label.incident"), data);
+    Coceso.UI.openIncident(data);
     this.save();
   };
 
@@ -2491,9 +2519,17 @@ Coceso.ViewModels.Unit = function(data) {
    *
    * @function
    * @type ko.observable
-   * @returns {Coceso.Models.Incident}
+   * @returns {Coceso.Models.Unit}
    */
   this.model = ko.observable(null);
+
+  var title = _("label.unit.edit");
+  this.dialogTitle = ko.computed(function() {
+    if (!this.model()) {
+      return title;
+    }
+    return {dialog: title + ": " + this.model().call, button: this.model().call};
+  }, this);
 
   //Call parent constructors
   Coceso.Models.Unit.call(this, {id: data.id});
@@ -2669,6 +2705,48 @@ Coceso.ViewModels.Unit.prototype = Object.create(Coceso.Models.Unit.prototype, /
 });
 
 /**
+ * Unit details
+ *
+ * @constructor
+ * @param {Integer} id
+ */
+Coceso.ViewModels.UnitDetail = function(id) {
+  /**
+   * Used Model (reference)
+   *
+   * @function
+   * @type ko.observable
+   * @returns {Coceso.Models.Unit}
+   */
+  this.model = ko.computed(function() {
+    var model = Coceso.Data.getUnit(id);
+    return model === null ? new Coceso.Models.Unit() : model;
+  }, this);
+
+  var title = _("label.unit.details");
+  this.dialogTitle = ko.computed(function() {
+    if (!this.model()) {
+      return title;
+    }
+    return {dialog: title + ": " + this.model().call, button: this.model().call};
+  }, this);
+
+};
+Coceso.ViewModels.UnitDetail.prototype = Object.create({}, /** @lends Coceso.ViewModels.UnitDetail.prototype */ {
+  /**
+   * Destroy the ViewModel
+   *
+   * @function
+   * @return {void}
+   */
+  destroy: {
+    value: function() {
+      Coceso.ViewModels.destroyComputed(this);
+    }
+  }
+});
+
+/**
  * Single Patient
  *
  * @constructor
@@ -2684,6 +2762,14 @@ Coceso.ViewModels.Patient = function(data) {
    * @returns {Coceso.Models.Incident}
    */
   this.model = ko.observable(null);
+
+  var title = _("label.patient.edit");
+  this.dialogTitle = ko.computed(function() {
+    if (!this.model()) {
+      return title;
+    }
+    return {dialog: title + ": " + this.model().sur_name() + " " + this.model().given_name(), button: title};
+  }, this);
 
   //Call parent constructors
   Coceso.Models.Patient.call(this, {id: data.id});
@@ -2832,6 +2918,8 @@ Coceso.ViewModels.Patient.prototype = Object.create(Coceso.Models.Patient.protot
 Coceso.ViewModels.Logs = function(options) {
   var self = this;
 
+  this.dialogTitle = options.title || _("label.log");
+
   /**
    * List of Logs
    *
@@ -2904,6 +2992,7 @@ Coceso.ViewModels.CustomLogEntry = function(data) {
   var self = this;
 
   Coceso.Helpers.initErrorHandling(this);
+  this.dialogTitle = _("label.log.add");
 
   this.text = ko.observable(data.text || "");
   this.unit = ko.observable(data.unit || 0);
@@ -3110,58 +3199,4 @@ Coceso.ViewModels.Notifications = function() {
   this.cssError = ko.computed(function() {
     return this.connectionError() ? "connection-error" : "connection-ok";
   }, this);
-};
-
-/**
- * Debug viewmodel
- *
- * @constructor
- */
-Coceso.ViewModels.Debug = function() {
-  var self = this;
-
-  /**
-   * List of errors
-   *
-   * @function
-   * @type ko.obserableArray
-   * @returns {Array}
-   */
-  this.errors = ko.observableArray();
-
-  /**
-   * Sorted errors
-   *
-   * @function
-   * @type ko.observable
-   * @returns {Array}
-   */
-  this.filtered = this.errors.extend({
-    list: {
-      sort: function(a, b) {
-        return (b.timestamp - a.timestamp);
-      }
-    }
-  });
-
-  /**
-   * Add a HTTP error to the list
-   *
-   * @param {type} jqXHR
-   * @param {type} url
-   * @param {type} data
-   * @returns {undefined}
-   */
-  this.pushHttpError = function(jqXHR, url, data) {
-    var time = new Date();
-    self.errors.push({
-      timestamp: time.getTime(),
-      time: time.toLocaleString(),
-      type: "HTTP-Error",
-      status: jqXHR.status,
-      message: jqXHR.statusText,
-      url: url,
-      data: data
-    });
-  };
 };

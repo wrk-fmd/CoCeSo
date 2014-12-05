@@ -95,12 +95,14 @@ $.widget("ui.winman", {
     this.index = 0;
   },
   // Add a window
-  addWindow: function(title, src, options, create, destroy) {
+  addWindow: function(src, options, viewmodel, title, destroy) {
     var self = this;
 
-    var id = "ui-id-" + this.uuid + "-" + (++this.index);
-    var el = $("<div class='dialog_window' id='" + id + "' title='" + title + "'></div>");
-    el.load(src + " .ajax_content", function(response, status, request) {
+    var id = "ui-id-" + this.uuid + "-" + (++this.index),
+        el = $("<div class='dialog_window' id='" + id + "'>"),
+        button = $("<li class='ui-taskbar-item ui-widget ui-state-default ui-corner-all' id='" + id + "_taskbar'>");
+
+    el.load(src + " .ajax_content", function() {
       el.find("*").each(function(i, child) {
         // Uncomment for usage of Templates in Windows
         // if($(child).is("script")) {
@@ -110,18 +112,32 @@ $.widget("ui.winman", {
         $(child).prependAttr("for", id + "-");
         $(child).prependAttr("name", id + "-");
       });
-      if (typeof create === "function") {
-        create(el.get(0), id);
+      if (viewmodel) {
+        if (ko.isObservable(viewmodel.dialogTitle)) {
+          viewmodel.dialogTitle.subscribe(function(value) {
+            if (value) {
+              el.dialog("option", "title", value.dialog || value);
+              button.text(value.button || value);
+            }
+          });
+        }
+        viewmodel.ui = id;
+        ko.applyBindings(viewmodel, el.get(0));
       }
     });
 
-    this.windows[id] = el;
-    this.buttons[id] = $("<li class='ui-taskbar-item ui-widget ui-state-default ui-corner-all' id='" + id + "_taskbar'>" + title + "</li>");
-    this.buttons[id].click(function() {
+    if (viewmodel && typeof viewmodel.dialogTitle !== "undefined") {
+      title = ko.utils.unwrapObservable(viewmodel.dialogTitle);
+    }
+    title = title || "&nbsp;";
+
+    button.text(title.button || title);
+    button.click(function() {
       self.toggle.call(self, id);
     });
 
     options = $.extend(true, {}, {
+      title: title.dialog || title,
       closeOnEscape: false,
       width: "auto",
       height: "auto",
@@ -135,15 +151,23 @@ $.widget("ui.winman", {
       },
       destroy: function(event, ui) {
         self._close.call(self, event, ui);
+        ko.cleanNode(el.get(0));
+        if (viewmodel && viewmodel.destroy instanceof Function) {
+          viewmodel.destroy.call(viewmodel);
+        }
+
         if (typeof destroy === "function") {
           destroy(el.get(0), id);
         }
       }
     }, options);
 
+    this.windows[id] = el;
+    this.buttons[id] = button;
+
     //TODO Max-Height to option in Dialog-options?
-    this.windows[id].dialog(options).css("maxHeight", window.innerHeight - 150).data("ui-dialog").uiDialog.draggable("option", "containment", $("#dialog_container"));
-    this.element.append(this.buttons[id]);
+    el.dialog(options).css("maxHeight", window.innerHeight - 150).data("ui-dialog").uiDialog.draggable("option", "containment", $("#dialog_container"));
+    this.element.append(button);
 
     return id;
   },
@@ -173,18 +197,18 @@ $.widget("ui.winman", {
       this.windows[id].dialog("destroy");
     }
   },
-  _focus: function(event, ui) {
+  _focus: function(event) {
     //Update the taskbar after a window is focused
     this._setFocused(event.target.id);
   },
-  _minimize: function(event, ui) {
+  _minimize: function(event) {
     //Update the taskbar after a window is set to invisible
     if (this.buttons[event.target.id]) {
       this.buttons[event.target.id].removeClass("ui-state-focus ui-state-open").addClass("ui-state-default");
     }
     this._setFocused($(".dialog_window:visible").last().attr("id"));
   },
-  _close: function(event, ui) {
+  _close: function(event) {
     //Update the taskbar after a window is closed
     if (this.windows[event.target.id]) {
       this.windows[event.target.id].remove();
