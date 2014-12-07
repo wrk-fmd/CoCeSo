@@ -3200,3 +3200,17 @@ Coceso.ViewModels.Notifications = function() {
     return this.connectionError() ? "connection-error" : "connection-ok";
   }, this);
 };
+
+/**
+ * Fix issue with droppables in background
+ */
+
+var _intersect = $.ui.intersect;
+$.ui.intersect = (function() {
+	return function(draggable, droppable, toleranceMode, event) {
+    if (toleranceMode === "pointer" && !$.contains(droppable.element[0], document.elementFromPoint(event.pageX, event.pageY))) {
+      return false;
+    }
+    return _intersect(draggable, droppable, toleranceMode, event);
+	};
+})();

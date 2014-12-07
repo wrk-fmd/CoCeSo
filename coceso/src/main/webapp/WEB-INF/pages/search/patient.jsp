@@ -12,11 +12,9 @@
     <link rel="stylesheet" href="<c:url value="/static/css/coceso.css"/>" type="text/css"/>
 
     <script src="<c:url value="/static/js/assets/jquery.min.js"/>" type="text/javascript"></script>
-    <script src="<c:url value="/static/js/assets/jquery.ui.1.10.4.min.js"/>" type="text/javascript"></script>
-
     <script src="<c:url value="/static/js/assets/knockout.min.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/assets/bootstrap.min.js"/>" type="text/javascript"></script>
-    <script src="<c:url value="/static/js/assets/jquery.ui.touch-punch.min.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/static/js/knockout.extensions.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/static/js/search.patient.js"/>" type="text/javascript"></script>
 
     <script type="text/javascript">
@@ -27,7 +25,7 @@
                 ,urlprefix: "${pageContext.request.contextPath}/"
                 ,concerns: [
                     {id: 0, name: "<spring:message code="label.select"/>"}
-                    <c:forEach var="concern" items="${concerns}">,{ id: ${concern.id}, name: "${concern.name}" }</c:forEach>
+                    /*<c:forEach var="concern" items="${concerns}">*/,{ id: ${concern.id}, name: "${concern.name}" }/*</c:forEach>*/
                 ]
             });
             ko.applyBindings(model);

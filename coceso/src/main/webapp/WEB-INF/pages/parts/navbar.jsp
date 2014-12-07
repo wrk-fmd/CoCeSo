@@ -38,13 +38,13 @@
         <ul class="dropdown-menu">
           <li>
             <a href="?lang=en">
-              <img src="<c:url value="/static/imgs/blank.gif"/>" class="flag flag-us" alt="<spring:message code="label.language.en"/>"/>
+              <span class="flag flag-us"></span>
               <spring:message code="label.language.en"/>
             </a>
           </li>
           <li>
             <a href="?lang=de">
-              <img src="<c:url value="/static/imgs/blank.gif"/>" class="flag flag-at" alt="<spring:message code="label.language.de"/>"/>
+              <span class="flag flag-at"></span>
               <spring:message code="label.language.de"/>
             </a>
           </li>

@@ -69,6 +69,7 @@
                 ${unit.info}
             </td>
             <!-- TODO -->
+            <td></td><td></td>
         </tr>
     </c:forEach>
     </tbody>

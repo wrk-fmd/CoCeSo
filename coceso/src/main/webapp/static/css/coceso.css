@@ -634,6 +634,9 @@ table[id*='keytable'] > tbody > tr > td:nth-child(2) {
  */
 
 .flag {
+  position: relative;
+  top: 1px;
+  display: inline-block;
   width: 16px;
   height: 11px;
   background: url('../imgs/flags.png') no-repeat;
