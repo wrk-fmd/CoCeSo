@@ -38,7 +38,7 @@
       <tr>
         <td><fmt:formatDate type="both" dateStyle="short" timeStyle="medium" value="${log.timestamp}"/></td>
         <td><c:out value="${log.user.username}"/></td>
-        <td><t:logtext log="${log}"/></td>
+        <td class="log_text"><t:logtext log="${log}"/></td>
         <td>
           <c:if test="${not empty log.incident}">
             <a href="${get_inc}${log.incident.id}"><t:inctitle incident="${log.incident}"/></a>

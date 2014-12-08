@@ -28,7 +28,7 @@ Accordion:     main/incident.jsp (via knockout.extensions.js)
 Draggable:     templates/main.jsp (via knockout.extensions.js)
 Droppable:     main/incident.jsp, main/incident_form.jsp (via knockout.extensions.js)
 Sortable:      knockout.sortable.js
-Dialog:        main.jsp (via jquery.ui.winman.js): Version 1.9.2 with edit!
+Dialog:        main.jsp (via jquery.ui.winman.js)
 
 Touch-Punch:   all pages with draggable, sortable, dialog
 Winman:        main.jsp (via main.js)
@@ -40,17 +40,16 @@ KO Sortable:   edit_concern.jsp, edit_container.jsp
 
 
 USED VERSIONS
-Bootstrap:     3.2.0 custom
-jQuery:        1.11.1
+Bootstrap:     3.3.1 custom
+jQuery:        2.1.1 (No support for IE<=8!)
 jQuery Cookie: 1.4.1
 jQuery i18n:   1.0.9
-jQuery UI:     1.10.4 custom (except dialog, see above)
-ui-bootstrap:  1.0 alpha (TODO: compile only necessary parts)
+jQuery UI:     1.11.2 custom
+ui-bootstrap:  1.0 alpha custom
 Touch-Punch:   0.2.3
 KO Base:       3.2.0
-KO Sortable:   0.8.6
+KO Sortable:   0.9.2
 
 CUSTOM OPTIONS
-Bootstrap:     all of the above Components, with @grid-gutter-width set to 10px
-jQuery UI:     1.10.4  Draggable, Droppable, Sortable, Accordion
-               1.9.2   Dialog with dependencies (edited afterwards)
+Bootstrap:     all of the above Components, with @grid-gutter-width set to 10px: http://getbootstrap.com/customize/?id=a13f9f6048a35ab65bae
+jQuery UI:     all of the above Components

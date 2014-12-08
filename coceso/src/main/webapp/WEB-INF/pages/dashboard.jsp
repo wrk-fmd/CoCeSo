@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@taglib tagdir="/WEB-INF/tags" prefix="t"%>
 <%--
 /**
  * CoCeSo
@@ -18,14 +19,7 @@
 <html>
   <head>
     <title><spring:message code="label.coceso"/> - <spring:message code="label.nav.dashboard"/></title>
-    <meta charset="utf-8"/>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link rel="icon" href="<c:url value="/static/favicon.ico"/>" type="image/x-icon">
-    <link rel="stylesheet" href="<c:url value="/static/css/coceso.css"/>" type="text/css"/>
-
-    <script src="<c:url value="/static/js/assets/jquery.min.js"/>" type="text/javascript"></script>
-    <script src="<c:url value="/static/js/assets/bootstrap.min.js"/>" type="text/javascript"></script>
+    <t:head/>
   </head>
   <body>
     <div class="container">

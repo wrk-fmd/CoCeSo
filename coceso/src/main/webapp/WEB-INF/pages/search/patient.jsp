@@ -1,22 +1,12 @@
 <!DOCTYPE html>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@taglib tagdir="/WEB-INF/tags" prefix="t"%>
 
 <html>
 <head>
     <title><spring:message code="label.patient.search"/></title>
-
-    <meta charset="utf-8"/>
-    <link rel="icon" href="<c:url value="/static/favicon.ico"/>" type="image/x-icon">
-
-    <link rel="stylesheet" href="<c:url value="/static/css/coceso.css"/>" type="text/css"/>
-
-    <script src="<c:url value="/static/js/assets/jquery.min.js"/>" type="text/javascript"></script>
-    <script src="<c:url value="/static/js/assets/knockout.min.js"/>" type="text/javascript"></script>
-    <script src="<c:url value="/static/js/assets/bootstrap.min.js"/>" type="text/javascript"></script>
-    <script src="<c:url value="/static/js/knockout.extensions.js"/>" type="text/javascript"></script>
-    <script src="<c:url value="/static/js/search.patient.js"/>" type="text/javascript"></script>
-
+    <t:head js="search.patient"/>
     <script type="text/javascript">
         var model;
         $(document).ready(function() {

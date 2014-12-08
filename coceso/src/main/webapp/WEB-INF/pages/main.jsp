@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@taglib tagdir="/WEB-INF/tags" prefix="t"%>
 <%--
 /**
  * CoCeSo
@@ -18,28 +19,7 @@
 <html>
   <head>
     <title><spring:message code="label.coceso"/></title>
-    <meta charset="utf-8"/>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <link rel="icon" href="<c:url value="/static/favicon.ico"/>" type="image/x-icon">
-    <link rel="stylesheet" href="<c:url value="/static/css/coceso.css"/>" type="text/css"/>
-
-    <%-- jQuery --%>
-    <script src="<c:url value="/static/js/assets/jquery.min.js"/>" type="text/javascript"></script>
-    <script src="<c:url value="/static/js/assets/jquery.i18n.min.js"/>" type="text/javascript"></script>
-    <%-- jQuery UI --%>
-    <script src="<c:url value="/static/js/assets/jquery.ui.js"/>" type="text/javascript"></script>
-    <script src="<c:url value="/static/js/assets/jquery.ui.touch-punch.min.js"/>" type="text/javascript"></script>
-    <script src="<c:url value="/static/js/jquery.ui.winman.js"/>" type="text/javascript"></script>
-    <script src="<c:url value="/static/js/jquery.ui.fixes.js"/>" type="text/javascript"></script>
-    <%-- Knockout --%>
-    <script src="<c:url value="/static/js/assets/knockout.min.js"/>" type="text/javascript"></script>
-    <script src="<c:url value="/static/js/knockout.extensions.js"/>" type="text/javascript"></script>
-    <%-- Bootstrap --%>
-    <script src="<c:url value="/static/js/assets/bootstrap.min.js"/>" type="text/javascript"></script>
-    <%-- Client JS --%>
-    <script src="<c:url value="/static/js/coceso.js"/>" type="text/javascript"></script>
-    <script src="<c:url value="/static/js/main.js"/>" type="text/javascript"></script>
-
+    <t:head jquery="i18n, ui, ui.touch-punch" js="jquery.ui.winman, main"/>
     <script type="text/javascript">
       $(document).ready(function() {
         Coceso.Conf.jsonBase = "<c:url value="/data/"/>";

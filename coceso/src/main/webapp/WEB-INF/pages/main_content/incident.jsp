@@ -115,35 +115,35 @@
             </span>
           </h3>
           <div>
-            <p data-bind="visible: bo.info() && !disableBO()">
-              <span class="key"><spring:message code="label.incident.bo"/></span>
-              <span data-bind="text: bo.info"></span>
-            </p>
+            <dl class="dl-horizontal list-spacing list-narrower">
+              <!-- ko if: bo.info() && !disableBO() -->
+              <dt><spring:message code="label.incident.bo"/></dt>
+              <dd><span class="pre" data-bind="text: bo.info"></span></dd>
+              <!-- /ko -->
 
-            <p data-bind="visible: !disableAAO()">
-              <span class="key"><spring:message code="label.incident.ao"/></span>
-              <span data-bind="text: ao.info"></span>
-            </p>
+              <!-- ko ifnot: disableAAO -->
+              <dt><spring:message code="label.incident.ao"/></dt>
+              <dd><span class="pre" data-bind="text: ao.info"></span></dd>
+              <!-- /ko -->
 
-            <p data-bind="visible: info">
-              <span class="key"><spring:message code="label.incident.info"/></span>
-              <span data-bind="text: info"></span>
-            </p>
+              <!-- ko if: info -->
+              <dt><spring:message code="label.incident.info"/></dt>
+              <dd><span class="pre" data-bind="text: info"></span></dd>
+              <!-- /ko -->
 
-            <p>
-              <span class="key"><spring:message code="label.incident.state"/></span>
-              <span data-bind="text: state"></span>
-            </p>
+              <dt><spring:message code="label.incident.state"/></dt>
+              <dd data-bind="text: state"></dd>
 
-            <!-- ko foreach: units -->
-            <p>
-              <span class="key" data-bind="text: unit() && unit().call"></span>
-              <span data-bind="text: localizedTaskState"></span>
-              <button type="button" class="btn btn-xs btn-default" data-bind="click: nextState">
-                <span class="glyphicon glyphicon-forward"></span>
-              </button>
-            </p>
-            <!-- /ko -->
+              <!-- ko foreach: units -->
+              <dt data-bind="text: unit() && unit().call"></dt>
+              <dd>
+                <span data-bind="text: localizedTaskState"></span>
+                <button type="button" class="btn btn-xs btn-default" data-bind="click: nextState">
+                  <span class="glyphicon glyphicon-forward"></span>
+                </button>
+              </dd>
+              <!-- /ko -->
+            </dl>
 
             <p><button type="button" class="btn btn-default" data-bind="click: openForm"><spring:message code="label.edit"/></button></p>
             <p>

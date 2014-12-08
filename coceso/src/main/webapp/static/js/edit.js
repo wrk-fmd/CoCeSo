@@ -44,7 +44,7 @@ Coceso.Models.Concern = function(data, rootModel) {
   data = data || {};
   this.id = data.id || null;
   this.name = data.name || "";
-  this.closed = ko.observable(data.closed || false).extend({boolean: true});
+  this.closed = ko.observable(data.closed || false).extend({"boolean": true});
 
   this.isActive = ko.computed(function() {
     return rootModel.concernId() === this.id;
@@ -123,9 +123,9 @@ Coceso.Models.EditableUnit = function(data, rootModel) {
   this.id = data.id || null;
   this.call = ko.observable(data.call || "").extend({observeChanges: {server: data.call || ""}});
   this.ani = ko.observable(data.ani || "").extend({observeChanges: {server: data.ani || ""}});
-  this.doc = ko.observable(data.withDoc || false).extend({boolean: {}, observeChanges: {server: data.withDoc || false}});
-  this.vehicle = ko.observable(data.transportVehicle || false).extend({boolean: {}, observeChanges: {server: data.transportVehicle || false}});
-  this.portable = ko.observable(data.portable || false).extend({boolean: {}, observeChanges: {server: data.portable || false}});
+  this.doc = ko.observable(data.withDoc || false).extend({"boolean": true, observeChanges: {server: data.withDoc || false}});
+  this.vehicle = ko.observable(data.transportVehicle || false).extend({"boolean": true, observeChanges: {server: data.transportVehicle || false}});
+  this.portable = ko.observable(data.portable || false).extend({"boolean": true, observeChanges: {server: data.portable || false}});
   this.info = ko.observable(data.info || "").extend({observeChanges: {server: data.info || ""}});
   this.home = ko.observable(data.home && data.home.info ? data.home.info : "").extend({observeChanges: {server: data.home && data.home.info ? data.home.info : ""}});
   this.locked = data.locked;
@@ -264,9 +264,9 @@ Coceso.Models.BatchUnit = function(rootModel) {
   this.call = ko.observable("");
   this.from = ko.observable(null).extend({integer: 0});
   this.to = ko.observable(null).extend({integer: 0});
-  this.doc = ko.observable(false).extend({boolean: true});
-  this.vehicle = ko.observable(false).extend({boolean: true});
-  this.portable = ko.observable(false).extend({boolean: true});
+  this.doc = ko.observable(false).extend({"boolean": true});
+  this.vehicle = ko.observable(false).extend({"boolean": true});
+  this.portable = ko.observable(false).extend({"boolean": true});
   this.home = ko.observable("");
 
   Coceso.Helpers.initErrorHandling(this);
@@ -337,7 +337,7 @@ Coceso.Models.Container = function(data, rootModel) {
   this.ordering = data.ordering;
   this.head = data.head;
 
-  this.selected = ko.observable(false).extend({boolean: true});
+  this.selected = ko.observable(false).extend({"boolean": true});
 
   this.subContainer = ko.observableArray($.map(data.subContainer, function(item) {
     return new Coceso.Models.Container(item, rootModel);
@@ -473,7 +473,7 @@ Coceso.Models.EditablePerson = function(data) {
   this.dnr = this.dnr.extend({integer: 0, observeChanges: {}});
   this.contact.extend({observeChanges: {}});
   this.username.extend({observeChanges: {}});
-  this.allowlogin = this.allowlogin.extend({boolean: true, observeChanges: {}});
+  this.allowlogin = this.allowlogin.extend({"boolean": true, observeChanges: {}});
   this.password = ko.observable("").extend({observeChanges: {server: ""}});
   this.password2 = ko.observable("").extend({
     observeChanges: {

@@ -16,7 +16,7 @@
  */
 --%>
 
-<dl class="dashboard-list dl-horizontal">
+<dl class="list-spacing dl-horizontal">
   <dt><spring:message code="label.incident.type"/></dt>
   <dd <c:if test="${incident.blue}">class="blue"</c:if>>
     <c:choose>

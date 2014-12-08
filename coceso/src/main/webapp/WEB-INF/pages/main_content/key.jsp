@@ -20,7 +20,7 @@
   </head>
   <body style="display: none">
     <div class="ajax_content">
-      <table id="keytable" class="table">
+      <table class="table keytable">
         <thead>
           <tr>
             <th><spring:message code="label.key.category"/></th>

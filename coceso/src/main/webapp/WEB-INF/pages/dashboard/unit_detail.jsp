@@ -29,7 +29,7 @@
   <c:if test="${not empty incidents}">
     <div class="col-md-6">
       <h4><spring:message code="label.incidents"/></h4>
-      <dl class="dashboard-list dl-horizontal no-colon">
+      <dl class="list-spacing dl-horizontal no-colon">
         <c:forEach items="${incidents}" var="task">
           <dt><t:inctitle incident="${task.key}"/></dt>
           <dd><a href="${get_inc}${task.key.id}"><spring:message code="label.task.state.${fn:toLowerCase(task.value)}" text="${task.value}"/></a></dd>
@@ -56,7 +56,7 @@
       <tr>
         <td><fmt:formatDate type="both" dateStyle="short" timeStyle="medium" value="${log.timestamp}"/></td>
         <td><c:out value="${log.user.username}"/></td>
-        <td><t:logtext log="${log}"/></td>
+        <td class="log_text"><t:logtext log="${log}"/></td>
         <td>
           <c:if test="${not empty log.incident}">
             <a href="${get_inc}${log.incident.id}"><t:inctitle incident="${log.incident}"/></a>

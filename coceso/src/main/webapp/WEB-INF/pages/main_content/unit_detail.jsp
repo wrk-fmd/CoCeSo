@@ -21,7 +21,7 @@
   <body style="display: none">
     <div class="ajax_content" data-bind="with: model">
 
-      <dl class="dl-horizontal property-list">
+      <dl class="dl-horizontal list-spacing">
         <dt><spring:message code="label.unit.call"/></dt>
         <dd data-bind="text: call"></dd>
 
@@ -59,7 +59,7 @@
         <!-- /ko -->
       </dl>
       <hr/>
-      <dl class="dl-horizontal property-list">
+      <dl class="dl-horizontal list-spacing">
         <!-- ko foreach: incidents -->
         <dt data-bind="html: incident() && incident().assignedTitle()"></dt>
         <dd data-bind="text: localizedTaskState"></dd>

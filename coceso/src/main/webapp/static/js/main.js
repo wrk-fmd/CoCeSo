@@ -45,7 +45,7 @@ Coceso.Constants = {
       task: "Task"
     },
     state: {
-      new : "New",
+      "new" : "New",
       open: "Open",
       dispo: "Dispo",
       working: "Working",
@@ -458,7 +458,7 @@ Coceso.Models.Task = function(taskState, incident, unit) {
     return Coceso.Data.getIncident(this.incident_id);
   }, this);
 
-  /*
+  /**
    * Get the associated unit
    *
    * @function
@@ -733,7 +733,7 @@ Coceso.Models.Incident = function(data) {
   this.caller = ko.observable("");
   this.casusNr = ko.observable("");
   this.info = ko.observable("");
-  this.state = ko.observable(Coceso.Constants.Incident.state.new);
+  this.state = ko.observable(Coceso.Constants.Incident.state["new"]);
   this.type = ko.observable(Coceso.Constants.Incident.type.task);
 
   /**
@@ -781,7 +781,7 @@ Coceso.Models.Incident = function(data) {
     self.caller(data.caller || "");
     self.casusNr(data.casusNr || "");
     self.info(data.info || "");
-    self.state(data.state || Coceso.Constants.Incident.state.new);
+    self.state(data.state || Coceso.Constants.Incident.state["new"]);
     self.type(data.type || Coceso.Constants.Incident.type.task);
   };
 
@@ -849,7 +849,7 @@ Coceso.Models.Incident = function(data) {
    * @type ko.pureComputed
    * @returns {boolean}
    */
-  this.isNew = this.state.extend({isValue: Coceso.Constants.Incident.state.new});
+  this.isNew = this.state.extend({isValue: Coceso.Constants.Incident.state["new"]});
 
   /**
    * Incident has state "Open"
@@ -898,7 +898,7 @@ Coceso.Models.Incident = function(data) {
     return Coceso.Data.getPatient(this.id);
   }, this);
 
-  /*
+  /**
    * True, if current Incident will be cancelled on next assign
    *
    * @function
@@ -2154,7 +2154,7 @@ Coceso.ViewModels.Incident = function(data) {
 
   //Initialize change detection
   this.ao.info.extend({observeChanges: {}});
-  this.blue = this.blue.extend({boolean: true, observeChanges: {}});
+  this.blue = this.blue.extend({"boolean": true, observeChanges: {}});
   this.bo.info.extend({observeChanges: {}});
   this.caller.extend({observeChanges: {}});
   this.casusNr.extend({observeChanges: {}});
@@ -2321,7 +2321,7 @@ Coceso.ViewModels.Incident = function(data) {
    * @returns {boolean}
    */
   this.disableNew = ko.computed(function() {
-    return (this.id && this.state.orig() !== Coceso.Constants.Incident.state.new);
+    return (this.id && this.state.orig() !== Coceso.Constants.Incident.state["new"]);
   }, this);
 
   /**

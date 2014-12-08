@@ -193,6 +193,48 @@
                 </configuration>
             </plugin>
 
+            <plugin>
+              <groupId>com.samaxes.maven</groupId>
+              <artifactId>minify-maven-plugin</artifactId>
+              <version>1.7.4</version>
+              <executions>
+                <execution>
+                  <id>minify-css</id>
+                  <configuration>
+                    <cssSourceDir>static/css</cssSourceDir>
+                    <cssSourceFiles>
+                      <cssSourceFile>bootstrap.css</cssSourceFile>
+                      <cssSourceFile>bootstrap-theme.css</cssSourceFile>
+                      <cssSourceFile>jquery.ui.css</cssSourceFile>
+                      <cssSourceFile>jquery.ui.winman.css</cssSourceFile>
+                      <cssSourceFile>coceso.css</cssSourceFile>
+                    </cssSourceFiles>
+                  </configuration>
+                  <goals>
+                    <goal>minify</goal>
+                  </goals>
+                </execution>
+                <execution>
+                  <id>minify-js</id>
+                  <configuration>
+                    <skipMerge>true</skipMerge>
+                    <jsSourceDir>static/js</jsSourceDir>
+                    <jsSourceFiles>
+                      <jsSourceFile>assets/jquery.cookie.js</jsSourceFile>
+                      <jsSourceFile>knockout.extensions.js</jsSourceFile>
+                      <jsSourceFile>jquery.ui.winman.js</jsSourceFile>
+                      <jsSourceFile>coceso.js</jsSourceFile>
+                      <jsSourceFile>main.js</jsSourceFile>
+                      <jsSourceFile>edit.js</jsSourceFile>
+                      <jsSourceFile>search.patient.js</jsSourceFile>
+                    </jsSourceFiles>
+                  </configuration>
+                  <goals>
+                    <goal>minify</goal>
+                  </goals>
+                </execution>
+              </executions>
+            </plugin>
         </plugins>
     </build>
 </project>

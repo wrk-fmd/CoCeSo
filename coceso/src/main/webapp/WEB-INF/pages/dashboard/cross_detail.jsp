@@ -18,7 +18,7 @@
  */
 --%>
 
-<div class="dashboard-list clearfix">
+<div class="list-spacing clearfix">
   <div class="col-md-6">
     <h3><a href="<c:url value="?iid=${incident.id}"/>"><spring:message code="label.incident"/> #<c:out value="${incident.id}"/></a></h3>
     <%@include file="incident_props.jsp"%>
@@ -45,7 +45,7 @@
       <tr>
         <td><fmt:formatDate type="both" dateStyle="short" timeStyle="medium" value="${log.timestamp}"/></td>
         <td><c:out value="${log.user.username}"/></td>
-        <td><t:logtext log="${log}"/></td>
+        <td class="log_text"><t:logtext log="${log}"/></td>
         <td>
           <c:if test="${not empty log.state}">
             <spring:message code="label.task.state.${fn:toLowerCase(log.state)}" text="${log.state}"/>

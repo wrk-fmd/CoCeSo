@@ -12,15 +12,6 @@
  */
 
 /**
- * Import other stylesheets
- */
-
-@import "bootstrap.min.css";
-@import "bootstrap-theme.min.css";
-@import "ui-bootstrap/jquery-ui-1.10.3.custom.css";
-@import "jquery.ui.winman.css";
-
-/**
  * Global settings
  */
 
@@ -35,36 +26,6 @@ body.scroll {
 body {
   padding: 10px;
   margin: 0;
-}
-
-body.main {
-  padding: 60px 10px 40px 10px;
-  margin: 0;
-}
-
-body.login {
-  padding-top: 40px;
-  padding-bottom: 40px;
-  background-color: #eee;
-}
-
-#dialog_container {
-  position: relative;
-  padding: 0;
-  margin: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.navbar {
-  z-index: 9930;
-}
-
-#taskbar {
-  position: fixed;
-  bottom: 2px;
-  left: 2px;
-  right: 2px;
 }
 
 /**
@@ -122,9 +83,31 @@ body.login {
 /**
  * Overwrite/extend some Bootstrap defaults
  */
+
 nav.navbar {
   padding-left: 10px;
   padding-right: 15px;
+}
+
+@media (min-width: 768px){
+  .navbar-center {
+    margin: 0 auto;
+    display: table;
+    table-layout: fixed;
+    float: none;
+  }
+}
+
+@media (max-width: 880px){
+  .navbar-hide-on-mobile {
+    display: none;
+  }
+}
+
+@media (max-width: 999px){
+  .navbar-hide-on-1000px {
+    display: none;
+  }
 }
 
 .nav-tabs {
@@ -142,47 +125,75 @@ nav.navbar {
   color: #666666;
 }
 
-.btn-sm, .btn-xs {
-  font-size: 12px !important;
-}
-
 .ui-dialog .dropdown-menu {
   position: fixed;
   top: 0;
   left: 0;
 }
 
-.panel-default > .panel-heading .badge {
-  background-color: #777;
-}
-
 td dl:last-child {
   margin-bottom: 0;
 }
 
-/**
- * Overflow has to be visible for Dropdown Menu in Unit List
- */
-ul.dropdown-menu {
+.dl-horizontal dt:after {
+  content: ":";
+}
+
+.no-colon dt:after {
+  content: initial;
+}
+
+.list-spacing dd {
+  margin-bottom: 10px;
+}
+
+@media (min-width: 768px) {
+  .dl-horizontal dt {
+    text-align: left;
+  }
+
+  .dl-horizontal.list-narrow dt {
+    width: 100px;
+  }
+
+  .dl-horizontal.list-narrow dd {
+    margin-left: 120px;
+  }
+
+  .dl-horizontal.list-narrower dt {
+    width: 60px;
+  }
+
+  .dl-horizontal.list-narrower dd {
+    margin-left: 80px;
+  }
+}
+
+.popover {
+  position: fixed;
+  z-index: 9960;
+}
+
+.popover .arrow {
   overflow: visible;
 }
 
-.quicklink {
-  height: 50px;
-  color: #ffffff !important;
+.popover .arrow:after{
+  left: initial;
+  top: initial;
 }
 
-.quicklink:hover, .quicklink:focus {
-  color: #dddddd !important;
+.modal {
+  z-index: 9950;
 }
 
-.quicklink_incident {
-  background-color: #2268b3 !important;
+.modal-dialog {
+  margin-top: 80px;
 }
 
-.quicklink_log {
-  background-color: #ffb66c !important;
-}
+/**
+ * Form elements
+ */
 
 input[type="number"] {
   display: inline-block;
@@ -239,48 +250,32 @@ textarea.form-control {
   resize: vertical;
 }
 
-.popover {
-  position: fixed;
-  z-index: 9960;
-}
-
-.popover .arrow {
-  overflow: visible;
-}
-
-.popover .arrow:after{
-  left: initial;
-  top: initial;
-}
-
-.dl-horizontal dt {
-  text-align: left;
-}
-
-.dl-horizontal dt:after {
-  content: ":";
-}
-
-/**
- * Forms
+/*
+ * Flags
  */
 
-.incident_form, .unit_form, .patient_form {
-  min-width: 444px;
+.flag {
+  position: relative;
+  top: 1px;
+  display: inline-block;
+  width: 16px;
+  height: 11px;
+  background: url('../imgs/flags.png') no-repeat;
 }
 
-.log_form {
-  min-width: 380px;
-}
-
-.assigned label.control-label {
-  padding-top: 4px;
-  text-align: center;
-}
+.flag.flag-at {background-position: -16px 0}
+.flag.flag-de {background-position: 0 -11px}
+.flag.flag-us {background-position: -16px -11px}
 
 /**
  * Login
  */
+
+body.login {
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: #eee;
+}
 
 .login form {
   width: 300px;
@@ -318,6 +313,81 @@ textarea.form-control {
   margin-bottom: 10px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
+}
+
+/**
+ * Main
+ */
+
+body.main {
+  padding: 60px 10px 40px 10px;
+  margin: 0;
+}
+
+#dialog_container {
+  position: relative;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#taskbar {
+  position: fixed;
+  bottom: 2px;
+  left: 2px;
+  right: 2px;
+}
+
+/**
+ * Navbar
+ */
+
+.navbar {
+  z-index: 9930;
+}
+
+.quicklink {
+  height: 50px;
+  color: #ffffff !important;
+}
+
+.quicklink:hover, .quicklink:focus {
+  color: #dddddd !important;
+}
+
+.quicklink_incident {
+  background-color: #2268b3 !important;
+}
+
+.quicklink_log {
+  background-color: #ffb66c !important;
+}
+
+.notification-icon {
+  font-size: larger;
+  padding-bottom: 10px !important;
+}
+
+.notification-highlight {
+  background-color: #dd0000;
+}
+
+.notification-ok {
+  background-color: #00dd00 !important;
+}
+
+.notification-icon .badge {
+  position: relative;
+  top: -3px;
+}
+
+.connection-error {
+  color: #dd0000;
+}
+
+.connection-ok {
+  color: #00dd00;
 }
 
 /**
@@ -373,21 +443,6 @@ span.incident_blue {
   padding-left: 3px;
   color: #ffffff;
   font-weight: bold;
-}
-
-.key {
-  display: inline-block;
-  font-weight: bold;
-  margin-right: 0.3em;
-  min-width: 3em;
-}
-
-.key:after {
-  content: ":";
-}
-
-.ui-dialog p span, .pre {
-  white-space: pre-wrap;
 }
 
 /**
@@ -472,12 +527,8 @@ span.incident_blue {
   color: #ffffff;
 }
 
-.unit_state_multiple {
-  background-color: #dddddd;
-}
-
 /**
- *   Unit Container definitions
+ * Unit Container definitions
  */
 
 .unit_container:not(:empty) {
@@ -496,6 +547,10 @@ span.incident_blue {
   padding: 5px 10px;
 }
 
+.unit_container .panel-heading .badge {
+  background-color: #777;
+}
+
 .unit_container .panel-body {
   padding: 5px;
 }
@@ -504,6 +559,10 @@ span.incident_blue {
   margin-right: 10px;
   color: #999;
 }
+
+/**
+ * Additional definitions for editing
+ */
 
 .unit_list_edit {
   background: #eeeeee;
@@ -535,65 +594,20 @@ span.incident_blue {
 }
 
 /**
- * Notifications
+ * Form dialogs
  */
 
-.notification-icon {
-  font-size: larger;
-  padding-bottom: 10px !important;
+.incident_form, .unit_form, .patient_form {
+  min-width: 444px;
 }
 
-.notification-highlight {
-  background-color: #dd0000;
+.log_form {
+  min-width: 380px;
 }
 
-.notification-ok {
-  background-color: #00dd00 !important;
-}
-
-.notification-icon .badge {
-  position: relative;
-  top: -3px;
-}
-
-.connection-error {
-  color: #dd0000;
-}
-
-.connection-ok {
-  color: #00dd00;
-}
-
-/**
- * License
- */
-
-td.license_icon {
-  text-align: right;
-}
-
-.license_icon img {
-  max-height: 16px;
-  max-width: 16px;
-}
-
-table[id*='keytable'] > tbody > tr > td:nth-child(2) {
+.assigned label.control-label {
+  padding-top: 4px;
   text-align: center;
-}
-
-/**
- * Fix to lay backdrop over windows
- */
-.modal-backdrop {
-  z-index: 9940;
-}
-
-.modal {
-  z-index: 9950;
-}
-
-.modal-dialog {
-  margin-top: 80px;
 }
 
 /*
@@ -607,44 +621,9 @@ table[id*='keytable'] > tbody > tr > td:nth-child(2) {
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 10px rgba(233, 65, 54, 0.60);
 }
 
-@media (min-width: 768px){
-  .navbar-center {
-    margin: 0 auto;
-    display: table;
-    table-layout: fixed;
-    float:none;
-  }
-}
-
-
-@media (max-width: 880px){
-  .navbar-hide-on-mobile {
-    display: none
-  }
-}
-
-@media (max-width: 999px){
-  .navbar-hide-on-1000px {
-    display: none
-  }
-}
-
-/*
- * Flags
+/**
+ * Misc
  */
-
-.flag {
-  position: relative;
-  top: 1px;
-  display: inline-block;
-  width: 16px;
-  height: 11px;
-  background: url('../imgs/flags.png') no-repeat;
-}
-
-.flag.flag-at {background-position: -16px 0}
-.flag.flag-de {background-position: 0 -11px}
-.flag.flag-us {background-position: -16px -11px}
 
 .green {
   color: green;
@@ -652,19 +631,6 @@ table[id*='keytable'] > tbody > tr > td:nth-child(2) {
 
 .red {
   color: red;
-}
-
-.blue {
-  font-weight: bold;
-  color: #0064cd;
-}
-
-.dashboard-list dd, .property-list dd {
-  margin-bottom: 10px;
-}
-
-.no-colon dt:after {
-  content: initial;
 }
 
 div.pull-left.glyphicon {
@@ -675,16 +641,27 @@ div.pull-left.glyphicon.small {
   margin-top: 2px;
 }
 
-@media (min-width: 768px) {
-  .dl-horizontal.change-list dt {
-    width: 100px;
-  }
-
-  .dl-horizontal.change-list dd {
-    margin-left: 120px;
-  }
+.pre {
+  white-space: pre-wrap;
 }
 
 .log_text {
   max-width: 400px;
+}
+
+.keytable td:nth-child(2) {
+  text-align: center;
+}
+
+/**
+ * License
+ */
+
+td.license_icon {
+  text-align: right;
+}
+
+.license_icon img {
+  max-height: 16px;
+  max-width: 16px;
 }

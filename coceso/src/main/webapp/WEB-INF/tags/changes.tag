@@ -2,6 +2,7 @@
 <%@attribute name="container" required="true" rtexprvalue="true" type="at.wrk.coceso.entity.helper.JsonContainer"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@tag trimDirectiveWhitespaces="true"%>
 <%--
 /**
  * CoCeSo
@@ -18,7 +19,7 @@
 --%>
 
 <c:if test="${not empty container}">
-  <dl class="change-list dl-horizontal">
+  <dl class="list-narrow dl-horizontal">
     <c:forEach items="${container.data}" var="change" varStatus="key">
       <dt><spring:message code="label.${container.type}.${change.key}" text="${change.key}"/></dt>
       <dd>

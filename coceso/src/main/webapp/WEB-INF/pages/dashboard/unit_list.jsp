@@ -40,14 +40,12 @@
         <td><c:out value="${unit.info}"/></td>
         <td><c:out value="${unit.ani}"/></td>
         <td>
-          <ul class="list-unstyled">
+          <dl class="dl-horizontal list-narrower">
             <c:forEach items="${unit.incidents}" var="task">
-              <li>
-                <span class="key"><c:out value="${task.key}"/></span>
-                <span><a href="${get_inc}${task.key}"><spring:message code="label.task.state.${fn:toLowerCase(task.value)}" text="${task.value}"/></a></span>
-              </li>
+              <dt><c:out value="${task.key}"/></dt>
+              <dd><a href="${get_inc}${task.key}"><spring:message code="label.task.state.${fn:toLowerCase(task.value)}" text="${task.value}"/></a></dd>
             </c:forEach>
-          </ul>
+          </dl>
         </td>
       </tr>
     </c:forEach>

@@ -29,7 +29,7 @@
   <c:if test="${not empty units}">
     <div class="col-md-6">
       <h4><spring:message code="label.units"/></h4>
-      <dl class="dashboard-list dl-horizontal">
+      <dl class="list-spacing dl-horizontal">
         <c:forEach items="${units}" var="unit">
           <dt><c:out value="${unit.key.call}"/></dt>
           <dd>
@@ -58,7 +58,7 @@
       <tr>
         <td><fmt:formatDate type="both" dateStyle="short" timeStyle="medium" value="${log.timestamp}"/></td>
         <td><c:out value="${log.user.username}"/></td>
-        <td><t:logtext log="${log}"/></td>
+        <td class="log_text"><t:logtext log="${log}"/></td>
         <td>
           <c:if test="${not empty log.unit}">
             <a href="${get_unit}${log.unit.id}"><c:out value="${log.unit.call}"/></a>

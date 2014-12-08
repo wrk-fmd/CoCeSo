@@ -120,7 +120,7 @@
 
         <!-- ko foreach: elements -->
         <p>
-          <strong data-bind="text: key"></strong>: <span data-bind="text: val"></span>
+          <strong data-bind="text: key"></strong>: <span class="pre" data-bind="text: val"></span>
         </p>
         <!-- /ko -->
 

@@ -16,7 +16,7 @@
  */
 --%>
 
-<dl class="dashboard-list dl-horizontal">
+<dl class="list-spacing dl-horizontal">
   <dt><spring:message code="label.unit.call"/></dt>
   <dd><c:out value="${unit.call}"/></dd>
 

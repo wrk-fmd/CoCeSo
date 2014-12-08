@@ -367,7 +367,7 @@ ko.extenders.list = function(target, options) {
   var field = null, asc = null;
   if (options.sort === true) {
     field = ko.observable(options.field || null);
-    asc = ko.observable(options.asc || true).extend({boolean: true});
+    asc = ko.observable(options.asc || true).extend({"boolean": true});
     options.sort = function(a, b) {
       var f = field();
       if (f && typeof a[f] !== "undefined" && typeof b[f] !== "undefined") {
@@ -465,7 +465,7 @@ ko.extenders.isValue = function(target, value) {
  * @param {ko.observable} target
  * @returns {ko.pureComputed}
  */
-ko.extenders.boolean = function(target) {
+ko.extenders["boolean"] = function(target) {
   var ret = ko.pureComputed({
     read: target,
     write: function(val) {
