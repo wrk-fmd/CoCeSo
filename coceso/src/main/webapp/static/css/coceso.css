@@ -125,6 +125,10 @@ nav.navbar {
   color: #666666;
 }
 
+.btn-sm, .btn-xs {
+  font-size: 12px !important;
+}
+
 .ui-dialog .dropdown-menu {
   position: fixed;
   top: 0;
@@ -651,6 +655,11 @@ div.pull-left.glyphicon.small {
 
 .keytable td:nth-child(2) {
   text-align: center;
+}
+
+.tt-dropdown-menu {
+  max-height: 200px;
+  overflow-y: auto;
 }
 
 /**

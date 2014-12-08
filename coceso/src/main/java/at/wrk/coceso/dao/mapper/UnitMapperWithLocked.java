@@ -1,10 +1,10 @@
 package at.wrk.coceso.dao.mapper;
 
 import at.wrk.coceso.dao.CrewDao;
-import at.wrk.coceso.dao.PointDao;
-import at.wrk.coceso.dao.TaskDao;
 import at.wrk.coceso.entity.enums.UnitState;
 import at.wrk.coceso.entity.helper.UnitWithLocked;
+import at.wrk.coceso.service.PointService;
+import at.wrk.coceso.service.TaskService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
@@ -23,10 +23,10 @@ public class UnitMapperWithLocked implements RowMapper<UnitWithLocked> {
   private CrewDao crewDao;
 
   @Autowired
-  private PointDao pointDao;
+  private PointService pointService;
 
   @Autowired
-  private TaskDao taskDao;
+  private TaskService taskService;
 
   @Override
   public UnitWithLocked mapRow(ResultSet rs, int i) throws SQLException {
@@ -50,12 +50,12 @@ public class UnitMapperWithLocked implements RowMapper<UnitWithLocked> {
 
     // References
     unit.setConcern(rs.getInt("concern_fk"));
-    unit.setHome(pointDao.getById(rs.getInt("home_point_fk")));
-    unit.setPosition(pointDao.getById(rs.getInt("position_point_fk")));
+    unit.setHome(pointService.getById(rs.getInt("home_point_fk")));
+    unit.setPosition(pointService.getById(rs.getInt("position_point_fk")));
 
     // Extra Table
     unit.setCrew(crewDao.getByUnitId(unit.getId()));
-    unit.setIncidents(taskDao.getAllByUnitId(unit.getId()));
+    unit.setIncidents(taskService.getAllByUnitId(unit.getId()));
 
     return unit;
   }

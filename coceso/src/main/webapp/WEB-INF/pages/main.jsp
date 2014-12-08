@@ -19,7 +19,7 @@
 <html>
   <head>
     <title><spring:message code="label.coceso"/></title>
-    <t:head jquery="i18n, ui, ui.touch-punch" js="jquery.ui.winman, main"/>
+    <t:head jquery="i18n, ui, ui.touch-punch" js="assets/typeahead.bundle, jquery.ui.winman, main"/>
     <script type="text/javascript">
       $(document).ready(function() {
         Coceso.Conf.jsonBase = "<c:url value="/data/"/>";

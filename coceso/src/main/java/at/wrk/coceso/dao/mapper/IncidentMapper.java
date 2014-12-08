@@ -1,12 +1,10 @@
 package at.wrk.coceso.dao.mapper;
 
-
-import at.wrk.coceso.dao.ConcernDao;
-import at.wrk.coceso.dao.PointDao;
-import at.wrk.coceso.dao.TaskDao;
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.enums.IncidentType;
+import at.wrk.coceso.service.PointService;
+import at.wrk.coceso.service.TaskService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
@@ -22,13 +20,10 @@ public class IncidentMapper implements RowMapper<Incident> {
     Logger LOG = Logger.getLogger(IncidentMapper.class);
 
     @Autowired
-    private ConcernDao concernDao;
+    private PointService pointService;
 
     @Autowired
-    private PointDao pointDao;
-
-    @Autowired
-    private TaskDao taskDao;
+    private TaskService taskService;
 
     @Override
     public Incident mapRow(ResultSet rs, int i) throws SQLException {
@@ -57,9 +52,9 @@ public class IncidentMapper implements RowMapper<Incident> {
         }
         // References
         inc.setConcern(rs.getInt("concern_fk"));
-        inc.setBo(pointDao.getById(rs.getInt("bo_point_fk")));
-        inc.setAo(pointDao.getById(rs.getInt("ao_point_fk")));
-        inc.setUnits(taskDao.getAllByIncidentId(inc.getId()));
+        inc.setBo(pointService.getById(rs.getInt("bo_point_fk")));
+        inc.setAo(pointService.getById(rs.getInt("ao_point_fk")));
+        inc.setUnits(taskService.getAllByIncidentId(inc.getId()));
 
         return inc;
     }

@@ -1,14 +1,13 @@
 package at.wrk.coceso.dao;
 
-
 import at.wrk.coceso.dao.mapper.UnitMapper;
 import at.wrk.coceso.dao.mapper.UnitMapperWithLocked;
 import at.wrk.coceso.entity.Person;
-import at.wrk.coceso.entity.Point;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entity.enums.UnitState;
 import at.wrk.coceso.entity.helper.UnitWithLocked;
+import at.wrk.coceso.service.PointService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -25,7 +24,6 @@ import java.sql.Statement;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import org.springframework.jdbc.support.rowset.ResultSetWrappingSqlRowSet;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
@@ -45,7 +43,7 @@ public class UnitDao extends CocesoDao<Unit> {
     private CrewDao crewDao;
 
     @Autowired
-    private PointDao pointDao;
+    private PointService pointService;
 
     @Autowired
     private LogDao logDao;
@@ -143,32 +141,6 @@ public class UnitDao extends CocesoDao<Unit> {
       return ret;
     }
 
-    //TODO move to PointService
-    Point createPointIfNotExist(Point dummy) {
-        if(dummy == null)
-            return null;
-
-        // Marker for deletion
-        if(dummy.getId() == -2) {
-            return dummy;
-        }
-
-        // If the id already exists, return Point from Database
-        if(dummy.getId() > 0) {
-            Point p = pointDao.getById(dummy.getId());
-            if(p != null)
-                return p;
-        }
-
-
-        Point point = pointDao.getByInfo(dummy.getInfo());
-        if(point == null && dummy.getInfo() != null && !dummy.getInfo().isEmpty()) {
-            dummy.setId(pointDao.add(dummy));
-            return dummy;
-        }
-        else return point;
-    }
-
     /**
      * Update Unit. Only Values state, info, position are changeable. All others are LOCKED!
      * To change these, use updateFull(Unit).
@@ -187,8 +159,8 @@ public class UnitDao extends CocesoDao<Unit> {
             return false;
         }
 
-        unit.setHome(createPointIfNotExist(unit.getHome()));
-        unit.setPosition(createPointIfNotExist(unit.getPosition()));
+        unit.setHome(pointService.createIfNotExists(unit.getHome()));
+        unit.setPosition(pointService.createIfNotExists(unit.getPosition()));
 
         final String pre_q = "update unit set";
         final String suf_q = " where id = " + unit.getId();
@@ -256,8 +228,8 @@ public class UnitDao extends CocesoDao<Unit> {
             return false;
         }
 
-        unit.setHome(createPointIfNotExist(unit.getHome()));
-        unit.setPosition(createPointIfNotExist(unit.getPosition()));
+        unit.setHome(pointService.createIfNotExists(unit.getHome()));
+        unit.setPosition(pointService.createIfNotExists(unit.getPosition()));
 
 
         String q = "UPDATE unit SET state = ?, call = ?, ani = ?, withdoc = ?, " +
@@ -296,8 +268,8 @@ public class UnitDao extends CocesoDao<Unit> {
 
         uunit.prepareNotNull();
 
-        uunit.setHome(createPointIfNotExist(uunit.getHome()));
-        uunit.setPosition(createPointIfNotExist(uunit.getPosition()));
+        uunit.setHome(pointService.createIfNotExists(uunit.getHome()));
+        uunit.setPosition(pointService.createIfNotExists(uunit.getPosition()));
 
 
         final Unit unit = uunit;

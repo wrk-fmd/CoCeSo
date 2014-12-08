@@ -205,6 +205,7 @@
                     <cssSourceFiles>
                       <cssSourceFile>bootstrap.css</cssSourceFile>
                       <cssSourceFile>bootstrap-theme.css</cssSourceFile>
+                      <cssSourceFile>typeahead.css</cssSourceFile>
                       <cssSourceFile>jquery.ui.css</cssSourceFile>
                       <cssSourceFile>jquery.ui.winman.css</cssSourceFile>
                       <cssSourceFile>coceso.css</cssSourceFile>

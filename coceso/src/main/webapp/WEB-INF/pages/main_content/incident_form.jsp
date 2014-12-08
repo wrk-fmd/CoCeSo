@@ -49,18 +49,11 @@
         </div>
 
         <div class="clearfix">
-          <div class="form-group col-md-8" data-bind="css: bo.info.formcss">
+          <div class="form-group col-md-12" data-bind="css: bo.info.formcss">
             <label for="bo" class=""><spring:message code="label.incident.bo"/>:</label>
             <textarea id="bo" name="bo" rows="3" class="form-control" placeholder="<spring:message code="label.incident.bo"/>" autofocus
-                      data-bind="disable: disableBO, value: bo.info, valueUpdate: 'input', css: {'form-highlight': !bo.info() && !disableBO()}">
+                      data-bind="disable: disableBO, value: bo.info, valueUpdate: 'input', css: {'form-highlight': !bo.info() && !disableBO()}, typeahead: Coceso.poiAutocomplete">
             </textarea>
-          </div>
-
-          <div class="form-group btn-group-vertical btn-group-sm col-md-4">
-            <!-- TODO data-bind -->
-            <button type="button" class="btn btn-default" disabled><spring:message code="label.addressbook"/></button>
-            <button type="button" class="btn btn-default" disabled><spring:message code="label.hospitals"/></button>
-            <button type="button" class="btn btn-default" disabled><spring:message code="label.favorites"/></button>
           </div>
         </div>
 
@@ -82,19 +75,12 @@
         </div>
 
         <div class="clearfix">
-          <div class="form-group col-md-8" data-bind="css: ao.info.formcss">
+          <div class="form-group col-md-12" data-bind="css: ao.info.formcss">
             <label for="ao" class=""><spring:message code="label.incident.ao"/>:</label>
             <textarea id="ao" name="ao" rows="3" class="form-control"
                       placeholder="<spring:message code="label.incident.ao"/>"
-                      data-bind="value: ao.info, valueUpdate: 'input', css: {'form-highlight': highlightAO()}">
+                      data-bind="value: ao.info, valueUpdate: 'input', css: {'form-highlight': highlightAO()}, typeahead: Coceso.poiAutocomplete">
             </textarea>
-          </div>
-
-          <div class="form-group btn-group-vertical btn-group-sm col-md-4">
-            <!-- TODO data-bind -->
-            <button type="button" class="btn btn-default" disabled><spring:message code="label.addressbook"/></button>
-            <button type="button" class="btn btn-default" disabled><spring:message code="label.hospitals"/></button>
-            <button type="button" class="btn btn-default" disabled><spring:message code="label.favorites"/></button>
           </div>
         </div>
 

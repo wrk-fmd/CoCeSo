@@ -133,6 +133,30 @@ ko.bindingHandlers.file = {
   }
 };
 
+ko.bindingHandlers.typeahead = {
+  init: function(element, valueAccessor) {
+    $(element).typeahead({
+      minLength: 2,
+      highlight: true
+    }, {
+      templates: {
+        suggestion: function (obj) {
+          return "<p>" + obj.value.replace("\n", ", ") + "</p>";
+        }
+      },
+      source: valueAccessor().ttAdapter()
+    });
+
+    $(element).on("typeahead:selected typeahead:cursorchanged", function(event, data) {
+      var index = data.value.indexOf("\n");
+      if (index < 0) {
+        index = data.value.length;
+      }
+      element.setSelectionRange(index, index);
+    });
+  }
+};
+
 /**
  * Allow change detection on observable
  *

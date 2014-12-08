@@ -6,7 +6,9 @@ import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entity.helper.ClientLog;
 import at.wrk.coceso.service.ConcernService;
 import at.wrk.coceso.service.OperatorService;
+import at.wrk.coceso.service.PointService;
 import at.wrk.coceso.service.TaskService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
@@ -22,6 +24,9 @@ public class DataController {
 
   @Autowired
   private ConcernService concernService;
+
+  @Autowired
+  private PointService pointService;
 
   @Autowired
   private OperatorService operatorService;
@@ -64,4 +69,9 @@ public class DataController {
     return "{\"success\":" + operatorService.update(user) + "}";
   }
 
+  @ResponseBody
+  @RequestMapping(value = "poiAutocomplete", produces = "application/json", method = RequestMethod.GET)
+  public List<String> poiAutocomplete(@RequestParam("q") String q) {
+    return pointService.autocomplete(q);
+  }
 }

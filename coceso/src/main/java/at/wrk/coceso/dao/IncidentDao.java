@@ -5,6 +5,7 @@ import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.TaskState;
+import at.wrk.coceso.service.PointService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -35,10 +36,7 @@ public class IncidentDao extends CocesoDao<Incident> {
     private IncidentMapper incidentMapper;
 
     @Autowired
-    private PointDao pointDao;
-
-    @Autowired
-    private UnitDao unitDao;
+    private PointService pointService;
 
     @Autowired
     public IncidentDao(DataSource dataSource) {
@@ -157,8 +155,8 @@ public class IncidentDao extends CocesoDao<Incident> {
         List<Object> parameters = new ArrayList<>();
         boolean comma = false;
 
-        incident.setBo(unitDao.createPointIfNotExist(incident.getBo()));
-        incident.setAo(unitDao.createPointIfNotExist(incident.getAo()));
+        incident.setBo(pointService.createIfNotExists(incident.getBo()));
+        incident.setAo(pointService.createIfNotExists(incident.getAo()));
 
         if(incident.getCaller() != null) {
             q += "caller = ? ";
@@ -240,8 +238,8 @@ public class IncidentDao extends CocesoDao<Incident> {
 
         KeyHolder holder = new GeneratedKeyHolder();
 
-        incident.setBo(unitDao.createPointIfNotExist(incident.getBo()));
-        incident.setAo(unitDao.createPointIfNotExist(incident.getAo()));
+        incident.setBo(pointService.createIfNotExists(incident.getBo()));
+        incident.setAo(pointService.createIfNotExists(incident.getAo()));
 
         jdbc.update(new PreparedStatementCreator() {
 

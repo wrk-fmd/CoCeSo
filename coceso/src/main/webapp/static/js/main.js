@@ -127,6 +127,25 @@ Coceso.startup = function() {
 
   //Load Bindings for status confirmation window
   ko.applyBindings(Coceso.UI.Dialog, $("#next-state-confirm")[0]);
+
+  //Initialize autocomplete handler
+  Coceso.poiAutocomplete = new Bloodhound({
+    datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    limit: 20,
+    remote: {
+      url: Coceso.Conf.jsonBase + 'poiAutocomplete.json?q=',
+      replace: function(url, query) {
+        return url + encodeURIComponent(query.replace("\n", ", "));
+      },
+      filter: function(list) {
+        return $.map(list, function(item) {
+          return {value: item};
+        });
+      }
+    }
+  });
+  Coceso.poiAutocomplete.initialize();
 };
 
 /**
