@@ -45,7 +45,7 @@ Coceso.Constants = {
       task: "Task"
     },
     state: {
-      "new" : "New",
+      "new": "New",
       open: "Open",
       dispo: "Dispo",
       working: "Working",
@@ -2400,11 +2400,20 @@ Coceso.ViewModels.Incident = function(data) {
     if (task instanceof Coceso.Models.Task) {
       data.units = {};
       data.units[task.unit_id] = task.taskState();
-      task.taskState(Coceso.Constants.TaskState.detached);
-      data.autoSave = true;
+      if (ko.utils.unwrapObservable(task.taskState.server()) && self.id) {
+        // Unit is assigned on server, so we have to move it on server
+        data.autoSave = true;
+        Coceso.Ajax.save({
+          incident_id: self.id,
+          unit_id: task.unit_id,
+          state: Coceso.Constants.TaskState.detached
+        }, "incident/setToState.json", self.afterSave, self.saveError, self.httpError);
+      } else {
+        // Just remove it locally
+        self.units.remove(task);
+      }
     }
     Coceso.UI.openIncident(data);
-    this.save();
   };
 
   /**
@@ -3207,10 +3216,10 @@ Coceso.ViewModels.Notifications = function() {
 
 var _intersect = $.ui.intersect;
 $.ui.intersect = (function() {
-	return function(draggable, droppable, toleranceMode, event) {
+  return function(draggable, droppable, toleranceMode, event) {
     if (toleranceMode === "pointer" && !$.contains(droppable.element[0], document.elementFromPoint(event.pageX, event.pageY))) {
       return false;
     }
     return _intersect(draggable, droppable, toleranceMode, event);
-	};
+  };
 })();
