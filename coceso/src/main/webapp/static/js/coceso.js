@@ -38,6 +38,7 @@ var Coceso = {};
 Coceso.Conf = {
   interval: 10000,
   logEntryLimit: 30,
+  layerBase: "",
   contentBase: "",
   jsonBase: "",
   langBase: "",
@@ -193,7 +194,7 @@ Coceso.Ajax = {
             Coceso.Data[type].models.valueHasMutated();
           }
         }
-        if (Coceso.UI) {
+        if (Coceso.UI && Coceso.UI.Notifications) {
           Coceso.UI.Notifications.connectionError(false);
         }
       },
@@ -241,9 +242,6 @@ Coceso.Ajax = {
         }
       },
       error: function(jqXHR) {
-        if (Coceso.UI) {
-          Coceso.UI.Debug.pushHttpError(jqXHR, url, data);
-        }
         if (httperror instanceof Function) {
           httperror(jqXHR);
         }

@@ -122,6 +122,9 @@ $.widget("ui.winman", {
           });
         }
         viewmodel.ui = id;
+        if (viewmodel.init instanceof Function) {
+          viewmodel.init.call(viewmodel);
+        }
         ko.applyBindings(viewmodel, el.get(0));
       }
     });

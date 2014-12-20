@@ -626,6 +626,23 @@ span.incident_blue {
 }
 
 /**
+ * Map
+ */
+
+body.map {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+}
+
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+  min-height: 600px;
+  min-width: 800px;
+}
+
+/**
  * Misc
  */
 

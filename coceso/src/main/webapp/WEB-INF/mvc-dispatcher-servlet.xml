@@ -57,6 +57,7 @@
         <property name="defaultLocale" value="${default.lang}"/>
     </bean>
 
+    <bean id="restTemplate" class="org.springframework.web.client.RestTemplate"/>
 
     <import resource="db-config.xml" />
 </beans>

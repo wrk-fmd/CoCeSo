@@ -19,9 +19,11 @@
 <html>
   <head>
     <title><spring:message code="label.coceso"/></title>
-    <t:head jquery="i18n, ui, ui.touch-punch" js="assets/typeahead.bundle, jquery.ui.winman, main"/>
+    <t:head jquery="i18n, ui, ui.touch-punch" js="assets/typeahead.bundle, assets/leaflet, jquery.ui.winman, main"/>
     <script type="text/javascript">
       $(document).ready(function() {
+        L.Icon.Default.imagePath = "<c:url value="/static/css/images/"/>";
+        Coceso.Conf.layerBase = "<c:url value="/static/imgs/layer/"/>";
         Coceso.Conf.jsonBase = "<c:url value="/data/"/>";
         Coceso.Conf.contentBase = "<c:url value="/main/"/>";
         Coceso.Conf.langBase = "<c:url value="/static/i18n/"/>";
@@ -197,6 +199,11 @@
                 <li>
                   <a href="#" title="<spring:message code="label.log.add"/>" onclick="return Coceso.UI.openLogAdd();">
                     <span class="glyphicon glyphicon-book"></span> <spring:message code="label.log.add"/>
+                  </a>
+                </li>
+                <li>
+                  <a href="#" title="<spring:message code="label.map"/>" onclick="return Coceso.UI.openMap();">
+                    <span class="glyphicon glyphicon-globe"></span> <spring:message code="label.map"/>
                   </a>
                 </li>
                 <%-- External (of Main Program) Links --%>

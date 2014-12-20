@@ -149,6 +149,25 @@ Coceso.startup = function() {
 };
 
 /**
+ * Initialize only map
+ *
+ * @returns {void}
+ */
+Coceso.startupMap = function() {
+  //Initialize localization
+  Coceso.initi18n();
+
+  //Preload incidents and units
+  Coceso.Ajax.load("incidents");
+  Coceso.Ajax.load("units");
+
+  //Load Map ViewModel
+  var viewModel = new Coceso.ViewModels.Map({});
+  ko.applyBindings(viewModel);
+  viewModel.init();
+};
+
+/**
  * Contains UI related functions and data
  *
  * @namespace Coceso.UI
@@ -289,6 +308,17 @@ Coceso.UI = {
    */
   openPatient: function(data, dialog) {
     this.openWindow(Coceso.Conf.contentBase + "patient_form.html", new Coceso.ViewModels.Patient(data || {}), $.extend({position: {at: "left+40% top+30%"}}, dialog));
+    return false;
+  },
+  /**
+   * Open the map window
+   *
+   * @param {Object} options Viewmodel options
+   * @param {Object} dialog Dialog options
+   * @returns {boolean}
+   */
+  openMap: function(options, dialog) {
+    this.openWindow(Coceso.Conf.contentBase + "map.html", new Coceso.ViewModels.Map(options || {}), $.extend({position: {at: "left+10% top"}}, dialog));
     return false;
   },
   /**
@@ -745,8 +775,8 @@ Coceso.Models.Incident = function(data) {
 
   //Create basic properties
   this.id = data.id;
-  this.ao = {info: ko.observable("")};
-  this.bo = {info: ko.observable("")};
+  this.ao = {info: ko.observable(""), latitude: ko.observable(null), longitude: ko.observable(null)};
+  this.bo = {info: ko.observable(""), latitude: ko.observable(null), longitude: ko.observable(null)};
   this.units = ko.observableArray([]);
   this.blue = ko.observable(false);
   this.caller = ko.observable("");
@@ -764,13 +794,21 @@ Coceso.Models.Incident = function(data) {
   this.setData = function(data) {
     if (data.ao) {
       self.ao.info(data.ao.info);
+      self.ao.latitude(data.ao.latitude);
+      self.ao.longitude(data.ao.longitude);
     } else {
       self.ao.info("");
+      self.ao.latitude(null);
+      self.ao.longitude(null);
     }
     if (data.bo) {
       self.bo.info(data.bo.info);
+      self.bo.latitude(data.bo.latitude);
+      self.bo.longitude(data.bo.longitude);
     } else {
       self.bo.info("");
+      self.bo.latitude(null);
+      self.bo.longitude(null);
     }
     if (data.units) {
       ko.utils.objectForEach(data.units, function(unit, taskState) {
@@ -806,6 +844,11 @@ Coceso.Models.Incident = function(data) {
 
   //Set data
   this.setData(data);
+
+  /**
+   * Marker for the situation map
+   */
+  this.marker = new L.Marker.Observable(new L.LatLng.Observable(this.bo.latitude, this.bo.longitude));
 
   /**
    * Incident is of type "Task"
@@ -3050,6 +3093,175 @@ Coceso.ViewModels.CustomLogEntry = function(data) {
 };
 
 /**
+ * Constructor for the situation map
+ *
+ * @constructor
+ */
+Coceso.ViewModels.Map = function() {
+  var self = this;
+
+  this.dialogTitle = _("label.map");
+
+  this.markers = {
+    incidents: {}
+  };
+
+  this.init = function() {
+    var baseLayers = {}, overlays = {};
+    baseLayers[_("label.map.basemap")] = L.tileLayer("https://{s}.wien.gv.at/basemap/bmaphidpi/normal/google3857/{z}/{y}/{x}.jpeg", {
+      subdomains: ["maps", "maps1", "maps2", "maps3", "maps4"],
+      bounds: [[46.358770, 8.782379], [49.037872, 17.189532]],
+      attribution: _("label.map.source") + ": <a href='http://basemap.at' target='_blank'>basemap.at</a>, " +
+          "<a href='http://creativecommons.org/licenses/by/3.0/at/deed.de' target='_blank'>CC-BY 3.0</a>"
+    });
+    baseLayers[_("label.map.vienna")] = L.layerGroup([
+      L.tileLayer("https://{s}.wien.gv.at/wmts/lb/farbe/google3857/{z}/{y}/{x}.jpeg", {
+        subdomains: ["maps", "maps1", "maps2", "maps3", "maps4"],
+        bounds: [[48.10, 16.17], [48.33, 16.58]]
+      }),
+      L.tileLayer("https://{s}.wien.gv.at/wmts/beschriftung/normal/google3857/{z}/{y}/{x}.png", {
+        subdomains: ["maps", "maps1", "maps2", "maps3", "maps4"],
+        bounds: [[48.10, 16.17], [48.33, 16.58]]
+      })
+    ]);
+
+    overlays[_("label.map.hospitals")] = L.tileLayer.wms("http://data.wien.gv.at/daten/geo", {
+      layers: "ogdwien:KRANKENHAUSOGD",
+      format: "image/png",
+      transparent: true,
+      version: "1.3.0"
+    });
+    overlays[_("label.map.oneway")] = L.tileLayer.wms("http://data.wien.gv.at/daten/geo", {
+      layers: "ogdwien:EINBAHNOGD",
+      format: "image/jpeg",
+      transparent: true,
+      version: "1.3.0",
+      minZoom: 16
+    });
+    overlays[_("label.map.defi")] = L.tileLayer.wms("http://data.wien.gv.at/daten/geo", {
+      layers: "ogdwien:DEFIBRILLATOROGD",
+      format: "image/png",
+      transparent: true,
+      version: "1.3.0"
+    });
+    overlays[_("label.map.ehs.out")] = L.imageOverlay(Coceso.Conf.layerBase + "ehs_out.jpg", [[48.200655, 16.415747], [48.213634, 16.427824]]);
+    overlays[_("label.map.ehs.in")] = L.imageOverlay(Coceso.Conf.layerBase + "ehs_in.png", [[48.204912, 16.417671], [48.209496, 16.424191]]);
+
+    var map = L.map(this.ui ? this.ui + "-map-container" : "map-container", {
+      center: [48.2, 16.35], zoom: 13,
+      minZoom: 7, maxZoom: 19,
+      maxBounds: [[46.358770, 8.782379], [49.037872, 17.189532]],
+      layers: [baseLayers[_("label.map.basemap")]]
+    });
+
+    map.attributionControl.setPrefix(false);
+    map.locate({setView: true});
+    L.control.layers(baseLayers, overlays).addTo(map);
+
+    if (this.ui) {
+      $("#" + this.ui).on("dialogresizestop", function() {
+        map.invalidateSize();
+      });
+    }
+
+    Coceso.Data.incidents.models.subscribe(function(incidents) {
+      var local = self.markers.incidents;
+
+      for (var id in incidents) {
+        if (!local[id] || local[id] !== incidents[id].marker) {
+          if (local[id]) {
+            //Local marker exists, but does not match global marker
+            map.removeLayer(local[id]);
+          }
+          incidents[id].marker.addTo(map);
+          local[id] = incidents[id].marker;
+        }
+      }
+      for (var id in local) {
+        if (!incidents[id]) {
+          map.removeLayer(local[id]);
+          delete local[id];
+        }
+      }
+    }, this);
+
+    var incidents = Coceso.Data.incidents.models();
+    for (var id in incidents) {
+      incidents[id].marker.addTo(map);
+      self.markers.incidents[id] = incidents[id].marker;
+    }
+  };
+};
+
+L.LatLng.Observable = function(lat, lng) {
+  this.latObservable = ko.isObservable(lat) ? lat : ko.observable(lat);
+  this.lngObservable = ko.isObservable(lng) ? lng : ko.observable(lng);
+  this.callbacks = [];
+
+  try {
+    L.LatLng.call(this, this.latObservable(), this.lngObservable());
+  } catch (e) {
+    this.lat = null;
+    this.lng = null;
+  }
+
+  this.latObservable.subscribe(function(lat) {
+    lat = parseFloat(lat);
+    this.lat = isNaN(lat) ? null : lat;
+    this._notify();
+  }, this);
+  this.lngObservable.subscribe(function(lng) {
+    lng = parseFloat(lng);
+    this.lng = isNaN(lng) ? null : lng;
+    this._notify();
+  }, this);
+};
+L.LatLng.Observable.prototype = Object.create(L.LatLng.prototype, /** @lends L.LatLng.Observable.prototype */ {
+  subscribe: {
+    value: function(method, obj) {
+      this.callbacks.push([obj, method]);
+    }
+  },
+  unsubscribe: {
+    value: function(method, obj) {
+      ko.utils.arrayRemoveItem(this.callbacks, function(item) {
+        return item[0] === obj && item[1] === method;
+      });
+    }
+  },
+  _notify: {
+    value: function() {
+      ko.utils.arrayForEach(this.callbacks, function(item) {
+        item[1].call(item[0]);
+      });
+    }
+  }
+});
+
+L.Marker.Observable = L.Marker.extend({
+  initialize: function(latlng, options) {
+    var _latlng = latlng;
+    if (ko.isObservable(latlng)) {
+      _latlng = latlng();
+      latlng.subscribe(this.setLatLng, this);
+    }
+    L.Marker.prototype.initialize.call(this, _latlng, options);
+    if (this._latlng instanceof L.LatLng.Observable) {
+      this._latlng.subscribe(this.update, this);
+    }
+  },
+  setLatLng: function(latlng) {
+    if (this._latlng instanceof L.LatLng.Observable) {
+      this._latlng.unsubscribe(this.update, this);
+    }
+    L.Marker.prototype.setLatLng.call(this, latlng);
+    if (this._latlng instanceof L.LatLng.Observable) {
+      this._latlng.subscribe(this.update, this);
+    }
+  }
+});
+
+/**
  * Constructor for the notification viewmodel
  *
  * @constructor
@@ -3233,12 +3445,14 @@ Coceso.ViewModels.Notifications = function() {
  * Fix issue with droppables in background
  */
 
-var _intersect = $.ui.intersect;
-$.ui.intersect = (function() {
-  return function(draggable, droppable, toleranceMode, event) {
-    if (toleranceMode === "pointer" && !$.contains(droppable.element[0], document.elementFromPoint(event.pageX, event.pageY))) {
-      return false;
-    }
-    return _intersect(draggable, droppable, toleranceMode, event);
-  };
-})();
+if ($.ui && $.ui.intersect) {
+  var _intersect = $.ui.intersect;
+  $.ui.intersect = (function() {
+    return function(draggable, droppable, toleranceMode, event) {
+      if (toleranceMode === "pointer" && !$.contains(droppable.element[0], document.elementFromPoint(event.pageX, event.pageY))) {
+        return false;
+      }
+      return _intersect(draggable, droppable, toleranceMode, event);
+    };
+  })();
+}

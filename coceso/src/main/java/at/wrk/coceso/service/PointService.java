@@ -2,6 +2,8 @@ package at.wrk.coceso.service;
 
 import at.wrk.coceso.dao.PointDao;
 import at.wrk.coceso.entity.Point;
+import at.wrk.coceso.entity.helper.Address;
+import at.wrk.coceso.entity.helper.AddressInfo;
 import at.wrk.coceso.service.csv.CsvParseException;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -12,6 +14,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -19,6 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import javax.annotation.PostConstruct;
 
 @Service
 public class PointService {
@@ -34,10 +38,22 @@ public class PointService {
   private static TreeMap<String, String> poiList = null;
 
   @Autowired
+  private RestTemplate restTemplate;
+
+  @Autowired
   private ApplicationContext appContext;
 
   @Autowired
   private PointDao pointDao;
+
+  @PostConstruct
+  public void init() {
+    try {
+      poiList = parseStreetList(getCsvBody(streetConfig.url));
+    } catch (IOException | CsvParseException ex) {
+      LOG.error(ex);
+    }
+  }
 
   public Point createIfNotExists(Point dummy) {
     if (dummy == null) {
@@ -53,15 +69,22 @@ public class PointService {
     if (dummy.getId() > 0) {
       Point p = pointDao.getById(dummy.getId());
       if (p != null) {
+        if (getCoordinates(p)) {
+          pointDao.update(p);
+        }
         return p;
       }
     }
 
     Point point = pointDao.getByInfo(dummy.getInfo());
     if (point == null && dummy.getInfo() != null && !dummy.getInfo().isEmpty()) {
+      getCoordinates(dummy);
       dummy.setId(pointDao.add(dummy));
       return dummy;
     } else {
+      if (getCoordinates(point)) {
+        pointDao.update(point);
+      }
       return point;
     }
   }
@@ -71,18 +94,7 @@ public class PointService {
   }
 
   public List<String> autocomplete(String address) {
-    return filterCollection(getPoiList(), address, 20);
-  }
-
-  private TreeMap<String, String> getPoiList() {
-    if (poiList == null) {
-      try {
-        poiList = parseStreetList(getCsvBody(streetConfig.url));
-      } catch (IOException | CsvParseException ex) {
-        LOG.error(ex);
-      }
-    }
-    return poiList;
+    return poiList != null ? filterCollection(poiList, address, 20) : null;
   }
 
   private String getCsvBody(String url) throws IOException {
@@ -143,6 +155,56 @@ public class PointService {
       }
     }
     return filtered;
+  }
+
+  private boolean getCoordinates(Point p) {
+    if (Point.isEmpty(p) || (p.getLatitude() != 0 && p.getLongitude() != 0)) {
+      return false;
+    }
+
+    try {
+      AddressInfo.Entry entry = getCoordinatesForAddress(new Address(p.getInfo()));
+      if (entry != null && entry.getCoordinates().length >= 2) {
+        p.setLongitude(entry.getCoordinates()[0]);
+        p.setLatitude(entry.getCoordinates()[1]);
+        return true;
+      }
+    } catch (Exception e) {
+      LOG.error(e.getClass().toString(), e);
+    }
+
+    return false;
+  }
+
+  private AddressInfo.Entry getCoordinatesForAddress(Address address) {
+    String query = address.searchString();
+    if (query == null) {
+      return null;
+    }
+    AddressInfo info = restTemplate.getForObject("http://data.wien.gv.at/daten/OGDAddressService.svc/GetAddressInfo?crs=EPSG:4326&Address={query}", AddressInfo.class, query);
+
+    if (info == null || info.count() <= 0) {
+      return null;
+    }
+
+    if (info.count() > 1) {
+      for (AddressInfo.Entry entry : info.getEntries()) {
+        // First run: Look for exact match
+        if (entry.getAddress().exactMatch(address)) {
+          return entry;
+        }
+      }
+
+      for (AddressInfo.Entry entry : info.getEntries()) {
+        // Second run: Look for bigger addresses containing the requested
+        if (entry.getAddress().contains(address)) {
+          return entry;
+        }
+      }
+    }
+
+    // Only one entry or no match found, use lowest ranking
+    return info.getEntries()[0];
   }
 
   private static class SourceConfig {

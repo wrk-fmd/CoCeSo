@@ -106,6 +106,11 @@ public class MainController {
     return "main_content/log_add";
   }
 
+  @RequestMapping(value = "map", method = RequestMethod.GET)
+  public String map() {
+    return "main_content/map";
+  }
+
   @RequestMapping(value = "dump", method = RequestMethod.GET)
   public String dump(ModelMap map, @CookieValue("concern") int concern_id) {
     Concern c = concernService.getById(concern_id);
