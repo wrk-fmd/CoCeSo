@@ -49,10 +49,10 @@
         </div>
 
         <div class="clearfix">
-          <div class="form-group col-md-12" data-bind="css: bo.info.formcss">
+          <div class="form-group col-md-12" data-bind="css: bo.formcss">
             <label for="bo" class=""><spring:message code="label.incident.bo"/>:</label>
             <textarea id="bo" name="bo" rows="3" class="form-control" placeholder="<spring:message code="label.incident.bo"/>" autofocus
-                      data-bind="disable: disableBO, value: bo.info, valueUpdate: 'input', css: {'form-highlight': !bo.info() && !disableBO()}, typeahead: Coceso.poiAutocomplete">
+                      data-bind="disable: disableBO, value: bo, valueUpdate: 'input', css: {'form-highlight': !bo() && !disableBO()}, typeahead: Coceso.poiAutocomplete">
             </textarea>
           </div>
         </div>
@@ -75,11 +75,11 @@
         </div>
 
         <div class="clearfix">
-          <div class="form-group col-md-12" data-bind="css: ao.info.formcss">
+          <div class="form-group col-md-12" data-bind="css: ao.formcss">
             <label for="ao" class=""><spring:message code="label.incident.ao"/>:</label>
             <textarea id="ao" name="ao" rows="3" class="form-control"
                       placeholder="<spring:message code="label.incident.ao"/>"
-                      data-bind="value: ao.info, valueUpdate: 'input', css: {'form-highlight': highlightAO()}, typeahead: Coceso.poiAutocomplete">
+                      data-bind="textInput: ao, css: {'form-highlight': highlightAO()}, typeahead: Coceso.poiAutocomplete">
             </textarea>
           </div>
         </div>

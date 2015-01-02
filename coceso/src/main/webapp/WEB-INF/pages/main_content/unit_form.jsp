@@ -33,17 +33,17 @@
         </div>
 
         <div class="clearfix">
-          <div class="form-group col-md-6" data-bind="css: position.info.formcss">
+          <div class="form-group col-md-6" data-bind="css: position.formcss">
             <label for="position"><spring:message code="label.unit.position"/>:</label>
             <a href="#" class="pull-right" data-bind="click: isHome.set"><spring:message code="label.unit.settohome"/></a>
             <textarea id="position" name="position" rows="3" class="form-control"
-                      data-bind="value: position.info, valueUpdate: 'input'"></textarea>
+                      data-bind="value: position, valueUpdate: 'input'"></textarea>
           </div>
 
           <div class="form-group col-md-6">
             <label for="home"><spring:message code="label.unit.home"/>:</label>
             <textarea id="home" name="home" rows="3" class="form-control"
-                      data-bind="value: model() && model().home.info" readonly></textarea>
+                      data-bind="value: model() && model().home().info" readonly></textarea>
           </div>
         </div>
 

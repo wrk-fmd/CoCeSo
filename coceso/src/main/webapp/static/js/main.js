@@ -161,8 +161,34 @@ Coceso.startupMap = function() {
   Coceso.Ajax.load("incidents");
   Coceso.Ajax.load("units");
 
+  var options = {};
+  if (location.search) {
+    var query = location.search.replace(/&+/g, '&').replace(/^\?*&*|&+$/g, '');
+    if (query.length) {
+      var splits = query.split('&');
+      var length = splits.length;
+      var v, name, value;
+
+      for (var i = 0; i < length; i++) {
+        v = splits[i].split('=');
+        name = decodeURIComponent(v.shift().replace(/\+/g, '%20'));
+        value = v.length ? decodeURIComponent(v.join('=').replace(/\+/g, '%20')) : null;
+
+        if (options.hasOwnProperty(name)) {
+          if (typeof options[name] === 'string') {
+            options[name] = [options[name]];
+          }
+
+          options[name].push(value);
+        } else {
+          options[name] = value;
+        }
+      }
+    }
+  }
+
   //Load Map ViewModel
-  var viewModel = new Coceso.ViewModels.Map({});
+  var viewModel = new Coceso.ViewModels.Map(options);
   ko.applyBindings(viewModel);
   viewModel.init();
 };
@@ -187,6 +213,12 @@ Coceso.UI = {
    * @type Coceso.ViewModels.Notifications
    */
   Notifications: null,
+  /**
+   * List of all maps
+   *
+   * @type Array
+   */
+  Maps: [],
   /**
    * Confirmation dialog data
    *
@@ -416,9 +448,27 @@ Coceso.Data = {
     }
     return null;
   },
+  getPoint: function(data) {
+    if (!data) {
+      return Coceso.Models.Point.empty;
+    }
+    if (!data.id) {
+      return new Coceso.Models.Point(data);
+    }
+    if (!Coceso.Data.points[data.id]) {
+      Coceso.Data.points[data.id] = new Coceso.Models.Point(data);
+      ko.utils.arrayForEach(Coceso.UI.Maps, function(item) {
+        item.newPoint(Coceso.Data.points[data.id]);
+      });
+    } else {
+      Coceso.Data.points[data.id].setData(data);
+    }
+    return Coceso.Data.points[data.id];
+  },
   incidents: {models: ko.observable({})},
   units: {models: ko.observable({})},
-  patients: {models: ko.observable({})}
+  patients: {models: ko.observable({})},
+  points: {}
 };
 
 /**
@@ -681,7 +731,7 @@ Coceso.Models.Task.prototype = Object.create({}, /** @lends Coceso.Models.Task.p
         return;
       }
 
-      if (needAO && !incident.ao.info() && (nextState === s.zao || nextState === s.aao)) {
+      if (needAO && !incident.ao().id && (nextState === s.zao || nextState === s.aao)) {
         console.info("No AO set, opening Incident Window");
         Coceso.UI.openIncident({id: incident.id});
         return;
@@ -698,7 +748,7 @@ Coceso.Models.Task.prototype = Object.create({}, /** @lends Coceso.Models.Task.p
           }
 
           elements = [
-            {key: _("label.unit.position"), val: unit.position.info()}
+            {key: _("label.unit.position"), val: unit.position().info()}
           ];
         } else if (incident.isHoldPosition()) {
           if (nextState === s.aao) {
@@ -708,19 +758,19 @@ Coceso.Models.Task.prototype = Object.create({}, /** @lends Coceso.Models.Task.p
           }
 
           elements = [
-            {key: _("label.unit.position"), val: incident.ao.info()}
+            {key: _("label.unit.position"), val: incident.ao().info()}
           ];
         } else if (incident.isToHome()) {
           elements = [
-            {key: _("label.incident.bo"), val: incident.bo.info()},
-            {key: _("label.incident.ao"), val: incident.ao.info()}
+            {key: _("label.incident.bo"), val: incident.bo().info()},
+            {key: _("label.incident.ao"), val: incident.ao().info()}
           ];
 
           button = (nextState === s.zao) ? _("label.task.state.zao") : _("label.task.state.ishome");
         } else if (incident.isRelocation()) {
           elements = [
             {key: _("text.confirmation.current"), val: _("label.task.state." + this.taskState().toLowerCase())},
-            {key: _("label.incident.ao"), val: incident.ao.info()},
+            {key: _("label.incident.ao"), val: incident.ao().info()},
             {key: _("label.incident.blue"), val: (incident.blue() ? _("label.yes") : _("label.no"))},
             {key: _("label.incident.info"), val: incident.info()}
           ];
@@ -729,8 +779,8 @@ Coceso.Models.Task.prototype = Object.create({}, /** @lends Coceso.Models.Task.p
         } else {
           elements = [
             {key: _("text.confirmation.current"), val: _("label.task.state." + this.taskState().toLowerCase())},
-            {key: _("label.incident.bo"), val: incident.bo.info()},
-            {key: _("label.incident.ao"), val: incident.ao.info()},
+            {key: _("label.incident.bo"), val: incident.bo().info()},
+            {key: _("label.incident.ao"), val: incident.ao().info()},
             {key: _("label.incident.blue"), val: (incident.blue() ? _("label.yes") : _("label.no"))},
             {key: _("label.incident.info"), val: incident.info()},
             {key: _("label.incident.caller"), val: incident.caller()}
@@ -764,6 +814,32 @@ Coceso.Models.Task.prototype = Object.create({}, /** @lends Coceso.Models.Task.p
 });
 
 /**
+ * Point
+ *
+ * @constructor
+ * @param {Object} data
+ */
+Coceso.Models.Point = function(data) {
+  data = data || {};
+
+  this.id = data.id;
+  this.info = ko.observable("");
+  this.lat = ko.observable(null);
+  this.lng = ko.observable(null);
+
+  this.setData = function(data) {
+    data = data || {};
+    this.info(data.info || "");
+    this.lat(data.latitude || null);
+    this.lng(data.longitude || null);
+  };
+
+  this.setData(data);
+};
+
+Coceso.Models.Point.empty = new Coceso.Models.Point();
+
+/**
  * Single incident
  *
  * @constructor
@@ -775,8 +851,8 @@ Coceso.Models.Incident = function(data) {
 
   //Create basic properties
   this.id = data.id;
-  this.ao = {info: ko.observable(""), latitude: ko.observable(null), longitude: ko.observable(null)};
-  this.bo = {info: ko.observable(""), latitude: ko.observable(null), longitude: ko.observable(null)};
+  this.ao = ko.observable(Coceso.Models.Point.empty);
+  this.bo = ko.observable(Coceso.Models.Point.empty);
   this.units = ko.observableArray([]);
   this.blue = ko.observable(false);
   this.caller = ko.observable("");
@@ -792,24 +868,8 @@ Coceso.Models.Incident = function(data) {
    * @returns {void}
    */
   this.setData = function(data) {
-    if (data.ao) {
-      self.ao.info(data.ao.info);
-      self.ao.latitude(data.ao.latitude);
-      self.ao.longitude(data.ao.longitude);
-    } else {
-      self.ao.info("");
-      self.ao.latitude(null);
-      self.ao.longitude(null);
-    }
-    if (data.bo) {
-      self.bo.info(data.bo.info);
-      self.bo.latitude(data.bo.latitude);
-      self.bo.longitude(data.bo.longitude);
-    } else {
-      self.bo.info("");
-      self.bo.latitude(null);
-      self.bo.longitude(null);
-    }
+    self.ao(Coceso.Data.getPoint(data.ao));
+    self.bo(Coceso.Data.getPoint(data.bo));
     if (data.units) {
       ko.utils.objectForEach(data.units, function(unit, taskState) {
         unit = parseInt(unit);
@@ -844,11 +904,6 @@ Coceso.Models.Incident = function(data) {
 
   //Set data
   this.setData(data);
-
-  /**
-   * Marker for the situation map
-   */
-  this.marker = new L.Marker.Observable(new L.LatLng.Observable(this.bo.latitude, this.bo.longitude));
 
   /**
    * Incident is of type "Task"
@@ -1005,6 +1060,17 @@ Coceso.Models.Incident = function(data) {
   }, this);
 
   /**
+   * Incident has an AO
+   *
+   * @function
+   * @type ko.computed
+   * @returns {boolean}
+   */
+  this.hasAO = ko.computed(function() {
+    return !!this.ao().id;
+  }, this);
+
+  /**
    * Disable "AAO" state
    *
    * @function
@@ -1012,7 +1078,7 @@ Coceso.Models.Incident = function(data) {
    * @returns {boolean}
    */
   this.disableAAO = ko.computed(function() {
-    return (this.ao.info() === "");
+    return !this.hasAO();
   }, this);
 
   /**
@@ -1023,7 +1089,7 @@ Coceso.Models.Incident = function(data) {
    * @returns {boolean}
    */
   this.disableZAO = ko.computed(function() {
-    return (this.isStandby() || this.isHoldPosition() || this.ao.info() === "");
+    return (this.isStandby() || this.isHoldPosition() || !this.hasAO());
   }, this);
 
   /**
@@ -1046,9 +1112,9 @@ Coceso.Models.Incident = function(data) {
    */
   this.title = ko.pureComputed(function() {
     if (!this.disableBO()) {
-      return (this.bo.info()) ? this.bo.info() : _("label.incident.nobo");
+      return (this.bo().id) ? this.bo().info() : _("label.incident.nobo");
     }
-    return (this.ao.info()) ? this.ao.info() : _("label.incident.noao");
+    return (this.ao().id) ? this.ao().info() : _("label.incident.noao");
   }, this);
 
   /**
@@ -1251,8 +1317,8 @@ Coceso.Models.Unit = function(data) {
   this.transportVehicle = data.transportVehicle;
   this.withDoc = data.withDoc;
 
-  this.home = {info: ko.observable("")};
-  this.position = {info: ko.observable("")};
+  this.home = ko.observable(Coceso.Models.Point.empty);
+  this.position = ko.observable(Coceso.Models.Point.empty);
   this.incidents = ko.observableArray([]);
   this.info = ko.observable("");
   this.state = ko.observable(Coceso.Constants.Unit.state.ad);
@@ -1264,16 +1330,8 @@ Coceso.Models.Unit = function(data) {
    * @returns {void}
    */
   this.setData = function(data) {
-    if (data.home) {
-      self.home.info(data.home.info);
-    } else {
-      self.home.info("");
-    }
-    if (data.position) {
-      self.position.info(data.position.info);
-    } else {
-      self.position.info("");
-    }
+    self.home(Coceso.Data.getPoint(data.home));
+    self.position(Coceso.Data.getPoint(data.position));
     if (data.incidents) {
       ko.utils.objectForEach(data.incidents, function(incident, taskState) {
         incident = parseInt(incident);
@@ -1304,6 +1362,19 @@ Coceso.Models.Unit = function(data) {
 
   //Set data
   this.setData(data);
+
+  this.target = ko.pureComputed(function() {
+    if (!this.portable) {
+      return this.home();
+    }
+    var target = ko.utils.arrayFirst(this.incidents(), function(task) {
+      return (task.isZBO() || task.isZAO());
+    });
+    if (target && target.incident()) {
+      return target.isZBO() ? target.incident().bo() : target.incident().ao();
+    }
+    return this.position();
+  }, this);
 
   /**
    * Return the number of assigned incidents
@@ -1352,7 +1423,7 @@ Coceso.Models.Unit = function(data) {
    * @returns {boolean}
    */
   this.hasHome = ko.pureComputed(function() {
-    return (this.home.info() !== "");
+    return !!this.home().id;
   }, this);
 
   /**
@@ -1362,7 +1433,7 @@ Coceso.Models.Unit = function(data) {
    * @type ko.pureComputed
    * @returns {boolean}
    */
-  this.isHome = this.position.info.extend({isValue: this.home.info});
+  this.isHome = this.position.extend({isValue: this.home});
 
   /**
    * Unit has state "AD"
@@ -1484,7 +1555,7 @@ Coceso.Models.Unit = function(data) {
    * @returns {boolean}
    */
   this.disableHoldPosition = ko.pureComputed(function() {
-    if (this.isHome() || (this.position.info() === "") || (this.incidentCount() > 1)) {
+    if (this.isHome() || !this.position().id || (this.incidentCount() > 1)) {
       return true;
     }
     if (this.incidentCount() <= 0) {
@@ -1529,10 +1600,10 @@ Coceso.Models.Unit = function(data) {
       content += "<p><span class='key'>" + _("label.unit.ani") + "</span><span>" + this.ani + "</span></p>";
     }
     if (this.hasHome()) {
-      content += "<p><span class='key'> <span class='glyphicon glyphicon-home'></span> </span><span>" + this.home.info() + "</span></p>";
+      content += "<p><span class='key'><span class='glyphicon glyphicon-home'></span></span><span>" + this.home().info() + "</span></p>";
     }
-    content += "<p><span class='key'> <span class='glyphicon glyphicon-map-marker'></span> </span><span>" +
-        (this.position.info() === "" ? "N/A" : this.position.info()) + "</span></p>";
+    content += "<p><span class='key'><span class='glyphicon glyphicon-map-marker'></span></span><span>" +
+        (this.position().id ? this.position().info() : "N/A") + "</span></p>";
 
     content += "<hr>";
 
@@ -1575,7 +1646,7 @@ Coceso.Models.Unit = function(data) {
   this.reportIncident = function() {
     var data = {caller: self.call};
     if (this.portable) {
-      data.bo = {info: self.position.info()};
+      data.bo = {info: self.position().info()};
       data.blue = true;
       data.units = {};
       data.units[self.id] = Coceso.Constants.TaskState.abo;
@@ -2142,8 +2213,6 @@ Coceso.ViewModels.UnitContainer.prototype = Object.create({}, /** @lends Coceso.
   }
 });
 
-
-
 /**
  * Base class for all Form ViewModels
  *
@@ -2215,16 +2284,16 @@ Coceso.ViewModels.Incident = function(data) {
   Coceso.ViewModels.Form.call(this);
 
   //Initialize change detection
-  this.ao.info.extend({observeChanges: {}});
+  this.ao = ko.observable("").extend({observeChanges: {}});
   this.blue = this.blue.extend({"boolean": true, observeChanges: {}});
-  this.bo.info.extend({observeChanges: {}});
+  this.bo = ko.observable("").extend({observeChanges: {}});
   this.caller.extend({observeChanges: {}});
   this.casusNr.extend({observeChanges: {}});
   this.info.extend({observeChanges: {keepChanges: true}});
   this.state.extend({observeChanges: {}});
   this.type.extend({observeChanges: {}});
   this.units.extend({arrayChanges: {}});
-  this.form.push(this.units, this.type, this.blue, this.bo.info, this.ao.info, this.info, this.caller, this.casusNr, this.state);
+  this.form.push(this.units, this.type, this.blue, this.bo, this.ao, this.info, this.caller, this.casusNr, this.state);
 
   /**
    * "Virtual" computed observable:
@@ -2262,9 +2331,9 @@ Coceso.ViewModels.Incident = function(data) {
     this.model();
 
     //Update server reference for change detection
-    this.ao.info.server(this.model().ao.info);
+    this.ao.server(this.model().ao().info);
     this.blue.server(this.model().blue);
-    this.bo.info.server(this.model().bo.info);
+    this.bo.server(this.model().bo().info);
     this.caller.server(this.model().caller);
     this.casusNr.server(this.model().casusNr);
     this.info.server(this.model().info);
@@ -2274,13 +2343,13 @@ Coceso.ViewModels.Incident = function(data) {
     //Set initial data
     if (ko.computedContext.isInitial()) {
       if (data.ao) {
-        this.ao.info(data.ao.info);
+        this.ao(data.ao.info);
       }
       if (typeof data.blue !== "undefined") {
         this.blue(data.blue);
       }
       if (typeof data.bo !== "undefined") {
-        this.bo.info(data.bo.info);
+        this.bo(data.bo.info);
       }
       if (typeof data.caller !== "undefined") {
         this.caller(data.caller);
@@ -2354,6 +2423,17 @@ Coceso.ViewModels.Incident = function(data) {
   }
 
   /**
+   * Incident has an AO
+   *
+   * @function
+   * @type ko.computed
+   * @returns {boolean}
+   */
+  this.hasAO = ko.computed(function() {
+    return !!this.ao();
+  }, this);
+
+  /**
    * Disable the "Task" type button
    *
    * @function
@@ -2361,7 +2441,7 @@ Coceso.ViewModels.Incident = function(data) {
    * @returns {boolean}
    */
   this.disableTask = ko.computed(function() {
-    return (this.id && !this.isTask() && !this.isTransport());
+    return (this.idObs() && !this.isTask() && !this.isTransport());
   }, this);
 
   /**
@@ -2372,7 +2452,7 @@ Coceso.ViewModels.Incident = function(data) {
    * @returns {boolean}
    */
   this.disableRelocation = ko.computed(function() {
-    return (this.id && !this.isRelocation());
+    return (this.idObs() && !this.isRelocation());
   }, this);
 
   /**
@@ -2383,7 +2463,7 @@ Coceso.ViewModels.Incident = function(data) {
    * @returns {boolean}
    */
   this.disableNew = ko.computed(function() {
-    return (this.id && this.state.orig() !== Coceso.Constants.Incident.state["new"]);
+    return (this.idObs() && this.state.orig() !== Coceso.Constants.Incident.state["new"]);
   }, this);
 
   /**
@@ -2421,7 +2501,7 @@ Coceso.ViewModels.Incident = function(data) {
    */
   this.highlightAO = ko.computed(function() {
     if (this.unitCount() > 0) {
-      return (!this.ao.info() && ko.utils.arrayFilter(this.units(), function(task) {
+      return (!this.hasAO() && ko.utils.arrayFilter(this.units(), function(task) {
         return task.isABO();
       }).length >= 1);
     }
@@ -2453,8 +2533,8 @@ Coceso.ViewModels.Incident = function(data) {
   this.duplicate = function(task) {
     var data = {
       caller: self.caller(),
-      bo: {info: self.bo.info()},
-      ao: {info: self.ao.info()},
+      bo: {info: self.bo()},
+      ao: {info: self.ao()},
       info: self.info(),
       blue: self.blue(),
       type: self.type()
@@ -2528,8 +2608,8 @@ Coceso.ViewModels.Incident.prototype = Object.create(Coceso.Models.Incident.prot
     value: function() {
       var data = {
         id: this.id,
-        ao: {info: this.ao.info()},
-        bo: {info: this.bo.info()},
+        ao: {info: this.ao()},
+        bo: {info: this.bo()},
         blue: this.blue(),
         caller: this.caller(),
         casusNr: this.casusNr(),
@@ -2539,10 +2619,10 @@ Coceso.ViewModels.Incident.prototype = Object.create(Coceso.Models.Incident.prot
         units: {}
       };
 
-      if (data.ao.info === "") {
+      if (!data.ao.info) {
         data.ao = {id: -2};
       }
-      if (data.bo.info === "") {
+      if (!data.bo.info) {
         data.bo = {id: -2};
       }
 
@@ -2607,12 +2687,14 @@ Coceso.ViewModels.Unit = function(data) {
   Coceso.ViewModels.Form.call(this);
 
   //Initialize change detection
-  this.position.info.extend({observeChanges: {}});
-  this.home.info.extend({observeChanges: {}});
+  this.position = ko.observable("").extend({observeChanges: {}});
+  this.home = ko.observable("").extend({observeChanges: {}});
   this.info.extend({observeChanges: {keepChanges: true}});
   this.state.extend({observeChanges: {}});
   this.incidents.extend({arrayChanges: {}});
-  this.form.push(this.position.info, this.info, this.state, this.incidents);
+  this.form.push(this.position, this.info, this.state, this.incidents);
+
+  this.isHome = this.position.extend({isValue: this.home});
 
   /**
    * "Virtual" computed observable:
@@ -2650,15 +2732,15 @@ Coceso.ViewModels.Unit = function(data) {
     this.model();
 
     //Update server reference for change detection
-    this.position.info.server(this.model().position.info);
-    this.home.info.server(this.model().home.info);
+    this.position.server(this.model().position().info);
+    this.home.server(this.model().home().info);
     this.info.server(this.model().info);
     this.state.server(this.model().state);
 
     //Set initial data
     if (ko.computedContext.isInitial()) {
       if (data.position) {
-        this.position.info(data.position.info);
+        this.position(data.position.info);
       }
       if (typeof data.info !== "undefined") {
         this.info(data.info);
@@ -2736,13 +2818,13 @@ Coceso.ViewModels.Unit.prototype = Object.create(Coceso.Models.Unit.prototype, /
     value: function() {
       var data = {
         id: this.id,
-        position: {info: this.position.info()},
+        position: {info: this.position()},
         info: this.info(),
         state: this.state(),
         incidents: {}
       };
 
-      if (data.position.info === "") {
+      if (!data.position.info) {
         data.position = {id: -2};
       }
 
@@ -3096,25 +3178,40 @@ Coceso.ViewModels.CustomLogEntry = function(data) {
  * Constructor for the situation map
  *
  * @constructor
+ * @param {Object} options
  */
-Coceso.ViewModels.Map = function() {
-  var self = this;
+Coceso.ViewModels.Map = function(options) {
+  var self = this, map;
+  options = options || {};
+  this.dialogTitle = options.title || _("label.map");
 
-  this.dialogTitle = _("label.map");
+  this.incidents = Coceso.Data.incidents.list.extend({list: {filter: {
+        type: [Coceso.Constants.Incident.type.task, Coceso.Constants.Incident.type.transport, Coceso.Constants.Incident.type.relocation],
+        isDone: false
+      }}});
 
-  this.markers = {
-    incidents: {}
+  var names = {
+    basemap: _("label.map.basemap"),
+    vienna: _("label.map.vienna"),
+    hospitals: _("label.map.hospitals"),
+    oneway: _("label.map.oneway"),
+    defi: _("label.map.defi"),
+    "ehs.in": _("label.map.ehs.in"),
+    "ehs.out": _("label.map.ehs.out")
   };
+
+  this.points = {};
+  this.lines = {};
 
   this.init = function() {
     var baseLayers = {}, overlays = {};
-    baseLayers[_("label.map.basemap")] = L.tileLayer("https://{s}.wien.gv.at/basemap/bmaphidpi/normal/google3857/{z}/{y}/{x}.jpeg", {
+    baseLayers[names.basemap] = L.tileLayer("https://{s}.wien.gv.at/basemap/bmaphidpi/normal/google3857/{z}/{y}/{x}.jpeg", {
       subdomains: ["maps", "maps1", "maps2", "maps3", "maps4"],
       bounds: [[46.358770, 8.782379], [49.037872, 17.189532]],
       attribution: _("label.map.source") + ": <a href='http://basemap.at' target='_blank'>basemap.at</a>, " +
           "<a href='http://creativecommons.org/licenses/by/3.0/at/deed.de' target='_blank'>CC-BY 3.0</a>"
     });
-    baseLayers[_("label.map.vienna")] = L.layerGroup([
+    baseLayers[names.vienna] = L.layerGroup([
       L.tileLayer("https://{s}.wien.gv.at/wmts/lb/farbe/google3857/{z}/{y}/{x}.jpeg", {
         subdomains: ["maps", "maps1", "maps2", "maps3", "maps4"],
         bounds: [[48.10, 16.17], [48.33, 16.58]]
@@ -3125,37 +3222,160 @@ Coceso.ViewModels.Map = function() {
       })
     ]);
 
-    overlays[_("label.map.hospitals")] = L.tileLayer.wms("http://data.wien.gv.at/daten/geo", {
-      layers: "ogdwien:KRANKENHAUSOGD",
-      format: "image/png",
-      transparent: true,
-      version: "1.3.0"
+    overlays[names.hospitals] = new L.GeoJSON.WFS("https://data.wien.gv.at/daten/geo", "ogdwien:KRANKENHAUSOGD", {
+      pointToLayer: function(feature, latlng) {
+        return L.marker(latlng, {
+          icon: L.icon({
+            iconUrl: 'https://data.wien.gv.at/katalog/images/krankenhaus.png',
+            iconSize: [16, 16]
+          })
+        });
+      },
+      onEachFeature: function(feature, layer) {
+        if (feature.properties) {
+          layer.bindPopup("<strong>" + feature.properties.BEZEICHNUNG + "</strong><br/>" + feature.properties.ADRESSE);
+        }
+      }
     });
-    overlays[_("label.map.oneway")] = L.tileLayer.wms("http://data.wien.gv.at/daten/geo", {
-      layers: "ogdwien:EINBAHNOGD",
-      format: "image/jpeg",
-      transparent: true,
-      version: "1.3.0",
-      minZoom: 16
-    });
-    overlays[_("label.map.defi")] = L.tileLayer.wms("http://data.wien.gv.at/daten/geo", {
-      layers: "ogdwien:DEFIBRILLATOROGD",
-      format: "image/png",
-      transparent: true,
-      version: "1.3.0"
-    });
-    overlays[_("label.map.ehs.out")] = L.imageOverlay(Coceso.Conf.layerBase + "ehs_out.jpg", [[48.200655, 16.415747], [48.213634, 16.427824]]);
-    overlays[_("label.map.ehs.in")] = L.imageOverlay(Coceso.Conf.layerBase + "ehs_in.png", [[48.204912, 16.417671], [48.209496, 16.424191]]);
 
-    var map = L.map(this.ui ? this.ui + "-map-container" : "map-container", {
-      center: [48.2, 16.35], zoom: 13,
-      minZoom: 7, maxZoom: 19,
+    overlays[names.defi] = new L.GeoJSON.WFS("https://data.wien.gv.at/daten/geo", "ogdwien:DEFIBRILLATOROGD", {
+      pointToLayer: function(feature, latlng) {
+        return L.marker(latlng, {
+          icon: L.icon({
+            iconUrl: 'https://data.wien.gv.at/katalog/images/defibrillator.png',
+            iconSize: [16, 16]
+          })
+        });
+      },
+      onEachFeature: function(feature, layer) {
+        if (feature.properties) {
+          layer.bindPopup("<strong>" + feature.properties.ADRESSE + "</strong><br/>" + feature.properties.INFO);
+        }
+      }
+    });
+
+    overlays[names["ehs.out"]] = L.imageOverlay(Coceso.Conf.layerBase + "ehs_out.jpg", [[48.200655, 16.415747], [48.213634, 16.427824]]);
+    overlays[names["ehs.in"]] = L.imageOverlay(Coceso.Conf.layerBase + "ehs_in.png", [[48.204912, 16.417671], [48.209496, 16.424191]]);
+
+    options.b = baseLayers[names[options.b]] ? options.b : "basemap";
+    var layers = [baseLayers[names[options.b]]], o = [];
+    if (options.o) {
+      if (!(options.o instanceof Array)) {
+        options.o = [options.o];
+      }
+      ko.utils.arrayForEach(options.o, function(item) {
+        if (overlays[names[item]]) {
+          o.push(item);
+          layers.push(overlays[names[item]]);
+        }
+      });
+    }
+    if (o) {
+      options.o = o;
+    } else if (options.o) {
+      delete options.o;
+    }
+
+    var locate = true;
+    if (options.c) {
+      if (!(options.c instanceof Array)) {
+        options.c = options.c.split(",");
+      }
+      if (options.c.length >= 2) {
+        options.c = options.c.slice(0, 2);
+        options.c = $.map(options.c, parseFloat);
+        if (!isNaN(options.c[0]) && !isNaN(options.c[1])) {
+          locate = false;
+        }
+      }
+    }
+    if (locate) {
+      options.c = [48.2, 16.35];
+    }
+    if (options.z) {
+      options.z = parseInt(options.z);
+      if (isNaN(options.z)) {
+        options.z = 13;
+      }
+    } else {
+      options.z = 13;
+    }
+
+    map = L.map(this.ui ? this.ui + "-map-container" : "map-container", {
+      center: options.c, zoom: options.z,
+      minZoom: 7, maxZoom: 18,
       maxBounds: [[46.358770, 8.782379], [49.037872, 17.189532]],
-      layers: [baseLayers[_("label.map.basemap")]]
+      layers: layers
     });
 
-    map.attributionControl.setPrefix(false);
-    map.locate({setView: true});
+    var fullLink = $("<a href='" + Coceso.Conf.contentBase + "map' target='_blank'>" + _("label.map.full") + "</a>");
+    if (this.ui) {
+      map.attributionControl.setPrefix(fullLink.prop("outerHTML"));
+    } else {
+      map.attributionControl.setPrefix(false);
+    }
+
+    function setQuery() {
+      for (var key in options) {
+        if (!options[key]) {
+          delete options[key];
+        }
+      }
+      if (self.ui) {
+        fullLink.prop("href", Coceso.Conf.contentBase + "map?" + $.param(options, true));
+        map.attributionControl.setPrefix(fullLink.prop("outerHTML"));
+      } else {
+        window.history.replaceState(null, null, "?" + $.param(options, true));
+      }
+    }
+
+    function findName(name) {
+      for (var key in names) {
+        if (names[key] === name) {
+          return key;
+        }
+      }
+      return null;
+    }
+
+    map.on("moveend", function() {
+      var c = map.getCenter();
+      options.c = c ? [c.lat, c.lng] : null;
+      options.z = map.getZoom();
+      setQuery();
+    });
+    map.on("baselayerchange", function(e) {
+      options.b = findName(e.name);
+      setQuery();
+    });
+    map.on("overlayadd", function(e) {
+      var name = findName(e.name);
+      if (name) {
+        if (options.o instanceof Array) {
+          options.o.push(name);
+        } else {
+          options.o = [name];
+        }
+      }
+      setQuery();
+    });
+    map.on("overlayremove", function(e) {
+      if (options.o instanceof Array) {
+        var name = findName(e.name);
+        if (name) {
+          for (var i = 0; i <= options.o.length; i++) {
+            if (options.o[i] === name) {
+              options.o.splice(i, 1);
+            }
+          }
+        }
+      }
+      setQuery();
+    });
+
+    if (locate) {
+      map.locate({setView: true});
+    }
     L.control.layers(baseLayers, overlays).addTo(map);
 
     if (this.ui) {
@@ -3164,36 +3384,74 @@ Coceso.ViewModels.Map = function() {
       });
     }
 
-    Coceso.Data.incidents.models.subscribe(function(incidents) {
-      var local = self.markers.incidents;
+    for (var i in Coceso.Data.points) {
+      this.points[i] = new L.Marker.Point(Coceso.Data.points[i], map, this.incidents, Coceso.Data.units.list);
+    }
 
-      for (var id in incidents) {
-        if (!local[id] || local[id] !== incidents[id].marker) {
-          if (local[id]) {
-            //Local marker exists, but does not match global marker
-            map.removeLayer(local[id]);
+    Coceso.UI.Maps.push(this);
+
+    this._drawIncidents = ko.computed(function() {
+      var found = [];
+      ko.utils.arrayForEach(this.incidents(), function(inc) {
+        if (!self.lines[inc.id] || self.lines[inc.id].incident !== inc) {
+          if (self.lines[inc.id]) {
+            //Local marker exists, but incident does not match global marker
+            map.removeLayer(self.lines[inc.id]);
           }
-          incidents[id].marker.addTo(map);
-          local[id] = incidents[id].marker;
+          self.lines[inc.id] = new L.LayerGroup.Incident(inc);
+          self.lines[inc.id].addTo(map);
         }
-      }
-      for (var id in local) {
-        if (!incidents[id]) {
-          map.removeLayer(local[id]);
-          delete local[id];
+        found[inc.id] = true;
+      });
+      for (var id in self.lines) {
+        if (!found[id]) {
+          map.removeLayer(self.lines[id]);
+          delete self.lines[id];
         }
       }
     }, this);
+  };
 
-    var incidents = Coceso.Data.incidents.models();
-    for (var id in incidents) {
-      incidents[id].marker.addTo(map);
-      self.markers.incidents[id] = incidents[id].marker;
-    }
+  this.newPoint = function(point) {
+    this.points[point.id] = new L.Marker.Point(point, map, this.incidents, Coceso.Data.units.list);
   };
 };
 
+L.GeoJSON.WFS = L.GeoJSON.extend({
+  initialize: function(serviceUrl, featureType, options) {
+    options = options || {};
+    L.GeoJSON.prototype.initialize.call(this, null, options);
+    this.getFeatureUrl = serviceUrl + "?service=WFS&request=GetFeature&outputFormat=json&version=1.1.0&srsName=EPSG:4326&typeName=" + featureType;
+  },
+  onAdd: function(map) {
+    L.LayerGroup.prototype.onAdd.call(this, map);
+    if (!this.jsonData) {
+      var self = this;
+      this.getFeature(function() {
+        self.addData(self.jsonData);
+      });
+    }
+  },
+  getFeature: function(callback) {
+    var self = this;
+    $.ajax({
+      dataType: "json",
+      url: this.getFeatureUrl,
+      success: function(response) {
+        if (response.type && response.type === "FeatureCollection") {
+          self.jsonData = response;
+          callback();
+        }
+      }
+    });
+  }
+});
+
 L.LatLng.Observable = function(lat, lng) {
+  if (lat instanceof Coceso.Models.Point) {
+    lng = lat.lng;
+    lat = lat.lat;
+  }
   this.latObservable = ko.isObservable(lat) ? lat : ko.observable(lat);
   this.lngObservable = ko.isObservable(lng) ? lng : ko.observable(lng);
   this.callbacks = [];
@@ -3223,9 +3481,9 @@ L.LatLng.Observable.prototype = Object.create(L.LatLng.prototype, /** @lends L.L
     }
   },
   unsubscribe: {
-    value: function(method, obj) {
+    value: function(method) {
       ko.utils.arrayRemoveItem(this.callbacks, function(item) {
-        return item[0] === obj && item[1] === method;
+        return item[1] === method;
       });
     }
   },
@@ -3238,26 +3496,70 @@ L.LatLng.Observable.prototype = Object.create(L.LatLng.prototype, /** @lends L.L
   }
 });
 
-L.Marker.Observable = L.Marker.extend({
-  initialize: function(latlng, options) {
-    var _latlng = latlng;
-    if (ko.isObservable(latlng)) {
-      _latlng = latlng();
-      latlng.subscribe(this.setLatLng, this);
-    }
-    L.Marker.prototype.initialize.call(this, _latlng, options);
-    if (this._latlng instanceof L.LatLng.Observable) {
-      this._latlng.subscribe(this.update, this);
-    }
+L.Marker.Point = L.Marker.extend({
+  initialize: function(point, map, incidents, units, options) {
+    this.point = point;
+    L.Marker.prototype.initialize.call(this, new L.LatLng.Observable(point), options);
+    this._latlng.subscribe(this.update, this);
+
+    this.bo = incidents.extend({list: {filter: {bo: point}}});
+    this.ao = incidents.extend({list: {filter: {ao: point}}});
+    this.target = units.extend({list: {filter: {target: point}}});
+
+    this.showMarker = ko.computed(function() {
+      if (this.bo().length || this.ao().length || this.target().length) {
+        map.addLayer(this);
+        return true;
+      }
+      map.removeLayer(this);
+      return false;
+    }, this);
+
+    var popup = L.popup();
+    this.popupContent = ko.computed(function() {
+      if (!this.showMarker()) {
+        return "";
+      }
+      var content = "<strong class='pre'>" + point.info() + "</strong>";
+      if (this.target().length) {
+        content += "<hr/>" + _("label.units");
+        ko.utils.arrayForEach(this.target(), function(unit) {
+          content += "<br/>" + unit.call;
+        });
+      }
+      ko.utils.arrayForEach(this.bo(), function(inc) {
+        content += "<br/>" + inc.assignedTitle();
+      });
+      ko.utils.arrayForEach(this.ao(), function(inc) {
+        content += "<br/>" + inc.assignedTitle();
+      });
+      popup.setContent(content);
+      return content;
+    }, this);
+    this.bindPopup(popup);
   },
-  setLatLng: function(latlng) {
-    if (this._latlng instanceof L.LatLng.Observable) {
-      this._latlng.unsubscribe(this.update, this);
-    }
-    L.Marker.prototype.setLatLng.call(this, latlng);
-    if (this._latlng instanceof L.LatLng.Observable) {
-      this._latlng.subscribe(this.update, this);
-    }
+  destroy: function() {
+    this._latlng.unsubscribe(this.update);
+  }
+});
+
+L.LayerGroup.Incident = L.LayerGroup.extend({
+  initialize: function(inc) {
+    this.incident = inc;
+    this._layers = {};
+    var line = new L.Polyline([[0, 0], [0, 0]]);
+
+    this._updateLine = ko.computed(function() {
+      var aLat = inc.ao().lat(), aLng = inc.ao().lng(),
+          bLat = inc.bo().lat(), bLng = inc.bo().lng();
+
+      if (aLat && aLng && bLat && bLng) {
+        line.setLatLngs([[bLat, bLng], [aLat, aLng]]);
+        this.addLayer(line);
+      } else {
+        this.removeLayer(line);
+      }
+    }, this);
   }
 });
 

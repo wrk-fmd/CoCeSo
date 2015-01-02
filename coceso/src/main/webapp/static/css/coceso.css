@@ -414,7 +414,7 @@ body.main {
 .incident_ao {
   display: block;
   font-size: 0.9em;
-  color: #888888;
+  color: #999999;
   line-height: 17px;
   font-weight: normal;
 }
@@ -424,7 +424,7 @@ body.main {
   top: auto;
   left: auto;
   float: left;
-  background-image: url("ui-bootstrap/images/ui-icons_888888_256x240.png");
+  background-image: url("images/ui-icons_999999_256x240.png");
   margin-top: 0;
 }
 
@@ -631,14 +631,15 @@ span.incident_blue {
 
 body.map {
   padding: 0;
-  margin: 0;
-  height: 100%;
 }
 
 .leaflet-container {
   height: 100%;
   width: 100%;
-  min-height: 600px;
+}
+
+.ui-dialog-content .leaflet-container {
+  min-height: 550px;
   min-width: 800px;
 }
 

@@ -19,7 +19,7 @@
 <html>
   <head>
     <title><spring:message code="label.coceso"/> - <spring:message code="label.map"/></title>
-    <t:head jquery="i18n" js="assets/leaflet, assets/leaflet.wfs, main"/>
+    <t:head jquery="i18n" js="assets/leaflet, main"/>
     <script type="text/javascript">
       $(document).ready(function() {
         L.Icon.Default.imagePath = "<c:url value="/static/css/images/"/>";

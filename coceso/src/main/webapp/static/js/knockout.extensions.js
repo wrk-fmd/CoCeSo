@@ -135,24 +135,28 @@ ko.bindingHandlers.file = {
 
 ko.bindingHandlers.typeahead = {
   init: function(element, valueAccessor) {
-    $(element).typeahead({
+    var $element = $(element);
+    $element.typeahead({
       minLength: 2,
       highlight: true
     }, {
       templates: {
-        suggestion: function (obj) {
+        suggestion: function(obj) {
           return "<p>" + obj.value.replace("\n", ", ") + "</p>";
         }
       },
       source: valueAccessor().ttAdapter()
     });
 
-    $(element).on("typeahead:selected typeahead:cursorchanged", function(event, data) {
+    $element.on("typeahead:selected typeahead:cursorchanged", function(event, data) {
       var index = data.value.indexOf("\n");
       if (index < 0) {
         index = data.value.length;
       }
       element.setSelectionRange(index, index);
+    });
+    $element.on("typeahead:selected", function() {
+      $element.trigger("input");
     });
   }
 };
@@ -551,4 +555,8 @@ ko.extenders.integer = function(target, length) {
   ret(target());
 
   return ret;
+};
+
+ko.observable.fn.equalityComparer = ko.dependentObservable.fn.equalityComparer = function(a, b) {
+  return a === b;
 };
