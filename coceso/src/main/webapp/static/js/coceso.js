@@ -367,3 +367,14 @@ Coceso.ViewModels.destroyComputed = function(obj) {
 RegExp.escape = function(s) {
   return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 };
+
+String.escapeChars = {
+  "&": "amp",
+  "<": "lt",
+  ">": "gt"
+};
+String.prototype.escapeHTML = function() {
+  return this.replace(/[&<>]/g, function(m) {
+    return '&' + String.escapeChars[m] + ';';
+  });
+};

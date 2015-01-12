@@ -631,7 +631,7 @@ Coceso.Models.Task = function(taskState, incident, unit) {
    */
   this.localizedTaskState = ko.pureComputed(function() {
     if (this.taskState()) {
-      return _("label.task.state." + this.taskState().toLowerCase());
+      return _("label.task.state." + this.taskState().toLowerCase().escapeHTML());
     }
     return "";
   }, this);
@@ -769,7 +769,7 @@ Coceso.Models.Task.prototype = Object.create({}, /** @lends Coceso.Models.Task.p
           button = (nextState === s.zao) ? _("label.task.state.zao") : _("label.task.state.ishome");
         } else if (incident.isRelocation()) {
           elements = [
-            {key: _("text.confirmation.current"), val: _("label.task.state." + this.taskState().toLowerCase())},
+            {key: _("text.confirmation.current"), val: this.localizedTaskState()},
             {key: _("label.incident.ao"), val: incident.ao().info()},
             {key: _("label.incident.blue"), val: (incident.blue() ? _("label.yes") : _("label.no"))},
             {key: _("label.incident.info"), val: incident.info()}
@@ -778,7 +778,7 @@ Coceso.Models.Task.prototype = Object.create({}, /** @lends Coceso.Models.Task.p
           button = _("label.task.state." + nextState.toLowerCase());
         } else {
           elements = [
-            {key: _("text.confirmation.current"), val: _("label.task.state." + this.taskState().toLowerCase())},
+            {key: _("text.confirmation.current"), val: this.localizedTaskState()},
             {key: _("label.incident.bo"), val: incident.bo().info()},
             {key: _("label.incident.ao"), val: incident.ao().info()},
             {key: _("label.incident.blue"), val: (incident.blue() ? _("label.yes") : _("label.no"))},
@@ -796,7 +796,7 @@ Coceso.Models.Task.prototype = Object.create({}, /** @lends Coceso.Models.Task.p
         }
 
         Coceso.UI.Dialog({
-          title: "<strong>" + unit.call + "</strong>" + " - " + incident.typeString(),
+          title: "<strong>" + unit.call.escapeHTML() + "</strong>" + " - " + incident.typeString(),
           info_text: info, button_text: button, elements: elements,
           save: function() {
             console.info("nextState() triggered on Server");
@@ -1129,7 +1129,7 @@ Coceso.Models.Incident = function(data) {
       if (this.isTask() && this.blue()) {
         return _("label.incident.type.task.blue");
       }
-      return _("label.incident.type." + this.type().toLowerCase());
+      return _("label.incident.type." + this.type().toLowerCase().escapeHTML());
     }
     return "";
   }, this);
@@ -1206,7 +1206,7 @@ Coceso.Models.Incident = function(data) {
       title = title.substring(0, 30) + "...";
     }
     return "<span class='incident_type_text" + (this.blue() ? " incident_blue" : "")
-        + "'>" + this.typeChar() + "</span>" + title.split("\n")[0];
+        + "'>" + this.typeChar() + "</span>" + title.split("\n")[0].escapeHTML();
   }, this);
 
   /**
@@ -1218,12 +1218,12 @@ Coceso.Models.Incident = function(data) {
    */
   this.assignedTitle = ko.pureComputed(function() {
     if (this.isTask() || this.isTransport() || this.isRelocation()) {
-      return this.typeChar() + ": " + this.title().split("\n")[0];
+      return this.typeChar() + ": " + this.title().split("\n")[0].escapeHTML();
     }
     if (this.isToHome() || this.isStandby() || this.isHoldPosition()) {
       return this.typeChar();
     }
-    return this.title();
+    return this.title().escapeHTML();
   }, this);
 
   /**
@@ -1595,26 +1595,26 @@ Coceso.Models.Unit = function(data) {
    */
   this.popover = ko.pureComputed(function() {
     // Bugfix orphaned Popovers (Ticket #17)
-    var content = "<div onmouseout=\"$('.popover').remove();\">";
-    if (this.ani !== "") {
-      content += "<p><span class='key'>" + _("label.unit.ani") + "</span><span>" + this.ani + "</span></p>";
+    var content = "<div onmouseout=\"$('.popover').remove();\"><dl class='dl-horizontal list-narrower'>";
+    if (this.ani) {
+      content += "<dt>" + _("label.unit.ani") + "</dt><dd>" + this.ani.escapeHTML() + "</dd>";
     }
     if (this.hasHome()) {
-      content += "<p><span class='key'><span class='glyphicon glyphicon-home'></span></span><span>" + this.home().info() + "</span></p>";
+      content += "<dt><span class='glyphicon glyphicon-home'></span></dt><dd><span class='pre'>" + this.home().info().escapeHTML() + "</span></dd>";
     }
-    content += "<p><span class='key'><span class='glyphicon glyphicon-map-marker'></span></span><span>" +
-        (this.position().id ? this.position().info() : "N/A") + "</span></p>";
+    content += "<dt><span class='glyphicon glyphicon-map-marker'></span></dt><dd><span class='pre'>" +
+        (this.position().id ? this.position().info().escapeHTML() : "N/A") + "</span></dd>";
 
-    content += "<hr>";
+    content += "</dl><hr/><dl class='dl-horizontal'>";
 
     if (this.incidentCount() > 0) {
       ko.utils.arrayForEach(this.incidents(), function(task) {
         if (task.incident() !== null) {
-          content += "<p><span class='key'>" + task.incident().assignedTitle() + "</span><span>" + _("label.task.state." + task.taskState().toLowerCase()) + "</span></p>";
+          content += "<dt>" + task.incident().assignedTitle() + "</dt><dd>" + task.localizedTaskState() + "</dd>";
         }
       });
     }
-    content += "</div>";
+    content += "</dl></div>";
 
     return {
       trigger: "hover focus",
