@@ -22,6 +22,7 @@
     <t:head jquery="i18n, ui, ui.touch-punch" js="assets/typeahead.bundle, assets/leaflet, jquery.ui.winman, main"/>
     <script type="text/javascript">
       $(document).ready(function() {
+        L.Browser.webkit3d = false;
         L.Icon.Default.imagePath = "<c:url value="/static/css/images/"/>";
         Coceso.Conf.layerBase = "<c:url value="/static/imgs/layer/"/>";
         Coceso.Conf.jsonBase = "<c:url value="/data/"/>";
