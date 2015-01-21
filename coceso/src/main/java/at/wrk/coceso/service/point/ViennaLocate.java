@@ -1,13 +1,76 @@
-package at.wrk.coceso.entity.helper;
+package at.wrk.coceso.service.point;
 
-import java.util.Arrays;
-import java.util.Objects;
+import at.wrk.coceso.entity.Point;
+import at.wrk.coceso.entity.helper.Address;
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.Arrays;
+import java.util.Objects;
+
+public class ViennaLocate implements ILocate {
+
+  private final static Logger LOG = Logger.getLogger(ViennaLocate.class);
+  private final RestTemplate restTemplate;
+
+  public ViennaLocate(RestTemplate restTemplate) {
+    this.restTemplate = restTemplate;
+  }
+
+  @Override
+  public boolean locate(Point p) {
+    try {
+      AddressInfo.Entry entry = getCoordinatesForAddress(new Address(p.getInfo()));
+      if (entry != null && entry.getCoordinates().length >= 2) {
+        p.setLongitude(entry.getCoordinates()[0]);
+        p.setLatitude(entry.getCoordinates()[1]);
+        return true;
+      }
+    } catch (Exception e) {
+      LOG.error(e.getClass().toString(), e);
+    }
+
+    return false;
+  }
+
+  private AddressInfo.Entry getCoordinatesForAddress(Address address) {
+    String query = address.searchString();
+    if (query == null) {
+      return null;
+    }
+    AddressInfo info = restTemplate.getForObject("http://data.wien.gv.at/daten/OGDAddressService.svc/GetAddressInfo?crs=EPSG:4326&Address={query}", AddressInfo.class, query);
+
+    if (info == null || info.count() <= 0) {
+      return null;
+    }
+
+    if (info.count() > 1) {
+      for (AddressInfo.Entry entry : info.getEntries()) {
+        // First run: Look for exact match
+        if (entry.getAddress().exactMatch(address)) {
+          return entry;
+        }
+      }
+
+      for (AddressInfo.Entry entry : info.getEntries()) {
+        // Second run: Look for bigger addresses containing the requested
+        if (entry.getAddress().contains(address)) {
+          return entry;
+        }
+      }
+    }
+
+    // Only one entry or no match found, use lowest ranking
+    return info.getEntries()[0];
+  }
+
+}
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class AddressInfo {
+class AddressInfo {
 
   @JsonProperty("features")
   private final Entry[] entries;

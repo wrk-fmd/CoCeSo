@@ -130,18 +130,13 @@ Coceso.startup = function() {
 
   //Initialize autocomplete handler
   Coceso.poiAutocomplete = new Bloodhound({
-    datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+    datumTokenizer: Bloodhound.tokenizers.whitespace,
     queryTokenizer: Bloodhound.tokenizers.whitespace,
     limit: 20,
     remote: {
       url: Coceso.Conf.jsonBase + 'poiAutocomplete.json?q=',
       replace: function(url, query) {
         return url + encodeURIComponent(query.replace("\n", ", "));
-      },
-      filter: function(list) {
-        return $.map(list, function(item) {
-          return {value: item};
-        });
       }
     }
   });
@@ -1363,15 +1358,22 @@ Coceso.Models.Unit = function(data) {
   //Set data
   this.setData(data);
 
-  this.target = ko.pureComputed(function() {
+  /**
+   * Return the position to show in map
+   * Moving units are displayed by corresponding incidents
+   *
+   * @function
+   * @type ko.pureComputed
+   * @returns {Coceso.Models.Point}
+   */
+  this.mapPosition = ko.pureComputed(function() {
     if (!this.portable) {
       return this.home();
     }
-    var target = ko.utils.arrayFirst(this.incidents(), function(task) {
-      return (task.isZBO() || task.isZAO());
-    });
-    if (target && target.incident()) {
-      return target.isZBO() ? target.incident().bo() : target.incident().ao();
+    if (ko.utils.arrayFirst(this.incidents(), function(task) {
+      return !task.isAssigned();
+    })) {
+      return null;
     }
     return this.position();
   }, this);
@@ -3181,12 +3183,12 @@ Coceso.ViewModels.CustomLogEntry = function(data) {
  * @param {Object} options
  */
 Coceso.ViewModels.Map = function(options) {
-  var self = this, map;
+  var self = this,
+      markers = L.layerGroup();
   options = options || {};
   this.dialogTitle = options.title || _("label.map");
 
   this.incidents = Coceso.Data.incidents.list.extend({list: {filter: {
-        type: [Coceso.Constants.Incident.type.task, Coceso.Constants.Incident.type.transport, Coceso.Constants.Incident.type.relocation],
         isDone: false
       }}});
 
@@ -3233,7 +3235,7 @@ Coceso.ViewModels.Map = function(options) {
       },
       onEachFeature: function(feature, layer) {
         if (feature.properties) {
-          layer.bindPopup("<strong>" + feature.properties.BEZEICHNUNG + "</strong><br/>" + feature.properties.ADRESSE);
+          layer.bindPopup(new L.Popup.Bootstrap(feature.properties.BEZEICHNUNG, feature.properties.ADRESSE));
         }
       }
     });
@@ -3249,7 +3251,7 @@ Coceso.ViewModels.Map = function(options) {
       },
       onEachFeature: function(feature, layer) {
         if (feature.properties) {
-          layer.bindPopup("<strong>" + feature.properties.ADRESSE + "</strong><br/>" + feature.properties.INFO);
+          layer.bindPopup(new L.Popup.Bootstrap(feature.properties.ADRESSE, feature.properties.INFO));
         }
       }
     });
@@ -3301,7 +3303,7 @@ Coceso.ViewModels.Map = function(options) {
       options.z = 13;
     }
 
-    map = L.map(this.ui ? this.ui + "-map-container" : "map-container", {
+    var map = L.map(this.ui ? this.ui + "-map-container" : "map-container", {
       center: options.c, zoom: options.z,
       minZoom: 7, maxZoom: 18,
       maxBounds: [[46.358770, 8.782379], [49.037872, 17.189532]],
@@ -3384,8 +3386,9 @@ Coceso.ViewModels.Map = function(options) {
       });
     }
 
+    map.addLayer(markers);
     for (var i in Coceso.Data.points) {
-      this.points[i] = new L.Marker.Point(Coceso.Data.points[i], map, this.incidents, Coceso.Data.units.list);
+      this.points[i] = new L.Marker.Point(Coceso.Data.points[i], markers, this.incidents, Coceso.Data.units.list);
     }
 
     Coceso.UI.Maps.push(this);
@@ -3396,16 +3399,16 @@ Coceso.ViewModels.Map = function(options) {
         if (!self.lines[inc.id] || self.lines[inc.id].incident !== inc) {
           if (self.lines[inc.id]) {
             //Local marker exists, but incident does not match global marker
-            map.removeLayer(self.lines[inc.id]);
+            markers.removeLayer(self.lines[inc.id]);
           }
           self.lines[inc.id] = new L.LayerGroup.Incident(inc);
-          self.lines[inc.id].addTo(map);
+          self.lines[inc.id].addTo(markers);
         }
         found[inc.id] = true;
       });
       for (var id in self.lines) {
         if (!found[id]) {
-          map.removeLayer(self.lines[id]);
+          markers.removeLayer(self.lines[id]);
           delete self.lines[id];
         }
       }
@@ -3413,7 +3416,7 @@ Coceso.ViewModels.Map = function(options) {
   };
 
   this.newPoint = function(point) {
-    this.points[point.id] = new L.Marker.Point(point, map, this.incidents, Coceso.Data.units.list);
+    this.points[point.id] = new L.Marker.Point(point, markers, this.incidents, Coceso.Data.units.list);
   };
 };
 
@@ -3496,47 +3499,254 @@ L.LatLng.Observable.prototype = Object.create(L.LatLng.prototype, /** @lends L.L
   }
 });
 
+L.Popup.Bootstrap = L.Popup.extend({
+  initialize: function(title, content, options, source) {
+    L.Popup.prototype.initialize.call(this, options, source);
+    if (ko.isObservable(title)) {
+      this.setTitle(title());
+      title.subscribe(this.setTitle, this);
+    } else {
+      this.setTitle(title);
+    }
+    if (ko.isObservable(content)) {
+      this.setContent(content());
+      content.subscribe(this.setContent, this);
+    } else {
+      this.setContent(content);
+    }
+  },
+  setTitle: function(title) {
+    this._title = title;
+    this.update();
+    return this;
+  },
+  _initLayout: function() {
+    var containerClass = "leaflet-popover popover top " + this.options.className + " leaflet-zoom-" + (this._animated ? "animated" : "hide"),
+        container = this._container = L.DomUtil.create('div', containerClass),
+        closeButton;
+
+    if (this.options.closeButton) {
+      closeButton = this._closeButton = L.DomUtil.create('a', 'leaflet-popup-close-button', container);
+      closeButton.href = '#close';
+      closeButton.innerHTML = '&#215;';
+      L.DomEvent.disableClickPropagation(closeButton);
+      L.DomEvent.on(closeButton, 'click', this._onCloseButtonClick, this);
+    }
+
+    L.DomEvent.disableClickPropagation(container);
+    this._tipContainer = L.DomUtil.create('div', 'arrow', container);
+    this._titleNode = L.DomUtil.create('h3', 'popover-title', container);
+    this._contentNode = L.DomUtil.create('div', 'popover-content', container);
+
+    L.DomEvent.disableScrollPropagation(this._contentNode);
+    L.DomEvent.on(container, 'contextmenu', L.DomEvent.stopPropagation);
+  },
+  _updateContent: function() {
+    if (this._title) {
+      this._titleNode.innerHTML = this._title;
+    }
+    L.Popup.prototype._updateContent.call(this);
+  },
+  _updatePosition: function() {
+    if (!this._map) {
+      return;
+    }
+    L.Popup.prototype._updatePosition.call(this);
+    this._containerBottom = this._containerBottom + 20;
+    this._container.style.bottom = this._containerBottom + 'px';
+  }
+});
+
 L.Marker.Point = L.Marker.extend({
-  initialize: function(point, map, incidents, units, options) {
+	options: {
+		icon: L.divIcon({iconSize: [18, 18]})
+	},
+  initialize: function(point, layer, incidents, units, options) {
     this.point = point;
     L.Marker.prototype.initialize.call(this, new L.LatLng.Observable(point), options);
     this._latlng.subscribe(this.update, this);
 
     this.bo = incidents.extend({list: {filter: {bo: point}}});
     this.ao = incidents.extend({list: {filter: {ao: point}}});
-    this.target = units.extend({list: {filter: {target: point}}});
+    this.units = units.extend({list: {filter: {mapPosition: point}}});
 
     this.showMarker = ko.computed(function() {
-      if (this.bo().length || this.ao().length || this.target().length) {
-        map.addLayer(this);
+      if (this._latlng.latObservable() && this._latlng.lngObservable() &&
+          (this.bo().length || this.ao().length || this.units().length)) {
+        layer.addLayer(this);
         return true;
       }
-      map.removeLayer(this);
+      layer.removeLayer(this);
       return false;
     }, this);
 
-    var popup = L.popup();
+    this.type = ko.computed(function() {
+      if (!this.showMarker()) {
+        return;
+      }
+
+      var hasFree = false, hasHome = false, hasFixed = false,
+          hasOpen = false, hasTask = false, hasBlue = false, hasRelocation = false,
+          hasStandby = false, hasToHome = false, hasHoldPosition = false;
+
+      ko.utils.arrayForEach(this.units(), function(unit) {
+        if (unit.portable) {
+          if (unit.isFree()) {
+            hasFree = true;
+          }
+          if (unit.isHome()) {
+            hasHome = true;
+          }
+        } else {
+          hasFixed = true;
+        }
+      });
+
+      ko.utils.arrayForEach(this.bo(), function(inc) {
+        if (inc.isNewOrOpen()) {
+          hasOpen = true;
+        }
+        switch (inc.type()) {
+          case Coceso.Constants.Incident.type.task:
+          case Coceso.Constants.Incident.type.transport:
+            hasTask = true;
+            if (inc.blue()) {
+              hasBlue = true;
+            }
+            break;
+          case Coceso.Constants.Incident.type.tohome:
+            hasToHome = true;
+            break;
+        }
+      });
+
+      ko.utils.arrayForEach(this.ao(), function(inc) {
+        if (inc.disableBO() && inc.isNewOrOpen()) {
+          hasOpen = true;
+        }
+        switch (inc.type()) {
+          case Coceso.Constants.Incident.type.task:
+          case Coceso.Constants.Incident.type.transport:
+            hasTask = true;
+            if (inc.blue()) {
+              hasBlue = true;
+            }
+            break;
+          case Coceso.Constants.Incident.type.relocation:
+            hasRelocation = true;
+            break;
+          case Coceso.Constants.Incident.type.holdposition:
+            hasHoldPosition = true;
+            break;
+          case Coceso.Constants.Incident.type.standby:
+            hasStandby = true;
+            break;
+          case Coceso.Constants.Incident.type.tohome:
+            hasToHome = true;
+            break;
+        }
+      });
+
+      var type = null;
+      switch (true) {
+        case hasOpen:
+          type = "open";
+          break;
+        case hasFree:
+          type = "free";
+          break;
+        case hasFixed:
+          type = "fixed";
+          break;
+        case hasBlue:
+          type = "blue";
+          break;
+        case hasRelocation:
+          type = "relocation";
+          break;
+        case hasTask:
+          type = "task";
+          break;
+        case hasHome:
+          type = "home";
+          break;
+        case hasHoldPosition:
+          type = "holdposition";
+          break;
+        case hasStandby:
+          type = "standby";
+          break;
+        case hasToHome:
+          type = "tohome";
+          break;
+      }
+
+      this.options.icon.options.className = "leaflet-div-icon icon-" + type;
+      this.options.icon.options.html = (this.units().length + this.bo().length + this.ao().length > 1) ? "<span class='glyphicon glyphicon-plus'></span>" : "";
+      this.setIcon(this.options.icon);
+    }, this);
+
     this.popupContent = ko.computed(function() {
       if (!this.showMarker()) {
         return "";
       }
-      var content = "<strong class='pre'>" + point.info() + "</strong>";
-      if (this.target().length) {
-        content += "<hr/>" + _("label.units");
-        ko.utils.arrayForEach(this.target(), function(unit) {
-          content += "<br/>" + unit.call;
-        });
+
+      var units = "", incidents = "", content = "";
+      function printIncident(inc) {
+        if (inc.isStandby() || inc.isHoldPosition() || inc.isToHome()) {
+          var tasks = inc.units();
+          if (tasks.length > 0 && tasks[0].unit()) {
+            units += "<li><strong>" + inc.typeChar() + "</strong>: " + tasks[0].unit().call.escapeHTML();
+            if (tasks[0].isAssigned()) {
+              units += " (" + tasks[0].localizedTaskState() + ")";
+            }
+            units += "</li>";
+          }
+        } else {
+          incidents += "<li>" + inc.assignedTitle();
+          if (inc.unitCount()) {
+            incidents += "<dl class='dl-horizontal list-narrower'>";
+            ko.utils.arrayForEach(inc.units(), function(task) {
+              incidents += "<dt>" + (task.unit() && task.unit().call.escapeHTML()) + "</dt><dd>" + task.localizedTaskState() + "</dd>";
+            });
+            incidents += "</dl>";
+          }
+          incidents += "</li>";
+        }
       }
-      ko.utils.arrayForEach(this.bo(), function(inc) {
-        content += "<br/>" + inc.assignedTitle();
+
+      ko.utils.arrayForEach(this.bo(), printIncident);
+      ko.utils.arrayForEach(this.ao(), printIncident);
+      ko.utils.arrayForEach(this.units(), function(unit) {
+        units += "<li>";
+        if (unit.portable) {
+          if (unit.isFree()) {
+            units += "<span class='glyphicon glyphicon-exclamation-sign'></span>";
+          } else if (unit.isHome()) {
+            units += "<span class='glyphicon glyphicon-home'></span>";
+          } else {
+            units += "<span class='glyphicon glyphicon-map-marker'></span>";
+          }
+        } else {
+          units += "<span class='glyphicon glyphicon-record'></span>";
+        }
+        units += ": " + unit.call.escapeHTML() + "</li>";
       });
-      ko.utils.arrayForEach(this.ao(), function(inc) {
-        content += "<br/>" + inc.assignedTitle();
-      });
-      popup.setContent(content);
+
+      if (incidents) {
+        content += "<ul class='list-unstyled'>" + incidents + "</ul>";
+      }
+      if (units) {
+        content += "<ul class='list-unstyled'>" + units + "</ul>";
+      }
       return content;
     }, this);
-    this.bindPopup(popup);
+
+    this.popupTitle = ko.computed(function() {
+      return "<span class='pre'>" + point.info().escapeHTML() + "</span>";
+    }, this);
+
+    this.bindPopup(new L.Popup.Bootstrap(this.popupTitle, this.popupContent));
   },
   destroy: function() {
     this._latlng.unsubscribe(this.update);
@@ -3558,6 +3768,16 @@ L.LayerGroup.Incident = L.LayerGroup.extend({
         this.addLayer(line);
       } else {
         this.removeLayer(line);
+      }
+    }, this);
+
+    this._updateColor = ko.computed(function() {
+      if (inc.isTask() || inc.isTransport()) {
+        line.setStyle({color: inc.blue() ? "#0064cd" : "#9999ff"});
+      } else if (inc.isToHome()) {
+        line.setStyle({color: "#99ff99"});
+      } else {
+        line.setStyle({color: "#03f"});
       }
     }, this);
   }

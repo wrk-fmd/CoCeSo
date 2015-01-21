@@ -497,36 +497,36 @@ span.incident_blue {
   background-color: #dddddd;
 }
 
-.unit_state .unit_state_task {
+.unit_state .unit_state_task, .icon-task {
   background-color: #9999ff;
 }
 
-.unit_state .unit_state_task_blue {
+.unit_state .unit_state_task_blue, .icon-blue {
   background-color: #0064cd;
   color: #ffffff;
 }
 
-.unit_state .unit_state_relocation {
+.unit_state .unit_state_relocation, .icon-relocation {
   background-color: #cc99ff;
 }
 
-.unit_state .unit_state_holdposition {
+.unit_state .unit_state_holdposition, .icon-holdposition {
   background-color: #d83cff;
 }
 
-.unit_state .unit_state_tohome {
+.unit_state .unit_state_tohome, .icon-tohome {
   background-color: #99ff99;
 }
 
-.unit_state .unit_state_ishome {
+.unit_state .unit_state_ishome, .icon-home {
   background-color: #33ff66;
 }
 
-.unit_state .unit_state_standby {
+.unit_state .unit_state_standby, .icon-standby {
   background-color: #ffb66c;
 }
 
-.unit_state .unit_state_free {
+.unit_state .unit_state_free, .icon-free {
   background-color: #ff3333;
   color: #ffffff;
 }
@@ -641,6 +641,32 @@ body.map {
 .ui-dialog-content .leaflet-container {
   min-height: 550px;
   min-width: 800px;
+}
+
+.leaflet-div-icon {
+  border-radius: 9px;
+}
+
+.icon-open {
+  background-color: #cd0a0a;
+}
+
+.leaflet-div-icon .glyphicon {
+  left: 2px;
+}
+
+.leaflet-popover {
+  display: initial;
+  position: absolute;
+  top: initial;
+}
+
+.popover-title {
+  font-weight: bold;
+}
+
+.leaflet-overlay-pane svg {
+  z-index: 10;
 }
 
 /**

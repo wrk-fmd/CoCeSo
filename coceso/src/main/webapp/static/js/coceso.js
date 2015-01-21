@@ -177,12 +177,12 @@ Coceso.Ajax = {
       ifModified: true,
       success: function(data, status) {
         if (status !== "notmodified" && Coceso.Models[options.model] instanceof Function) {
-          var mutated = false;
+          var mutated = false, found = {};
           ko.utils.arrayForEach(data, function(item) {
             if (!item.id) {
               return;
             }
-
+            found[item.id] = true;
             if (Coceso.Data[type].models()[item.id] instanceof Coceso.Models[options.model]) {
               Coceso.Data[type].models()[item.id].setData(item);
             } else {
@@ -190,6 +190,12 @@ Coceso.Ajax = {
               mutated = true;
             }
           });
+          for (var i in Coceso.Data[type].models()) {
+            if (!found[i]) {
+              delete Coceso.Data[type].models()[i];
+              mutated = true;
+            }
+          }
           if (mutated) {
             Coceso.Data[type].models.valueHasMutated();
           }
@@ -205,7 +211,7 @@ Coceso.Ajax = {
       },
       error: function(xhr) {
         // 404: not found, 0: no connection to server, 200: error is thrown, because response is not a json (not authenticated)
-        if (Coceso.UI && (xhr.status === 404 || xhr.status === 0 || xhr.status === 200 || xhr.status === 403)) {
+        if (Coceso.UI && Coceso.UI.Notifications && (xhr.status === 404 || xhr.status === 0 || xhr.status === 200 || xhr.status === 403)) {
           Coceso.UI.Notifications.connectionError(true);
         }
       }

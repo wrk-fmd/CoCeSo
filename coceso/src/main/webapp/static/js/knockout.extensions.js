@@ -140,18 +140,21 @@ ko.bindingHandlers.typeahead = {
       minLength: 2,
       highlight: true
     }, {
+      displayKey: function(str) {
+        return str;
+      },
       templates: {
-        suggestion: function(obj) {
-          return "<p>" + obj.value.replace("\n", ", ") + "</p>";
+        suggestion: function(str) {
+          return "<p>" + str.replace("\n", ", ") + "</p>";
         }
       },
       source: valueAccessor().ttAdapter()
     });
 
     $element.on("typeahead:selected typeahead:cursorchanged", function(event, data) {
-      var index = data.value.indexOf("\n");
+      var index = data.indexOf("\n");
       if (index < 0) {
-        index = data.value.length;
+        index = data.length;
       }
       element.setSelectionRange(index, index);
     });
