@@ -25,6 +25,46 @@
     "longitude": 16.42044
   },
   {
+    "info": "EHS/VIP-Parkplatz",
+    "latitude": 48.20846,
+    "longitude": 16.41923
+  },
+  {
+    "info": "EHS/Stadionbadparkplatz",
+    "latitude": 48.20567,
+    "longitude": 16.41914
+  },
+  {
+    "info": "EHS/Vorfeld/U-Bahn",
+    "latitude": 48.21003,
+    "longitude": 16.42056
+  },
+  {
+    "info": "EHS/Vorfeld/A-F",
+    "latitude": 48.2061,
+    "longitude": 16.4197
+  },
+  {
+    "info": "EHS/Vorfeld/B",
+    "latitude": 48.20794,
+    "longitude": 16.41952
+  },
+  {
+    "info": "EHS/Vorfeld/C-D",
+    "latitude": 48.20835,
+    "longitude": 16.4222
+  },
+  {
+    "info": "EHS/Vorfeld/E",
+    "latitude": 48.20663,
+    "longitude": 16.42233
+  },
+  {
+    "info": "EHS/Vorfeld/Rundfahrt",
+    "latitude": 48.20902,
+    "longitude": 16.42144
+  },
+  {
     "info": "EHS/A/St25",
     "latitude": 48.20655,
     "longitude": 16.42003
@@ -385,12 +425,12 @@
     "longitude": 16.42005
   },
   {
-    "info": "AKH Ev\nWähringer Gürtel 18-20\n1090 Wien",
+    "info": "AKH Ev\nWähringer Gürtel 18-20/6D\n1090 Wien",
     "latitude": 48.22141,
     "longitude": 16.34619
   },
   {
-    "info": "AKH Unf\nWähringer Gürtel 18-20\n1090 Wien",
+    "info": "AKH Unf\nWähringer Gürtel 18-20/6C\n1090 Wien",
     "latitude": 48.22141,
     "longitude": 16.34619
   },
@@ -400,32 +440,32 @@
     "longitude": 16.34427
   },
   {
-    "info": "FLO Ev\nHinaysgasse 1\n1210 Wien",
+    "info": "FLO Ev\nHinaysgasse 1/A/EG\n1210 Wien",
     "latitude": 48.2538,
     "longitude": 16.40624
   },
   {
-    "info": "HAN Ev\nHeinrich-Collin-Straße 30\n1140 Wien",
+    "info": "HAN Ev\nHeinrich-Collin-Straße 30/Pav.3/2\n1140 Wien",
     "latitude": 48.19951,
     "longitude": 16.29101
   },
   {
-    "info": "HAN Unf\nHeinrich-Collin-Straße 30\n1140 Wien",
+    "info": "HAN Unf\nHeinrich-Collin-Straße 30/Pav.4/1\n1140 Wien",
     "latitude": 48.19999,
     "longitude": 16.29095
   },
   {
-    "info": "KFJ Ev\nKundratstraße 3\n1100 Wien",
+    "info": "KFJ Ev\nKundratstraße 3/Pav.M\n1100 Wien",
     "latitude": 48.17452,
     "longitude": 16.35138
   },
   {
-    "info": "KHH Ev\nWolkersbergenstraße 1\n1130 Wien",
+    "info": "KHH Ev\nWolkersbergenstraße 1/Pav.5a\n1130 Wien",
     "latitude": 48.1704,
     "longitude": 16.27527
   },
   {
-    "info": "KHH Chir\nWolkersbergenstraße 1\n1130 Wien",
+    "info": "KHH Chir\nWolkersbergenstraße 1/Pav.16\n1130 Wien",
     "latitude": 48.17307,
     "longitude": 16.27185
   },
@@ -440,7 +480,7 @@
     "longitude": 16.28104
   },
   {
-    "info": "OWS Ev\nBaumgartner Höhe 1\n1140 Wien",
+    "info": "OWS Ev\nSanatoriumstraße 2/Pav. Wienerwald\n1140 Wien",
     "latitude": 48.20724,
     "longitude": 16.2739
   },
@@ -480,17 +520,17 @@
     "longitude": 16.34406
   },
   {
-    "info": "WIL Ev\nMontleartstraße 37\n1160 Wien",
+    "info": "WIL Ev\nMontleartstraße 37/Pav.80\n1160 Wien",
     "latitude": 48.21138,
     "longitude": 16.30196
   },
   {
-    "info": "WIL Unf\nMontleartstraße 37\n1160 Wien",
+    "info": "WIL Unf\nMontleartstraße 37/Pav.30\n1160 Wien",
     "latitude": 48.21084,
     "longitude": 16.30011
   },
   {
-    "info": "WIL Kinder\nMontleartstraße 37\n1160 Wien",
+    "info": "WIL Kinder\nMontleartstraße 37/Pav.40\n1160 Wien",
     "latitude": 48.20849,
     "longitude": 16.29987
   },

@@ -145,7 +145,7 @@ ko.bindingHandlers.typeahead = {
       },
       templates: {
         suggestion: function(str) {
-          return "<p>" + str.replace("\n", ", ") + "</p>";
+          return "<p>" + str.replace(/\n/g, ", ") + "</p>";
         }
       },
       source: valueAccessor().ttAdapter()

@@ -48,7 +48,7 @@
     <textarea rows="3" class="form-control" placeholder="${info}" data-bind="value: info, valueUpdate: 'input', attr: {form: 'table_form_' + id}"></textarea>
   </td>
   <td data-bind="css: home.formcss">
-    <textarea rows="3" class="form-control" placeholder="${home}" data-bind="value: home, valueUpdate: 'input', attr: {form: 'table_form_' + id}"></textarea>
+    <textarea rows="3" class="form-control" placeholder="${home}" data-bind="value: home, valueUpdate: 'input', attr: {form: 'table_form_' + id}, typeahead: Coceso.poiAutocomplete"></textarea>
   </td>
 </script>
 

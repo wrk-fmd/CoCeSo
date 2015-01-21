@@ -101,6 +101,27 @@ Coceso.initi18n = function() {
 };
 
 /**
+ * Initialize autocomplete
+ *
+ * @returns {void}
+ */
+Coceso.initAutocomplete = function() {
+  //Initialize autocomplete handler
+  Coceso.poiAutocomplete = new Bloodhound({
+    datumTokenizer: Bloodhound.tokenizers.whitespace,
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    limit: 20,
+    remote: {
+      url: Coceso.Conf.jsonBase + 'poiAutocomplete.json?q=',
+      replace: function(url, query) {
+        return url + encodeURIComponent(query.replace(/\n/g, ", "));
+      }
+    }
+  });
+  Coceso.poiAutocomplete.initialize();
+};
+
+/**
  * Contains helpers
  *
  * @type Object

@@ -665,6 +665,8 @@ Coceso.ViewModels.Home = function(error) {
  * @constructor
  */
 Coceso.ViewModels.Edit = function() {
+  Coceso.initAutocomplete();
+
   this.units = new Coceso.ViewModels.EditUnits(this);
   this.container = new Coceso.ViewModels.Container();
   this.concern = new Coceso.Models.EditableConcern();

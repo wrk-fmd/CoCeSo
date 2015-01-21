@@ -129,18 +129,7 @@ Coceso.startup = function() {
   ko.applyBindings(Coceso.UI.Dialog, $("#next-state-confirm")[0]);
 
   //Initialize autocomplete handler
-  Coceso.poiAutocomplete = new Bloodhound({
-    datumTokenizer: Bloodhound.tokenizers.whitespace,
-    queryTokenizer: Bloodhound.tokenizers.whitespace,
-    limit: 20,
-    remote: {
-      url: Coceso.Conf.jsonBase + 'poiAutocomplete.json?q=',
-      replace: function(url, query) {
-        return url + encodeURIComponent(query.replace("\n", ", "));
-      }
-    }
-  });
-  Coceso.poiAutocomplete.initialize();
+  Coceso.initAutocomplete();
 };
 
 /**

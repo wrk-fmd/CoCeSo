@@ -49,7 +49,7 @@ public class JsonPoi implements IAutocomplete, ILocate {
   public boolean locate(Point p) {
     String info = p.getInfo().toLowerCase();
     for (Point poi : points) {
-      if (poi.getLongitude() != 0 && poi.getLatitude() != 0 && poi.getInfo().toLowerCase().startsWith(info)) {
+      if (poi.getLongitude() != 0 && poi.getLatitude() != 0 && info.startsWith(poi.getInfo().toLowerCase())) {
         p.setLongitude(poi.getLongitude());
         p.setLatitude(poi.getLatitude());
         return true;

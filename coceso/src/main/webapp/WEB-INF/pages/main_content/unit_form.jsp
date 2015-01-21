@@ -37,7 +37,7 @@
             <label for="position"><spring:message code="label.unit.position"/>:</label>
             <a href="#" class="pull-right" data-bind="click: isHome.set"><spring:message code="label.unit.settohome"/></a>
             <textarea id="position" name="position" rows="3" class="form-control"
-                      data-bind="value: position, valueUpdate: 'input'"></textarea>
+                      data-bind="value: position, valueUpdate: 'input', typeahead: Coceso.poiAutocomplete"></textarea>
           </div>
 
           <div class="form-group col-md-6">
