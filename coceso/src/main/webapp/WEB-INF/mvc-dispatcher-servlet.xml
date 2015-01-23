@@ -59,5 +59,6 @@
 
     <bean id="restTemplate" class="org.springframework.web.client.RestTemplate"/>
 
+    <import resource="points.xml" />
     <import resource="db-config.xml" />
 </beans>

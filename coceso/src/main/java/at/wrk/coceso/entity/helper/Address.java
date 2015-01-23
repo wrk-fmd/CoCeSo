@@ -1,35 +1,36 @@
 package at.wrk.coceso.entity.helper;
 
+import at.wrk.coceso.entity.Point;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.log4j.Logger;
 
 public class Address {
 
-  private static final Logger LOG = Logger.getLogger(Address.class);
+  protected String title;
+  protected String street;
+  protected Integer numberFrom;
+  protected Integer numberTo;
+  protected String numberLetter;
+  protected String numberBlock;
+  protected String numberDetails;
+  protected Integer postCode;
+  protected String city;
+  protected String additional;
 
-  private String title;
-  private String street;
-  private Integer numberFrom;
-  private Integer numberTo;
-  private String numberLetter;
-  private String numberBlock;
-  private String numberDetails;
-  private Integer postCode;
-  private String city;
-  private String additional;
+  protected Address() {
+  }
 
   /**
    * Parse info string
    *
-   * @param info
+   * @param point
    */
-  public Address(String info) {
-    if (info == null || info.trim().isEmpty()) {
+  public Address(Point point) {
+    if (point == null || point.getInfo() == null || point.getInfo().trim().isEmpty()) {
       return;
     }
-    String[] lines = info.split("\n");
+    String[] lines = point.getInfo().trim().split("\n");
 
     Pattern isStreet = Pattern.compile("^(\\w[\\w\\s\\-\\.]*?)"
             + "( ([1-9]\\d*(\\-([1-9]\\d*)|[a-zA-Z])?)?(/.*)?)?$", Pattern.UNICODE_CHARACTER_CLASS);
@@ -44,7 +45,7 @@ public class Address {
         if (street1.find(0)) {
           // First (and only) line represents street
           street = street1.group(1);
-          setNumber(street1.group(2));
+          parseNumber(street1.group(2));
         } else if (!lines[0].trim().isEmpty()) {
           // Use as title (e.g. POI)
           title = lines[0].trim();
@@ -57,18 +58,18 @@ public class Address {
         if (street1.find(0) && city1.find(0)) {
           // First line is street, second is city
           street = street1.group(1);
-          setNumber(street1.group(2));
+          parseNumber(street1.group(2));
           postCode = Integer.parseInt(city1.group(1));
           city = city1.group(2);
         } else if (street2.find(0)) {
           // Second line is street
           title = lines[0].trim();
           street = street2.group(1);
-          setNumber(street2.group(2));
+          parseNumber(street2.group(2));
         } else if (street1.find(0)) {
           // First line is street
           street = street1.group(1);
-          setNumber(street1.group(2));
+          parseNumber(street1.group(2));
           additional = lines[1].trim();
         } else {
           title = lines[0].trim();
@@ -86,14 +87,14 @@ public class Address {
           // Second line is street, third is city
           title = lines[0].trim();
           street = street2.group(1);
-          setNumber(street2.group(2));
+          parseNumber(street2.group(2));
           postCode = Integer.parseInt(city2.group(1));
           city = city2.group(2);
           additionalStart = 3;
         } else if (street1.find(0) && city1.find(0)) {
           // First line is street, second is city
           street = street1.group(1);
-          setNumber(street1.group(2));
+          parseNumber(street1.group(2));
           postCode = Integer.parseInt(city1.group(1));
           city = city1.group(2);
           additionalStart = 2;
@@ -101,12 +102,12 @@ public class Address {
           // Second line is street
           title = lines[0].trim();
           street = street2.group(1);
-          setNumber(street2.group(2));
+          parseNumber(street2.group(2));
           additionalStart = 2;
         } else if (street1.find(0)) {
           // First line is street
           street = street1.group(1);
-          setNumber(street1.group(2));
+          parseNumber(street1.group(2));
           additionalStart = 1;
         } else {
           title = lines[0].trim();
@@ -119,44 +120,7 @@ public class Address {
     }
   }
 
-  /**
-   * Parse components from AddressInfo
-   *
-   * @param street
-   * @param number
-   * @param postCode
-   * @param city
-   */
-  public Address(String street, String number, String postCode, String city) {
-    if (street != null && !street.trim().isEmpty()) {
-      this.street = street.trim();
-    }
-
-    if (postCode != null && !postCode.trim().isEmpty()) {
-      try {
-        this.postCode = Integer.parseInt(postCode.trim());
-      } catch (NumberFormatException e) {
-        this.postCode = null;
-      }
-    }
-
-    if (city != null && !city.trim().isEmpty()) {
-      this.city = city.trim();
-    }
-
-    if (number != null && !number.trim().isEmpty()) {
-      setNumber(number.trim());
-    }
-  }
-
-  public Address(String street, Integer numberFrom, Integer numberTo, Integer postCode) {
-    this.street = street;
-    this.numberFrom = numberFrom;
-    this.numberTo = numberTo;
-    this.postCode = postCode;
-  }
-
-  private void setNumber(String number) {
+  protected final void parseNumber(String number) {
     if (number == null || number.trim().isEmpty()) {
       return;
     }
@@ -242,7 +206,7 @@ public class Address {
     if (title != null && !title.isEmpty()) {
       str += title;
     }
-    String streetString = searchString();
+    String streetString = getStreetString();
     if (streetString != null) {
       if (!str.isEmpty()) {
         str += "\n";
@@ -270,7 +234,7 @@ public class Address {
     return str;
   }
 
-  public String searchString() {
+  protected String getStreetString() {
     if (street == null || street.isEmpty()) {
       return null;
     }
@@ -290,44 +254,8 @@ public class Address {
     return str;
   }
 
-  public String getTitle() {
-    return title;
-  }
-
-  public String getStreet() {
-    return street;
-  }
-
-  public Integer getNumberFrom() {
-    return numberFrom;
-  }
-
-  public Integer getNumberTo() {
-    return numberTo;
-  }
-
-  public String getNumberLetter() {
-    return numberLetter;
-  }
-
-  public String getNumberBlock() {
-    return numberBlock;
-  }
-
-  public String getNumberDetails() {
-    return numberDetails;
-  }
-
-  public Integer getPostCode() {
-    return postCode;
-  }
-
-  public String getCity() {
-    return city;
-  }
-
-  public String getAdditional() {
-    return additional;
+  public Point getCoordinates() {
+    return null;
   }
 
 }

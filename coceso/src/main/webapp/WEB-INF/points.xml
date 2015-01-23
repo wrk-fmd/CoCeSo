@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+  <bean id="autocomplete" class="at.wrk.coceso.service.point.MultipleAutocomplete">
+    <constructor-arg>
+      <list>
+        <ref bean="jsonPoi"/>
+        <bean id="viennaAutocomplete" class="at.wrk.coceso.service.point.ViennaAutocomplete"/>
+      </list>
+    </constructor-arg>
+  </bean>
+
+  <bean id="locate" class="at.wrk.coceso.service.point.MultipleLocate">
+    <constructor-arg>
+      <list>
+        <ref bean="jsonPoi"/>
+        <bean id="addressLocate" class="at.wrk.coceso.service.point.ViennaLocate"/>
+      </list>
+    </constructor-arg>
+  </bean>
+
+  <bean id="jsonPoi" class="at.wrk.coceso.service.point.JsonPoi">
+    <constructor-arg type="org.springframework.core.io.Resource" value="classpath:poi.json"/>
+  </bean>
+</beans>

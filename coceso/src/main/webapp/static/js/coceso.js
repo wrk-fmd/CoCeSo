@@ -112,10 +112,7 @@ Coceso.initAutocomplete = function() {
     queryTokenizer: Bloodhound.tokenizers.whitespace,
     limit: 20,
     remote: {
-      url: Coceso.Conf.jsonBase + 'poiAutocomplete.json?q=',
-      replace: function(url, query) {
-        return url + encodeURIComponent(query.replace(/\n/g, ", "));
-      }
+      url: Coceso.Conf.jsonBase + 'poiAutocomplete.json?q=%QUERY'
     }
   });
   Coceso.poiAutocomplete.initialize();

@@ -2,42 +2,24 @@ package at.wrk.coceso.service;
 
 import at.wrk.coceso.dao.PointDao;
 import at.wrk.coceso.entity.Point;
-import at.wrk.coceso.service.csv.CsvParseException;
-import at.wrk.coceso.service.point.*;
-import org.apache.log4j.Logger;
+import at.wrk.coceso.service.point.IAutocomplete;
+import at.wrk.coceso.service.point.ILocate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.List;
-import javax.annotation.PostConstruct;
-import org.springframework.web.client.RestTemplate;
 
 @Service
 public class PointService {
 
-  private final static Logger LOG = Logger.getLogger(PointService.class);
-
+  @Autowired
   private IAutocomplete autocomplete;
+
+  @Autowired
   private ILocate locate;
 
   @Autowired
-  private RestTemplate restTemplate;
-
-  @Autowired
   private PointDao pointDao;
-
-  @PostConstruct
-  public void init() {
-    try {
-      JsonPoi jsonPoi = new JsonPoi(new ClassPathResource("poi.json"));
-      autocomplete = new MultipleAutocomplete(jsonPoi, new ViennaAutocomplete());
-      locate = new MultipleLocate(jsonPoi, new ViennaLocate(restTemplate));
-    } catch (IOException | CsvParseException ex) {
-      LOG.error(ex);
-    }
-  }
 
   public Point createIfNotExists(Point dummy) {
     if (dummy == null) {
@@ -81,7 +63,7 @@ public class PointService {
     if (autocomplete == null || filter == null || filter.length() <= 1) {
       return null;
     }
-    return autocomplete.getAll(filter.toLowerCase(), 20);
+    return autocomplete.getAll(filter.toLowerCase().replaceAll("\n", ", "), 20);
   }
 
   private boolean locate(Point p) {

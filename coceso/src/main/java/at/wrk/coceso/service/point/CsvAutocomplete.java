@@ -10,19 +10,10 @@ import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
-public abstract class CsvAutocomplete implements IAutocomplete {
+public abstract class CsvAutocomplete extends PreloadedAutocomplete {
 
   private final static Logger LOG = Logger.getLogger(CsvAutocomplete.class);
-  private final TreeMap<String, String> streets;
-
-  public CsvAutocomplete() {
-    streets = new TreeMap<>();
-  }
 
   protected void init(Resource source, Charset charset, char delimiter) throws CsvParseException, IOException {
     LOG.info(String.format("Loading CSV from %s", source.getDescription()));
@@ -34,36 +25,11 @@ public abstract class CsvAutocomplete implements IAutocomplete {
       throw new CsvParseException("Couldn't parse street name CSV");
     }
     for (CSVRecord record : records) {
-      streets.putAll(parseRecord(record));
+      parseRecord(record);
     }
-    LOG.info(String.format("Fully loaded street names: %d entries", streets.size()));
+    LOG.info(String.format("Fully loaded street names: %d entries", autocomplete.size()));
   }
 
-  protected abstract Map<String, String> parseRecord(CSVRecord record);
-
-  @Override
-  public List<String> getAll(String filter, Integer max) {
-    String to = filter.substring(0, filter.length() - 1) + (char) (filter.charAt(filter.length() - 1) + 1);
-    List<String> filtered = new LinkedList<>(streets.subMap(filter, to).values());
-
-    if (max == null || max > filtered.size()) {
-      filtered.addAll(getContaining(filter, max == null ? null : max - filtered.size()));
-    }
-    return filtered;
-  }
-
-  @Override
-  public List<String> getContaining(String filter, Integer max) {
-    List<String> filtered = new LinkedList<>();
-    for (Map.Entry<String, String> entry : streets.entrySet()) {
-      if (max != null && filtered.size() >= max) {
-        break;
-      }
-      if (entry.getKey().indexOf(filter) > 0) {
-        filtered.add(entry.getValue());
-      }
-    }
-    return filtered;
-  }
+  protected abstract void parseRecord(CSVRecord record);
 
 }

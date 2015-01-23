@@ -5,49 +5,26 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 
-public class JsonPoi implements IAutocomplete, ILocate {
+public class JsonPoi extends PreloadedAutocomplete implements ILocate {
 
   private final Point[] points;
 
   public JsonPoi(Resource source) throws IOException {
     points = new ObjectMapper().readValue(source.getFile(), Point[].class);
-  }
 
-  @Override
-  public List<String> getAll(String filter, Integer max) {
-    List<String> filtered = new LinkedList<>();
     for (Point poi : points) {
-      if (poi.getInfo().toLowerCase().startsWith(filter)) {
-        filtered.add(poi.getInfo());
+      if (poi.getInfo() == null) {
+        continue;
       }
+      String key = poi.getInfo().toLowerCase().replaceAll("\n", ", ");
+      autocomplete.put(key, poi.getInfo());
     }
-
-    if (max == null || max > filtered.size()) {
-      filtered.addAll(getContaining(filter, max == null ? null : max - filtered.size()));
-    }
-    return filtered;
   }
-
-  @Override
-  public List<String> getContaining(String filter, Integer max) {
-    List<String> filtered = new LinkedList<>();
-    for (Point poi : points) {
-      if (max != null && filtered.size() >= max) {
-        break;
-      }
-      if (poi.getInfo().toLowerCase().indexOf(filter) > 0) {
-        filtered.add(poi.getInfo());
-      }
-    }
-    return filtered;
-  }
-
+  
   @Override
   public boolean locate(Point p) {
-    String info = p.getInfo().toLowerCase();
+    String info = p.getInfo().toLowerCase().replace("\n", ", ");
     for (Point poi : points) {
       if (poi.getLongitude() != 0 && poi.getLatitude() != 0 && info.startsWith(poi.getInfo().toLowerCase())) {
         p.setLongitude(poi.getLongitude());

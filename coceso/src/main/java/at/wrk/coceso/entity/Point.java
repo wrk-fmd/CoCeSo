@@ -59,6 +59,11 @@ public class Point {
         this.latitude = latitude;
     }
 
+    public void setLatLong(Point p) {
+      this.latitude = p.latitude;
+      this.longitude = p.longitude;
+    }
+
     public static boolean isEmpty(Point point) {
         return point == null || point.getInfo() == null || point.getInfo().isEmpty();
 
