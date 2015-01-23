@@ -2425,6 +2425,28 @@ Coceso.ViewModels.Incident = function(data) {
   }, this);
 
   /**
+   * Disable "AAO" state
+   *
+   * @function
+   * @type ko.computed
+   * @returns {boolean}
+   */
+  this.disableAAO = ko.computed(function() {
+    return !this.hasAO();
+  }, this);
+
+  /**
+   * Disable "ZAO" state
+   *
+   * @function
+   * @type ko.computed
+   * @returns {boolean}
+   */
+  this.disableZAO = ko.computed(function() {
+    return (this.isStandby() || this.isHoldPosition() || !this.hasAO());
+  }, this);
+
+  /**
    * Disable the "Task" type button
    *
    * @function

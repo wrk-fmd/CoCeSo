@@ -21,10 +21,10 @@ public class JsonPoi extends PreloadedAutocomplete implements ILocate {
       autocomplete.put(key, poi.getInfo());
     }
   }
-  
+
   @Override
   public boolean locate(Point p) {
-    String info = p.getInfo().toLowerCase().replace("\n", ", ");
+    String info = p.getInfo().toLowerCase();
     for (Point poi : points) {
       if (poi.getLongitude() != 0 && poi.getLatitude() != 0 && info.startsWith(poi.getInfo().toLowerCase())) {
         p.setLongitude(poi.getLongitude());

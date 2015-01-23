@@ -203,7 +203,7 @@
                   </a>
                 </li>
                 <li>
-                  <a href="#" title="<spring:message code="label.map"/>" onclick="return Coceso.UI.openMap();">
+                  <a href="<c:url value="/main/map"/>" target="_blank" title="<spring:message code="label.map"/>" onclick="return Coceso.UI.openMap();">
                     <span class="glyphicon glyphicon-globe"></span> <spring:message code="label.map"/>
                   </a>
                 </li>
