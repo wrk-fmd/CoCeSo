@@ -195,9 +195,9 @@
             <div class="clearfix">
               <div class="col-md-3">
                 <div class="form-group">
-                  <label for="batch_call">${call} <spring:message code="label.prefix"/></label>
+                  <label for="batch_call">${call}&nbsp;<spring:message code="label.prefix"/></label>
                   <input type="text" id="batch_call" class="form-control"  maxlength="50"
-                         placeholder="${call} <spring:message code="label.prefix"/>"
+                         placeholder="${call}&nbsp;<spring:message code="label.prefix"/>"
                          data-bind="value: call, valueUpdate: 'input'"/>
                 </div>
                 <div class="form-group">
@@ -246,7 +246,7 @@
                 <div class="form-group">
                   <label for="batch_home">${home}</label>
                   <textarea id="batch_home" class="form-control" rows="3" placeholder="${home}"
-                            data-bind="value: home, valueUpdate: 'input'"></textarea>
+                            data-bind="value: home, valueUpdate: 'input', typeahead: Coceso.poiAutocomplete"></textarea>
                 </div>
               </div>
             </div>
