@@ -1,6 +1,5 @@
 package at.wrk.coceso.service.point;
 
-import at.wrk.coceso.service.csv.CsvParseException;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -15,19 +14,18 @@ public abstract class CsvAutocomplete extends PreloadedAutocomplete {
 
   private final static Logger LOG = Logger.getLogger(CsvAutocomplete.class);
 
-  protected void init(Resource source, Charset charset, char delimiter) throws CsvParseException, IOException {
+  protected void init(Resource source, Charset charset, char delimiter) {
     LOG.info(String.format("Loading CSV from %s", source.getDescription()));
-    String csv = StreamUtils.copyToString(source.getInputStream(), charset);
-    Iterable<CSVRecord> records;
     try {
-      records = CSVParser.parse(csv, CSVFormat.RFC4180.withDelimiter(delimiter).withHeader());
+      String csv = StreamUtils.copyToString(source.getInputStream(), charset);
+      Iterable<CSVRecord> records = CSVParser.parse(csv, CSVFormat.RFC4180.withDelimiter(delimiter).withHeader());
+      for (CSVRecord record : records) {
+        parseRecord(record);
+      }
+      LOG.info(String.format("Fully loaded street names: %d entries", autocomplete.size()));
     } catch (IOException e) {
-      throw new CsvParseException("Couldn't parse street name CSV");
+      LOG.error("Couldn't parse street name CSV");
     }
-    for (CSVRecord record : records) {
-      parseRecord(record);
-    }
-    LOG.info(String.format("Fully loaded street names: %d entries", autocomplete.size()));
   }
 
   protected abstract void parseRecord(CSVRecord record);

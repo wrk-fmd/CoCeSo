@@ -198,12 +198,6 @@ Coceso.UI = {
    */
   Notifications: null,
   /**
-   * List of all maps
-   *
-   * @type Array
-   */
-  Maps: [],
-  /**
    * Confirmation dialog data
    *
    * @function
@@ -432,27 +426,9 @@ Coceso.Data = {
     }
     return null;
   },
-  getPoint: function(data) {
-    if (!data) {
-      return Coceso.Models.Point.empty;
-    }
-    if (!data.id) {
-      return new Coceso.Models.Point(data);
-    }
-    if (!Coceso.Data.points[data.id]) {
-      Coceso.Data.points[data.id] = new Coceso.Models.Point(data);
-      ko.utils.arrayForEach(Coceso.UI.Maps, function(item) {
-        item.newPoint(Coceso.Data.points[data.id]);
-      });
-    } else {
-      Coceso.Data.points[data.id].setData(data);
-    }
-    return Coceso.Data.points[data.id];
-  },
   incidents: {models: ko.observable({})},
   units: {models: ko.observable({})},
-  patients: {models: ko.observable({})},
-  points: {}
+  patients: {models: ko.observable({})}
 };
 
 /**
@@ -715,7 +691,7 @@ Coceso.Models.Task.prototype = Object.create({}, /** @lends Coceso.Models.Task.p
         return;
       }
 
-      if (needAO && !incident.ao().id && (nextState === s.zao || nextState === s.aao)) {
+      if (needAO && !incident.ao.id() && (nextState === s.zao || nextState === s.aao)) {
         console.info("No AO set, opening Incident Window");
         Coceso.UI.openIncident({id: incident.id});
         return;
@@ -732,7 +708,7 @@ Coceso.Models.Task.prototype = Object.create({}, /** @lends Coceso.Models.Task.p
           }
 
           elements = [
-            {key: _("label.unit.position"), val: unit.position().info()}
+            {key: _("label.unit.position"), val: unit.position.info()}
           ];
         } else if (incident.isHoldPosition()) {
           if (nextState === s.aao) {
@@ -742,19 +718,19 @@ Coceso.Models.Task.prototype = Object.create({}, /** @lends Coceso.Models.Task.p
           }
 
           elements = [
-            {key: _("label.unit.position"), val: incident.ao().info()}
+            {key: _("label.unit.position"), val: incident.ao.info()}
           ];
         } else if (incident.isToHome()) {
           elements = [
-            {key: _("label.incident.bo"), val: incident.bo().info()},
-            {key: _("label.incident.ao"), val: incident.ao().info()}
+            {key: _("label.incident.bo"), val: incident.bo.info()},
+            {key: _("label.incident.ao"), val: incident.ao.info()}
           ];
 
           button = (nextState === s.zao) ? _("label.task.state.zao") : _("label.task.state.ishome");
         } else if (incident.isRelocation()) {
           elements = [
             {key: _("text.confirmation.current"), val: this.localizedTaskState()},
-            {key: _("label.incident.ao"), val: incident.ao().info()},
+            {key: _("label.incident.ao"), val: incident.ao.info()},
             {key: _("label.incident.blue"), val: (incident.blue() ? _("label.yes") : _("label.no"))},
             {key: _("label.incident.info"), val: incident.info()}
           ];
@@ -763,8 +739,8 @@ Coceso.Models.Task.prototype = Object.create({}, /** @lends Coceso.Models.Task.p
         } else {
           elements = [
             {key: _("text.confirmation.current"), val: this.localizedTaskState()},
-            {key: _("label.incident.bo"), val: incident.bo().info()},
-            {key: _("label.incident.ao"), val: incident.ao().info()},
+            {key: _("label.incident.bo"), val: incident.bo.info()},
+            {key: _("label.incident.ao"), val: incident.ao.info()},
             {key: _("label.incident.blue"), val: (incident.blue() ? _("label.yes") : _("label.no"))},
             {key: _("label.incident.info"), val: incident.info()},
             {key: _("label.incident.caller"), val: incident.caller()}
@@ -804,24 +780,39 @@ Coceso.Models.Task.prototype = Object.create({}, /** @lends Coceso.Models.Task.p
  * @param {Object} data
  */
 Coceso.Models.Point = function(data) {
-  data = data || {};
-
-  this.id = data.id;
+  this.id = ko.observable(null);
   this.info = ko.observable("");
   this.lat = ko.observable(null);
   this.lng = ko.observable(null);
 
   this.setData = function(data) {
     data = data || {};
+    this.id(data.id || null);
     this.info(data.info || "");
-    this.lat(data.latitude || null);
-    this.lng(data.longitude || null);
+    this.lat(typeof data.latitude === "undefined" ? null : data.latitude || null);
+    this.lng(typeof data.longitude === "undefined" ? null : data.longitude || null);
   };
 
-  this.setData(data);
-};
+  /**
+   * Get static representation of the point
+   *
+   * @function
+   * @type ko.computed
+   * @returns {Object}
+   */
+  this.getStatic = ko.pureComputed(function() {
+    return {
+      id: this.id(),
+      info: this.info(),
+      lat: this.lat(),
+      lng: this.lng()
+    };
+  }, this).extend({rateLimit: 5});
 
-Coceso.Models.Point.empty = new Coceso.Models.Point();
+  if (data) {
+    this.setData(data);
+  }
+};
 
 /**
  * Single incident
@@ -835,8 +826,8 @@ Coceso.Models.Incident = function(data) {
 
   //Create basic properties
   this.id = data.id;
-  this.ao = ko.observable(Coceso.Models.Point.empty);
-  this.bo = ko.observable(Coceso.Models.Point.empty);
+  this.ao = new Coceso.Models.Point();
+  this.bo = new Coceso.Models.Point();
   this.units = ko.observableArray([]);
   this.blue = ko.observable(false);
   this.caller = ko.observable("");
@@ -852,8 +843,8 @@ Coceso.Models.Incident = function(data) {
    * @returns {void}
    */
   this.setData = function(data) {
-    self.ao(Coceso.Data.getPoint(data.ao));
-    self.bo(Coceso.Data.getPoint(data.bo));
+    self.ao.setData(data.ao);
+    self.bo.setData(data.bo);
     if (data.units) {
       ko.utils.objectForEach(data.units, function(unit, taskState) {
         unit = parseInt(unit);
@@ -1051,7 +1042,7 @@ Coceso.Models.Incident = function(data) {
    * @returns {boolean}
    */
   this.hasAO = ko.computed(function() {
-    return !!this.ao().id;
+    return !!this.ao.id();
   }, this);
 
   /**
@@ -1096,9 +1087,9 @@ Coceso.Models.Incident = function(data) {
    */
   this.title = ko.pureComputed(function() {
     if (!this.disableBO()) {
-      return (this.bo().id) ? this.bo().info() : _("label.incident.nobo");
+      return (this.bo.id()) ? this.bo.info() : _("label.incident.nobo");
     }
-    return (this.ao().id) ? this.ao().info() : _("label.incident.noao");
+    return (this.ao.id()) ? this.ao.info() : _("label.incident.noao");
   }, this);
 
   /**
@@ -1279,6 +1270,17 @@ Coceso.Models.Incident.prototype = Object.create({}, /** @lends Coceso.Models.In
     value: function() {
       Coceso.UI.openPatient({id: this.id});
     }
+  },
+  /**
+   * Destroy the object
+   *
+   * @function
+   * @returns {void}
+   */
+  destroy: {
+    value: function() {
+      Coceso.Helpers.destroyComputed(this);
+    }
   }
 });
 
@@ -1301,8 +1303,8 @@ Coceso.Models.Unit = function(data) {
   this.transportVehicle = data.transportVehicle;
   this.withDoc = data.withDoc;
 
-  this.home = ko.observable(Coceso.Models.Point.empty);
-  this.position = ko.observable(Coceso.Models.Point.empty);
+  this.home = new Coceso.Models.Point();
+  this.position = new Coceso.Models.Point();
   this.incidents = ko.observableArray([]);
   this.info = ko.observable("");
   this.state = ko.observable(Coceso.Constants.Unit.state.ad);
@@ -1314,8 +1316,8 @@ Coceso.Models.Unit = function(data) {
    * @returns {void}
    */
   this.setData = function(data) {
-    self.home(Coceso.Data.getPoint(data.home));
-    self.position(Coceso.Data.getPoint(data.position));
+    self.home.setData(data.home);
+    self.position.setData(data.position);
     if (data.incidents) {
       ko.utils.objectForEach(data.incidents, function(incident, taskState) {
         incident = parseInt(incident);
@@ -1357,14 +1359,14 @@ Coceso.Models.Unit = function(data) {
    */
   this.mapPosition = ko.pureComputed(function() {
     if (!this.portable) {
-      return this.home();
+      return this.home;
     }
     if (ko.utils.arrayFirst(this.incidents(), function(task) {
       return !task.isAssigned();
     })) {
       return null;
     }
-    return this.position();
+    return this.position;
   }, this);
 
   /**
@@ -1414,7 +1416,7 @@ Coceso.Models.Unit = function(data) {
    * @returns {boolean}
    */
   this.hasHome = ko.pureComputed(function() {
-    return !!this.home().id;
+    return !!this.home.id();
   }, this);
 
   /**
@@ -1424,7 +1426,7 @@ Coceso.Models.Unit = function(data) {
    * @type ko.pureComputed
    * @returns {boolean}
    */
-  this.isHome = this.position.extend({isValue: this.home});
+  this.isHome = this.position.id.extend({isValue: this.home.id});
 
   /**
    * Unit has state "AD"
@@ -1546,7 +1548,7 @@ Coceso.Models.Unit = function(data) {
    * @returns {boolean}
    */
   this.disableHoldPosition = ko.pureComputed(function() {
-    if (this.isHome() || !this.position().id || (this.incidentCount() > 1)) {
+    if (this.isHome() || !this.position.id() || (this.incidentCount() > 1)) {
       return true;
     }
     if (this.incidentCount() <= 0) {
@@ -1591,10 +1593,10 @@ Coceso.Models.Unit = function(data) {
       content += "<dt>" + _("label.unit.ani") + "</dt><dd>" + this.ani.escapeHTML() + "</dd>";
     }
     if (this.hasHome()) {
-      content += "<dt><span class='glyphicon glyphicon-home'></span></dt><dd><span class='pre'>" + this.home().info().escapeHTML() + "</span></dd>";
+      content += "<dt><span class='glyphicon glyphicon-home'></span></dt><dd><span class='pre'>" + this.home.info().escapeHTML() + "</span></dd>";
     }
     content += "<dt><span class='glyphicon glyphicon-map-marker'></span></dt><dd><span class='pre'>" +
-        (this.position().id ? this.position().info().escapeHTML() : "N/A") + "</span></dd>";
+        (this.position.id() ? this.position.info().escapeHTML() : "N/A") + "</span></dd>";
 
     content += "</dl><hr/><dl class='dl-horizontal'>";
 
@@ -1637,7 +1639,7 @@ Coceso.Models.Unit = function(data) {
   this.reportIncident = function() {
     var data = {caller: self.call};
     if (this.portable) {
-      data.bo = {info: self.position().info()};
+      data.bo = {info: self.position.info()};
       data.blue = true;
       data.units = {};
       data.units[self.id] = Coceso.Constants.TaskState.abo;
@@ -1809,8 +1811,18 @@ Coceso.Models.Unit.prototype = Object.create({}, /** @lends Coceso.Models.Unit.p
       appendTo: "body",
       cursor: "move"
     }
+  },
+  /**
+   * Destroy the object
+   *
+   * @function
+   * @returns {void}
+   */
+  destroy: {
+    value: function() {
+      Coceso.Helpers.destroyComputed(this);
+    }
   }
-
 });
 
 /**
@@ -1903,6 +1915,9 @@ Coceso.Models.Patient = function(data) {
   this.isUnknown.state = ko.pureComputed(function() {
     return this() ? "active" : "";
   }, this.isUnknown);
+
+  this.destroy = function() {
+  };
 };
 
 /**
@@ -1984,7 +1999,7 @@ Coceso.ViewModels.Filterable.prototype = Object.create({}, /** @lends Coceso.Vie
    */
   destroy: {
     value: function() {
-      Coceso.ViewModels.destroyComputed(this);
+      Coceso.Helpers.destroyComputed(this);
     }
   }
 });
@@ -2199,7 +2214,7 @@ Coceso.ViewModels.UnitContainer.prototype = Object.create({}, /** @lends Coceso.
       ko.utils.arrayForEach(this.subContainer(), function(item) {
         item.destroy();
       });
-      Coceso.ViewModels.destroyComputed(this);
+      Coceso.Helpers.destroyComputed(this);
     }
   }
 });
@@ -2322,9 +2337,9 @@ Coceso.ViewModels.Incident = function(data) {
     this.model();
 
     //Update server reference for change detection
-    this.ao.server(this.model().ao().info);
+    this.ao.server(this.model().ao.info);
     this.blue.server(this.model().blue);
-    this.bo.server(this.model().bo().info);
+    this.bo.server(this.model().bo.info);
     this.caller.server(this.model().caller);
     this.casusNr.server(this.model().casusNr);
     this.info.server(this.model().info);
@@ -2663,7 +2678,7 @@ Coceso.ViewModels.Incident.prototype = Object.create(Coceso.Models.Incident.prot
    */
   destroy: {
     value: function() {
-      Coceso.ViewModels.destroyComputed(this);
+      Coceso.Helpers.destroyComputed(this);
     }
   }
 });
@@ -2745,8 +2760,8 @@ Coceso.ViewModels.Unit = function(data) {
     this.model();
 
     //Update server reference for change detection
-    this.position.server(this.model().position().info);
-    this.home.server(this.model().home().info);
+    this.position.server(this.model().position.info);
+    this.home.server(this.model().home.info);
     this.info.server(this.model().info);
     this.state.server(this.model().state);
 
@@ -2865,7 +2880,7 @@ Coceso.ViewModels.Unit.prototype = Object.create(Coceso.Models.Unit.prototype, /
    */
   destroy: {
     value: function() {
-      Coceso.ViewModels.destroyComputed(this);
+      Coceso.Helpers.destroyComputed(this);
     }
   }
 });
@@ -2907,7 +2922,7 @@ Coceso.ViewModels.UnitDetail.prototype = Object.create({}, /** @lends Coceso.Vie
    */
   destroy: {
     value: function() {
-      Coceso.ViewModels.destroyComputed(this);
+      Coceso.Helpers.destroyComputed(this);
     }
   }
 });
@@ -3070,7 +3085,7 @@ Coceso.ViewModels.Patient.prototype = Object.create(Coceso.Models.Patient.protot
    */
   destroy: {
     value: function() {
-      Coceso.ViewModels.destroyComputed(this);
+      Coceso.Helpers.destroyComputed(this);
     }
   }
 });
@@ -3194,16 +3209,12 @@ Coceso.ViewModels.CustomLogEntry = function(data) {
  * @param {Object} options
  */
 Coceso.ViewModels.Map = function(options) {
-  var self = this,
-      markers = L.layerGroup();
+  var self = this;
   options = options || {};
   this.dialogTitle = options.title || _("label.map");
 
-  this.incidents = Coceso.Data.incidents.list.extend({list: {filter: {
-        isDone: false
-      }}});
-
-  var names = {
+  // Define Layers
+  var baseLayers = {}, overlays = {}, names = {
     basemap: _("label.map.basemap"),
     vienna: _("label.map.vienna"),
     hospitals: _("label.map.hospitals"),
@@ -3213,114 +3224,181 @@ Coceso.ViewModels.Map = function(options) {
     "ehs.out": _("label.map.ehs.out")
   };
 
-  this.points = {};
-  this.lines = {};
-
-  this.init = function() {
-    var baseLayers = {}, overlays = {};
-    baseLayers[names.basemap] = L.tileLayer("https://{s}.wien.gv.at/basemap/bmaphidpi/normal/google3857/{z}/{y}/{x}.jpeg", {
+  baseLayers[names.basemap] = L.tileLayer("https://{s}.wien.gv.at/basemap/bmaphidpi/normal/google3857/{z}/{y}/{x}.jpeg", {
+    subdomains: ["maps", "maps1", "maps2", "maps3", "maps4"],
+    bounds: [[46.358770, 8.782379], [49.037872, 17.189532]],
+    attribution: _("label.map.source") + ": <a href='http://basemap.at' target='_blank'>basemap.at</a>, " +
+        "<a href='http://creativecommons.org/licenses/by/3.0/at/deed.de' target='_blank'>CC-BY 3.0</a>"
+  });
+  baseLayers[names.vienna] = L.layerGroup([
+    L.tileLayer("https://{s}.wien.gv.at/wmts/lb/farbe/google3857/{z}/{y}/{x}.jpeg", {
       subdomains: ["maps", "maps1", "maps2", "maps3", "maps4"],
-      bounds: [[46.358770, 8.782379], [49.037872, 17.189532]],
-      attribution: _("label.map.source") + ": <a href='http://basemap.at' target='_blank'>basemap.at</a>, " +
-          "<a href='http://creativecommons.org/licenses/by/3.0/at/deed.de' target='_blank'>CC-BY 3.0</a>"
-    });
-    baseLayers[names.vienna] = L.layerGroup([
-      L.tileLayer("https://{s}.wien.gv.at/wmts/lb/farbe/google3857/{z}/{y}/{x}.jpeg", {
-        subdomains: ["maps", "maps1", "maps2", "maps3", "maps4"],
-        bounds: [[48.10, 16.17], [48.33, 16.58]]
-      }),
-      L.tileLayer("https://{s}.wien.gv.at/wmts/beschriftung/normal/google3857/{z}/{y}/{x}.png", {
-        subdomains: ["maps", "maps1", "maps2", "maps3", "maps4"],
-        bounds: [[48.10, 16.17], [48.33, 16.58]]
-      })
-    ]);
+      bounds: [[48.10, 16.17], [48.33, 16.58]]
+    }),
+    L.tileLayer("https://{s}.wien.gv.at/wmts/beschriftung/normal/google3857/{z}/{y}/{x}.png", {
+      subdomains: ["maps", "maps1", "maps2", "maps3", "maps4"],
+      bounds: [[48.10, 16.17], [48.33, 16.58]]
+    })
+  ]);
 
-    overlays[names.hospitals] = new L.GeoJSON.WFS("https://data.wien.gv.at/daten/geo", "ogdwien:KRANKENHAUSOGD", {
-      pointToLayer: function(feature, latlng) {
-        return L.marker(latlng, {
-          icon: L.icon({
-            iconUrl: 'https://data.wien.gv.at/katalog/images/krankenhaus.png',
-            iconSize: [16, 16]
-          })
-        });
-      },
-      onEachFeature: function(feature, layer) {
-        if (feature.properties) {
-          layer.bindPopup(new L.Popup.Bootstrap(feature.properties.BEZEICHNUNG, feature.properties.ADRESSE));
-        }
-      }
-    });
-
-    overlays[names.defi] = new L.GeoJSON.WFS("https://data.wien.gv.at/daten/geo", "ogdwien:DEFIBRILLATOROGD", {
-      pointToLayer: function(feature, latlng) {
-        return L.marker(latlng, {
-          icon: L.icon({
-            iconUrl: 'https://data.wien.gv.at/katalog/images/defibrillator.png',
-            iconSize: [16, 16]
-          })
-        });
-      },
-      onEachFeature: function(feature, layer) {
-        if (feature.properties) {
-          layer.bindPopup(new L.Popup.Bootstrap(feature.properties.ADRESSE, feature.properties.INFO));
-        }
-      }
-    });
-
-    overlays[names["ehs.out"]] = L.imageOverlay(Coceso.Conf.layerBase + "ehs_out.jpg", [[48.200655, 16.415747], [48.213634, 16.427824]]);
-    overlays[names["ehs.in"]] = L.imageOverlay(Coceso.Conf.layerBase + "ehs_in.png", [[48.204912, 16.417671], [48.209496, 16.424191]]);
-
-    options.b = baseLayers[names[options.b]] ? options.b : "basemap";
-    var layers = [baseLayers[names[options.b]]], o = [];
-    if (options.o) {
-      if (!(options.o instanceof Array)) {
-        options.o = [options.o];
-      }
-      ko.utils.arrayForEach(options.o, function(item) {
-        if (overlays[names[item]]) {
-          o.push(item);
-          layers.push(overlays[names[item]]);
-        }
+  overlays[names.hospitals] = new L.GeoJSON.WFS("https://data.wien.gv.at/daten/geo", "ogdwien:KRANKENHAUSOGD", {
+    pointToLayer: function(feature, latlng) {
+      return L.marker(latlng, {
+        icon: L.icon({
+          iconUrl: 'https://data.wien.gv.at/katalog/images/krankenhaus.png',
+          iconSize: [16, 16]
+        })
       });
+    },
+    onEachFeature: function(feature, layer) {
+      if (feature.properties) {
+        layer.bindPopup(new Coceso.Map.Popup(feature.properties.BEZEICHNUNG, feature.properties.ADRESSE));
+      }
     }
-    if (o) {
-      options.o = o;
-    } else if (options.o) {
-      delete options.o;
-    }
+  });
 
-    var locate = true;
-    if (options.c) {
-      if (!(options.c instanceof Array)) {
-        options.c = options.c.split(",");
-      }
-      if (options.c.length >= 2) {
-        options.c = options.c.slice(0, 2);
-        options.c = $.map(options.c, parseFloat);
-        if (!isNaN(options.c[0]) && !isNaN(options.c[1])) {
-          locate = false;
-        }
+  overlays[names.defi] = new L.GeoJSON.WFS("https://data.wien.gv.at/daten/geo", "ogdwien:DEFIBRILLATOROGD", {
+    pointToLayer: function(feature, latlng) {
+      return L.marker(latlng, {
+        icon: L.icon({
+          iconUrl: 'https://data.wien.gv.at/katalog/images/defibrillator.png',
+          iconSize: [16, 16]
+        })
+      });
+    },
+    onEachFeature: function(feature, layer) {
+      if (feature.properties) {
+        layer.bindPopup(new Coceso.Map.Popup(feature.properties.ADRESSE, feature.properties.INFO));
       }
     }
-    if (locate) {
-      options.c = [48.2, 16.35];
+  });
+
+  overlays[names["ehs.out"]] = L.imageOverlay(Coceso.Conf.layerBase + "ehs_out.jpg", [[48.200655, 16.415747], [48.213634, 16.427824]]);
+  overlays[names["ehs.in"]] = L.imageOverlay(Coceso.Conf.layerBase + "ehs_in.png", [[48.204912, 16.417671], [48.209496, 16.424191]]);
+
+  var layersControl = L.control.layers(baseLayers, overlays);
+
+  // Parse options
+  options.b = baseLayers[names[options.b]] ? options.b : "basemap";
+  var layers = [baseLayers[names[options.b]]], o = [];
+  if (options.o) {
+    if (!(options.o instanceof Array)) {
+      options.o = [options.o];
     }
-    if (options.z) {
-      options.z = parseInt(options.z);
-      if (isNaN(options.z)) {
-        options.z = 13;
+    ko.utils.arrayForEach(options.o, function(item) {
+      if (overlays[names[item]]) {
+        o.push(item);
+        layers.push(overlays[names[item]]);
       }
-    } else {
+    });
+  }
+  if (o) {
+    options.o = o;
+  } else if (options.o) {
+    delete options.o;
+  }
+
+  var locate = true;
+  if (options.c) {
+    if (!(options.c instanceof Array)) {
+      options.c = options.c.split(",");
+    }
+    if (options.c.length >= 2) {
+      options.c = options.c.slice(0, 2);
+      options.c = $.map(options.c, parseFloat);
+      if (!isNaN(options.c[0]) && !isNaN(options.c[1])) {
+        locate = false;
+      }
+    }
+  }
+  if (locate) {
+    options.c = [48.2, 16.35];
+  }
+  if (options.z) {
+    options.z = parseInt(options.z);
+    if (isNaN(options.z)) {
       options.z = 13;
     }
+  } else {
+    options.z = 13;
+  }
 
-    var map = L.map(this.ui ? this.ui + "-map-container" : "map-container", {
+  // Create marker layer
+  var noCoordsControl = new Coceso.Map.NoCoordsControl(),
+      markerLayer = new Coceso.Map.MarkerLayer(noCoordsControl),
+      incidentMarkers = {},
+      unitMarkers = {};
+
+  // Add markers to layer
+  var incidents = Coceso.Data.incidents.list.extend({list: {filter: {isDone: false}}});
+  this._updateIncidentList = ko.computed(function() {
+    var found = {}, id;
+    ko.utils.arrayForEach(incidents(), function(inc) {
+      if (!incidentMarkers[inc.id]) {
+        incidentMarkers[inc.id] = new Coceso.Map.Incident(inc, markerLayer);
+      }
+      found[inc.id] = true;
+    });
+    for (id in incidentMarkers) {
+      if (!found[id]) {
+        incidentMarkers[id].destroy();
+        delete incidentMarkers[id];
+      }
+    }
+  }, this);
+
+  this._updateUnitList = ko.computed(function() {
+    var found = {}, id;
+    ko.utils.arrayForEach(Coceso.Data.units.list(), function(unit) {
+      if (!unitMarkers[unit.id]) {
+        unitMarkers[unit.id] = new Coceso.Map.Unit(unit, markerLayer);
+      }
+      found[unit.id] = true;
+    });
+    for (id in unitMarkers) {
+      if (!found[id]) {
+        unitMarkers[id].destroy();
+        delete unitMarkers[id];
+      }
+    }
+  }, this);
+
+  // Initalize map after UI is loaded
+  var map;
+
+  /**
+   * Initialize the ViewModel
+   *
+   * @returns {void}
+   */
+  this.init = function() {
+    map = L.map(this.ui ? this.ui + "-map-container" : "map-container", {
       center: options.c, zoom: options.z,
-      minZoom: 7, maxZoom: 18,
+      minZoom: 7, maxZoom: 19,
       maxBounds: [[46.358770, 8.782379], [49.037872, 17.189532]],
       layers: layers
     });
 
+    // Center map on current position
+    if (locate) {
+      map.locate({setView: true});
+    }
+
+    // Add layers
+    map.addControl(layersControl);
+    map.addControl(L.control.scale({imperial: false, maxWidth: 300}));
+    map.addControl(new Coceso.Map.Legend());
+    map.addControl(noCoordsControl);
+    map.addLayer(markerLayer);
+
+    // Listen to resize of UI container
+    if (this.ui) {
+      $("#" + this.ui).on("dialogresizestop", function() {
+        map.invalidateSize();
+      });
+    }
+
+    // Set link to full version
     var fullLink = $("<a href='" + Coceso.Conf.contentBase + "map' target='_blank'>" + _("label.map.full") + "</a>");
     if (this.ui) {
       map.attributionControl.setPrefix(fullLink.prop("outerHTML"));
@@ -3385,132 +3463,87 @@ Coceso.ViewModels.Map = function(options) {
       }
       setQuery();
     });
-
-    if (locate) {
-      map.locate({setView: true});
-    }
-    L.control.layers(baseLayers, overlays).addTo(map);
-
-    if (this.ui) {
-      $("#" + this.ui).on("dialogresizestop", function() {
-        map.invalidateSize();
-      });
-    }
-
-    map.addLayer(markers);
-    for (var i in Coceso.Data.points) {
-      this.points[i] = new L.Marker.Point(Coceso.Data.points[i], markers, this.incidents, Coceso.Data.units.list);
-    }
-
-    Coceso.UI.Maps.push(this);
-
-    this._drawIncidents = ko.computed(function() {
-      var found = [];
-      ko.utils.arrayForEach(this.incidents(), function(inc) {
-        if (!self.lines[inc.id] || self.lines[inc.id].incident !== inc) {
-          if (self.lines[inc.id]) {
-            //Local marker exists, but incident does not match global marker
-            markers.removeLayer(self.lines[inc.id]);
-          }
-          self.lines[inc.id] = new L.LayerGroup.Incident(inc);
-          self.lines[inc.id].addTo(markers);
-        }
-        found[inc.id] = true;
-      });
-      for (var id in self.lines) {
-        if (!found[id]) {
-          markers.removeLayer(self.lines[id]);
-          delete self.lines[id];
-        }
-      }
-    }, this);
   };
 
-  this.newPoint = function(point) {
-    this.points[point.id] = new L.Marker.Point(point, markers, this.incidents, Coceso.Data.units.list);
+  /**
+   * Destroy the viewmodel
+   *
+   * @returns {void}
+   */
+  this.destroy = function() {
+    Coceso.Helpers.destroyComputed(this);
+    var i;
+    for (i in incidentMarkers) {
+      incidentMarkers[i].destroy();
+      delete incidentMarkers[i];
+    }
+    for (i in unitMarkers) {
+      unitMarkers[i].destroy();
+      delete unitMarkers[i];
+    }
+
+    if (this.ui) {
+      $("#" + this.ui).off("dialogresizestop");
+    }
+
+    map.remove();
+    Coceso.Helpers.cleanObj(map);
+    map = layersControl = markerLayer = noCoordsControl = baseLayers = overlays = names = null;
   };
 };
 
+/**
+ * Layer to show WFS data
+ *
+ * @constructor
+ * @extends L.GeoJSON
+ * @param {String} serviceUrl
+ * @param {String} featureType
+ * @param {GeoJSONOptions} options
+ */
 L.GeoJSON.WFS = L.GeoJSON.extend({
   initialize: function(serviceUrl, featureType, options) {
-    options = options || {};
     L.GeoJSON.prototype.initialize.call(this, null, options);
-    this.getFeatureUrl = serviceUrl + "?service=WFS&request=GetFeature&outputFormat=json&version=1.1.0&srsName=EPSG:4326&typeName=" + featureType;
+    this._featureUrl = serviceUrl + "?service=WFS&request=GetFeature&outputFormat=json&version=1.1.0&srsName=EPSG:4326&typeName=" + featureType;
+    this._loaded = false;
   },
   onAdd: function(map) {
     L.LayerGroup.prototype.onAdd.call(this, map);
-    if (!this.jsonData) {
+    if (!this._loaded) {
       var self = this;
-      this.getFeature(function() {
-        self.addData(self.jsonData);
-      });
-    }
-  },
-  getFeature: function(callback) {
-    var self = this;
-    $.ajax({
-      dataType: "json",
-      url: this.getFeatureUrl,
-      success: function(response) {
-        if (response.type && response.type === "FeatureCollection") {
-          self.jsonData = response;
-          callback();
+      $.ajax({
+        dataType: "json",
+        url: this._featureUrl,
+        success: function(response) {
+          if (response.type && response.type === "FeatureCollection") {
+            self.addData(response);
+            self._loaded = true;
+          }
         }
-      }
-    });
-  }
-});
-
-L.LatLng.Observable = function(lat, lng) {
-  if (lat instanceof Coceso.Models.Point) {
-    lng = lat.lng;
-    lat = lat.lat;
-  }
-  this.latObservable = ko.isObservable(lat) ? lat : ko.observable(lat);
-  this.lngObservable = ko.isObservable(lng) ? lng : ko.observable(lng);
-  this.callbacks = [];
-
-  try {
-    L.LatLng.call(this, this.latObservable(), this.lngObservable());
-  } catch (e) {
-    this.lat = null;
-    this.lng = null;
-  }
-
-  this.latObservable.subscribe(function(lat) {
-    lat = parseFloat(lat);
-    this.lat = isNaN(lat) ? null : lat;
-    this._notify();
-  }, this);
-  this.lngObservable.subscribe(function(lng) {
-    lng = parseFloat(lng);
-    this.lng = isNaN(lng) ? null : lng;
-    this._notify();
-  }, this);
-};
-L.LatLng.Observable.prototype = Object.create(L.LatLng.prototype, /** @lends L.LatLng.Observable.prototype */ {
-  subscribe: {
-    value: function(method, obj) {
-      this.callbacks.push([obj, method]);
-    }
-  },
-  unsubscribe: {
-    value: function(method) {
-      ko.utils.arrayRemoveItem(this.callbacks, function(item) {
-        return item[1] === method;
-      });
-    }
-  },
-  _notify: {
-    value: function() {
-      ko.utils.arrayForEach(this.callbacks, function(item) {
-        item[1].call(item[0]);
       });
     }
   }
 });
 
-L.Popup.Bootstrap = L.Popup.extend({
+/**
+ * Contains all map related classes
+ *
+ * @namespace Coceso.Map
+ * @type Object
+ */
+Coceso.Map = {};
+
+/**
+ * Modified Leaflet popup to work with bootstrap and observables
+ *
+ * @constructor
+ * @extends L.Popup
+ * @param {String|ko.observable} title
+ * @param {String|ko.observable} content
+ * @param {PopupOptions} options
+ * @param {ILayer} source
+ */
+Coceso.Map.Popup = L.Popup.extend({
   initialize: function(title, content, options, source) {
     L.Popup.prototype.initialize.call(this, options, source);
     if (ko.isObservable(title)) {
@@ -3533,7 +3566,7 @@ L.Popup.Bootstrap = L.Popup.extend({
   },
   _initLayout: function() {
     var containerClass = "leaflet-popover popover top " + this.options.className + " leaflet-zoom-" + (this._animated ? "animated" : "hide"),
-        container = this._container = L.DomUtil.create('div', containerClass),
+        container = this._container = L.DomUtil.create("div", containerClass),
         closeButton;
 
     if (this.options.closeButton) {
@@ -3545,12 +3578,12 @@ L.Popup.Bootstrap = L.Popup.extend({
     }
 
     L.DomEvent.disableClickPropagation(container);
-    this._tipContainer = L.DomUtil.create('div', 'arrow', container);
-    this._titleNode = L.DomUtil.create('h3', 'popover-title', container);
-    this._contentNode = L.DomUtil.create('div', 'popover-content', container);
+    this._tipContainer = L.DomUtil.create("div", "arrow", container);
+    this._titleNode = L.DomUtil.create("h3", "popover-title", container);
+    this._contentNode = L.DomUtil.create("div", "popover-content", container);
 
     L.DomEvent.disableScrollPropagation(this._contentNode);
-    L.DomEvent.on(container, 'contextmenu', L.DomEvent.stopPropagation);
+    L.DomEvent.on(container, "contextmenu", L.DomEvent.stopPropagation);
   },
   _updateContent: function() {
     if (this._title) {
@@ -3564,233 +3597,928 @@ L.Popup.Bootstrap = L.Popup.extend({
     }
     L.Popup.prototype._updatePosition.call(this);
     this._containerBottom = this._containerBottom + 20;
-    this._container.style.bottom = this._containerBottom + 'px';
+    this._container.style.bottom = this._containerBottom + "px";
   }
 });
 
-L.Marker.Point = L.Marker.extend({
-	options: {
-		icon: L.divIcon({iconSize: [18, 18]})
-	},
-  initialize: function(point, layer, incidents, units, options) {
-    this.point = point;
-    L.Marker.prototype.initialize.call(this, new L.LatLng.Observable(point), options);
-    this._latlng.subscribe(this.update, this);
+/**
+ * Show legend
+ * in part taken from L.Control.Layers
+ *
+ * @constructor
+ * @extends L.Control
+ */
+Coceso.Map.Legend = L.Control.extend({
+  options: {
+    collapsed: true,
+    position: "bottomright"
+  },
+  onAdd: function() {
+    var className = 'map-legend',
+        container = this._container = L.DomUtil.create('div', className);
 
-    this.bo = incidents.extend({list: {filter: {bo: point}}});
-    this.ao = incidents.extend({list: {filter: {ao: point}}});
-    this.units = units.extend({list: {filter: {mapPosition: point}}});
+    //Makes this work on IE10 Touch devices by stopping it from firing a mouseout event when the touch is released
+    container.setAttribute('aria-haspopup', true);
 
-    this.showMarker = ko.computed(function() {
-      if (this._latlng.latObservable() && this._latlng.lngObservable() &&
-          (this.bo().length || this.ao().length || this.units().length)) {
-        layer.addLayer(this);
-        return true;
+    if (!L.Browser.touch) {
+      L.DomEvent
+          .disableClickPropagation(container)
+          .disableScrollPropagation(container);
+    } else {
+      L.DomEvent.on(container, 'click', L.DomEvent.stopPropagation);
+    }
+    if (this.options.collapsed) {
+      if (!L.Browser.android) {
+        L.DomEvent
+            .on(container, 'mouseover', this._expand, this)
+            .on(container, 'mouseout', this._collapse, this);
       }
-      layer.removeLayer(this);
-      return false;
+      var link = L.DomUtil.create('a', className + '-toggle', container);
+      link.href = '#';
+      link.title = _("label.main.key");
+      L.DomUtil.create("span", "glyphicon glyphicon-question-sign", link);
+
+      if (L.Browser.touch) {
+        L.DomEvent
+            .on(link, 'click', L.DomEvent.stop)
+            .on(link, 'click', this._expand, this);
+      } else {
+        L.DomEvent.on(link, 'focus', this._expand, this);
+      }
+
+      this._map.on('click', this._collapse, this);
+    } else {
+      this._expand();
+    }
+
+    var list = L.DomUtil.create('div', className + '-list', container),
+        content = "<ul class='list-unstyled'>";
+    ko.utils.arrayForEach(Coceso.Map.Point.prototype.types, function(type) {
+      content += "<li class='clearfix'>"
+          + "<div class='leaflet-marker-icon leaflet-div-icon icon-" + type + "'></div>"
+          + "<div>" + _("label.map.legend." + type) + "</div>"
+          + "</li>";
+    });
+    content += "<li class='clearfix'>"
+        + "<div class='leaflet-marker-icon leaflet-div-icon'>"
+        + "<span class='glyphicon glyphicon-plus'></span></div>"
+        + "<div>" + _("label.map.legend.multiple") + "</div>"
+        + "</li>";
+    content += "</ul>";
+    list.innerHTML = content;
+
+    return container;
+  },
+  _expand: function() {
+    L.DomUtil.addClass(this._container, 'map-legend-expanded');
+  },
+  _collapse: function() {
+    this._container.className = this._container.className.replace(' map-legend-expanded', '');
+  }
+});
+
+/**
+ * Show incident on map
+ *
+ * @constructor
+ * @param {Coceso.Models.Incident} inc
+ * @param {Coceso.Map.MarkerLayer} layer
+ */
+Coceso.Map.Incident = function(inc, layer) {
+  this.id = inc.id;
+
+  this.type = inc.type;
+  this.blue = inc.blue;
+  this.isNewOrOpen = inc.isNewOrOpen;
+  this.disableBO = inc.disableBO;
+
+  /**
+   * Get the content to show in popup
+   *
+   * @function
+   * @type ko.computed
+   * @returns {Array} Content to show in incident and unit lists
+   */
+  this.popupContent = ko.computed(function() {
+    var incidents = "", units = "";
+
+    if (inc.isStandby() || inc.isHoldPosition() || inc.isToHome()) {
+      var tasks = inc.units();
+      if (tasks.length > 0 && tasks[0].unit()) {
+        units += "<li><strong>" + inc.typeChar() + "</strong>: " + tasks[0].unit().call.escapeHTML();
+        if (tasks[0].isAssigned()) {
+          units += " (" + tasks[0].localizedTaskState() + ")";
+        }
+        units += "</li>";
+      }
+    } else {
+      incidents += "<li>" + inc.assignedTitle();
+      if (inc.unitCount()) {
+        incidents += "<dl class='dl-horizontal list-narrower'>";
+        ko.utils.arrayForEach(inc.units(), function(task) {
+          incidents += "<dt>" + (task.unit() && task.unit().call.escapeHTML()) + "</dt><dd>" + task.localizedTaskState() + "</dd>";
+        });
+        incidents += "</dl>";
+      }
+      incidents += "</li>";
+    }
+
+    return [incidents, units];
+  }, this);
+
+  this._updateBo = ko.computed(function() {
+    layer.moveBo(this, inc.bo.getStatic());
+  }, this);
+
+  this._updateAo = ko.computed(function() {
+    layer.moveAo(this, inc.ao.getStatic());
+  }, this);
+
+  var line = new L.Polyline([[0, 0], [0, 0]]);
+
+  this._updateLine = ko.computed(function() {
+    var aLat = inc.ao.lat(), aLng = inc.ao.lng(),
+        bLat = inc.bo.lat(), bLng = inc.bo.lng();
+
+    if (aLat && aLng && bLat && bLng) {
+      line.setLatLngs([[bLat, bLng], [aLat, aLng]]);
+      layer.addLayer(line);
+    } else {
+      layer.removeLayer(line);
+    }
+  }, this);
+
+  this._updateLineColor = ko.computed(function() {
+    if (inc.isTask() || inc.isTransport()) {
+      line.setStyle({color: inc.blue() ? "#0064cd" : "#9999ff"});
+    } else if (inc.isToHome()) {
+      line.setStyle({color: "#99ff99"});
+    } else {
+      line.setStyle({color: "#03f"});
+    }
+  }, this);
+
+  /**
+   * Destroy the object
+   *
+   * @returns {void}
+   */
+  this.destroy = function() {
+    Coceso.Helpers.destroyComputed(this);
+    layer.removeLayer(line);
+    layer.moveBo(this, null);
+    layer.moveAo(this, null);
+  };
+};
+
+/**
+ * Show unit on map
+ *
+ * @void
+ * @param {Coceso.Models.Unit} unit
+ * @param {Coceso.Map.MarkerLayer} layer
+ */
+Coceso.Map.Unit = function(unit, layer) {
+  this.id = unit.id;
+
+  this.portable = unit.portable;
+  this.isFree = unit.isFree;
+  this.isHome = unit.isHome;
+
+  /**
+   * Get the content to show in popup
+   *
+   * @function
+   * @type ko.computed
+   * @returns {String} Content to show in unit list
+   */
+  this.popupContent = ko.computed(function() {
+    var content = "<li>";
+    if (unit.portable) {
+      if (unit.isFree()) {
+        content += "<span class='glyphicon glyphicon-exclamation-sign'></span>";
+      } else if (unit.isHome()) {
+        content += "<span class='glyphicon glyphicon-home'></span>";
+      } else {
+        content += "<span class='glyphicon glyphicon-map-marker'></span>";
+      }
+    } else {
+      content += "<span class='glyphicon glyphicon-record'></span>";
+    }
+    content += ": " + unit.call.escapeHTML() + "</li>";
+
+    return content;
+  }, this);
+
+  this._updatePoint = ko.computed(function() {
+    var point = unit.mapPosition();
+    layer.moveUnit(this, point ? point.getStatic() : null);
+  }, this);
+
+  /**
+   * Destroy the object
+   *
+   * @returns {void}
+   */
+  this.destroy = function() {
+    Coceso.Helpers.destroyComputed(this);
+    layer.moveUnit(this, null);
+  };
+};
+
+
+/**
+ * LayerGroup to show the markers on
+ *
+ * @constructor
+ * @extends L.LayerGroup
+ * @param {Coceso.Map.NoCoordsControl} noCoordsControl
+ */
+Coceso.Map.MarkerLayer = L.LayerGroup.extend({
+  initialize: function(noCoordsControl) {
+    this._layers = {};
+    this._points = {};
+    this._grid = {};
+    this._bo = {};
+    this._ao = {};
+    this._units = {};
+    this._noCoordsControl = noCoordsControl;
+  },
+  removeLayer: function(layer) {
+    if (layer instanceof Coceso.Map.Marker) {
+      var x, y;
+      for (x in this._grid) {
+        for (y in this._grid[x]) {
+          ko.utils.arrayRemoveItem(this._grid[x][y], layer);
+        }
+      }
+    }
+    L.LayerGroup.prototype.removeLayer.call(this, layer);
+  },
+  /**
+   * Move bo of incident
+   *
+   * @param {Coceso.Map.Incident} inc
+   * @param {Object} point
+   * @returns {void}
+   */
+  moveBo: function(inc, point) {
+    var mapPoint = this._getMapPoint(point);
+    if (mapPoint) {
+      if (this._bo[inc.id] !== mapPoint) {
+        this._removeBo(inc);
+        mapPoint.pushBo(inc);
+        this._bo[inc.id] = mapPoint;
+      }
+    } else {
+      this._removeBo(inc);
+    }
+  },
+  /**
+   * Move ao of incident
+   *
+   * @param {Coceso.Map.Incident} inc
+   * @param {Object} point
+   * @returns {void}
+   */
+  moveAo: function(inc, point) {
+    var mapPoint = this._getMapPoint(point);
+    if (mapPoint) {
+      if (this._ao[inc.id] !== mapPoint) {
+        this._removeAo(inc);
+        mapPoint.pushAo(inc);
+        this._ao[inc.id] = mapPoint;
+      }
+    } else {
+      this._removeAo(inc);
+    }
+  },
+  /**
+   * Move unit
+   *
+   * @param {Coceso.Map.Unit} unit
+   * @param {Object} point
+   * @returns {void}
+   */
+  moveUnit: function(unit, point) {
+    var mapPoint = this._getMapPoint(point);
+    if (mapPoint) {
+      if (this._units[unit.id] !== mapPoint) {
+        this._removeUnit(unit);
+        mapPoint.pushUnit(unit);
+        this._units[unit.id] = mapPoint;
+      }
+    } else {
+      this._removeUnit(unit);
+    }
+  },
+  /**
+   * Get MapPoint for a point object and move the point to correct marker
+   *
+   * @param {Object} point
+   * @returns {Coceso.Map.Point}
+   */
+  _getMapPoint: function(point) {
+    if (!point || !point.id) {
+      return null;
+    }
+
+    var mapPoint = null;
+    if (this._points[point.id]) {
+      if (!this._points[point.id].checkLatLng(point)) {
+        // Point exists, but has been moved
+        mapPoint = this._points[point.id];
+        mapPoint.setData(point);
+      } else {
+        this._points[point.id].info(point.info);
+      }
+    } else {
+      // Point does not yet exist
+      mapPoint = this._points[point.id] = new Coceso.Map.Point(point);
+    }
+
+    if (mapPoint) {
+      // Point is either new or has been moved
+      if (point.lat === null || point.lng === null) {
+        // Coordinates not set, move to noCoordControl
+        mapPoint.moveToMarker(this._noCoordsControl);
+      } else {
+        // Find near points
+        var x = Math.round(point.lat * 5000) / 5000,
+            y = Math.round(point.lng * 2500) / 2500,
+            x1 = x < point.lat ? x + 0.0002 : x - 0.0002,
+            y1 = x < point.lng ? x + 0.0004 : x - 0.0004;
+
+        var gridMarkers = $.merge($.merge(this._getGrid(x, y), this._getGrid(x, y1)), $.merge(this._getGrid(x1, y), this._getGrid(x1, y1)));
+        var near = $.map(gridMarkers, function(marker) {
+          var distance = marker.getLatLng().distanceTo(point);
+          return distance < 10 ? {m: marker, d: distance} : null;
+        });
+
+        if (near.length) {
+          // Move to nearest existing marker
+          near.sort(function(a, b) {
+            return a.d - b.d;
+          });
+          mapPoint.moveToMarker(near[0].m);
+        } else {
+          // Create a new marker
+          var marker = new Coceso.Map.Marker(point, this, {noCoordsControl: this._noCoordsControl});
+          if (this._grid[x]) {
+            if (this._grid[x][y]) {
+              this._grid[x][y].push(marker);
+            } else {
+              this._grid[x][y] = [marker];
+            }
+          } else {
+            this._grid[x] = {};
+            this._grid[x][y] = [marker];
+          }
+          mapPoint.moveToMarker(marker);
+        }
+      }
+    }
+    return this._points[point.id];
+  },
+  _getGrid: function(x, y) {
+    return (this._grid[x] && this._grid[x][y]) ? $.merge([], this._grid[x][y]) : [];
+  },
+  /**
+   * Remove bo for incident
+   *
+   * @param {Coceso.Map.Incident} inc
+   * @returns {void}
+   */
+  _removeBo: function(inc) {
+    if (this._bo[inc.id]) {
+      this._bo[inc.id].bo.remove(inc);
+      if (!this._bo[inc.id].count()) {
+        this._bo[inc.id].destroy();
+        delete this._points[this._bo[inc.id].id];
+      }
+      delete this._bo[inc.id];
+    }
+  },
+  /**
+   * Remove ao for incident
+   *
+   * @param {Coceso.Map.Incident} inc
+   * @returns {void}
+   */
+  _removeAo: function(inc) {
+    if (this._ao[inc.id]) {
+      this._ao[inc.id].ao.remove(inc);
+      if (!this._ao[inc.id].count()) {
+        this._ao[inc.id].destroy();
+        delete this._points[this._ao[inc.id].id];
+      }
+      delete this._ao[inc.id];
+    }
+  },
+  /**
+   * Remove unit
+   *
+   * @param {Coceso.Map.Unit} unit
+   * @returns {void}
+   */
+  _removeUnit: function(unit) {
+    if (this._units[unit.id]) {
+      this._units[unit.id].units.remove(unit);
+      if (!this._units[unit.id].count()) {
+        this._units[unit.id].destroy();
+        delete this._points[this._units[unit.id].id];
+      }
+      delete this._units[unit.id];
+    }
+  }
+});
+
+/**
+ * Point to show on map
+ *
+ * @constructor
+ * @param {Object} point Unwrapped Coceso.Models.Point
+ */
+Coceso.Map.Point = function(point) {
+  this.id = point.id;
+  this.bo = ko.observableArray([]);
+  this.ao = ko.observableArray([]);
+  this.units = ko.observableArray([]);
+  this.info = ko.observable(point.info);
+  this._latlng = {lat: point.lat, lng: point.lng};
+  this._marker = null;
+
+  /**
+   * Total count of units and incidents at this point
+   *
+   * @type ko.computed
+   * @returns {Integer}
+   */
+  this.count = ko.computed(function() {
+    return this.units().length + this.bo().length + this.ao().length;
+  }, this);
+
+  /**
+   * Get types of units and incidents at this point
+   *
+   * @function
+   * @type ko.computed
+   * @returns {Integer} Each bit represents a specific type
+   * @see Coceso.Map.Point.prototype.types
+   */
+  this.type = ko.computed(function() {
+    var value = 0;
+    ko.utils.arrayForEach(this.units(), function(unit) {
+      if (unit.portable) {
+        if (unit.isFree()) {
+          value |= 2;
+        }
+        if (unit.isHome()) {
+          value |= 64;
+        }
+      } else {
+        value |= 4;
+      }
+    });
+
+    ko.utils.arrayForEach(this.bo(), function(inc) {
+      if (inc.isNewOrOpen()) {
+        value |= 1;
+      }
+      switch (inc.type()) {
+        case Coceso.Constants.Incident.type.task:
+        case Coceso.Constants.Incident.type.transport:
+          value |= 32;
+          if (inc.blue()) {
+            value |= 8;
+          }
+          break;
+        case Coceso.Constants.Incident.type.tohome:
+          value |= 512;
+          break;
+      }
+    });
+
+    ko.utils.arrayForEach(this.ao(), function(inc) {
+      if (inc.disableBO() && inc.isNewOrOpen()) {
+        value |= 1;
+      }
+      switch (inc.type()) {
+        case Coceso.Constants.Incident.type.task:
+        case Coceso.Constants.Incident.type.transport:
+          value |= 32;
+          if (inc.blue()) {
+            value |= 8;
+          }
+          break;
+        case Coceso.Constants.Incident.type.relocation:
+          value |= 16;
+          break;
+        case Coceso.Constants.Incident.type.holdposition:
+          value |= 128;
+          break;
+        case Coceso.Constants.Incident.type.standby:
+          value |= 256;
+          break;
+        case Coceso.Constants.Incident.type.tohome:
+          value |= 512;
+          break;
+      }
+    });
+    return value;
+  }, this);
+
+  /**
+   * Content for popup
+   *
+   * @function
+   * @type ko.computed
+   * @returns {String}
+   */
+  this.popupContent = ko.computed(function() {
+    var units = "", incidents = "", content = "";
+
+    function addIncident(inc) {
+      var incContent = inc.popupContent();
+      incidents += incContent[0];
+      units += incContent[1];
+    }
+
+    ko.utils.arrayForEach(this.bo(), addIncident);
+    ko.utils.arrayForEach(this.ao(), addIncident);
+    ko.utils.arrayForEach(this.units(), function(unit) {
+      units += unit.popupContent();
+    });
+
+    if (incidents) {
+      content += "<ul class='list-unstyled'>" + incidents + "</ul>";
+    }
+    if (units) {
+      content += "<ul class='list-unstyled'>" + units + "</ul>";
+    }
+    return content;
+  }, this);
+
+  /**
+   * Title for popup
+   *
+   * @function
+   * @type ko.computed
+   * @returns {String}
+   */
+  this.popupTitle = ko.computed(function() {
+    return "<span class='pre'>" + this.info().escapeHTML() + "</span>";
+  }, this);
+};
+Coceso.Map.Point.prototype = Object.create({}, /** @lends Coceso.Map.Point.prototype */ {
+  /**
+   * Add incident bo to point
+   *
+   * @function
+   * @param {Coceso.Map.Incident} inc
+   * @returns {void}
+   */
+  pushBo: {
+    value: function(inc) {
+      if (!ko.utils.arrayFirst(this.bo(), function(item) {
+        return item === inc;
+      })) {
+        this.bo.push(inc);
+      }
+    }
+  },
+  /**
+   * Add incident ao to point
+   *
+   * @function
+   * @param {Coceso.Map.Incident} inc
+   * @returns {void}
+   */
+  pushAo: {
+    value: function(inc) {
+      if (!ko.utils.arrayFirst(this.ao(), function(item) {
+        return item === inc;
+      })) {
+        this.ao.push(inc);
+      }
+    }
+  },
+  /**
+   * Add unit to point
+   *
+   * @function
+   * @param {Coceso.Map.Unit} inc
+   * @returns {void}
+   */
+  pushUnit: {
+    value: function(unit) {
+      if (!ko.utils.arrayFirst(this.units(), function(item) {
+        return item === unit;
+      })) {
+        this.units.push(unit);
+      }
+    }
+  },
+  /**
+   * Compare latlngs
+   *
+   * @function
+   * @param {Object} latlng
+   * @returns {boolean}
+   */
+  checkLatLng: {
+    value: function(latlng) {
+      return this._latlng.lat === latlng.lat && this._latlng.lng === latlng.lng;
+    }
+  },
+  /**
+   * Update latlng and info
+   *
+   * @function
+   * @param {Object} point
+   * @returns {void}
+   */
+  setData: {
+    value: function(point) {
+      this._latlng = {lat: point.lat, lng: point.lng};
+      this.info(point.info);
+    }
+  },
+  /**
+   * Move point to another marker
+   *
+   * @function
+   * @param {Coceso.Map.Marker|Coceso.Map.NoCoordsMarker} marker
+   */
+  moveToMarker: {
+    value: function(marker) {
+      if (this._marker !== marker) {
+        if (this._marker) {
+          this._marker.removePoint(this);
+        }
+        if (marker) {
+          marker.addPoint(this);
+        }
+        this._marker = marker;
+      }
+    }
+  },
+  /**
+   * Types for each bit (2^0 to 2^9) in .type()
+   *
+   * @type Array
+   */
+  types: {
+    value: [
+      "open", "free", "fixed", "blue", "relocation",
+      "task", "home", "holdposition", "standby", "tohome"
+    ]
+  },
+  /**
+   * Get type for bitwise value
+   */
+  getType: {
+    value: function(value) {
+      var i, bit = 1;
+      for (i = 0; i < this.types.length; i++) {
+        if (value & bit) {
+          return this.types[i];
+
+        }
+        bit *= 2;
+      }
+      return null;
+    }
+  },
+  /**
+   * Destroy the object
+   *
+   * @function
+   * @returns {void}
+   */
+  destroy: {
+    value: function() {
+      if (this._marker) {
+        this._marker.removePoint(this);
+        this._marker = null;
+      }
+      Coceso.Helpers.destroyComputed(this);
+    }
+  }
+});
+
+/**
+ * Marker for the situation map
+ *
+ * @constructor
+ * @extends L.Marker
+ * @param {Object} latlng
+ * @param {Coceso.Map.MarkerLayer} layer
+ * @param {MarkerOptions} options
+ */
+Coceso.Map.Marker = L.Marker.extend({
+  initialize: function(latlng, layer, options) {
+    options.icon = L.divIcon({iconSize: [18, 18]});
+    L.Marker.prototype.initialize.call(this, latlng, options);
+
+    this._layer = layer;
+    this._points = ko.observableArray([]);
+
+    /**
+     * Get count of all units and incidents and set marker content accordingly
+     *
+     * @function
+     * @type ko.computed
+     * @returns {Integer}
+     */
+    this.count = ko.computed(function() {
+      var count = 0;
+      ko.utils.arrayForEach(this._points(), function(item) {
+        count += item.count();
+      });
+      this.options.icon.options.html = count > 1 ? "<span class='glyphicon glyphicon-plus'></span>" : false;
+      this.setIcon(this.options.icon);
+      return count;
     }, this);
 
-    this.type = ko.computed(function() {
-      if (!this.showMarker()) {
-        return;
-      }
+    /**
+     * Set marker color according to units and incidents
+     *
+     * @function
+     * @type ko.computed
+     * @returns {void}
+     */
+    this._type = ko.computed(function() {
+      var value = 0;
 
-      var hasFree = false, hasHome = false, hasFixed = false,
-          hasOpen = false, hasTask = false, hasBlue = false, hasRelocation = false,
-          hasStandby = false, hasToHome = false, hasHoldPosition = false;
-
-      ko.utils.arrayForEach(this.units(), function(unit) {
-        if (unit.portable) {
-          if (unit.isFree()) {
-            hasFree = true;
-          }
-          if (unit.isHome()) {
-            hasHome = true;
-          }
-        } else {
-          hasFixed = true;
-        }
+      ko.utils.arrayForEach(this._points(), function(item) {
+        value |= item.type();
       });
 
-      ko.utils.arrayForEach(this.bo(), function(inc) {
-        if (inc.isNewOrOpen()) {
-          hasOpen = true;
-        }
-        switch (inc.type()) {
-          case Coceso.Constants.Incident.type.task:
-          case Coceso.Constants.Incident.type.transport:
-            hasTask = true;
-            if (inc.blue()) {
-              hasBlue = true;
-            }
-            break;
-          case Coceso.Constants.Incident.type.tohome:
-            hasToHome = true;
-            break;
-        }
-      });
-
-      ko.utils.arrayForEach(this.ao(), function(inc) {
-        if (inc.disableBO() && inc.isNewOrOpen()) {
-          hasOpen = true;
-        }
-        switch (inc.type()) {
-          case Coceso.Constants.Incident.type.task:
-          case Coceso.Constants.Incident.type.transport:
-            hasTask = true;
-            if (inc.blue()) {
-              hasBlue = true;
-            }
-            break;
-          case Coceso.Constants.Incident.type.relocation:
-            hasRelocation = true;
-            break;
-          case Coceso.Constants.Incident.type.holdposition:
-            hasHoldPosition = true;
-            break;
-          case Coceso.Constants.Incident.type.standby:
-            hasStandby = true;
-            break;
-          case Coceso.Constants.Incident.type.tohome:
-            hasToHome = true;
-            break;
-        }
-      });
-
-      var type = null;
-      switch (true) {
-        case hasOpen:
-          type = "open";
-          break;
-        case hasFree:
-          type = "free";
-          break;
-        case hasFixed:
-          type = "fixed";
-          break;
-        case hasBlue:
-          type = "blue";
-          break;
-        case hasRelocation:
-          type = "relocation";
-          break;
-        case hasTask:
-          type = "task";
-          break;
-        case hasHome:
-          type = "home";
-          break;
-        case hasHoldPosition:
-          type = "holdposition";
-          break;
-        case hasStandby:
-          type = "standby";
-          break;
-        case hasToHome:
-          type = "tohome";
-          break;
-      }
-
-      this.options.icon.options.className = "leaflet-div-icon icon-" + type;
-      this.options.icon.options.html = (this.units().length + this.bo().length + this.ao().length > 1) ? "<span class='glyphicon glyphicon-plus'></span>" : "";
+      this.options.icon.options.className = "leaflet-div-icon icon-" + Coceso.Map.Point.prototype.getType(value);
       this.setIcon(this.options.icon);
     }, this);
 
+    /**
+     * Get popup content
+     *
+     * @function
+     * @type ko.computed
+     * @returns {String}
+     */
     this.popupContent = ko.computed(function() {
-      if (!this.showMarker()) {
+      if (!this._points().length) {
         return "";
       }
-
-      var units = "", incidents = "", content = "";
-      function printIncident(inc) {
-        if (inc.isStandby() || inc.isHoldPosition() || inc.isToHome()) {
-          var tasks = inc.units();
-          if (tasks.length > 0 && tasks[0].unit()) {
-            units += "<li><strong>" + inc.typeChar() + "</strong>: " + tasks[0].unit().call.escapeHTML();
-            if (tasks[0].isAssigned()) {
-              units += " (" + tasks[0].localizedTaskState() + ")";
-            }
-            units += "</li>";
-          }
-        } else {
-          incidents += "<li>" + inc.assignedTitle();
-          if (inc.unitCount()) {
-            incidents += "<dl class='dl-horizontal list-narrower'>";
-            ko.utils.arrayForEach(inc.units(), function(task) {
-              incidents += "<dt>" + (task.unit() && task.unit().call.escapeHTML()) + "</dt><dd>" + task.localizedTaskState() + "</dd>";
-            });
-            incidents += "</dl>";
-          }
-          incidents += "</li>";
-        }
+      if (this._points().length === 1) {
+        return this._points()[0].popupContent();
       }
-
-      ko.utils.arrayForEach(this.bo(), printIncident);
-      ko.utils.arrayForEach(this.ao(), printIncident);
-      ko.utils.arrayForEach(this.units(), function(unit) {
-        units += "<li>";
-        if (unit.portable) {
-          if (unit.isFree()) {
-            units += "<span class='glyphicon glyphicon-exclamation-sign'></span>";
-          } else if (unit.isHome()) {
-            units += "<span class='glyphicon glyphicon-home'></span>";
-          } else {
-            units += "<span class='glyphicon glyphicon-map-marker'></span>";
-          }
-        } else {
-          units += "<span class='glyphicon glyphicon-record'></span>";
-        }
-        units += ": " + unit.call.escapeHTML() + "</li>";
+      var content = "";
+      ko.utils.arrayForEach(this._points(), function(item) {
+        content += "<h4>" + item.popupTitle() + "</h4>"
+            + item.popupContent();
       });
-
-      if (incidents) {
-        content += "<ul class='list-unstyled'>" + incidents + "</ul>";
-      }
-      if (units) {
-        content += "<ul class='list-unstyled'>" + units + "</ul>";
-      }
       return content;
     }, this);
 
+    /**
+     * Get popup title
+     *
+     * @function
+     * @type ko.computed
+     * @returns {String}
+     */
     this.popupTitle = ko.computed(function() {
-      return "<span class='pre'>" + point.info().escapeHTML() + "</span>";
+      return this._points().length ? this._points()[0].popupTitle() : "";
     }, this);
 
-    this.bindPopup(new L.Popup.Bootstrap(this.popupTitle, this.popupContent));
+    this.bindPopup(new Coceso.Map.Popup(this.popupTitle, this.popupContent));
   },
+  /**
+   * Add a point to the marker
+   *
+   * @param {Coceso.Map.Point} point
+   * @returns {void}
+   */
+  addPoint: function(point) {
+    this._points.push(point);
+    this._layer.addLayer(this);
+  },
+  /**
+   * Remove point from the marker
+   *
+   * @param {Coceso.Map.Point} point
+   * @returns {void}
+   */
+  removePoint: function(point) {
+    this._points.remove(point);
+    if (!this._points().length) {
+      this.destroy();
+    }
+  },
+  /**
+   * Destroy the object
+   *
+   * @returns {void}
+   */
   destroy: function() {
-    this._latlng.unsubscribe(this.update);
+    this._layer.removeLayer(this);
+    Coceso.Helpers.destroyComputed(this);
   }
 });
 
-L.LayerGroup.Incident = L.LayerGroup.extend({
-  initialize: function(inc) {
-    this.incident = inc;
-    this._layers = {};
-    var line = new L.Polyline([[0, 0], [0, 0]]);
-
-    this._updateLine = ko.computed(function() {
-      var aLat = inc.ao().lat(), aLng = inc.ao().lng(),
-          bLat = inc.bo().lat(), bLng = inc.bo().lng();
-
-      if (aLat && aLng && bLat && bLng) {
-        line.setLatLngs([[bLat, bLng], [aLat, aLng]]);
-        this.addLayer(line);
-      } else {
-        this.removeLayer(line);
+/**
+ * Show points with unknown coordinates
+ *
+ * @constructor
+ * @extends L.Control
+ * @param {ControlOptions} options
+ */
+Coceso.Map.NoCoordsControl = L.Control.extend({
+  options: {
+    position: "bottomleft"
+  },
+  initialize: function(options) {
+    L.Control.prototype.initialize.call(this, options);
+    this._points = {};
+    this._ul = L.DomUtil.create("ul", "list-unstyled");
+  },
+  onAdd: function() {
+    this._container = L.DomUtil.create("div", "map-nocoords");
+    L.DomUtil.create("h3", '', this._container).innerText = _("label.map.nocoords");
+    this._container.appendChild(this._ul);
+    this._container.style.display = this._ul.firstChild ? "" : "none";
+    return this._container;
+  },
+  /**
+   * Add point to list
+   *
+   * @param {Coceso.Map.Point} point
+   * @returns {void}
+   */
+  addPoint: function(point) {
+    if (!this._points[point.id]) {
+      this._points[point.id] = new Coceso.Map.NoCoordsMarker(point);
+      this._ul.appendChild(this._points[point.id].el);
+      if (this._container) {
+        this._container.style.display = "";
       }
-    }, this);
-
-    this._updateColor = ko.computed(function() {
-      if (inc.isTask() || inc.isTransport()) {
-        line.setStyle({color: inc.blue() ? "#0064cd" : "#9999ff"});
-      } else if (inc.isToHome()) {
-        line.setStyle({color: "#99ff99"});
-      } else {
-        line.setStyle({color: "#03f"});
+    }
+  },
+  /**
+   * Remove point from list
+   *
+   * @param {Coceso.Map.Point} point
+   * @returns {void}
+   */
+  removePoint: function(point) {
+    var item = this._points[point.id];
+    if (item) {
+      this._ul.removeChild(item.el);
+      item.destroy();
+      delete this._points[point.id];
+      if (!this._ul.firstChild) {
+        this._container.style.display = "none";
       }
-    }, this);
+    }
+  }
+});
+
+/**
+ * Marker item for the unknown coordinates list
+ *
+ * @constructor
+ * @param {Coceso.Map.Point} point
+ */
+Coceso.Map.NoCoordsMarker = function(point) {
+  this.el = L.DomUtil.create("li", "clearfix");
+
+  var icon = L.divIcon({iconSize: [18, 18]}).createIcon();
+  this.el.appendChild(icon);
+  var title = L.DomUtil.create('div', '', this.el);
+
+  this._updateTitle = ko.computed(function() {
+    title.innerHTML = point.popupTitle();
+  });
+  this._updateType = ko.computed(function() {
+    icon.className = "leaflet-marker-icon leaflet-div-icon icon-"
+        + point.getType(point.type());
+  });
+  this._updateCount = ko.computed(function() {
+    icon.innerHTML = point.count() > 1 ? "<span class='glyphicon glyphicon-plus'></span>" : "";
+  });
+};
+Coceso.Map.NoCoordsMarker.prototype = Object.create({}, /** @lends Coceso.Map.NoCoordsMarker.prototype */ {
+  /**
+   * Destroy the object
+   *
+   * @function
+   * @returns {void}
+   */
+  destroy: {
+    value: function() {
+      Coceso.Helpers.destroyComputed(this);
+    }
   }
 });
 

@@ -111,19 +111,19 @@
             <span data-bind="text: title"></span>
             <span class="incident_ao clearfix" data-bind="visible: !disableBO() && !disableAAO()">
               <span class="ui-icon ui-icon-arrowthick-1-e"></span>
-              <span data-bind="text: ao().info"></span>
+              <span data-bind="text: ao.info"></span>
             </span>
           </h3>
           <div>
             <dl class="dl-horizontal list-spacing list-narrower">
-              <!-- ko if: bo().info() && !disableBO() -->
+              <!-- ko if: bo.id() && !disableBO() -->
               <dt><spring:message code="label.incident.bo"/></dt>
-              <dd><span class="pre" data-bind="text: bo().info"></span></dd>
+              <dd><span class="pre" data-bind="text: bo.info"></span></dd>
               <!-- /ko -->
 
               <!-- ko ifnot: disableAAO -->
               <dt><spring:message code="label.incident.ao"/></dt>
-              <dd><span class="pre" data-bind="text: ao().info"></span></dd>
+              <dd><span class="pre" data-bind="text: ao.info"></span></dd>
               <!-- /ko -->
 
               <!-- ko if: info -->

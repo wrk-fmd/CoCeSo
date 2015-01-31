@@ -43,7 +43,7 @@
           <div class="form-group col-md-6">
             <label for="home"><spring:message code="label.unit.home"/>:</label>
             <textarea id="home" name="home" rows="3" class="form-control"
-                      data-bind="value: model() && model().home().info" readonly></textarea>
+                      data-bind="value: model() && model().home.info()" readonly></textarea>
           </div>
         </div>
 

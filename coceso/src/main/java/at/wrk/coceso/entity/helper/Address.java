@@ -1,6 +1,8 @@
 package at.wrk.coceso.entity.helper;
 
 import at.wrk.coceso.entity.Point;
+import org.apache.commons.lang.StringUtils;
+
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -155,15 +157,27 @@ public class Address {
     }
   }
 
+  public boolean checkStreet(Address b) {
+    if (street == null || b.street == null) {
+      return false;
+    }
+    return StringUtils.getLevenshteinDistance(street, b.street) / (b.street.length() + 1) <= 0.2;
+  }
+
   public boolean exactMatch(Address b) {
     return (Objects.equals(numberFrom, b.numberFrom)
             && Objects.equals(numberTo, b.numberTo)
             && Objects.equals(numberLetter, b.numberLetter)
             && Objects.equals(numberBlock, b.numberBlock)
-            && (b.postCode == null || Objects.equals(postCode, b.postCode)));
+            && (b.postCode == null || Objects.equals(postCode, b.postCode))
+            && checkStreet(b));
   }
 
   public boolean contains(Address b) {
+    if (!checkStreet(b)) {
+      return false;
+    }
+
     if (numberFrom == null || b.numberFrom == null) {
       // No number
       return Objects.equals(numberFrom, b.numberFrom);
@@ -191,13 +205,17 @@ public class Address {
       return false;
     }
 
-    if (b.numberBlock != null && Objects.equals(numberBlock, b.numberBlock)) {
+    if (b.numberBlock != null && !Objects.equals(numberBlock, b.numberBlock)) {
       // If looking for a block they have to match
       return false;
     }
 
-    // Postal code has to match
-    return (b.postCode == null || Objects.equals(postCode, b.postCode));
+    if (b.postCode != null && !Objects.equals(postCode, b.postCode)) {
+      // Postal code has to match
+      return false;
+    }
+
+    return checkStreet(b);
   }
 
   @Override

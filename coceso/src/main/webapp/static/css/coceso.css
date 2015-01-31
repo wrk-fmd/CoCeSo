@@ -518,7 +518,7 @@ span.incident_blue {
   background-color: #99ff99;
 }
 
-.unit_state .unit_state_ishome, .icon-home {
+.unit_state .unit_state_ishome, .icon-home, .icon-fixed {
   background-color: #33ff66;
 }
 
@@ -652,7 +652,12 @@ body.map {
 }
 
 .leaflet-div-icon .glyphicon {
-  left: 2px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -5px;
+  margin-left: -5px;
+  font-size: 10px;
 }
 
 .leaflet-popover {
@@ -667,6 +672,76 @@ body.map {
 
 .leaflet-overlay-pane svg {
   z-index: 10;
+}
+
+.map-nocoords, .map-legend {
+  background: #fff;
+  background: rgba(255,255,255,0.8);
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  border-radius: 5px;
+}
+
+.map-nocoords, .map-legend-expanded {
+  padding: 6px 10px 6px 6px;
+  color: #333;
+}
+
+.map-nocoords ul, .map-legend ul {
+  margin-bottom: 0;
+}
+
+.map-nocoords li > *, .map-legend li > * {
+  vertical-align: middle;
+  float: left;
+}
+
+.map-nocoords .leaflet-marker-icon, .map-legend .leaflet-marker-icon {
+  position: relative;
+  margin: 2px 5px 2px 0 !important;
+  display: inline-block;
+}
+
+.map-nocoords h3 {
+  margin-top: 0;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.map-legend-toggle {
+  position: relative;
+  display: block;
+  width: 36px;
+  height: 36px;
+}
+
+.leaflet-touch .map-legend-toggle {
+  width: 44px;
+  height: 44px;
+}
+
+.map-legend .map-legend-list,
+.map-legend-expanded .map-legend-toggle {
+  display: none;
+}
+
+.map-legend-toggle .glyphicon {
+  color: #666;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -12px;
+  margin-left: -12px;
+  font-size: 24px;
+}
+
+.map-legend-expanded .map-legend-list {
+  display: block;
+  position: relative;
+}
+
+.map-legend .leaflet-div-icon {
+  width: 18px;
+  height: 18px;
 }
 
 /**

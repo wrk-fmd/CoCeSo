@@ -60,6 +60,9 @@ $.ui.dialog.prototype._init = function() {
 };
 
 $.ui.dialog.prototype.destroy = function() {
+  //Untrack instance
+  this._untrackInstance();
+
   //Run the original destruction code
   destroy.apply(this, arguments);
 
@@ -214,6 +217,7 @@ $.widget("ui.winman", {
   _close: function(event) {
     //Update the taskbar after a window is closed
     if (this.windows[event.target.id]) {
+      this.windows[event.target.id].empty();
       this.windows[event.target.id].remove();
     }
     if (this.buttons[event.target.id]) {

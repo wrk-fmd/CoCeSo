@@ -27,11 +27,11 @@
 
         <!-- ko if: hasHome -->
         <dt><span class="glyphicon glyphicon-home"></span></dt>
-        <dd><span class="pre" data-bind="text: home().info"></span></dd>
+        <dd><span class="pre" data-bind="text: home.info"></span></dd>
         <!-- /ko -->
 
         <dt><span class="glyphicon glyphicon-map-marker"></span></dt>
-        <dd><span class="pre" data-bind="text: position().info() === '' ? 'N/A' : position().info()"></span></dd>
+        <dd><span class="pre" data-bind="text: position.id() ? position.info() : 'N/A'"></span></dd>
 
         <dt><spring:message code="label.unit.state"/></dt>
         <dd>

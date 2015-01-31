@@ -7,6 +7,7 @@ import java.util.Objects;
 import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 class ViennaAddress extends Address {
@@ -57,11 +58,20 @@ class ViennaAddress extends Address {
    */
   @Override
   public Point getCoordinates() {
+    if (postCode != null && (postCode < 1010 || postCode >= 1240)) {
+      return null;
+    }
+
     String query = getStreetString();
     if (query == null) {
       return null;
     }
-    AddressInfo info = new RestTemplate().getForObject("http://data.wien.gv.at/daten/OGDAddressService.svc/GetAddressInfo?crs=EPSG:4326&Address={query}", AddressInfo.class, query);
+    AddressInfo info;
+    try {
+      info = new RestTemplate().getForObject("http://data.wien.gv.at/daten/OGDAddressService.svc/GetAddressInfo?crs=EPSG:4326&Address={query}", AddressInfo.class, query);
+    } catch (RestClientException e) {
+      return null;
+    }
 
     if (info == null || info.count() <= 0) {
       return null;
@@ -84,7 +94,7 @@ class ViennaAddress extends Address {
     }
 
     // Only one entry or no match found, use lowest ranking
-    return info.getEntries()[0].getPoint();
+    return info.getEntries()[0].getAddress().checkStreet(this) ? info.getEntries()[0].getPoint() : null;
   }
 
   @JsonIgnoreProperties(ignoreUnknown = true)

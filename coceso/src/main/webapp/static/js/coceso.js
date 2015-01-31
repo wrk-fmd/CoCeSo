@@ -158,6 +158,35 @@ Coceso.Helpers = {
     }
 
     return "";
+  },
+  /**
+   * Helper function to destroy all computated observables in an object
+   *
+   * @param {Object} obj
+   * @returns {void}
+   */
+  destroyComputed: function(obj) {
+    var i;
+    for (i in obj) {
+      if (obj.hasOwnProperty(i) && ko.isComputed(obj[i])) {
+        obj[i].dispose();
+        delete obj[i];
+      }
+    }
+  },
+  /**
+   * Helper function to delete all properties in an object
+   *
+   * @param {Object} obj
+   * @returns {void}
+   */
+  cleanObj: function(obj) {
+    var i;
+    for (i in obj) {
+      if (obj.hasOwnProperty(i)) {
+        delete obj[i];
+      }
+    }
   }
 };
 
@@ -210,6 +239,7 @@ Coceso.Ajax = {
           });
           for (var i in Coceso.Data[type].models()) {
             if (!found[i]) {
+              Coceso.Data[type].models()[i].destroy();
               delete Coceso.Data[type].models()[i];
               mutated = true;
             }
@@ -372,21 +402,6 @@ Coceso.Models = {};
  * @type Object
  */
 Coceso.ViewModels = {};
-
-/**
- * Helper function to destroy all computated observables in an object
- *
- * @param {Object} obj
- * @returns {void}
- */
-Coceso.ViewModels.destroyComputed = function(obj) {
-  var i;
-  for (i in obj) {
-    if (obj.hasOwnProperty(i) && ko.isComputed(obj[i])) {
-      obj[i].dispose();
-    }
-  }
-};
 
 RegExp.escape = function(s) {
   return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
