@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%--
 /**
@@ -21,7 +22,7 @@
   <body style="display: none">
     <div class="ajax_content" data-bind="with: model">
 
-      <dl class="dl-horizontal list-spacing">
+      <dl class="dl-horizontal list-spacing list-narrow">
         <dt><spring:message code="label.unit.call"/></dt>
         <dd data-bind="text: call"></dd>
 
@@ -58,15 +59,23 @@
         <dd><span class="pre" data-bind="text: info"></span></dd>
         <!-- /ko -->
       </dl>
+      <!-- ko if: incidentCount -->
       <hr/>
-      <dl class="dl-horizontal list-spacing">
+      <dl class="dl-horizontal list-spacing list-narrow">
         <!-- ko foreach: incidents -->
         <dt data-bind="html: incident() && incident().assignedTitle()"></dt>
-        <dd data-bind="text: localizedTaskState"></dd>
+        <dd>
+          <span data-bind="text: localizedTaskState"></span>
+          <button type="button" class="btn btn-xs btn-default" data-bind="click: nextState">
+            <span class="glyphicon glyphicon-forward"></span>
+          </button>
+        </dd>
         <!-- /ko -->
       </dl>
+      <!-- /ko -->
 
       <div data-bind="if: crew.length">
+        <hr/>
         <label><spring:message code="label.crew"/>:</label>
         <div class="table-responsive">
           <table class="table table-striped table-condensed">
@@ -96,6 +105,13 @@
           </table>
         </div>
       </div>
+
+      <p>
+        <a href="#" target="_blank" title="<spring:message code="label.log.view"/>" class="btn btn-default btn-sm"
+            data-bind="attr: {href: '<c:url value="/dashboard?uid="/>' + id}">
+          <spring:message code="label.log.view"/>
+        </a>
+      </p>
     </div>
   </body>
 </html>

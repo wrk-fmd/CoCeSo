@@ -102,41 +102,6 @@
         </div>
 
         <div class="clearfix">
-          <div class="form-group col-md-12">
-            <label><spring:message code="label.crew" />:</label>
-            <div class="table-responsive">
-              <table class="table table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>
-                      <spring:message code="label.person.dnr"/>
-                    </th>
-                    <th>
-                      <spring:message code="label.person.name"/>
-                    </th>
-                    <th>
-                      <spring:message code="label.person.contact"/>
-                    </th>
-                  </tr>
-                </thead>
-
-                <!-- ko if: model -->
-                <tbody data-bind="foreach: model().crew">
-                  <tr>
-                    <td data-bind="text: dNr"></td>
-                    <td>
-                      <strong data-bind="text: sur_name"></strong> <span data-bind="text: given_name"></span>
-                    </td>
-                    <td class="pre" data-bind="text: contact"></td>
-                  </tr>
-                </tbody>
-                <!-- /ko -->
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <div class="clearfix">
           <div class="form-group col-md-offset-2 col-md-10">
             <button type="button" class="btn btn-success" data-bind="enable: form.enable, click: ok">
               <spring:message code="label.ok"/>
