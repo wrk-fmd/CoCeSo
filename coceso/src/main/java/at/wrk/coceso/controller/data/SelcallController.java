@@ -1,6 +1,7 @@
 package at.wrk.coceso.controller.data;
 
 import at.wrk.coceso.entity.Selcall;
+import at.wrk.coceso.entity.helper.TransceiverCallRequest;
 import at.wrk.coceso.service.SelcallService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,22 +25,23 @@ public class SelcallController {
     @Qualifier("mockup")
     SelcallService selcallService;
 
-    @RequestMapping(value = "receive", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "receive", method = RequestMethod.POST,
+            produces = "application/json", consumes = "application/json")
     @ResponseBody
-    public DeferredResult<Selcall> receive() {
+    public DeferredResult<Selcall> receive(@RequestBody TransceiverCallRequest request) {
         DeferredResult<Selcall> result = new DeferredResult<>();
 
-        selcallService.receiveRequest(result);
+        selcallService.receiveRequest(request.getPort(), result);
 
         return result;
     }
 
-    @RequestMapping(value = "send", method = RequestMethod.POST, produces = "application/json")
+    /*@RequestMapping(value = "send", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     public String send(@RequestBody Selcall selcall) {
 
         return String.format("{\"sucess\":%b}", selcallService.sendSelcall(selcall));
-    }
+    }*/
 
     @RequestMapping(value = "getLastHour", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
