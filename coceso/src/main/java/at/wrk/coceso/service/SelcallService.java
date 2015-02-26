@@ -10,9 +10,9 @@ import java.util.List;
  */
 public interface SelcallService {
 
-    public void receiveRequest(DeferredResult<Selcall> result);
+    public void receiveRequest(String port, DeferredResult<Selcall> result);
 
     public List<Selcall> getLastHour();
 
-    public boolean sendSelcall(Selcall selcall);
+    public boolean sendSelcall(String port, Selcall selcall);
 }

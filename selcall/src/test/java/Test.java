@@ -1,5 +1,4 @@
-import at.wrk.selcall.IllegalMessageException;
-import at.wrk.selcall.SelcallManager;
+import at.wrk.selcall.TransceiverManager;
 import org.apache.log4j.Logger;
 
 /**
@@ -9,10 +8,10 @@ public class Test {
     public final static Logger LOG = Logger.getLogger(Test.class);
 
     public static void main(String[] args) {
-        SelcallManager sel = SelcallManager.getInstance();
+        TransceiverManager sel = TransceiverManager.getInstance();
 
         try {
-            Thread.sleep(2000);
+            /*Thread.sleep(2000);
 
             try {
                 sel.sendMessage("12345");
@@ -32,7 +31,7 @@ public class Test {
                 sel.sendMessage(null);
             } catch (IllegalMessageException e) {
                 LOG.warn("", e);
-            }
+            }*/
 
             Thread.sleep(60000);
         } catch (InterruptedException e) {
