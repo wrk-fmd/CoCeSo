@@ -53,7 +53,7 @@ public class SelcallServiceMockup implements SelcallService {
     }
 
     @Override
-    public void receiveRequest(DeferredResult<Selcall> result) {
+    public void receiveRequest(String port, DeferredResult<Selcall> result) {
         LOG.debug("Add Result to queue");
         queue.add(result);
 
@@ -71,7 +71,7 @@ public class SelcallServiceMockup implements SelcallService {
     }
 
     @Override
-    public boolean sendSelcall(Selcall selcall) {
+    public boolean sendSelcall(String port, Selcall selcall) {
         if(selcall == null || selcall.getAni() == null) {
             LOG.info("Selcall or ANI is null");
             return false;
