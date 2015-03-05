@@ -321,6 +321,16 @@ Coceso.UI = {
     return false;
   },
   /**
+   * Open the patient edit Window
+   *
+   * @param {Object} dialog Dialog options
+   * @returns {boolean}
+   */
+  openRadio: function(dialog) {
+    this.openWindow(Coceso.Conf.contentBase + "radio.html", new Coceso.ViewModels.Radio(), $.extend({position: {at: "left+40% top+10%"}}, dialog));
+    return false;
+  },
+  /**
    * Open the map window
    *
    * @param {Object} options Viewmodel options
@@ -1735,7 +1745,7 @@ Coceso.Models.Unit.prototype = Object.create({}, /** @lends Coceso.Models.Unit.p
   sendCall: {
     value: function() {
       if (this.ani) {
-        Coceso.Ajax.save(JSON.stringify({ani: this.ani}), "selcall/send.json");
+        Coceso.Ajax.save(JSON.stringify({ani: this.ani}), "radio/send.json");
       }
     }
   },
@@ -1957,6 +1967,38 @@ Coceso.Models.Log = function(data) {
       self.incident.openForm();
     }
   };
+
+};
+
+Coceso.Models.RadioCall = function(data) {
+  data = data || {};
+
+  this.timestamp = data.timestamp;
+  this.time = Coceso.Helpers.fmtTime(data.timestamp);
+  this.ani = data.ani;
+  this.port = data.port;
+
+  this.unit = ko.pureComputed(function() {
+    if (Coceso.Data.Radio.aniMap[this.ani]) {
+      return Coceso.Data.getUnit(Coceso.Data.Radio.aniMap[this.ani]);
+    }
+    var id, models = Coceso.Data.units.models();
+    for (id in models) {
+      if (models[id].ani === this.ani) {
+        Coceso.Data.Radio.aniMap[this.ani] = id;
+        return models[id];
+      }
+    }
+    return null;
+  }, this);
+
+  this.timer = ko.pureComputed(function() {
+    return Coceso.Clock.timestamp() - this.timestamp;
+  }, this);
+
+  this.fmtTimer = ko.pureComputed(function() {
+    return Coceso.Helpers.fmtInterval(this.timer());
+  }, this);
 
 };
 
@@ -3201,6 +3243,115 @@ Coceso.ViewModels.CustomLogEntry = function(data) {
     $("#" + self.ui).dialog("destroy");
   };
 };
+
+/**
+ * ViewModel for incoming radio calls
+ *
+ * @constructor
+ */
+Coceso.ViewModels.Radio = function() {
+  var self = this;
+
+  Coceso.Helpers.initErrorHandling(this);
+
+  if (!Coceso.Data.Radio) {
+    // Initialize Object
+    Coceso.Data.Radio = {
+      calls: ko.observableArray(),
+      ports: ko.observableArray(),
+      aniMap: {},
+      count: 0,
+      interval: null
+    };
+
+    // Load past data
+    $.ajax({
+      dataType: "json",
+      url: Coceso.Conf.jsonBase + "radio/getLast/10.json",
+      success: function(data) {
+        ko.utils.arrayForEach(data, function(item) {
+          Coceso.Data.Radio.calls.unshift(new Coceso.Models.RadioCall(item));
+        });
+      },
+      error: function() {
+        if (Coceso.UI && Coceso.UI.Notifications) {
+          Coceso.UI.Notifications.connectionError(true);
+        }
+      }
+    });
+
+    // Subscribe to updates
+    Coceso.Socket.Client.subscribe('/topic/radio/incoming', function(data) {
+      Coceso.Data.Radio.calls.unshift(new Coceso.Models.RadioCall(JSON.parse(data.body)));
+    });
+
+    // Load available ports
+    (function getPorts() {
+      $.ajax({
+        dataType: "json",
+        url: Coceso.Conf.jsonBase + "radio/ports.json",
+        success: function(data) {
+          Coceso.Data.Radio.ports(data);
+        },
+        error: function() {
+          // Error loading ports, try again
+          window.setTimeout(getPorts, 5000);
+        }
+      });
+    })();
+
+    // Remove all entries older than 10 minutes
+    Coceso.Data.Radio.interval = window.setInterval(function() {
+      var time = new Date() - 600000;
+      Coceso.Data.Radio.calls.remove(function(call) {
+        return call.timestamp < time;
+      });
+    }, 60000);
+  }
+  Coceso.Data.Radio.count++;
+
+  this.port = ko.observable();
+  this.dialogTitle = ko.computed(function() {
+    var port = this.port();
+    return port ? "Radio: " + port : "Radio";
+  }, this);
+
+  this.calls = Coceso.Data.Radio.calls.extend({
+    list: {
+      filter: {
+        port: function(call) {
+          return (!self.port() || !call.port || call.port === self.port());
+        }
+      },
+      sort: function(a, b) {
+        return b.timestamp - a.timestamp;
+      }
+    }
+  });
+};
+Coceso.ViewModels.Radio.prototype = Object.create({}, /** @lends Coceso.ViewModels.Radio.prototype */ {
+  /**
+   * Destroy the ViewModel
+   *
+   * @function
+   * @return {void}
+   */
+  destroy: {
+    value: function() {
+      var store = Coceso.Data.Radio;
+      Coceso.Helpers.destroyComputed(this);
+      store.count--;
+      if (!store.count) {
+        delete Coceso.Data.Radio;
+        Coceso.Socket.Client.unsubscribe('/topic/radio/incoming');
+        window.clearInterval(store.interval);
+        ko.utils.arrayForEach(store.calls(), function(call) {
+          Coceso.Helpers.destroyComputed(call);
+        });
+      }
+    }
+  }
+});
 
 /**
  * Constructor for the situation map
@@ -4528,48 +4679,9 @@ Coceso.Map.NoCoordsMarker.prototype = Object.create({}, /** @lends Coceso.Map.No
  * @constructor
  */
 Coceso.ViewModels.Notifications = function() {
-  var self = this;
+  Coceso.Clock.init();
 
-  /**
-   * Current clock time
-   *
-   * @function
-   * @type ko.observable
-   * @returns {String}
-   */
-  this.clock_time = ko.observable("00:00:00");
-
-  /**
-   * Local clock offset to correct time
-   *
-   * @type integer
-   */
-  this.clock_offset = 0;
-
-  /**
-   * Update the clock
-   *
-   * @returns {void}
-   */
-  this.clock_update = function() {
-    var currentTime = new Date(new Date() - self.clock_offset),
-        currentHours = currentTime.getHours(),
-        currentMinutes = currentTime.getMinutes(),
-        currentSeconds = currentTime.getSeconds();
-
-    currentMinutes = (currentMinutes < 10 ? "0" : "") + currentMinutes;
-    currentSeconds = (currentSeconds < 10 ? "0" : "") + currentSeconds;
-
-    self.clock_time(currentHours + ":" + currentMinutes + ":" + currentSeconds);
-  };
-
-  //Start clock
-  $.get(Coceso.Conf.jsonBase + "timestamp", function(data) {
-    if (data.time) {
-      self.clock_offset = new Date() - data.time;
-    }
-  });
-  setInterval(this.clock_update, 1000);
+  this.clock_time = Coceso.Clock.time;
 
   /**
    * Connection error

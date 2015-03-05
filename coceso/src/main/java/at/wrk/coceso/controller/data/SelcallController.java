@@ -1,51 +1,38 @@
 package at.wrk.coceso.controller.data;
 
 import at.wrk.coceso.entity.Selcall;
-import at.wrk.coceso.entity.helper.TransceiverCallRequest;
 import at.wrk.coceso.service.SelcallService;
+import java.util.List;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.request.async.DeferredResult;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Created by Robert on 14.06.2014.
  */
-@Controller
-@RequestMapping("/data/selcall")
+@RestController
+@RequestMapping("/data/radio")
 public class SelcallController {
 
-    @Autowired
-    @Qualifier("mockup")
-    SelcallService selcallService;
+  @Autowired
+  SelcallService selcallService;
 
-    @RequestMapping(value = "receive", method = RequestMethod.POST,
-            produces = "application/json", consumes = "application/json")
-    @ResponseBody
-    public DeferredResult<Selcall> receive(@RequestBody TransceiverCallRequest request) {
-        DeferredResult<Selcall> result = new DeferredResult<>();
+  @RequestMapping(value = "send", method = RequestMethod.POST, produces = "application/json")
+  public String send(@RequestBody Selcall selcall) {
+    return String.format("{\"sucess\":%b}", selcallService.sendSelcall(selcall));
+  }
 
-        selcallService.receiveRequest(request.getPort(), result);
+  @RequestMapping(value = "ports", method = RequestMethod.GET, produces = "application/json")
+  public Set<String> ports() {
+    return selcallService.getPorts();
+  }
 
-        return result;
-    }
-
-    /*@RequestMapping(value = "send", method = RequestMethod.POST, produces = "application/json")
-    @ResponseBody
-    public String send(@RequestBody Selcall selcall) {
-
-        return String.format("{\"sucess\":%b}", selcallService.sendSelcall(selcall));
-    }*/
-
-    @RequestMapping(value = "getLastHour", method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    public List<Selcall> getLastHour() {
-        return selcallService.getLastHour();
-    }
+  @RequestMapping(value = "getLast/{minutes}", method = RequestMethod.GET, produces = "application/json")
+  public List<Selcall> getLast(@PathVariable("minutes") int minutes) {
+    return selcallService.getLastMinutes(minutes);
+  }
 }

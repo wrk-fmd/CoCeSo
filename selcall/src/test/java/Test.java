@@ -1,4 +1,3 @@
-import at.wrk.selcall.TransceiverManager;
 import org.apache.log4j.Logger;
 
 /**
@@ -8,7 +7,6 @@ public class Test {
     public final static Logger LOG = Logger.getLogger(Test.class);
 
     public static void main(String[] args) {
-        TransceiverManager sel = TransceiverManager.getInstance();
 
         try {
             /*Thread.sleep(2000);

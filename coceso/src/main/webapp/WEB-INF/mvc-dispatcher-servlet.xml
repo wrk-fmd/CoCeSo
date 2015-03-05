@@ -2,12 +2,15 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:websocket="http://www.springframework.org/schema/websocket"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/mvc
-        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/websocket
+        http://www.springframework.org/schema/websocket/spring-websocket-4.0.xsd">
 
     <bean id='bCryptPasswordEncoder' class='org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder'/>
 
@@ -17,6 +20,8 @@
 
     <mvc:resources mapping="/static/i18n/**" location="classpath:i18n/" />
     <mvc:resources mapping="/static/**" location="/static/" />
+
+    <bean id="transceiverManager" class="at.wrk.selcall.TransceiverManagerImpl"/>
 
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/pages/"/>
@@ -49,7 +54,6 @@
               class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
             <property name="paramName" value="lang" />
         </bean>
-
     </mvc:interceptors>
 
     <bean id="localeResolver"
@@ -58,6 +62,11 @@
     </bean>
 
     <bean id="restTemplate" class="org.springframework.web.client.RestTemplate"/>
+
+    <websocket:message-broker>
+        <websocket:stomp-endpoint path="/data/socket"/>
+        <websocket:simple-broker prefix="/topic"/>
+    </websocket:message-broker>
 
     <import resource="points.xml" />
     <import resource="db-config.xml" />

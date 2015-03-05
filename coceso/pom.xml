@@ -14,6 +14,7 @@
   <properties>
     <spring.version>4.0.2.RELEASE</spring.version>
     <spring.security.version>3.2.4.RELEASE</spring.security.version>
+    <tomcat.version>7.0.55</tomcat.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
@@ -31,6 +32,18 @@
     </dependency>
 
     <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-websocket</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-messaging</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
       <version>3.0.1</version>
@@ -42,6 +55,13 @@
       <artifactId>jsp-api</artifactId>
       <version>2.1</version>
       <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.websocket</groupId>
+      <artifactId>javax.websocket-api</artifactId>
+      <version>1.1</version>
+      <!-- BUGFIX Tomcat7 <scope>provided</scope> -->
     </dependency>
 
     <dependency>
@@ -104,6 +124,16 @@
       <artifactId>jackson-mapper-asl</artifactId>
       <version>1.9.2</version>
     </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+      <version>2.5.1</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.5.1</version>
+    </dependency>
 
     <dependency>
       <groupId>postgresql</groupId>
@@ -115,6 +145,34 @@
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-dbcp</artifactId>
       <version>7.0.41</version>
+    </dependency>
+
+    <!-- BUGFIX for Tomcat7 without WS libraries, not needed with Tomcat8-->
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-catalina</artifactId>
+      <version>${tomcat.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-coyote</artifactId>
+      <version>${tomcat.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-util</artifactId>
+      <version>${tomcat.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <!-- /BUGFIX -->
+
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat7-websocket</artifactId>
+      <version>${tomcat.version}</version>
+      <!-- BUGFIX Tomcat7 <scope>provided</scope> -->
     </dependency>
 
     <!-- Spring Security -->

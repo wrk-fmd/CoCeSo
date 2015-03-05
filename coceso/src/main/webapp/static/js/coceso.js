@@ -187,6 +187,53 @@ Coceso.Helpers = {
         delete obj[i];
       }
     }
+  },
+  /**
+   * Helper function to generate WebSocket url from url
+   *
+   * @param {String} url HTTP url, may be absolute or relative to page or domain
+   * @returns {String} Absolute WebSocket url
+   */
+  getWSUrl: function(url) {
+    if (url.substr(0, 4) !== "http") {
+      if (url.charAt(0) !== "/") {
+        url = window.location.pathname + "/" + url;
+      }
+      url = window.location.origin + url;
+    }
+    return url.replace(/^http/, "ws");
+  },
+  /**
+   * Helper function to format a timestamp
+   *
+   * @param {String} timestamp
+   * @returns {String} Localized datetime string
+   */
+  fmtTime: function(timestamp) {
+    return new Date(timestamp).toLocaleTimeString();
+  },
+  fmtInterval: function(interval) {
+    interval = Math.round(interval / 1000);
+    if (interval <= 0) {
+      return "0:00";
+    }
+
+    var string = "", val;
+
+    val = interval % 60;
+    interval = Math.floor(interval / 60);
+    string = ":" + (val < 10 ? "0" : "") + val + string;
+
+    if (interval === 0) {
+      return "0" + string;
+    }
+    val = interval % 60;
+    interval = Math.floor(interval / 60);
+
+    if (interval === 0) {
+      return val + string;
+    }
+    return interval + ":" + (val < 10 ? "0" : "") + val + string;
   }
 };
 
@@ -309,6 +356,127 @@ Coceso.Ajax = {
     });
   }
 };
+
+/**
+ * WebSocket/STOMP related functions and data
+ *
+ * @namespace Coceso.Socket
+ * @type Object
+ */
+Coceso.Socket = {
+  Client: (function() {
+    var obj = {}, subscriptions = {}, client = null;
+
+    function getClient() {
+      if (!client && Stomp) {
+        client = Stomp.client(Coceso.Helpers.getWSUrl(Coceso.Conf.jsonBase + "socket"));
+        client.debug = null;
+        client.connect({}, onConnected, onError);
+      }
+      return client;
+    }
+
+    function onConnected() {
+      var topic;
+      if (Coceso.UI && Coceso.UI.Notifications) {
+        Coceso.UI.Notifications.connectionError(false);
+      }
+      for (topic in subscriptions) {
+        subscriptions[topic].subscription = client.subscribe(topic, subscriptions[topic].callback);
+      }
+    }
+
+    function onError() {
+      if (!client || !client.connected) {
+        // Error connecting or connection lost
+        client = null;
+        setTimeout(getClient, 5000);
+      }
+      if (Coceso.UI && Coceso.UI.Notifications) {
+        Coceso.UI.Notifications.connectionError(true);
+      }
+    }
+
+    obj.subscribe = function(topic, callback) {
+      if (subscriptions[topic]) {
+        obj.unsubscribe(topic);
+      }
+      subscriptions[topic] = {
+        callback: callback
+      };
+      var _client = getClient();
+      if (_client.connected) {
+        subscriptions[topic].subscription = _client.subscribe(topic, callback);
+      }
+      return 1;
+    };
+
+    obj.unsubscribe = function(topic) {
+      var s = subscriptions[topic];
+      delete subscriptions[topic];
+      if (s && s.subscription && client && client.connected) {
+        s.subscription.unsubscribe();
+      }
+    };
+
+    return obj;
+  })()
+};
+
+/**
+ * Constructor for the notification viewmodel
+ *
+ * @constructor
+ */
+Coceso.Clock = (function() {
+  var obj = {};
+
+  /**
+   * Current timestamp
+   *
+   * @function
+   * @type ko.observable
+   * @returns {String}
+   */
+  obj.timestamp = ko.observable(new Date());
+
+  /**
+   * Current clock time
+   *
+   * @function
+   * @type ko.observable
+   * @returns {String}
+   */
+  obj.time = ko.pureComputed(function() {
+    return Coceso.Helpers.fmtTime(this.timestamp());
+  }, obj);
+
+  /**
+   * Local clock offset to correct time
+   *
+   * @type integer
+   */
+  var offset = 0;
+
+  /**
+   * Initialize the clock
+   *
+   * @returns {void}
+   */
+  obj.init = function() {
+    //Start clock
+    $.get(Coceso.Conf.jsonBase + "timestamp", function(data) {
+      if (data.time) {
+        offset = new Date() - data.time;
+      }
+    });
+    setInterval(function() {
+      obj.timestamp(new Date() - offset);
+    }, 1000);
+  };
+
+  return obj;
+})();
 
 /**
  * Contains all methods for the concern locking

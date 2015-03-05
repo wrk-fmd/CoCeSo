@@ -19,7 +19,7 @@
 <html>
   <head>
     <title><spring:message code="label.coceso"/></title>
-    <t:head jquery="i18n, ui, ui.touch-punch" js="assets/typeahead.bundle, assets/leaflet, jquery.ui.winman, main"/>
+    <t:head jquery="i18n, ui, ui.touch-punch" js="assets/typeahead.bundle, assets/leaflet, assets/stomp, jquery.ui.winman, main"/>
     <script type="text/javascript">
       $(document).ready(function() {
         L.Browser.webkit3d = false;
@@ -205,6 +205,11 @@
                 <li>
                   <a href="<c:url value="/main/map"/>" target="_blank" title="<spring:message code="label.map"/>" onclick="return Coceso.UI.openMap();">
                     <span class="glyphicon glyphicon-globe"></span> <spring:message code="label.map"/>
+                  </a>
+                </li>
+                <li>
+                  <a href="<c:url value="/main/radio"/>" title="<spring:message code="label.map"/>" onclick="return Coceso.UI.openRadio();">
+                    <span class="glyphicon glyphicon-globe"></span> Radio
                   </a>
                 </li>
                 <%-- External (of Main Program) Links --%>

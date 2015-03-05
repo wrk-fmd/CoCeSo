@@ -3,7 +3,7 @@ package at.wrk.coceso.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
+import java.util.Calendar;
 
 /**
  * Created by Robert on 14.06.2014.
@@ -19,10 +19,13 @@ public class Selcall implements Serializable, Comparable<Selcall> {
     private String ani;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date timestamp;
+    private Calendar timestamp;
 
     @Enumerated(EnumType.STRING)
     private Direction direction;
+
+    @Transient
+    private String port;
 
     @Override
     public int compareTo(Selcall that) {
@@ -50,11 +53,11 @@ public class Selcall implements Serializable, Comparable<Selcall> {
         this.ani = ani;
     }
 
-    public Date getTimestamp() {
+    public Calendar getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Date timestamp) {
+    public void setTimestamp(Calendar timestamp) {
         this.timestamp = timestamp;
     }
 
@@ -64,5 +67,13 @@ public class Selcall implements Serializable, Comparable<Selcall> {
 
     public void setDirection(Direction direction) {
         this.direction = direction;
+    }
+
+    public String getPort() {
+      return port;
+    }
+
+    public void setPort(String port) {
+      this.port = port;
     }
 }

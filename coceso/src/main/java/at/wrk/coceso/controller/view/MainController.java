@@ -106,6 +106,11 @@ public class MainController {
     return "main_content/log_add";
   }
 
+  @RequestMapping(value = "radio", method = RequestMethod.GET)
+  public String radio() {
+    return "main_content/radio";
+  }
+
   @RequestMapping(value = "map", method = RequestMethod.GET)
   public String map() {
     return "main_content/map";
