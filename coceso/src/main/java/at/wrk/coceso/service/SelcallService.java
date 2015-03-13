@@ -22,7 +22,7 @@ public class SelcallService implements ReceivedMessageListener {
 
     private static final Logger LOG = Logger.getLogger(SelcallService.class);
 
-    TransceiverManager transceiverManager = TransceiverManagerImpl.getInstance();
+    TransceiverManager transceiverManager = TransceiverManagerMockup.getInstance();
 
     @Autowired
     private SelcallDao selcallDao;
