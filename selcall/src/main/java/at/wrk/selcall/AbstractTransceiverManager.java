@@ -5,7 +5,7 @@ import java.util.Set;
 
 public abstract class AbstractTransceiverManager implements TransceiverManager, ReceivedMessageListener {
 
-  private final Set<ReceivedMessageListener> listeners = new HashSet();
+  private final Set<ReceivedMessageListener> listeners = new HashSet<>();
 
   @Override
   public void addListener(ReceivedMessageListener listener) {

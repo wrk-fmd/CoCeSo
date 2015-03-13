@@ -21,7 +21,7 @@
     <mvc:resources mapping="/static/i18n/**" location="classpath:i18n/" />
     <mvc:resources mapping="/static/**" location="/static/" />
 
-    <bean id="transceiverManager" class="at.wrk.selcall.TransceiverManagerImpl"/>
+    <!--bean id="transceiverManager" class="at.wrk.selcall.TransceiverManagerImpl"/-->
 
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/pages/"/>

@@ -8,8 +8,12 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.PostConstruct;
+
+import at.wrk.selcall.TransceiverManagerImpl;
+import at.wrk.selcall.TransceiverManagerMockup;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -18,8 +22,7 @@ public class SelcallService implements ReceivedMessageListener {
 
   private static final Logger LOG = Logger.getLogger(SelcallService.class);
 
-  @Autowired
-  TransceiverManager transceiverManager;
+  TransceiverManager transceiverManager = TransceiverManagerMockup.getInstance();
 
   @Autowired
   private SelcallDao selcallDao;
