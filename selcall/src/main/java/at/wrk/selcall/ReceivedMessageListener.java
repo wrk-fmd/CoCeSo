@@ -5,4 +5,5 @@ package at.wrk.selcall;
  */
 public interface ReceivedMessageListener {
     public void handleMessage(String port, String message);
+    public void handleEmergency(String port, String sender);
 }

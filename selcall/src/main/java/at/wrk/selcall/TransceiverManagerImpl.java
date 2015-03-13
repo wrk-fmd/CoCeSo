@@ -300,6 +300,9 @@ public class TransceiverManagerImpl extends AbstractTransceiverManager {
                 if (message.substring(0, 2).equals("I1") && message.length() >= MESSAGE_LENGTH + 2) {
                     LOG.info(String.format("Decoded Message: '%s'", message));
                     receivedMessageListener.handleMessage(port, message.substring(2, MESSAGE_LENGTH + 2));
+                } else if (message.substring(0, 1).equals("E") && message.length() >= MESSAGE_LENGTH + 1) {
+                    LOG.info(String.format("Decoded Message: '%s'", message));
+                    receivedMessageListener.handleEmergency(port, message.substring(1, MESSAGE_LENGTH + 1));
                 } else {
                     LOG.debug(String.format("unknown message (length: %d): '%s'", message.length(), message));
                 }

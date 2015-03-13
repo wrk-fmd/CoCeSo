@@ -20,69 +20,83 @@ import org.springframework.stereotype.Service;
 @Service
 public class SelcallService implements ReceivedMessageListener {
 
-  private static final Logger LOG = Logger.getLogger(SelcallService.class);
+    private static final Logger LOG = Logger.getLogger(SelcallService.class);
 
-  TransceiverManager transceiverManager = TransceiverManagerMockup.getInstance();
+    TransceiverManager transceiverManager = TransceiverManagerImpl.getInstance();
 
-  @Autowired
-  private SelcallDao selcallDao;
+    @Autowired
+    private SelcallDao selcallDao;
 
-  @Autowired
-  private SimpMessagingTemplate messagingTemplate;
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
-  @PostConstruct
-  protected void init() {
-    transceiverManager.addListener(this);
-  }
-
-  @Override
-  public void handleMessage(String port, String message) {
-    LOG.info(String.format("Call received from '%s'", message));
-
-    Selcall incomingCall = new Selcall();
-    incomingCall.setDirection(Selcall.Direction.RX);
-    incomingCall.setTimestamp(Calendar.getInstance());
-    incomingCall.setAni(message);
-    incomingCall.setPort(port);
-
-    messagingTemplate.convertAndSend("/topic/radio/incoming", incomingCall);
-    selcallDao.save(incomingCall);
-  }
-
-  public List<Selcall> getLastMinutes(int minutes) {
-    Calendar cal = Calendar.getInstance();
-    cal.add(Calendar.MINUTE, -minutes);
-    return selcallDao.findByTimestampGreaterThanAndDirection(cal, Selcall.Direction.RX);
-  }
-
-  public boolean sendSelcall(Selcall selcall) {
-    if (selcall == null || selcall.getAni() == null) {
-      LOG.info("Selcall or ANI is null");
-      return false;
+    @PostConstruct
+    protected void init() {
+        transceiverManager.addListener(this);
     }
 
-    boolean success = true;
-    try {
-      if (selcall.getPort() == null) {
-        LOG.debug(String.format("Trying to send Selcall to '%s' on all ports", selcall.getAni()));
-        transceiverManager.send(selcall.getAni());
-      } else {
-        LOG.debug(String.format("Trying to send Selcall to '%s' on port '%s'", selcall.getAni(), selcall.getPort()));
-        transceiverManager.send(selcall.getAni(), selcall.getPort());
-      }
-    } catch (IllegalArgumentException e) {
-      success = false;
+    @Override
+    public void handleMessage(String port, String message) {
+        LOG.info(String.format("Call received from '%s'", message));
+
+        Selcall incomingCall = new Selcall();
+        incomingCall.setDirection(Selcall.Direction.RX);
+        incomingCall.setTimestamp(Calendar.getInstance());
+        incomingCall.setAni(message);
+        incomingCall.setPort(port);
+
+        messagingTemplate.convertAndSend("/topic/radio/incoming", incomingCall);
+        selcallDao.save(incomingCall);
     }
 
-    selcall.setTimestamp(Calendar.getInstance());
-    selcall.setDirection(success ? Selcall.Direction.TX : Selcall.Direction.TX_FAILED);
-    selcallDao.save(selcall);
+    @Override
+    public void handleEmergency(String port, String sender) {
+        LOG.info(String.format("Emergency received from '%s'", sender));
 
-    return success;
-  }
+        Selcall incomingCall = new Selcall();
+        incomingCall.setDirection(Selcall.Direction.RX_EMG);
+        incomingCall.setTimestamp(Calendar.getInstance());
+        incomingCall.setAni(sender);
+        incomingCall.setPort(port);
 
-  public Set<String> getPorts() {
-    return transceiverManager.getPorts();
-  }
+        messagingTemplate.convertAndSend("/topic/radio/incoming", incomingCall);
+        selcallDao.save(incomingCall);
+    }
+
+    public List<Selcall> getLastMinutes(int minutes) {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MINUTE, -minutes);
+        return selcallDao.findByTimestampGreaterThanAndDirection(cal, Selcall.Direction.RX);
+    }
+
+    public boolean sendSelcall(Selcall selcall) {
+        if (selcall == null || selcall.getAni() == null) {
+            LOG.info("Selcall or ANI is null");
+            return false;
+        }
+
+        boolean success = true;
+        try {
+            if (selcall.getPort() == null) {
+                LOG.debug(String.format("Trying to send Selcall to '%s' on all ports", selcall.getAni()));
+                transceiverManager.send(selcall.getAni());
+            } else {
+                LOG.debug(String.format("Trying to send Selcall to '%s' on port '%s'", selcall.getAni(), selcall.getPort()));
+                transceiverManager.send(selcall.getAni(), selcall.getPort());
+            }
+        } catch (IllegalArgumentException e) {
+            success = false;
+        }
+
+        selcall.setTimestamp(Calendar.getInstance());
+        selcall.setDirection(success ? Selcall.Direction.TX : Selcall.Direction.TX_FAILED);
+        selcallDao.save(selcall);
+
+        return success;
+    }
+
+    public Set<String> getPorts() {
+        return transceiverManager.getPorts();
+    }
 
 }

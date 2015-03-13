@@ -33,7 +33,7 @@ public class Selcall implements Serializable, Comparable<Selcall> {
     }
 
     public enum Direction {
-        RX, RX_ACK, TX, TX_FAILED
+        RX, RX_ACK, RX_EMG, TX, TX_FAILED
     }
 
 
