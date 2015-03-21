@@ -24,5 +24,8 @@ coceso.properties
 # ignore compilation output
 target
 
+# ignore tiles
+/coceso/src/main/webapp/static/imgs/layer/vcm/
+
 # except this file
 !.gitignore
