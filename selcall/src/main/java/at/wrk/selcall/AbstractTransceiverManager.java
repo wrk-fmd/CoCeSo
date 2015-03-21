@@ -22,12 +22,12 @@ public abstract class AbstractTransceiverManager implements TransceiverManager, 
     @Override
     public void handleEmergency(String port, String sender) {
         for (ReceivedMessageListener listener : listeners) {
-            listener.handleMessage(port, sender);
+            listener.handleEmergency(port, sender);
         }
     }
 
     @Override
-    public final void send(String message) {
+    public void send(String message) {
         for (String port : getPorts()) {
             send(port, message);
         }
