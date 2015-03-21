@@ -4,16 +4,15 @@ import at.wrk.coceso.dao.SelcallDao;
 import at.wrk.coceso.entity.Selcall;
 import at.wrk.selcall.ReceivedMessageListener;
 import at.wrk.selcall.TransceiverManager;
+import at.wrk.selcall.TransceiverManagerMockup;
 import java.util.Calendar;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.PostConstruct;
 
-import at.wrk.selcall.TransceiverManagerImpl;
-import at.wrk.selcall.TransceiverManagerMockup;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +21,7 @@ public class SelcallService implements ReceivedMessageListener {
 
     private static final Logger LOG = Logger.getLogger(SelcallService.class);
 
-    TransceiverManager transceiverManager = TransceiverManagerMockup.getInstance();
+    private final TransceiverManager transceiverManager = TransceiverManagerMockup.getInstance();;
 
     @Autowired
     private SelcallDao selcallDao;
@@ -66,7 +65,7 @@ public class SelcallService implements ReceivedMessageListener {
     public List<Selcall> getLastMinutes(int minutes) {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MINUTE, -minutes);
-        return selcallDao.findByTimestampGreaterThanAndDirection(cal, Selcall.Direction.RX);
+        return selcallDao.findByTimestampGreaterThanAndDirectionIn(cal, EnumSet.of(Selcall.Direction.RX, Selcall.Direction.RX_EMG));
     }
 
     public boolean sendSelcall(Selcall selcall) {

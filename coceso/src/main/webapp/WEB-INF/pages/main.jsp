@@ -208,8 +208,8 @@
                   </a>
                 </li>
                 <li>
-                  <a href="<c:url value="/main/radio"/>" title="<spring:message code="label.map"/>" onclick="return Coceso.UI.openRadio();">
-                    <span class="glyphicon glyphicon-globe"></span> Radio
+                  <a href="#" title="<spring:message code="label.radio"/>" onclick="return Coceso.UI.openRadio();">
+                    <span class="glyphicon glyphicon-phone"></span> <spring:message code="label.radio"/>
                   </a>
                 </li>
                 <%-- External (of Main Program) Links --%>

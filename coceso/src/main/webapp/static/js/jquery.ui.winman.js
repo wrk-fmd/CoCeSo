@@ -11,6 +11,8 @@
  * @license GPL-3.0 http://opensource.org/licenses/GPL-3.0
  */
 
+/* global ko, Function */
+
 //Modify behaviour of JQueryUI Dialog widget
 var _init = $.ui.dialog.prototype._init;
 var destroy = $.ui.dialog.prototype.destroy;

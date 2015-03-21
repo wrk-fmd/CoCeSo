@@ -11,6 +11,8 @@
  * @license GPL-3.0 ( http://opensource.org/licenses/GPL-3.0 )
  */
 
+/* global ko, Function */
+
 /**
  * Generate the binding to a jQuery UI widget
  *

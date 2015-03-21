@@ -626,6 +626,35 @@ span.incident_blue {
 }
 
 /**
+ * Radio
+ */
+
+.calls {
+  min-width: 350px;
+}
+
+.calls hr {
+  margin: 5px 0 15px;
+}
+
+.calls dl {
+  margin: 0;
+}
+
+.no-open {
+  cursor: default !important;
+}
+
+.calls-single .ui-accordion-header-icon {
+  visibility: hidden;
+}
+
+.calls-list {
+  max-height: 270px;
+  overflow-y: auto;
+}
+
+/**
  * Map
  */
 

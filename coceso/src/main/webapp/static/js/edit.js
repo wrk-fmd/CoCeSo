@@ -11,6 +11,8 @@
  * @license GPL-3.0 http://opensource.org/licenses/GPL-3.0
  */
 
+/* global Coceso, ko, Function */
+
 /**
  * Get ordering for array position
  *

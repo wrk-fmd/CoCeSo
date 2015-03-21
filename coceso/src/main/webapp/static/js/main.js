@@ -11,6 +11,8 @@
  * @license GPL-3.0 http://opensource.org/licenses/GPL-3.0
  */
 
+/* global Coceso, ko, L */
+
 /**
  * Some global settings
  *
@@ -1977,6 +1979,7 @@ Coceso.Models.RadioCall = function(data) {
   this.time = Coceso.Helpers.fmtTime(data.timestamp);
   this.ani = data.ani;
   this.port = data.port;
+  this.emergency = (data.direction === "RX_EMG");
 
   this.unit = ko.pureComputed(function() {
     if (Coceso.Data.Radio.aniMap[this.ani]) {
@@ -2977,6 +2980,8 @@ Coceso.ViewModels.UnitDetail.prototype = Object.create({}, /** @lends Coceso.Vie
  * @param {Object} data
  */
 Coceso.ViewModels.Patient = function(data) {
+  var self = this;
+
   /**
    * Used Model (reference)
    *
@@ -3250,9 +3255,7 @@ Coceso.ViewModels.CustomLogEntry = function(data) {
  * @constructor
  */
 Coceso.ViewModels.Radio = function() {
-  var self = this;
-
-  Coceso.Helpers.initErrorHandling(this);
+  var self = this, minutes = 5;
 
   if (!Coceso.Data.Radio) {
     // Initialize Object
@@ -3267,7 +3270,7 @@ Coceso.ViewModels.Radio = function() {
     // Load past data
     $.ajax({
       dataType: "json",
-      url: Coceso.Conf.jsonBase + "radio/getLast/10.json",
+      url: Coceso.Conf.jsonBase + "radio/getLast/" + minutes + ".json",
       success: function(data) {
         ko.utils.arrayForEach(data, function(item) {
           Coceso.Data.Radio.calls.unshift(new Coceso.Models.RadioCall(item));
@@ -3302,7 +3305,7 @@ Coceso.ViewModels.Radio = function() {
 
     // Remove all entries older than 10 minutes
     Coceso.Data.Radio.interval = window.setInterval(function() {
-      var time = new Date() - 600000;
+      var time = new Date() - minutes * 60000;
       Coceso.Data.Radio.calls.remove(function(call) {
         return call.timestamp < time;
       });
@@ -3310,24 +3313,43 @@ Coceso.ViewModels.Radio = function() {
   }
   Coceso.Data.Radio.count++;
 
+  var radio = _("label.radio");
+
   this.port = ko.observable();
   this.dialogTitle = ko.computed(function() {
     var port = this.port();
-    return port ? "Radio: " + port : "Radio";
+    return port ? radio + ": " + port : radio;
   }, this);
 
-  this.calls = Coceso.Data.Radio.calls.extend({
-    list: {
-      filter: {
-        port: function(call) {
-          return (!self.port() || !call.port || call.port === self.port());
-        }
-      },
-      sort: function(a, b) {
-        return b.timestamp - a.timestamp;
+  this.calls = ko.computed(function() {
+    var data = Coceso.Data.Radio.calls().sort(function(a, b) {
+      return b.timestamp - a.timestamp;
+    }), calls = [], last = null;
+    ko.utils.arrayForEach(data, function(item) {
+      if (self.port() && item.port && self.port() !== item.port) {
+        return;
       }
+      if (last && last.call.ani === item.ani) {
+        last.additional.push(item);
+        if (item.emergency) {
+          last.emergency = true;
+        }
+      } else {
+        last = {call: item, additional: [], emergency: item.emergency};
+        calls.push(last);
+      }
+    });
+    return calls;
+  }, this);
+
+  this.accordionOptions = {
+    active: false,
+    collapsible: true,
+    heightStyle: "content",
+    beforeActivate: function(event, ui) {
+      return (!ui.newHeader || !ui.newHeader.hasClass("no-open"));
     }
-  });
+  };
 };
 Coceso.ViewModels.Radio.prototype = Object.create({}, /** @lends Coceso.ViewModels.Radio.prototype */ {
   /**
@@ -3367,28 +3389,34 @@ Coceso.ViewModels.Map = function(options) {
   // Define Layers
   var baseLayers = {}, overlays = {}, names = {
     basemap: _("label.map.basemap"),
-    vienna: _("label.map.vienna"),
+    ortho: _("label.map.ortho"),
     hospitals: _("label.map.hospitals"),
     oneway: _("label.map.oneway"),
     defi: _("label.map.defi"),
     "ehs.in": _("label.map.ehs.in"),
-    "ehs.out": _("label.map.ehs.out")
+    "ehs.out": _("label.map.ehs.out"),
+    vcm: _("label.map.vcm")
   };
 
   baseLayers[names.basemap] = L.tileLayer("https://{s}.wien.gv.at/basemap/bmaphidpi/normal/google3857/{z}/{y}/{x}.jpeg", {
+    maxZoom: 19,
     subdomains: ["maps", "maps1", "maps2", "maps3", "maps4"],
     bounds: [[46.358770, 8.782379], [49.037872, 17.189532]],
     attribution: _("label.map.source") + ": <a href='http://basemap.at' target='_blank'>basemap.at</a>, " +
         "<a href='http://creativecommons.org/licenses/by/3.0/at/deed.de' target='_blank'>CC-BY 3.0</a>"
   });
-  baseLayers[names.vienna] = L.layerGroup([
-    L.tileLayer("https://{s}.wien.gv.at/wmts/lb/farbe/google3857/{z}/{y}/{x}.jpeg", {
+  baseLayers[names.ortho] = L.layerGroup([
+    L.tileLayer("https://{s}.wien.gv.at/basemap/bmaporthofoto30cm/normal/google3857/{z}/{y}/{x}.jpeg", {
+      maxZoom: 19,
       subdomains: ["maps", "maps1", "maps2", "maps3", "maps4"],
-      bounds: [[48.10, 16.17], [48.33, 16.58]]
+      bounds: [[46.358770, 8.782379], [49.037872, 17.189532]],
+      attribution: _("label.map.source") + ": <a href='http://basemap.at' target='_blank'>basemap.at</a>, " +
+          "<a href='http://creativecommons.org/licenses/by/3.0/at/deed.de' target='_blank'>CC-BY 3.0</a>"
     }),
-    L.tileLayer("https://{s}.wien.gv.at/wmts/beschriftung/normal/google3857/{z}/{y}/{x}.png", {
+    L.tileLayer("https://{s}.wien.gv.at/basemap/bmapoverlay/normal/google3857/{z}/{y}/{x}.png", {
+      maxZoom: 19,
       subdomains: ["maps", "maps1", "maps2", "maps3", "maps4"],
-      bounds: [[48.10, 16.17], [48.33, 16.58]]
+      bounds: [[46.358770, 8.782379], [49.037872, 17.189532]]
     })
   ]);
 
@@ -3424,8 +3452,13 @@ Coceso.ViewModels.Map = function(options) {
     }
   });
 
-  overlays[names["ehs.out"]] = L.imageOverlay(Coceso.Conf.layerBase + "ehs_out.jpg", [[48.200655, 16.415747], [48.213634, 16.427824]]);
-  overlays[names["ehs.in"]] = L.imageOverlay(Coceso.Conf.layerBase + "ehs_in.png", [[48.204912, 16.417671], [48.209496, 16.424191]]);
+  overlays[names["ehs.out"]] = L.imageOverlay(Coceso.Conf.layerBase + "ehs_out.png", [[48.202974, 16.416414], [48.213057, 16.427201]]);
+  overlays[names["ehs.in"]] = L.imageOverlay(Coceso.Conf.layerBase + "ehs_in.png", [[48.206008, 16.419262], [48.208467, 16.422656]]);
+  overlays[names.vcm] = L.tileLayer(Coceso.Conf.layerBase + "vcm/{z}/{y}/{x}.png", {
+    minZoom: 11,
+    maxZoom: 19,
+    bounds: [[48.1837, 16.3141], [48.2377, 16.4395]]
+  });
 
   var layersControl = L.control.layers(baseLayers, overlays);
 
@@ -3456,7 +3489,7 @@ Coceso.ViewModels.Map = function(options) {
     }
     if (options.c.length >= 2) {
       options.c = options.c.slice(0, 2);
-      options.c = $.map(options.c, parseFloat);
+      options.c = $.map(options.c, window.parseFloat);
       if (!isNaN(options.c[0]) && !isNaN(options.c[1])) {
         locate = false;
       }
