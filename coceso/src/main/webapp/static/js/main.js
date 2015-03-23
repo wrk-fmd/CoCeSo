@@ -366,6 +366,18 @@ Coceso.UI = {
   openExternalStatic: function(title, src, dialog) {
     this.openWindow(src, {}, $.extend({position: {at: "left+30% top+10%"}}, dialog), title);
     return false;
+  },
+  /**
+   * Resize the workspace (scrollable dialog container)
+   *
+   * @param {Float} factor
+   * @returns {boolean}
+   */
+  resizeWorkspace: function(factor) {
+    var cont = $("#dialog_container");
+    cont.height(factor ? cont.height() * factor : "");
+    cont.width(factor ? cont.width() * factor : "");
+    return false;
   }
 };
 

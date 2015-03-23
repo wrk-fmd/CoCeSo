@@ -149,6 +149,7 @@ $.widget("ui.winman", {
       closeOnEscape: false,
       width: "auto",
       height: "auto",
+      appendTo: "#dialog_container",
       position: {my: "left top", at: "left top", of: "#dialog_container", within: "#dialog_container", collision: "fit"},
       autoOpen: true,
       focus: function(event, ui) {

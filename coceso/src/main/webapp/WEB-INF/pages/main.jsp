@@ -248,6 +248,20 @@
                     <span class="glyphicon glyphicon-copyright-mark"></span> <spring:message code="label.main.license"/>
                   </a>
                 </li>
+                <%-- Resize workspace --%>
+                <li class="divider"></li>
+                <li>
+                  <a href="#" title="<spring:message code="label.workspace.enlarge"/>"
+                     onclick="return Coceso.UI.resizeWorkspace(1.5);">
+                    <span class="glyphicon glyphicon-plus-sign"></span> <spring:message code="label.workspace.enlarge"/>
+                  </a>
+                </li>
+                <li>
+                  <a href="#" title="<spring:message code="label.workspace.reset"/>"
+                     onclick="return Coceso.UI.resizeWorkspace();">
+                    <span class="glyphicon glyphicon-minus-sign"></span> <spring:message code="label.workspace.reset"/>
+                  </a>
+                </li>
               </ul>
             </li>
             <li><a href="<c:url value="/home"/>"><spring:message code="label.exit"/></a></li>
@@ -274,8 +288,7 @@
       </nav>
     </header>
 
-    <div id="dialog_container">
-    </div>
+    <div id="dialog_scrolling"><div id="dialog_container"></div></div>
 
     <footer>
       <ul id="taskbar"></ul>

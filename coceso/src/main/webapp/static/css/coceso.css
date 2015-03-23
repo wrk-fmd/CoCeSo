@@ -32,8 +32,8 @@ body {
  * Overwrite/extend some UI defaults
  */
 
-.ui-widget {
-  font-size: 1em;
+.ui-widget, .ui-widget .ui-widget {
+  font-size: 12px;
 }
 
 .ui-dialog, .ui-dialog-content {
@@ -43,7 +43,7 @@ body {
 }
 
 .ui-dialog .ui-dialog-titlebar {
-  font-size: 14px;
+  font-size: 13px;
   padding: 3px 60px 5px 5px;
   background: none;
 }
@@ -85,8 +85,8 @@ body {
  */
 
 nav.navbar {
-  padding-left: 10px;
-  padding-right: 15px;
+  padding-left: 9px;
+  padding-right: 14px;
 }
 
 @media (min-width: 768px){
@@ -111,7 +111,7 @@ nav.navbar {
 }
 
 .nav-tabs {
-  margin-bottom: 15px;
+  margin-bottom: 14px;
 }
 
 .btn-default:active,
@@ -126,7 +126,7 @@ nav.navbar {
 }
 
 .btn-sm, .btn-xs {
-  font-size: 12px !important;
+  font-size: 11px !important;
 }
 
 .ui-dialog .dropdown-menu {
@@ -148,7 +148,7 @@ td dl:last-child {
 }
 
 .list-spacing dd {
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 @media (min-width: 768px) {
@@ -202,7 +202,7 @@ td dl:last-child {
 input[type="number"] {
   display: inline-block;
   padding: 4px;
-  font-size: 13px;
+  font-size: 12px;
   line-height: 18px;
   border: 1px solid #ccc;
   -webkit-border-radius: 3px;
@@ -219,8 +219,8 @@ input[type="number"] {
 }
 
 input.form-control, textarea.form-control {
-  padding-left: 6px;
-  padding-right: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
 }
 
 .has-change .help-block,
@@ -324,8 +324,17 @@ body.login {
  */
 
 body.main {
-  padding: 60px 10px 40px 10px;
+  padding: 43px 0 29px 0;
   margin: 0;
+}
+
+#dialog_scrolling {
+  position: relative;
+  padding: 10px 8px;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
 }
 
 #dialog_container {
@@ -352,7 +361,7 @@ body.main {
 }
 
 .quicklink {
-  height: 50px;
+  height: 43px;
   color: #ffffff !important;
 }
 
@@ -399,7 +408,7 @@ body.main {
  */
 
 .filter {
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 }
 
 .filter .ui-accordion-header {
@@ -579,7 +588,7 @@ span.incident_blue {
 
 .unit-placeholder {
   min-width: 50px;
-  min-height: 30px;
+  min-height: 28px;
   background-color: #ff4444;
 }
 
@@ -733,7 +742,7 @@ body.map {
 .map-nocoords h3 {
   margin-top: 0;
   font-weight: bold;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .map-legend-toggle {
