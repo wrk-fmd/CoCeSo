@@ -2287,7 +2287,7 @@ Coceso.ViewModels.Form = function() {
    *
    * @type ko.observableArray
    */
-  this.form = ko.observableArray().extend({arrayChanges: {}});
+  this.form = ko.observableArray().extend({form: {}});
 
   Coceso.Helpers.initErrorHandling(this);
 
@@ -2724,7 +2724,7 @@ Coceso.ViewModels.Incident.prototype = Object.create(Coceso.Models.Incident.prot
         units.remove(task);
       });
 
-      Coceso.Ajax.save(JSON.stringify(data), "incident/update.json", this.afterSave, this.saveError, this.httpError);
+      Coceso.Ajax.save(JSON.stringify(data), "incident/update.json", this.afterSave, this.saveError, this.httpError, this.form.saving);
     }
   },
   /**
@@ -2926,7 +2926,7 @@ Coceso.ViewModels.Unit.prototype = Object.create(Coceso.Models.Unit.prototype, /
         incidents.remove(task);
       });
 
-      Coceso.Ajax.save(JSON.stringify(data), "unit/update.json", this.afterSave, this.saveError, this.httpError);
+      Coceso.Ajax.save(JSON.stringify(data), "unit/update.json", this.afterSave, this.saveError, this.httpError, this.form.saving);
     }
   },
   /**
@@ -3133,7 +3133,7 @@ Coceso.ViewModels.Patient.prototype = Object.create(Coceso.Models.Patient.protot
         sex: this.sex()
       };
 
-      Coceso.Ajax.save(JSON.stringify(data), "patient/update.json", this.afterSave, this.saveError, this.httpError);
+      Coceso.Ajax.save(JSON.stringify(data), "patient/update.json", this.afterSave, this.saveError, this.httpError, this.form.saving);
     }
   },
   /**

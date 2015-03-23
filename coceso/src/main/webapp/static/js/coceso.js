@@ -322,10 +322,14 @@ Coceso.Ajax = {
    * @param {Function} success
    * @param {Function} error
    * @param {Function} httperror
+   * @param {ko.writeableObservable} saving
    * @param {String} contentType Optional content type
    * @returns {void}
    */
-  save: function(data, url, success, error, httperror, contentType) {
+  save: function(data, url, success, error, httperror, saving, contentType) {
+    if (ko.isWriteableObservable(saving)) {
+      saving(true);
+    }
     $.ajax({
       type: "POST",
       url: Coceso.Conf.jsonBase + url,
@@ -350,6 +354,9 @@ Coceso.Ajax = {
         }
       },
       complete: function() {
+        if (ko.isWriteableObservable(saving)) {
+          saving(false);
+        }
         var i;
         for (i in Coceso.Ajax.loadOptions) {
           Coceso.Ajax.load(i);

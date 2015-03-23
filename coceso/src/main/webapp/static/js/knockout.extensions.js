@@ -250,6 +250,22 @@ ko.extenders.arrayChanges = function(target, options) {
     });
   }, target);
 
+  return target;
+};
+
+/**
+ * Form related methods
+ *
+ * @param {ko.observableArray} target
+ * @param {Object} options
+ * @returns {ko.observableArray}
+ */
+ko.extenders.form = function(target, options) {
+  //Enable change detection
+  target.extend({arrayChanges: true});
+
+  target.saving = ko.observable(false);
+
   target.valid = ko.pureComputed(function() {
     var items = ko.utils.unwrapObservable(this);
     if (!items instanceof Array) {
@@ -262,7 +278,7 @@ ko.extenders.arrayChanges = function(target, options) {
   }, target);
 
   target.enable = ko.pureComputed(function() {
-    return (this.changed() && this.valid());
+    return (!this.saving() && this.changed() && this.valid());
   }, target);
 
   target.reset = function() {

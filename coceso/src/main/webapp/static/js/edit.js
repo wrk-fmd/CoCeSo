@@ -137,7 +137,7 @@ Coceso.Models.EditableUnit = function(data, rootModel) {
   }) : []);
 
   this.form = ko.observableArray([this.call, this.ani, this.doc, this.vehicle,
-    this.portable, this.info, this.home]).extend({arrayChanges: {}});
+    this.portable, this.info, this.home]).extend({form: {}});
 
   this.editCrew = function() {
     rootModel.showForm(this);
@@ -169,7 +169,7 @@ Coceso.Models.EditableUnit = function(data, rootModel) {
       self.portable.server(self.portable());
       self.info.server(self.info());
       self.home.server(self.home());
-    }, rootModel.saveError, rootModel.httpError);
+    }, rootModel.saveError, rootModel.httpError, this.form.saving);
   };
 
   this.assignPerson = function() {
@@ -218,7 +218,7 @@ Coceso.Models.EditableConcern = function() {
   this.pax = ko.observable(0).extend({integer: 0, observeChanges: {server: 0}});
   this.info = ko.observable("").extend({observeChanges: {server: ""}});
 
-  this.form = ko.observableArray([this.name, this.pax, this.info]).extend({arrayChanges: {}});
+  this.form = ko.observableArray([this.name, this.pax, this.info]).extend({form: {}});
 
   Coceso.Helpers.initErrorHandling(this);
 
@@ -250,7 +250,7 @@ Coceso.Models.EditableConcern = function() {
       name: self.name(),
       pax: self.pax(),
       info: self.info()
-    }), "concern/update.json", self.load, self.saveError, self.httpError);
+    }), "concern/update.json", self.load, self.saveError, self.httpError, this.form.saving);
   };
 };
 
@@ -270,11 +270,12 @@ Coceso.Models.BatchUnit = function(rootModel) {
   this.vehicle = ko.observable(false).extend({"boolean": true});
   this.portable = ko.observable(false).extend({"boolean": true});
   this.home = ko.observable("");
+  this.saving = ko.observable(false);
 
   Coceso.Helpers.initErrorHandling(this);
 
   this.enable = ko.computed(function() {
-    return (this.call() && this.from() !== null && this.to() !== null && this.from() <= this.to());
+    return (!this.saving() && this.call() && this.from() !== null && this.to() !== null && this.from() <= this.to());
   }, this);
 
   this.save = function() {
@@ -296,7 +297,7 @@ Coceso.Models.BatchUnit = function(rootModel) {
       self.home("");
       self.error(false);
       rootModel.load();
-    }, this.saveError, this.httpError);
+    }, this.saveError, this.httpError, this.saving);
   };
 };
 
@@ -498,7 +499,7 @@ Coceso.Models.EditablePerson = function(data) {
 
   this.form = ko.observableArray([
     this.givenname, this.surname, this.dnr, this.contact, this.username, this.allowlogin, this.authorities, this.password, this.password2
-  ]).extend({arrayChanges: true});
+  ]).extend({form: true});
 
   // Error Handling
   Coceso.Helpers.initErrorHandling(this);
@@ -581,9 +582,9 @@ Coceso.Models.EditablePerson = function(data) {
         }), "person/setTemporaryPassword.json", function() {
           self.password("");
           self.password2("");
-        }, self.saveError, self.httpError);
+        }, self.saveError, self.httpError, self.form.saving);
       }
-    }, this.saveError, this.httpError);
+    }, this.saveError, this.httpError, this.form.saving);
   };
 };
 
@@ -941,7 +942,7 @@ Coceso.ViewModels.Person = function() {
       self.csv(null);
       self.error(false);
       Coceso.Ajax.load("persons");
-    }, self.saveError, self.httpError, "text/csv");
+    }, self.saveError, self.httpError, null, "text/csv");
   };
 
   Coceso.Ajax.load("persons");
