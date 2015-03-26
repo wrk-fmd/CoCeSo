@@ -2,11 +2,11 @@ package at.wrk.coceso.service.point;
 
 import at.wrk.coceso.entity.Point;
 import at.wrk.coceso.entity.helper.Address;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Arrays;
 import java.util.Objects;
-import org.codehaus.jackson.annotate.JsonCreator;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonProperty;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 

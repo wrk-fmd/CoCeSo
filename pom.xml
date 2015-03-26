@@ -8,7 +8,7 @@
   <groupId>at.wrk</groupId>
   <artifactId>fmd-it</artifactId>
   <packaging>pom</packaging>
-  <version>1.3.0RC1</version>
+  <version>1.3.0</version>
   <name>Coceso Base Package (fmd-it)</name>
 
   <properties>

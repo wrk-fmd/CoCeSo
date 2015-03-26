@@ -1,7 +1,7 @@
 package at.wrk.coceso.entity;
 
 import at.wrk.coceso.entity.enums.CocesoAuthority;
-import org.codehaus.jackson.annotate.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

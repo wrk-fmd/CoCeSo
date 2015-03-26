@@ -3,15 +3,15 @@ package at.wrk.coceso.entity;
 import at.wrk.coceso.entity.enums.LogEntryType;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entity.helper.JsonContainer;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.ObjectMapper;
 
 public class LogEntry {
 
