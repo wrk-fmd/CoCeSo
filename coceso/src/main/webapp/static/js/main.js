@@ -3407,6 +3407,7 @@ Coceso.ViewModels.Map = function(options) {
     defi: _("label.map.defi"),
     "ehs.in": _("label.map.ehs.in"),
     "ehs.out": _("label.map.ehs.out"),
+    vcm_hp: _("label.map.vcm.hp"),
     vcm: _("label.map.vcm")
   };
 
@@ -3466,6 +3467,7 @@ Coceso.ViewModels.Map = function(options) {
 
   overlays[names["ehs.out"]] = L.imageOverlay(Coceso.Conf.layerBase + "ehs_out.png", [[48.202974, 16.416414], [48.213057, 16.427201]]);
   overlays[names["ehs.in"]] = L.imageOverlay(Coceso.Conf.layerBase + "ehs_in.png", [[48.206008, 16.419262], [48.208467, 16.422656]]);
+  overlays[names.vcm_hp] = L.imageOverlay(Coceso.Conf.layerBase + "vcm_hp.png", [[48.204297, 16.360141], [48.209045, 16.367461]]);
   overlays[names.vcm] = L.tileLayer(Coceso.Conf.layerBase + "vcm/{z}/{y}/{x}.png", {
     minZoom: 11,
     maxZoom: 19,

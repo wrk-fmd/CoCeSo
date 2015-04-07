@@ -7,6 +7,7 @@
     <constructor-arg>
       <list>
         <ref bean="jsonPoi"/>
+        <ref bean="vcmGridSquare"/>
         <bean id="viennaAutocomplete" class="at.wrk.coceso.service.point.ViennaAutocomplete"/>
       </list>
     </constructor-arg>
@@ -16,6 +17,7 @@
     <constructor-arg>
       <list>
         <ref bean="jsonPoi"/>
+        <ref bean="vcmGridSquare"/>
         <bean id="addressLocate" class="at.wrk.coceso.service.point.ViennaLocate"/>
       </list>
     </constructor-arg>
@@ -23,5 +25,23 @@
 
   <bean id="jsonPoi" class="at.wrk.coceso.service.point.JsonPoi">
     <constructor-arg type="org.springframework.core.io.Resource" value="classpath:poi.json"/>
+  </bean>
+  <bean id="vcmGridSquare" class="at.wrk.coceso.service.point.GridSquare">
+    <constructor-arg index="0" value="VCM/Heldenplatz/"/>
+    <!-- Base lat/lng (C10) -->
+    <constructor-arg index="1" value="48.206114"/>
+    <constructor-arg index="2" value="16.360507"/>
+    <!-- Interval x lat/lng -->
+    <constructor-arg index="3" value="1.80011E-4"/>
+    <constructor-arg index="4" value="2.98551E-4"/>
+    <!-- Interval y lat/lng -->
+    <constructor-arg index="5" value="-1.99578E-4"/>
+    <constructor-arg index="6" value="2.69281E-4"/>
+    <!-- x from/to -->
+    <constructor-arg index="7" value="C"/>
+    <constructor-arg index="8" value="R"/>
+    <!-- y from/to -->
+    <constructor-arg index="9" value="10"/>
+    <constructor-arg index="10" value="18"/>
   </bean>
 </beans>
