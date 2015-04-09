@@ -3404,11 +3404,7 @@ Coceso.ViewModels.Map = function(options) {
     ortho: _("label.map.ortho"),
     hospitals: _("label.map.hospitals"),
     oneway: _("label.map.oneway"),
-    defi: _("label.map.defi"),
-    "ehs.in": _("label.map.ehs.in"),
-    "ehs.out": _("label.map.ehs.out"),
-    vcm_hp: _("label.map.vcm.hp"),
-    vcm: _("label.map.vcm")
+    defi: _("label.map.defi")
   };
 
   baseLayers[names.basemap] = L.tileLayer("https://{s}.wien.gv.at/basemap/bmaphidpi/normal/google3857/{z}/{y}/{x}.jpeg", {
@@ -3465,14 +3461,11 @@ Coceso.ViewModels.Map = function(options) {
     }
   });
 
-  overlays[names["ehs.out"]] = L.imageOverlay(Coceso.Conf.layerBase + "ehs_out.png", [[48.202974, 16.416414], [48.213057, 16.427201]]);
-  overlays[names["ehs.in"]] = L.imageOverlay(Coceso.Conf.layerBase + "ehs_in.png", [[48.206008, 16.419262], [48.208467, 16.422656]]);
-  overlays[names.vcm_hp] = L.imageOverlay(Coceso.Conf.layerBase + "vcm_hp.png", [[48.204297, 16.360141], [48.209045, 16.367461]]);
-  overlays[names.vcm] = L.tileLayer(Coceso.Conf.layerBase + "vcm/{z}/{y}/{x}.png", {
-    minZoom: 11,
-    maxZoom: 19,
-    bounds: [[48.1837, 16.3141], [48.2377, 16.4395]]
-  });
+  if (Coceso.addLayers instanceof Array) {
+    Coceso.addLayers.forEach(function(item) {
+      item(names, baseLayers, overlays);
+    });
+  }
 
   var layersControl = L.control.layers(baseLayers, overlays);
 
@@ -3720,6 +3713,71 @@ L.GeoJSON.WFS = L.GeoJSON.extend({
         }
       });
     }
+  }
+});
+
+/**
+ * Refreshable image overlay
+ *
+ * @constructor
+ * @extends L.ImageOverlay
+ * @param {Function} getUrl
+ * @param {LatLngBounds} bounds
+ * @param {ImageOverlayOptions} options
+ */
+L.ImageOverlay.Refreshable = L.ImageOverlay.extend({
+  initialize: function(getUrl, bounds, options) { // (String, LatLngBounds, Object)
+    L.ImageOverlay.prototype.initialize.call(this, undefined, bounds, options);
+    this._getUrl = getUrl;
+    this._interval = null;
+  },
+  onAdd: function(map) {
+    L.ImageOverlay.prototype.onAdd.call(this, map);
+    this._getUrl.call(this);
+    map.on('zoomend', this._getUrl, this);
+    if (this._interval) {
+      clearInterval(this._interval);
+    }
+    this._interval = setInterval(this._getUrl.bind(this), this.options.interval ? this.options.interval : Coceso.Conf.interval);
+  },
+  onRemove: function(map) {
+    if (this._interval) {
+      clearInterval(this._interval);
+      this._interval = null;
+    }
+    L.ImageOverlay.prototype.onRemove.call(this, map);
+  },
+  setUrl: function(url) {
+    if (!url) {
+      this._url = null;
+      this._image.removeAttribute('src');
+      this._image.style.display = 'none';
+    } else {
+      this._url = url;
+      this._image.setAttribute('src', this._url);
+      this._image.style.display = '';
+    }
+  },
+  _initImage: function() {
+    this._image = L.DomUtil.create('img', 'leaflet-image-layer');
+
+    if (this._map.options.zoomAnimation && L.Browser.any3d) {
+      L.DomUtil.addClass(this._image, 'leaflet-zoom-animated');
+    } else {
+      L.DomUtil.addClass(this._image, 'leaflet-zoom-hide');
+    }
+
+    this._updateOpacity();
+
+    //TODO createImage util method to remove duplication
+    L.extend(this._image, {
+      galleryimg: 'no',
+      onselectstart: L.Util.falseFn,
+      onmousemove: L.Util.falseFn,
+      onload: L.bind(this._onImageLoad, this)
+    });
+
+    this._image.style.display = 'none';
   }
 });
 

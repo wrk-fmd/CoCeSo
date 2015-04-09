@@ -19,7 +19,7 @@
 <html>
   <head>
     <title><spring:message code="label.coceso"/></title>
-    <t:head jquery="i18n, ui, ui.touch-punch" js="assets/typeahead.bundle, assets/leaflet, assets/stomp, jquery.ui.winman, main"/>
+    <t:head jquery="i18n, ui, ui.touch-punch" js="assets/typeahead.bundle, assets/leaflet, assets/stomp, jquery.ui.winman, layers, main"/>
     <script type="text/javascript">
       $(document).ready(function() {
         L.Browser.webkit3d = false;
