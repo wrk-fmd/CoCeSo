@@ -24,8 +24,11 @@ coceso.properties
 # ignore compilation output
 target
 
-# ignore tiles
+# ignore tiles and layers
+/coceso/src/main/webapp/WEB-INF/classes/streetnames.csv
 /coceso/src/main/webapp/static/imgs/layer/vcm/
+/coceso/src/main/webapp/static/js/layers.js
+/coceso/src/main/webapp/static/js/layers.min.js
 
 # except this file
 !.gitignore
