@@ -8,7 +8,7 @@
       <list>
         <ref bean="jsonPoi"/>
         <ref bean="vcmGridSquare"/>
-        <bean id="viennaAutocomplete" class="at.wrk.coceso.service.point.ViennaAutocomplete"/>
+        <ref bean="viennaAutocomplete"/>
       </list>
     </constructor-arg>
   </bean>
@@ -21,6 +21,14 @@
         <bean id="addressLocate" class="at.wrk.coceso.service.point.ViennaLocate"/>
       </list>
     </constructor-arg>
+  </bean>
+
+  <bean id="viennaAutocomplete" class="at.wrk.coceso.service.point.ViennaAutocomplete">
+    <constructor-arg type="org.springframework.core.io.Resource" value="classpath:streetnames.csv"/>
+    <!--
+    <constructor-arg type="org.springframework.core.io.Resource"
+                     value="http://data.wien.gv.at/daten/geo?service=WFS&amp;version=1.1.0&amp;request=GetFeature&amp;typeName=ogdwien:GEONAMENSVERZOGD&amp;propertyName=STR_NAME,BEZLISTE&amp;outputFormat=csv"/>
+    -->
   </bean>
 
   <bean id="jsonPoi" class="at.wrk.coceso.service.point.JsonPoi">
