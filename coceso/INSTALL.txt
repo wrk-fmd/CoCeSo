@@ -10,7 +10,7 @@ INSTALL GUIDE:
 
 1. REQUIRED SYSTEM
 Server:
-- Java JRE (version 1.6 and newer tested)
+- Java JRE (version 1.7 and newer tested)
 - Tomcat (version 7 and newer tested)
 - PostgreSQL DB (9.1 and newer tested)
 - Maven (Build Manager)
