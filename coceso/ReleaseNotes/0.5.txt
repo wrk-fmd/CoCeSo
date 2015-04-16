@@ -4,7 +4,7 @@
 / /___   / /_/ /  / /___   /  __/   ___/ /  / /_/ /
 \____/   \____/   \____/   \___/   /____/   \____/
 
-   Communication       Center      Software
+   Coordination      Center       Software
 
 ## v0.5b - Release Notes ##
 2014-03-21
