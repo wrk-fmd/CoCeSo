@@ -26,7 +26,7 @@ target
 
 # ignore tiles and layers
 /coceso/src/main/webapp/WEB-INF/classes/streetnames.csv
-/coceso/src/main/webapp/static/imgs/layer/vcm/
+/coceso/src/main/webapp/static/imgs/layer/
 /coceso/src/main/webapp/static/js/layers.js
 /coceso/src/main/webapp/static/js/layers.min.js
 
