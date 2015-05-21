@@ -48,14 +48,6 @@ public class TransceiverManagerImpl extends AbstractTransceiverManager {
         return instance;
     }
 
-    /*@PreDestroy
-    protected void destroy() {
-        for (Iterator<Transceiver> it = transceivers.values().iterator(); it.hasNext();) {
-            it.next().closeSerialPort();
-            it.remove();
-        }
-    }*/
-
     @Override
     public Set<String> getPorts() {
         return transceivers.keySet();
@@ -70,8 +62,17 @@ public class TransceiverManagerImpl extends AbstractTransceiverManager {
         transceivers.get(port).sendMessage(message);
     }
 
+    @Override
+    public void shutdown() {
+        for (Iterator<Transceiver> it = transceivers.values().iterator(); it.hasNext();) {
+            it.next().closeSerialPort();
+            it.remove();
+        }
+    }
+
     /**
-     * ########################################################### Represents a
+     * ###########################################################
+     * Represents a
      * physical Transceiver connected via serial port
      * ###########################################################
      */

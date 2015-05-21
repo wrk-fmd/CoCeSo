@@ -10,6 +10,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ public class SelcallService implements ReceivedMessageListener {
 
     private static final Logger LOG = Logger.getLogger(SelcallService.class);
 
-    private final TransceiverManager transceiverManager = TransceiverManagerMockup.getInstance();;
+    private final TransceiverManager transceiverManager = TransceiverManagerMockup.getInstance();
 
     @Autowired
     private SelcallDao selcallDao;
@@ -32,6 +33,11 @@ public class SelcallService implements ReceivedMessageListener {
     @PostConstruct
     protected void init() {
         transceiverManager.addListener(this);
+    }
+
+    @PreDestroy
+    protected void shutdown() {
+        transceiverManager.shutdown();
     }
 
     @Override

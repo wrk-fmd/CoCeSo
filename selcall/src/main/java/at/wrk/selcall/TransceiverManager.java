@@ -11,4 +11,6 @@ public interface TransceiverManager {
   public void send(String message);
 
   public void send(String port, String message);
+
+  public void shutdown();
 }
