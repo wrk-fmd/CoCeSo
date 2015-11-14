@@ -18,6 +18,7 @@
   <modules>
     <module>coceso</module>
     <module>selcall</module>
+    <module>cocecl</module>
   </modules>
 
   <build>
