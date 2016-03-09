@@ -16,6 +16,8 @@ context.xml
 .project
 .settings
 build.xml
+*.iml
+.idea
 
 # ignore database configuration
 coceso.properties
