@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>at.wrk.coceso</groupId>
+    <artifactId>base</artifactId>
+    <version>2.0.0b1</version>
+  </parent>
+
+  <artifactId>main</artifactId>
+  <packaging>pom</packaging>
+  <name>Coceso Main App</name>
+
+  <modules>
+    <module>db</module>
+    <module>entity</module>
+    <module>service</module>
+    <module>taglib</module>
+    <module>view</module>
+  </modules>
+</project>

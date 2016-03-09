@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
+        version="2.0">
+  <tlib-version>2.0</tlib-version>
+  <short-name>patadmin</short-name>
+  <uri>patadmin</uri>
+  <tag-file>
+    <name>groups</name>
+    <path>/META-INF/tags/patadmin/groups.tag</path>
+  </tag-file>
+  <tag-file>
+    <name>incoming</name>
+    <path>/META-INF/tags/patadmin/incoming.tag</path>
+  </tag-file>
+  <tag-file>
+    <name>medinfos</name>
+    <path>/META-INF/tags/patadmin/medinfos.tag</path>
+  </tag-file>
+  <tag-file>
+    <name>pagination</name>
+    <path>/META-INF/tags/patadmin/pagination.tag</path>
+  </tag-file>
+  <tag-file>
+    <name>patients</name>
+    <path>/META-INF/tags/patadmin/patients.tag</path>
+  </tag-file>
+</taglib>

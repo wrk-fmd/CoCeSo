@@ -1,0 +1,103 @@
+package at.wrk.coceso.entity.types;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.io.Serializable;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
+import java.util.Objects;
+import org.hibernate.HibernateException;
+import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.usertype.UserType;
+
+public abstract class JsonUserType<T> implements UserType, Serializable {
+
+  private static final ObjectMapper mapper = new ObjectMapper();
+
+  @Override
+  public abstract Class<T> returnedClass();
+
+  @Override
+  public Object assemble(Serializable cached, Object owner) throws HibernateException {
+    return this.deepCopy(cached);
+  }
+
+  @Override
+  public Object deepCopy(Object value) throws HibernateException {
+    if (value == null) {
+      return null;
+    }
+    try {
+      return deserialize(serialize(value));
+    } catch (IOException e) {
+      throw new HibernateException("unable to deep copy object", e);
+    }
+  }
+
+  @Override
+  public Serializable disassemble(Object value) throws HibernateException {
+    try {
+      return serialize(value);
+    } catch (IOException e) {
+      throw new HibernateException("unable to disassemble object", e);
+    }
+  }
+
+  @Override
+  public T nullSafeGet(ResultSet rs, String[] names, SessionImplementor session, Object owner) throws HibernateException, SQLException {
+    try {
+      return deserialize(rs.getString(names[0]));
+    } catch (IOException e) {
+      throw new HibernateException("unable to read object from result set", e);
+    }
+  }
+
+  @Override
+  public void nullSafeSet(PreparedStatement st, Object value, int index, SessionImplementor session) throws HibernateException, SQLException {
+    if (value == null) {
+      st.setNull(index, Types.OTHER);
+    } else {
+      try {
+        st.setObject(index, serialize(value), Types.OTHER);
+      } catch (IOException e) {
+        throw new HibernateException("unable to set object to result set", e);
+      }
+    }
+  }
+
+  private String serialize(Object obj) throws JsonProcessingException {
+    return mapper.writeValueAsString(obj);
+  }
+
+  private T deserialize(String data) throws IOException {
+    return data == null ? null : mapper.readValue(data, returnedClass());
+  }
+
+  @Override
+  public boolean equals(Object x, Object y) throws HibernateException {
+    return Objects.equals(x, y);
+  }
+
+  @Override
+  public int hashCode(Object x) throws HibernateException {
+    return Objects.hashCode(x);
+  }
+
+  @Override
+  public boolean isMutable() {
+    return true;
+  }
+
+  @Override
+  public Object replace(Object original, Object target, Object owner) throws HibernateException {
+    return this.deepCopy(original);
+  }
+
+  @Override
+  public int[] sqlTypes() {
+    return new int[]{Types.JAVA_OBJECT};
+  }
+}
