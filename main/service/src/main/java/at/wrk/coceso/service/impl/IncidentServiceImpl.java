@@ -123,7 +123,7 @@ class IncidentServiceImpl implements IncidentService {
     hold.setAo(position);
 
     hold = update(hold, unit.getConcern(), user, notify);
-    taskService.changeState(hold, unit, TaskState.AAO, user, notify);
+    taskService.changeState(hold, unit, state, user, notify);
 
     return hold;
   }
