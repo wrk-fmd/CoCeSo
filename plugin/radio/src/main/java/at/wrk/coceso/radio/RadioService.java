@@ -16,7 +16,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 @Service
-@PropertySource("classpath:ports.properties")
+@PropertySource(value = "classpath:ports.properties", ignoreResourceNotFound = true)
 public class RadioService implements SelcallListener {
 
   private static final Logger LOG = LoggerFactory.getLogger(RadioService.class);
