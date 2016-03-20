@@ -20,8 +20,6 @@
   wrapShim: true,
   modules: [
     {name: "assets/requirejs/require"},
-    {name: "dashboard",
-      excludeShallow: ["bloodhound", "jquery", "jquery-i18n", "leaflet", "knockout", "knockout-sortable", "typeahead.js", "stomp"]},
     {name: "edit_concern",
       excludeShallow: ["bloodhound", "jquery", "jquery-i18n", "leaflet", "knockout", "knockout-sortable", "typeahead.js", "stomp"]},
     {name: "edit_user",
@@ -31,6 +29,8 @@
     {name: "main",
       excludeShallow: ["bloodhound", "jquery", "jquery-i18n", "leaflet", "knockout", "knockout-sortable", "typeahead.js", "stomp"]},
     {name: "map",
+      excludeShallow: ["bloodhound", "jquery", "jquery-i18n", "leaflet", "knockout", "knockout-sortable", "typeahead.js", "stomp"]},
+    {name: "navbar",
       excludeShallow: ["bloodhound", "jquery", "jquery-i18n", "leaflet", "knockout", "knockout-sortable", "typeahead.js", "stomp"]},
     {name: "patadmin_form",
       excludeShallow: ["bloodhound", "jquery", "jquery-i18n", "leaflet", "knockout", "knockout-sortable", "typeahead.js", "stomp"]},

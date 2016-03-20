@@ -12,7 +12,7 @@
  */
 
 require(["config"], function() {
-  require(["jquery", "knockout", "data/load", "data/store/units", "patadmin/triage/group", "bootstrap/dropdown"],
+  require(["jquery", "knockout", "data/load", "data/store/units", "patadmin/triage/group", "bootstrap/collapse", "bootstrap/dropdown"],
     function($, ko, load, store, Group) {
       "use strict";
 

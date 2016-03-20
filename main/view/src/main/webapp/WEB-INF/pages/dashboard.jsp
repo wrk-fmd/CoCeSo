@@ -18,7 +18,7 @@
 --%>
 <html>
   <head>
-    <t:head title="nav.dashboard" entry="dashboard"/>
+    <t:head title="nav.dashboard" entry="navbar"/>
   </head>
   <body>
     <div class="container">

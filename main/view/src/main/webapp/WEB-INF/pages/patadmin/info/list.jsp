@@ -19,7 +19,7 @@
 --%>
 <html>
   <head>
-    <t:head maintitle="patadmin" title="${empty search ? 'patadmin.info' : 'patadmin.searchresult'}"/>
+    <t:head maintitle="patadmin" title="${empty search ? 'patadmin.info' : 'patadmin.searchresult'}" entry="navbar"/>
   </head>
   <body>
     <div class="container">

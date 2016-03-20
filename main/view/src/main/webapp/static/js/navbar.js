@@ -12,5 +12,5 @@
  */
 
 require(["config"], function() {
-  require(["bootstrap/dropdown"]);
+  require(["bootstrap/collapse", "bootstrap/dropdown"]);
 });

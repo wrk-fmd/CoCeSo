@@ -20,7 +20,7 @@
 --%>
 <html>
   <head>
-    <t:head/>
+    <t:head entry="navbar"/>
   </head>
   <body>
     <div class="container">

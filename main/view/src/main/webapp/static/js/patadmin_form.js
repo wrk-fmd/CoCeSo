@@ -13,7 +13,7 @@
 
 require(["config"], function() {
   require(["jquery", "knockout", "data/load", "data/store/units", "patadmin/triage/form", "patadmin/triage/group",
-    "bootstrap/dropdown", "ko/bindings/valueinit"],
+    "bootstrap/collapse", "bootstrap/dropdown", "ko/bindings/valueinit"],
     function($, ko, load, store, Form, Group) {
       "use strict";
 

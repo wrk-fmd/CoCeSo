@@ -12,7 +12,7 @@
  */
 
 require(["config"], function() {
-  require(["knockout", "home/viewmodel", "bootstrap/dropdown", "bootstrap/alert", "utils/misc"],
+  require(["knockout", "home/viewmodel", "bootstrap/collapse", "bootstrap/dropdown", "bootstrap/alert", "utils/misc"],
     function(ko, Home) {
       "use strict";
       ko.applyBindings(new Home());

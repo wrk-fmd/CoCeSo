@@ -14,7 +14,7 @@
 require(["config"], function() {
   require(["jquery", "knockout", "edit/viewmodels/units", "edit/viewmodels/container",
     "edit/viewmodels/batch", "edit/models/editableconcern", "utils/lock",
-    "bootstrap/dropdown", "bootstrap/tab", "bootstrap/tooltip", "utils/misc"],
+    "bootstrap/collapse", "bootstrap/dropdown", "bootstrap/tab", "bootstrap/tooltip", "utils/misc"],
     function($, ko, Units, Container, Batch, Concern, lock) {
       "use strict";
 

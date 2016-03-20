@@ -20,7 +20,7 @@
 --%>
 <html>
   <head>
-    <t:head maintitle="patadmin" title="patient.transported"/>
+    <t:head maintitle="patadmin" title="patient.transported" entry="navbar"/>
   </head>
   <body>
     <div class="container">

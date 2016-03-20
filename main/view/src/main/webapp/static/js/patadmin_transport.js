@@ -12,7 +12,7 @@
  */
 
 require(["config"], function() {
-  require(["jquery", "knockout", "ko/bindings/ertype"], function($, ko) {
+  require(["jquery", "knockout", "ko/bindings/ertype", "bootstrap/collapse", "bootstrap/dropdown"], function($, ko) {
     "use strict";
     ko.applyBindings({}, $("#ertype")[0]);
   });

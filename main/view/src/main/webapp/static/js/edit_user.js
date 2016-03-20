@@ -12,7 +12,7 @@
  */
 
 require(["config"], function() {
-  require(["knockout", "edit/viewmodels/user", "bootstrap/dropdown", "utils/misc"], function(ko, EditUser) {
+  require(["knockout", "edit/viewmodels/user", "bootstrap/collapse", "bootstrap/dropdown", "utils/misc"], function(ko, EditUser) {
     "use strict";
     ko.applyBindings(new EditUser());
   });

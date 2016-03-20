@@ -19,7 +19,7 @@
 --%>
 <html>
   <head>
-    <t:head maintitle="patadmin" title="patadmin.searchresult"/>
+    <t:head maintitle="patadmin" title="patadmin.searchresult" entry="navbar"/>
   </head>
   <body>
     <div class="container">

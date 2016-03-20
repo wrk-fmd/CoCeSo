@@ -14,7 +14,7 @@
 require(["config"], function() {
   require(["jquery", "knockout", "data/load", "data/store/incidents", "data/store/patients", "data/store/units",
     "main/confirm", "main/navigation", "main/models/incident", "main/models/patient", "main/models/unit",
-    "utils/conf", "utils/lock", "utils/plugins", "utils/i18n", "utils/misc", "bootstrap/dropdown"],
+    "utils/conf", "utils/lock", "utils/plugins", "utils/i18n", "utils/misc", "bootstrap/collapse", "bootstrap/dropdown"],
     function($, ko, load, incidentsStore, patientsStore, unitsStore, confirm, navigation, Incident, Patient, Unit, conf, lock, getPlugins, _) {
       "use strict";
 

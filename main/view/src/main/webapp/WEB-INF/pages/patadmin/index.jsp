@@ -18,7 +18,7 @@
 --%>
 <html>
   <head>
-    <t:head maintitle="patadmin"/>
+    <t:head maintitle="patadmin" entry="navbar"/>
   </head>
   <body>
     <div class="container">
