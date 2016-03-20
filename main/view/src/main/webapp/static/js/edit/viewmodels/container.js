@@ -46,7 +46,19 @@ define(["jquery", "knockout", "../models/container", "../models/slimunit", "data
       url: "container/getAll.json",
       stomp: "/topic/container/{c}",
       model: Container,
-      store: store.models
+      store: store.models,
+      cbSet: function(data) {
+        if (!data.id) {
+          store.dummy(new Container(data));
+          return false;
+        }
+        if (store.models()[data.id] instanceof Container) {
+          store.models()[data.id].setData(data);
+          return false;
+        }
+        store.models()[data.id] = new Container(data);
+        return true;
+      }
     });
 
     /**
@@ -70,6 +82,10 @@ define(["jquery", "knockout", "../models/container", "../models/slimunit", "data
         this.spare(store.root() ? $.map(store.root().spare(), function(item) {
           return new SlimUnit(item);
         }) : []);
+      }, this);
+
+      this.hasRoot = ko.computed(function() {
+        return this.top() && this.top().id;
       }, this);
 
       this.createRoot = function() {

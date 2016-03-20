@@ -10,6 +10,7 @@ import at.wrk.coceso.entityevent.EntityEventListener;
 import at.wrk.coceso.entityevent.SocketMessagingTemplate;
 import at.wrk.coceso.entityevent.WebSocketWriter;
 import at.wrk.coceso.entityevent.NotifyList;
+import at.wrk.coceso.service.ContainerSocketService;
 import at.wrk.coceso.service.UnitService;
 import java.util.List;
 import javax.annotation.PreDestroy;
@@ -25,6 +26,9 @@ class UnitSocketServiceImpl implements UnitSocketService {
 
   @Autowired
   private UnitService unitService;
+
+  @Autowired
+  private ContainerSocketService containerSocketService;
 
   private final EntityEventHandler<Unit> entityEventHandler;
   private final EntityEventListener<Unit> mainEventListener;
@@ -50,12 +54,19 @@ class UnitSocketServiceImpl implements UnitSocketService {
 
   @Override
   public Unit updateEdit(Unit unit, Concern concern, User user) {
-    return NotifyList.execute(n -> unitService.updateEdit(unit, concern, user, n));
+    boolean isNew = unit.getId() == null;
+    Unit u = NotifyList.execute(n -> unitService.updateEdit(unit, concern, user, n));
+    if (isNew) {
+      containerSocketService.notifyRoot(concern);
+    }
+    return u;
   }
 
   @Override
   public List<Integer> batchCreate(BatchUnits batch, Concern concern, User user) {
-    return NotifyList.execute(n -> unitService.batchCreate(batch, concern, user, n));
+    List<Integer> created = NotifyList.execute(n -> unitService.batchCreate(batch, concern, user, n));
+    containerSocketService.notifyRoot(concern);
+    return created;
   }
 
   @Override
@@ -91,7 +102,9 @@ class UnitSocketServiceImpl implements UnitSocketService {
 
   @Override
   public int importUnits(String data, Concern concern, User user) {
-    return NotifyList.execute(n -> unitService.importUnits(data, concern, user, n));
+    int imported = NotifyList.execute(n -> unitService.importUnits(data, concern, user, n));
+    containerSocketService.notifyRoot(concern);
+    return imported;
   }
 
 }

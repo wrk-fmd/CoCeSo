@@ -28,6 +28,7 @@ define(["jquery", "knockout"], function($, ko) {
     get: function(id) {
       return store.models()[id] || null;
     },
+    dummy: ko.observable(null),
     count: 0
   };
 
@@ -38,10 +39,10 @@ define(["jquery", "knockout"], function($, ko) {
   });
 
   store.root = ko.computed(function() {
-    return ko.utils.arrayFirst(store.list(), function(container) {
+    return ko.utils.arrayFirst(this.list(), function(container) {
       return !container.parent();
-    });
-  });
+    }) || this.dummy();
+  }, store);
 
   return store;
 });

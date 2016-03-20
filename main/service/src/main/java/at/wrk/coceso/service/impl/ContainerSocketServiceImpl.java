@@ -46,7 +46,7 @@ class ContainerSocketServiceImpl implements ContainerSocketService {
   public synchronized void remove(int containerId) {
     Container container = containerService.doRemove(containerId);
     entityEventHandler.entityDeleted(containerId, container.getConcern().getId());
-    entityEventHandler.entityChanged(containerService.getRoot(container.getConcern()), container.getConcern().getId());
+    notifyRoot(container.getConcern());
   }
 
   @Override
@@ -55,7 +55,7 @@ class ContainerSocketServiceImpl implements ContainerSocketService {
 
     entityEventHandler.entityChanged(pair.newcont, pair.newcont.getConcern().getId());
     if (pair.notifyRoot) {
-      entityEventHandler.entityChanged(containerService.getRoot(pair.newcont.getConcern()), pair.newcont.getConcern().getId());
+      notifyRoot(pair.newcont.getConcern());
     }
     if (pair.previous != null) {
       entityEventHandler.entityChanged(pair.previous, pair.newcont.getConcern().getId());
@@ -66,9 +66,14 @@ class ContainerSocketServiceImpl implements ContainerSocketService {
   public void removeUnit(int unitId) {
     Container cont = containerService.doRemoveUnit(unitId);
     if (cont != null) {
-      entityEventHandler.entityChanged(containerService.getRoot(cont.getConcern()), cont.getConcern().getId());
+      notifyRoot(cont.getConcern());
       entityEventHandler.entityChanged(cont, cont.getConcern().getId());
     }
+  }
+
+  @Override
+  public void notifyRoot(Concern concern) {
+    entityEventHandler.entityChanged(containerService.getRoot(concern), concern.getId());
   }
 
 }

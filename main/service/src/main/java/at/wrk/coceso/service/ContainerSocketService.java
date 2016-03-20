@@ -18,4 +18,6 @@ public interface ContainerSocketService {
 
   public void removeUnit(int unitId);
 
+  public void notifyRoot(Concern concern);
+
 }

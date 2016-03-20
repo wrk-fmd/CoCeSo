@@ -22,53 +22,66 @@
  * @param {module:utils/i18n} _
  */
 define(["knockout", "../models/container", "data/load", "data/stomp", "data/store/hierarchy", "utils/destroy", "utils/i18n"],
-    function(ko, Container, load, stomp, store, destroy, _) {
-      "use strict";
+  function(ko, Container, load, stomp, store, destroy, _) {
+    "use strict";
 
-      var options = {
-        url: "container/getAll.json",
-        stomp: "/topic/container/{c}",
-        model: Container,
-        store: store.models
-      };
-
-      /**
-       * ViewModel for hierarchical view in Unit Window
-       *
-       * @constructor
-       */
-      var Hierarchy = function() {
-        if (store.count <= 0) {
-          store.count++;
-          load(options);
+    var options = {
+      url: "container/getAll.json",
+      stomp: "/topic/container/{c}",
+      model: Container,
+      store: store.models,
+      cbSet: function(data) {
+        if (!data.id) {
+          store.dummy(new Container(data));
+          return false;
         }
+        if (store.models()[data.id] instanceof Container) {
+          store.models()[data.id].setData(data);
+          return false;
+        }
+        store.models()[data.id] = new Container(data);
+        return true;
+      }
+    };
 
-        this.top = store.root;
+    /**
+     * ViewModel for hierarchical view in Unit Window
+     *
+     * @constructor
+     */
+    var Hierarchy = function() {
+      if (store.count <= 0) {
+        store.count++;
+        load(options);
+      }
 
-        var title = _("units") + ": " + _("main.unit.hierarchy");
-        this.dialogTitle = ko.pureComputed(function() {
-          return {dialog: title + (this.top() ? " (" + this.top().availableCounter() + "/" + this.top().totalCounter() + ")" : ""), button: title};
-        }, this);
-      };
-      Hierarchy.prototype = Object.create({}, /** @lends Hierarchy.prototype */ {
-        /**
-         * Destroy the ViewModel
-         *
-         * @function
-         * @return {void}
-         */
-        destroy: {
-          value: function() {
-            destroy(this);
-            store.count--;
-            if (store.count <= 0) {
-              store.root().destroy();
-              store.root(new Container());
-              stomp.unsubscribe(options.stomp.replace(/{c}/, localStorage.concern));
-            }
+      this.top = store.root;
+
+      var title = _("units") + ": " + _("main.unit.hierarchy");
+      this.dialogTitle = ko.pureComputed(function() {
+        return {dialog: title + (this.top() ? " (" + this.top().availableCounter() + "/" + this.top().totalCounter() + ")" : ""), button: title};
+      }, this);
+    };
+    Hierarchy.prototype = Object.create({}, /** @lends Hierarchy.prototype */ {
+      /**
+       * Destroy the ViewModel
+       *
+       * @function
+       * @return {void}
+       */
+      destroy: {
+        value: function() {
+          this.dialogTitle.dispose();
+          store.count--;
+          if (store.count <= 0) {
+            store.models({});
+            store.dummy(null);
+            stomp.unsubscribe(options.stomp.replace(/{c}/, localStorage.concern));
           }
         }
-      });
-
-      return Hierarchy;
+      }
     });
+
+    return Hierarchy;
+  }
+);

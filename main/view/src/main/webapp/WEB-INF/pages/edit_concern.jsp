@@ -140,10 +140,10 @@
             <h3><spring:message code="edit.container"/></h3>
           </div>
           <div>
-            <!-- ko if: top -->
+            <!-- ko if: hasRoot -->
             <div class="unit-container" data-bind="template: {name: 'template-container', data: top}"></div>
             <!-- /ko -->
-            <!-- ko ifnot: top -->
+            <!-- ko ifnot: hasRoot -->
             <p>
               <button class="btn btn-success" data-bind="click: createRoot">
                 <span class="glyphicon glyphicon-plus-sign"></span> <spring:message code="edit.container.root"/>
