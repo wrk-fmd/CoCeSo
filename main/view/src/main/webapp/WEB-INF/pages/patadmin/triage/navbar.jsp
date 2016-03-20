@@ -43,6 +43,7 @@
         <c:if test="${accessLevels[3]}">
         <li><a href="<c:url value="/patadmin/info"/>"><spring:message code="patadmin.info"/></a></li>
         </c:if>
+      <li><a href="<c:url value="/home"/>"><spring:message code="exit"/></a></li>
     </ul>
   </div>
 </div>
