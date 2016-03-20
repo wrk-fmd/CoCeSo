@@ -17,6 +17,7 @@
   <name>Coceso Plugins</name>
 
   <modules>
+    <module>gmaps</module>
     <module>niu</module>
     <module>radio</module>
     <module>vcm</module>

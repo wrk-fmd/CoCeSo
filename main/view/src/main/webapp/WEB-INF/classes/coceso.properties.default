@@ -17,3 +17,6 @@ locale.default=en
 
 # JS plugins
 js.plugins={}
+
+# Google Maps ApiKey
+gmaps.apikey=

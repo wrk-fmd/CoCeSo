@@ -1,16 +1,21 @@
 package at.wrk.coceso.entity.helper;
 
 import at.wrk.coceso.entity.Point;
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.lang3.StringUtils;
 
 public class Address {
 
+  private static final Pattern isStreet = Pattern.compile("^(\\w[\\w\\s\\-\\.]*?)"
+      + "( ([1-9]\\d*(\\-([1-9]\\d*)|[a-zA-Z])?)?(/.*)?)?( # (\\w[\\w\\s\\-\\.]*))?$", Pattern.UNICODE_CHARACTER_CLASS);
+  private static final Pattern isCity = Pattern.compile("^([1-9]\\d{3,4}) (\\w[\\w\\s\\-\\.]*)$", Pattern.UNICODE_CHARACTER_CLASS);
+  private static final Pattern numberParts = Pattern.compile("([1-9]\\d*)(\\-([1-9]\\d*)|[a-zA-Z])?");
+
   protected String title;
   protected String street;
+  protected String intersection;
   protected Integer numberFrom;
   protected Integer numberTo;
   protected String numberLetter;
@@ -29,14 +34,11 @@ public class Address {
    * @param point
    */
   public Address(Point point) {
-    if (point == null || point.getInfo() == null || point.getInfo().trim().isEmpty()) {
+    if (point == null || StringUtils.isBlank(point.getInfo())) {
       return;
     }
     String[] lines = point.getInfo().trim().split("\n");
 
-    Pattern isStreet = Pattern.compile("^(\\w[\\w\\s\\-\\.]*?)"
-            + "( ([1-9]\\d*(\\-([1-9]\\d*)|[a-zA-Z])?)?(/.*)?)?$", Pattern.UNICODE_CHARACTER_CLASS);
-    Pattern isCity = Pattern.compile("^([1-9]\\d{3,4}) (\\w[\\w\\s\\-\\.]*)$", Pattern.UNICODE_CHARACTER_CLASS);
     Matcher street1, street2, city1, city2;
 
     switch (lines.length) {
@@ -48,6 +50,7 @@ public class Address {
           // First (and only) line represents street
           street = street1.group(1);
           parseNumber(street1.group(2));
+          parseIntersection(street1.group(7));
         } else if (!lines[0].trim().isEmpty()) {
           // Use as title (e.g. POI)
           title = lines[0].trim();
@@ -61,6 +64,7 @@ public class Address {
           // First line is street, second is city
           street = street1.group(1);
           parseNumber(street1.group(2));
+          parseIntersection(street1.group(7));
           postCode = Integer.parseInt(city1.group(1));
           city = city1.group(2);
         } else if (street2.find(0)) {
@@ -68,10 +72,12 @@ public class Address {
           title = lines[0].trim();
           street = street2.group(1);
           parseNumber(street2.group(2));
+          parseIntersection(street2.group(7));
         } else if (street1.find(0)) {
           // First line is street
           street = street1.group(1);
           parseNumber(street1.group(2));
+          parseIntersection(street1.group(7));
           additional = lines[1].trim();
         } else {
           title = lines[0].trim();
@@ -90,6 +96,7 @@ public class Address {
           title = lines[0].trim();
           street = street2.group(1);
           parseNumber(street2.group(2));
+          parseIntersection(street2.group(7));
           postCode = Integer.parseInt(city2.group(1));
           city = city2.group(2);
           additionalStart = 3;
@@ -97,6 +104,7 @@ public class Address {
           // First line is street, second is city
           street = street1.group(1);
           parseNumber(street1.group(2));
+          parseIntersection(street1.group(7));
           postCode = Integer.parseInt(city1.group(1));
           city = city1.group(2);
           additionalStart = 2;
@@ -105,11 +113,13 @@ public class Address {
           title = lines[0].trim();
           street = street2.group(1);
           parseNumber(street2.group(2));
+          parseIntersection(street2.group(7));
           additionalStart = 2;
         } else if (street1.find(0)) {
           // First line is street
           street = street1.group(1);
           parseNumber(street1.group(2));
+          parseIntersection(street1.group(7));
           additionalStart = 1;
         } else {
           title = lines[0].trim();
@@ -123,7 +133,7 @@ public class Address {
   }
 
   protected final void parseNumber(String number) {
-    if (number == null || number.trim().isEmpty()) {
+    if (StringUtils.isBlank(number)) {
       return;
     }
 
@@ -140,7 +150,7 @@ public class Address {
           numberBlock = components[1].trim();
         }
       case 1:
-        Matcher matcher = Pattern.compile("([1-9]\\d*)(\\-([1-9]\\d*)|[a-zA-Z])?").matcher(components[0]);
+        Matcher matcher = numberParts.matcher(components[0]);
         if (matcher.find()) {
           numberFrom = Integer.parseInt(matcher.group(1));
           String letter = matcher.group(2), to = matcher.group(3);
@@ -157,6 +167,12 @@ public class Address {
     }
   }
 
+  protected final void parseIntersection(String intersection) {
+    if (!StringUtils.isBlank(intersection)) {
+      this.intersection = intersection.trim();
+    }
+  }
+
   public boolean checkStreet(Address b) {
     if (street == null || b.street == null) {
       return false;
@@ -166,11 +182,11 @@ public class Address {
 
   public boolean exactMatch(Address b) {
     return (Objects.equals(numberFrom, b.numberFrom)
-            && Objects.equals(numberTo, b.numberTo)
-            && Objects.equals(numberLetter, b.numberLetter)
-            && Objects.equals(numberBlock, b.numberBlock)
-            && (b.postCode == null || Objects.equals(postCode, b.postCode))
-            && checkStreet(b));
+        && Objects.equals(numberTo, b.numberTo)
+        && Objects.equals(numberLetter, b.numberLetter)
+        && Objects.equals(numberBlock, b.numberBlock)
+        && (b.postCode == null || Objects.equals(postCode, b.postCode))
+        && checkStreet(b));
   }
 
   public boolean contains(Address b) {

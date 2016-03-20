@@ -51,6 +51,12 @@
     <!-- Coceso plugins -->
     <dependency>
       <groupId>at.wrk.coceso-plugins</groupId>
+      <artifactId>coceso-gmaps</artifactId>
+      <version>${project.parent.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>at.wrk.coceso-plugins</groupId>
       <artifactId>coceso-niu</artifactId>
       <version>${project.parent.version}</version>
       <scope>runtime</scope>
