@@ -78,13 +78,13 @@ define(["jquery", "knockout", "data/store/hierarchy", "data/store/units", "utils
        * @type ko.computed
        * @returns {Container[]} Subcontainers of the container
        */
-      this.subContainer = store.list.extend({
+      this.subContainer = this.id  ? store.list.extend({
         list: {
           filter: {parent: this.id},
           sort: true,
           field: "ordering"
         }
-      });
+      }) : ko.observable([]);
 
       /**
        * @function
@@ -138,6 +138,7 @@ define(["jquery", "knockout", "data/store/hierarchy", "data/store/units", "utils
        */
       destroy: {
         value: function() {
+          console.log(this.id);
           destroy(this);
         }
       }

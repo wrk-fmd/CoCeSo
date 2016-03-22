@@ -3,6 +3,7 @@ package at.wrk.coceso.service;
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Container;
 import java.util.List;
+import java.util.Set;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +14,8 @@ public interface ContainerService {
   List<Container> getAll(Concern concern);
 
   Container getRoot(Concern concern);
+
+  Set<Integer> getSpare(Concern concern);
 
   Container doUpdate(Container container, Concern concern);
 

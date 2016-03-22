@@ -79,10 +79,9 @@ define(["jquery", "knockout", "./stomp", "utils/conf"],
         cbDelete = options.cbDelete;
       } else {
         cbDelete = function(id) {
-          if (options.store()[id]) {
-            options.store()[id].destroy();
-          }
+          var item = options.store()[id];
           delete options.store()[id];
+          return item;
         };
       }
 
@@ -101,9 +100,10 @@ define(["jquery", "knockout", "./stomp", "utils/conf"],
                 }
                 mutated = cbSet(item) || mutated;
               });
+              var deleted = [];
               for (var i in options.store()) {
                 if (!found[i]) {
-                  cbDelete(i);
+                  deleted.push(cbDelete(i));
                   mutated = true;
                 }
               }
@@ -125,6 +125,12 @@ define(["jquery", "knockout", "./stomp", "utils/conf"],
             if (mutated) {
               options.store.valueHasMutated();
             }
+
+            ko.utils.arrayForEach(deleted, function(item) {
+              if (item) {
+                item.destroy();
+              }
+            });
 
             conf.get("error")(false);
           },
@@ -149,12 +155,14 @@ define(["jquery", "knockout", "./stomp", "utils/conf"],
           options.seq = 0;
           options.queue = [];
 
-          // Workaround: Reload possibly faster than db save
-          window.setTimeout(fullLoad, 100);
+          fullLoad();
         } else if (body["delete"]) {
           options.seq = body.seq;
-          cbDelete(body["delete"]);
+          var item = cbDelete(body["delete"]);
           options.store.valueHasMutated();
+          if (item) {
+            item.destroy();
+          }
         } else if (body.data) {
           options.seq = body.seq;
           if (cbSet(body.data)) {

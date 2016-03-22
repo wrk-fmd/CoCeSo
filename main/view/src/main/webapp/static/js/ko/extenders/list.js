@@ -108,11 +108,13 @@ define(["knockout", "./boolean"], function(ko) {
         ret = false;
       } else {
         var op = null;
-        if ((typeof filter.op !== "undefined") && (typeof filter.val !== "undefined")) {
-          op = filter.op;
-          filter = filter.val;
-        } else if (typeof filter.val !== "undefined") {
-          filter = filter.val;
+        if (filter) {
+          if ((typeof filter.op !== "undefined") && (typeof filter.val !== "undefined")) {
+            op = filter.op;
+            filter = filter.val;
+          } else if (typeof filter.val !== "undefined") {
+            filter = filter.val;
+          }
         }
 
         ret = compare(op, ko.utils.unwrapObservable(filter), ko.utils.unwrapObservable(val[i]));
@@ -181,7 +183,7 @@ define(["knockout", "./boolean"], function(ko) {
       }
 
       var filter = options.filter ? ko.utils.unwrapObservable(options.filter) : null,
-          sort = options.sort ? ko.utils.unwrapObservable(options.sort) : null;
+        sort = options.sort ? ko.utils.unwrapObservable(options.sort) : null;
 
       if (filter) {
         data = ko.utils.arrayFilter(data, function(val) {

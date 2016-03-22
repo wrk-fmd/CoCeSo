@@ -38,6 +38,7 @@ class ContainerSocketServiceImpl implements ContainerSocketService {
   @Override
   public synchronized Container update(Container container, Concern concern) {
     container = containerService.doUpdate(container, concern);
+    setSpare(container);
     entityEventHandler.entityChanged(container, container.getConcern().getId());
     return container;
   }
@@ -53,11 +54,15 @@ class ContainerSocketServiceImpl implements ContainerSocketService {
   public synchronized void updateUnit(int containerId, int unitId, double ordering) {
     ContainerService.ContainerPair pair = containerService.doUpdateUnit(containerId, unitId, ordering);
 
+    setSpare(pair.newcont);
     entityEventHandler.entityChanged(pair.newcont, pair.newcont.getConcern().getId());
+
     if (pair.notifyRoot) {
       notifyRoot(pair.newcont.getConcern());
     }
+
     if (pair.previous != null) {
+      setSpare(pair.previous);
       entityEventHandler.entityChanged(pair.previous, pair.newcont.getConcern().getId());
     }
   }
@@ -67,6 +72,7 @@ class ContainerSocketServiceImpl implements ContainerSocketService {
     Container cont = containerService.doRemoveUnit(unitId);
     if (cont != null) {
       notifyRoot(cont.getConcern());
+      setSpare(cont);
       entityEventHandler.entityChanged(cont, cont.getConcern().getId());
     }
   }
@@ -74,6 +80,12 @@ class ContainerSocketServiceImpl implements ContainerSocketService {
   @Override
   public void notifyRoot(Concern concern) {
     entityEventHandler.entityChanged(containerService.getRoot(concern), concern.getId());
+  }
+
+  private void setSpare(Container container) {
+    if (container.getParent() == null) {
+      container.setSpare(containerService.getSpare(container.getConcern()));
+    }
   }
 
 }

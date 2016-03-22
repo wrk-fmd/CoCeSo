@@ -34,7 +34,7 @@ class ContainerServiceImpl implements ContainerService {
   public List<Container> getAll(Concern concern) {
     List<Container> container = containerRepository.findByConcern(concern);
     Container root = container.stream().filter(c -> c.getParent() == null).findFirst().orElseGet(Container::new);
-    root.setSpare(unitRepository.findSpare(concern).stream().map(Unit::getId).collect(Collectors.toSet()));
+    root.setSpare(getSpare(concern));
     if (root.getId() == null) {
       container.add(root);
     }
@@ -47,8 +47,13 @@ class ContainerServiceImpl implements ContainerService {
     if (container == null) {
       container = new Container();
     }
-    container.setSpare(unitRepository.findSpare(concern).stream().map(Unit::getId).collect(Collectors.toSet()));
+    container.setSpare(getSpare(concern));
     return container;
+  }
+
+  @Override
+  public Set<Integer> getSpare(Concern concern) {
+    return unitRepository.findSpare(concern).stream().map(Unit::getId).collect(Collectors.toSet());
   }
 
   @Override
