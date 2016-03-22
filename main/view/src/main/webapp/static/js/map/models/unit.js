@@ -16,9 +16,10 @@
  * @param {module:knockout} ko
  * @param {module:main/models/point} Point
  * @param {module:map/models/task} Task
+ * @param {module:utils/constants} constants
  */
-define(["knockout", "main/models/point", "./task", "ko/extenders/isvalue"],
-  function(ko, Point, Task) {
+define(["knockout", "main/models/point", "./task", "utils/constants", "ko/extenders/isvalue"],
+  function(ko, Point, Task, constants) {
     "use strict";
 
     /**
@@ -40,6 +41,7 @@ define(["knockout", "main/models/point", "./task", "ko/extenders/isvalue"],
       this.home = new Point();
       this.position = new Point();
       this.incidents = ko.observableArray([]);
+      this.state = ko.observable(constants.Unit.state.ad);
 
       /**
        * Method to set data
@@ -74,6 +76,8 @@ define(["knockout", "main/models/point", "./task", "ko/extenders/isvalue"],
         } else {
           self.incidents([]);
         }
+
+        self.state(data.state || constants.Unit.state.ad);
       };
 
       //Set data
@@ -109,6 +113,15 @@ define(["knockout", "main/models/point", "./task", "ko/extenders/isvalue"],
       this.incidentCount = ko.pureComputed(function() {
         return this.incidents().length;
       }, this);
+
+      /**
+       * Unit has state "AD"
+       *
+       * @function
+       * @type ko.pureComputed
+       * @returns {boolean}
+       */
+      this.isAD = this.state.extend({isValue: constants.Unit.state.ad});
 
       /**
        * Last known position is home

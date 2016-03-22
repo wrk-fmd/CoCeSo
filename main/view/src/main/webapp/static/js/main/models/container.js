@@ -138,7 +138,6 @@ define(["jquery", "knockout", "data/store/hierarchy", "data/store/units", "utils
        */
       destroy: {
         value: function() {
-          console.log(this.id);
           destroy(this);
         }
       }
