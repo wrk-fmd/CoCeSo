@@ -15,8 +15,8 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.CacheControl;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.web.method.annotation.AuthenticationPrincipalArgumentResolver;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -69,6 +69,10 @@ public class WebMvcConfigurer extends WebMvcConfigurerAdapter {
 
   @Override
   public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+    StringHttpMessageConverter stringConverter = new StringHttpMessageConverter();
+  	stringConverter.setWriteAcceptCharset(false);
+    converters.add(stringConverter);
+
     converters.add(new MappingJackson2HttpMessageConverter(objectMapper));
     super.configureMessageConverters(converters);
   }

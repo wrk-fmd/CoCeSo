@@ -25,7 +25,7 @@ define(["knockout"], function(ko) {
         fileContents(null);
         var file = element.files[0];
         if (file) {
-          reader.readAsBinaryString(file);
+          reader.readAsText(file);
         }
       });
     },
