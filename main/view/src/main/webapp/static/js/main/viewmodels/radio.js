@@ -85,8 +85,8 @@ define(["knockout", "../models/call", "data/load", "data/stomp", "data/store/rad
 
       this.port = ko.observable();
       this.dialogTitle = ko.computed(function() {
-        var port = this.port();
-        return port ? radio + ": " + port.name : radio;
+        var p = this.port();
+        return p ? radio + ": " + p.name : radio;
       }, this);
 
       this.calls = ko.computed(function() {
@@ -94,7 +94,7 @@ define(["knockout", "../models/call", "data/load", "data/stomp", "data/store/rad
           return b.timestamp - a.timestamp;
         }), calls = [], last = null, port = self.port();
         ko.utils.arrayForEach(data, function(item) {
-          if (port && item.port && port.port !== item.port) {
+          if (port && item.port && port.path !== item.port) {
             return;
           }
           if (last && last.call.ani === item.ani) {

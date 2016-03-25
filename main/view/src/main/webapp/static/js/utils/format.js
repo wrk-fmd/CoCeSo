@@ -16,7 +16,10 @@ define(function() {
 
   var format = {
     time: function(timestamp) {
-      return new Date(timestamp).toLocaleTimeString();
+      if (!(timestamp instanceof Date)) {
+        timestamp = new Date(timestamp);
+      }
+      return timestamp.toLocaleTimeString();
     },
     interval: function(interval) {
       interval = Math.round(interval / 1000);

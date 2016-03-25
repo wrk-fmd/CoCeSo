@@ -33,7 +33,7 @@ define(["knockout", "data/store/radio", "data/store/units", "utils/clock", "util
         data = data || {};
 
         /** @type Integer */
-        this.timestamp = data.timestamp;
+        this.timestamp = new Date(data.timestamp);
         /** @type String */
         this.time = format.time(data.timestamp);
         /** @type String */

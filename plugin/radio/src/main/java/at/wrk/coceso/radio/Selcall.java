@@ -3,7 +3,7 @@ package at.wrk.coceso.radio;
 import at.wrk.coceso.entity.types.EnumUserType;
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Calendar;
+import java.time.OffsetDateTime;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.hibernate.annotations.TypeDef;
@@ -11,8 +11,8 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
 @TypeDef(typeClass = EnumUserType.class,
-    parameters = @org.hibernate.annotations.Parameter(name = "enumClass", value = "at.wrk.coceso.radio.Selcall$Direction"),
-    defaultForType = Selcall.Direction.class)
+        parameters = @org.hibernate.annotations.Parameter(name = "enumClass", value = "at.wrk.coceso.radio.Selcall$Direction"),
+        defaultForType = Selcall.Direction.class)
 public class Selcall implements Serializable, Comparable<Selcall> {
 
   @Id
@@ -26,8 +26,7 @@ public class Selcall implements Serializable, Comparable<Selcall> {
 
   @NotNull
   @Column(name = "ts")
-  @Temporal(TemporalType.TIMESTAMP)
-  private Calendar timestamp;
+  private OffsetDateTime timestamp;
 
   @NotNull
   @Column(nullable = false)
@@ -44,7 +43,7 @@ public class Selcall implements Serializable, Comparable<Selcall> {
     this.port = port;
     this.ani = ani;
     this.direction = direction;
-    this.timestamp = Calendar.getInstance();
+    this.timestamp = OffsetDateTime.now();
   }
 
   @Override
@@ -72,11 +71,11 @@ public class Selcall implements Serializable, Comparable<Selcall> {
     this.ani = ani;
   }
 
-  public Calendar getTimestamp() {
+  public OffsetDateTime getTimestamp() {
     return timestamp;
   }
 
-  public void setTimestamp(Calendar timestamp) {
+  public void setTimestamp(OffsetDateTime timestamp) {
     this.timestamp = timestamp;
   }
 

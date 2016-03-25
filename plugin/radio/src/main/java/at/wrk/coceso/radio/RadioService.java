@@ -3,7 +3,7 @@ package at.wrk.coceso.radio;
 import at.wrk.coceso.entityevent.EntityEventHandler;
 import at.wrk.coceso.entityevent.SocketMessagingTemplate;
 import at.wrk.coceso.entityevent.WebSocketWriter;
-import java.util.Calendar;
+import java.time.OffsetDateTime;
 import java.util.EnumSet;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -58,9 +58,8 @@ public class RadioService implements SelcallListener {
   }
 
   public List<Selcall> getLastMinutes(int minutes) {
-    Calendar cal = Calendar.getInstance();
-    cal.add(Calendar.MINUTE, -minutes);
-    return selcallRepository.findByTimestampGreaterThanAndDirectionIn(cal, EnumSet.of(Selcall.Direction.RX, Selcall.Direction.RX_EMG));
+    return selcallRepository.findByTimestampGreaterThanAndDirectionIn(
+            OffsetDateTime.now().minusMinutes(minutes), EnumSet.of(Selcall.Direction.RX, Selcall.Direction.RX_EMG));
   }
 
   public boolean sendSelcall(Selcall selcall) {
@@ -83,7 +82,7 @@ public class RadioService implements SelcallListener {
       success = false;
     }
 
-    selcall.setTimestamp(Calendar.getInstance());
+    selcall.setTimestamp(OffsetDateTime.now());
     selcall.setDirection(success ? Selcall.Direction.TX : Selcall.Direction.TX_FAILED);
     selcallRepository.save(selcall);
 

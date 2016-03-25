@@ -126,11 +126,13 @@ define(["jquery", "knockout", "./stomp", "utils/conf"],
               options.store.valueHasMutated();
             }
 
-            ko.utils.arrayForEach(deleted, function(item) {
-              if (item) {
-                item.destroy();
-              }
-            });
+            if (deleted) {
+              ko.utils.arrayForEach(deleted, function(item) {
+                if (item) {
+                  item.destroy();
+                }
+              });
+            }
 
             conf.get("error")(false);
           },
