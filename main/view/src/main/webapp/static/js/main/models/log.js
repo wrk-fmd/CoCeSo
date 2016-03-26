@@ -24,8 +24,8 @@ define(["data/store/incidents", "data/store/units", "utils/i18n"], function(inci
 
     //Create basic properties
     this.id = data.id;
-    this.unit = data.unit ? incidents.get(data.unit) : null;
-    this.incident = data.incident ? units.get(data.incident) : null;
+    this.unit = data.unit ? units.get(data.unit) : null;
+    this.incident = data.incident ? incidents.get(data.incident) : null;
     this.user = data.user;
     this.timestamp = data.timestamp;
     this.state = data.state;

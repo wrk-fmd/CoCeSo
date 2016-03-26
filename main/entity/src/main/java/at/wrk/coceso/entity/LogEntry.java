@@ -136,6 +136,11 @@ public class LogEntry implements Serializable, Comparable<LogEntry>, ConcernBoun
     this.unit = unit;
   }
 
+  @JsonProperty("unit")
+  public void setUnitSlim(Integer unitId) {
+    this.unit = unitId == null ? null : new Unit(unitId);
+  }
+
   public Incident getIncident() {
     return incident;
   }
@@ -147,6 +152,11 @@ public class LogEntry implements Serializable, Comparable<LogEntry>, ConcernBoun
 
   public void setIncident(Incident incident) {
     this.incident = incident;
+  }
+
+  @JsonProperty("incident")
+  public void setIncidentSlim(Integer incidentId) {
+    this.incident = incidentId == null ? null : new Incident(incidentId);
   }
 
   public Patient getPatient() {
