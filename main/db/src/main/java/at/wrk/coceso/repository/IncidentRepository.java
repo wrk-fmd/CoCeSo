@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface IncidentRepository extends JpaRepository<Incident, Integer> {
 
-  List<Incident> findById(List<Integer> id);
+  List<Incident> findByIdIn(List<Integer> id);
 
   List<Incident> findByConcern(Concern concern);
 

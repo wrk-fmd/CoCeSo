@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UnitRepository extends JpaRepository<Unit, Integer> {
 
-  public List<Unit> findById(List<Integer> id);
+  public List<Unit> findByIdIn(List<Integer> id);
 
   public List<Unit> findByConcern(Concern concern);
 

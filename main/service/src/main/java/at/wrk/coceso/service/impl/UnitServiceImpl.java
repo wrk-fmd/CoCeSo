@@ -82,7 +82,7 @@ class UnitServiceImpl implements UnitService {
 
   @Override
   public Map<Unit, TaskState> getRelated(Incident incident) {
-    return unitRepository.findById(unitRepository.findRelated(incident)).stream().collect(Collectors.toMap(
+    return unitRepository.findByIdIn(unitRepository.findRelated(incident)).stream().collect(Collectors.toMap(
         Function.identity(), u -> u.getIncidents().getOrDefault(incident, TaskState.Detached)));
   }
 
