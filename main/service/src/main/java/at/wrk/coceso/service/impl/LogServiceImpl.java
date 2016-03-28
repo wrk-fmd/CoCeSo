@@ -90,9 +90,9 @@ class LogServiceImpl implements LogService {
 
   @Override
   public Timestamp getLastTaskStateUpdate(Incident incident, Unit unit) {
-    LogEntry last = logRepository.findLast(incident, unit,
+    List<LogEntry> last = logRepository.findLast(new PageRequest(0, 1), incident, unit,
         LogEntryType.TASKSTATE_CHANGED, LogEntryType.UNIT_ASSIGN, LogEntryType.UNIT_DETACH, LogEntryType.UNIT_AUTO_DETACH);
-    return last == null ? null : last.getTimestamp();
+    return last.isEmpty() ? null : last.get(0).getTimestamp();
   }
 
   @Override

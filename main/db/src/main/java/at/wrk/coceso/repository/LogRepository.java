@@ -34,7 +34,7 @@ public interface LogRepository extends JpaRepository<LogEntry, Integer> {
 
   @Query("SELECT l FROM LogEntry l WHERE l.incident = :incident AND l.unit = :unit AND l.type IN :types "
           + "ORDER BY l.timestamp DESC")
-  public LogEntry findLast(@Param("incident") Incident incident, @Param("unit") Unit unit, @Param("types") LogEntryType... types);
+  public List<LogEntry> findLast(Pageable pageable, @Param("incident") Incident incident, @Param("unit") Unit unit, @Param("types") LogEntryType... types);
 
   public List<LogEntry> findByConcernAndType(Concern concern, LogEntryType type, Sort sort);
 
