@@ -10,7 +10,9 @@ import at.wrk.coceso.service.PdfService;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
@@ -25,6 +27,12 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 public class PdfDocument extends Document {
+
+  private static final Font titleFont = new Font(Font.FontFamily.HELVETICA, 24, Font.BOLD);
+  private static final Font subTitleFont = new Font(Font.FontFamily.HELVETICA, 18);
+  private static final Font title2Font = new Font(Font.FontFamily.HELVETICA, 16, Font.BOLD);
+  private static final Font descrFont = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD);
+  private static final Font defFont = new Font(Font.FontFamily.HELVETICA, 10);
 
   private final static String timeFormat = "HH:mm:ss";
 
@@ -58,14 +66,14 @@ public class PdfDocument extends Document {
     Paragraph p = new Paragraph();
     addEmptyLine(p, 1);
 
-    Paragraph p0 = new Paragraph(title, PdfStyle.titleFont);
+    Paragraph p0 = new Paragraph(title, titleFont);
     p0.setAlignment(Element.ALIGN_CENTER);
     p.add(p0);
     addEmptyLine(p, 1);
 
     Paragraph p1 = new Paragraph(pdfService.getMessage("pdf.created",
         new String[]{user.getFirstname(), user.getLastname(), new java.text.SimpleDateFormat(dateTimeFormat).format(new Date())},
-        locale), PdfStyle.subTitleFont);
+        locale), subTitleFont);
     p1.setAlignment(Element.ALIGN_CENTER);
     p.add(p1);
 
@@ -121,27 +129,27 @@ public class PdfDocument extends Document {
     table.setHorizontalAlignment(PdfPTable.ALIGN_LEFT);
     table.getDefaultCell().setBorder(PdfPCell.BOTTOM);
 
-    table.addCell("");
-    table.addCell(pdfService.getMessage("pdf.report.total", null, locale));
-    table.addCell(pdfService.getMessage("pdf.report.stat_blue", null, locale));
+    addCell(table, "");
+    addCell(table, pdfService.getMessage("pdf.report.total", null, locale));
+    addCell(table, pdfService.getMessage("pdf.report.stat_blue", null, locale));
 
-    table.addCell(pdfService.getMessage("incident.type.task", null, locale) + " / " + pdfService.getMessage("incident.type.task.blue", null, locale));
-    table.addCell("" + task);
-    table.addCell("" + taskBlue);
+    addCell(table, pdfService.getMessage("incident.type.task", null, locale) + " / " + pdfService.getMessage("incident.type.task.blue", null, locale));
+    addCell(table, "" + task);
+    addCell(table, "" + taskBlue);
 
-    table.addCell(pdfService.getMessage("incident.type.transport", null, locale));
-    table.addCell("" + transport);
-    table.addCell("" + transportBlue);
+    addCell(table, pdfService.getMessage("incident.type.transport", null, locale));
+    addCell(table, "" + transport);
+    addCell(table, "" + transportBlue);
 
-    table.addCell(pdfService.getMessage("incident.type.relocation", null, locale));
-    table.addCell("" + relocation);
-    table.addCell("" + relocationBlue);
+    addCell(table, pdfService.getMessage("incident.type.relocation", null, locale));
+    addCell(table, "" + relocation);
+    addCell(table, "" + relocationBlue);
 
-    table.addCell(pdfService.getMessage("pdf.report.incident.other", null, locale));
-    table.addCell("" + other);
-    table.addCell("" + otherBlue);
+    addCell(table, pdfService.getMessage("pdf.report.incident.other", null, locale));
+    addCell(table, "" + other);
+    addCell(table, "" + otherBlue);
 
-    this.add(new Paragraph(pdfService.getMessage("pdf.report.statistics", null, locale), PdfStyle.titleFont));
+    this.add(new Paragraph(pdfService.getMessage("pdf.report.statistics", null, locale), titleFont));
     this.add(new Paragraph(""));
     this.add(table);
 
@@ -154,23 +162,25 @@ public class PdfDocument extends Document {
     Collections.reverse(logs);
 
     Paragraph p = new Paragraph();
-    Paragraph h = new Paragraph(pdfService.getMessage("log.custom", null, locale), PdfStyle.title2Font);
+    Paragraph h = new Paragraph(pdfService.getMessage("log.custom", null, locale), title2Font);
     p.add(h);
 
-    PdfPTable table = new PdfPTable(new float[]{1, 2, 6, 2});
+    PdfPTable table = new PdfPTable(new float[]{2, 2, 7.5F, 2, 2.5F});
     table.setWidthPercentage(100);
     table.getDefaultCell().setBorder(PdfPCell.BOTTOM);
 
-    table.addCell(pdfService.getMessage("log.timestamp", null, locale));
-    table.addCell(pdfService.getMessage("user", null, locale));
-    table.addCell(pdfService.getMessage("log.text", null, locale));
-    table.addCell(pdfService.getMessage("unit", null, locale));
+    addCell(table, pdfService.getMessage("log.timestamp", null, locale));
+    addCell(table, pdfService.getMessage("user", null, locale));
+    addCell(table, pdfService.getMessage("log.text", null, locale));
+    addCell(table, pdfService.getMessage("unit", null, locale));
+    addCell(table, pdfService.getMessage("incident", null, locale));
 
     logs.forEach(log -> {
-      table.addCell(getFormattedTime(log.getTimestamp()));
-      table.addCell(log.getUsername());
-      table.addCell(log.getText());
-      table.addCell(getUnitTitle(log.getUnit()));
+      addCell(table, getFormattedTime(log.getTimestamp()));
+      addCell(table, log.getUsername());
+      addCell(table, log.getText());
+      addCell(table, getUnitTitle(log.getUnit()));
+      addCell(table, getIncidentTitle(log.getIncident()));
     });
 
     p.add(table);
@@ -185,7 +195,7 @@ public class PdfDocument extends Document {
    * @throws DocumentException
    */
   public void addIncidentsLog(List<Incident> incidents) throws DocumentException {
-    this.add(new Paragraph(pdfService.getMessage("incidents", null, locale), PdfStyle.titleFont));
+    this.add(new Paragraph(pdfService.getMessage("incidents", null, locale), titleFont));
     this.add(new Paragraph(" "));
 
     for (Incident incident : incidents) {
@@ -216,7 +226,7 @@ public class PdfDocument extends Document {
    * @throws DocumentException
    */
   public void addTransports(Concern concern) throws DocumentException {
-    this.add(new Paragraph(pdfService.getMessage("pdf.transport", null, locale), PdfStyle.titleFont));
+    this.add(new Paragraph(pdfService.getMessage("pdf.transport", null, locale), titleFont));
     this.add(new Paragraph(" "));
 
     for (Incident incident : pdfService.getIncidents(concern)) {
@@ -245,7 +255,7 @@ public class PdfDocument extends Document {
    * @throws DocumentException
    */
   public void addIncidentsCurrent(Concern concern) throws DocumentException {
-    this.add(new Paragraph(pdfService.getMessage("incidents", null, locale), PdfStyle.titleFont));
+    this.add(new Paragraph(pdfService.getMessage("incidents", null, locale), titleFont));
     this.add(new Paragraph(" "));
 
     for (Incident incident : pdfService.getIncidents(concern)) {
@@ -274,7 +284,7 @@ public class PdfDocument extends Document {
    * @throws DocumentException
    */
   public void addUnitsLog(Concern concern) throws DocumentException {
-    this.add(new Paragraph(pdfService.getMessage("units", null, locale), PdfStyle.titleFont));
+    this.add(new Paragraph(pdfService.getMessage("units", null, locale), titleFont));
     this.add(new Paragraph(" "));
 
     for (Unit unit : pdfService.getUnits(concern)) {
@@ -293,7 +303,7 @@ public class PdfDocument extends Document {
    * @throws DocumentException
    */
   public void addUnitsCurrent(Concern concern) throws DocumentException {
-    this.add(new Paragraph(pdfService.getMessage("units", null, locale), PdfStyle.titleFont));
+    this.add(new Paragraph(pdfService.getMessage("units", null, locale), titleFont));
     this.add(new Paragraph(" "));
 
     for (Unit unit : pdfService.getUnits(concern)) {
@@ -309,7 +319,7 @@ public class PdfDocument extends Document {
 
   private Paragraph printIncidentTitle(Incident inc) {
     Paragraph p = new Paragraph();
-    p.add(new Paragraph(getIncidentTitle(inc), PdfStyle.title2Font));
+    p.add(new Paragraph(getIncidentTitle(inc), title2Font));
     return p;
   }
 
@@ -318,44 +328,44 @@ public class PdfDocument extends Document {
     table.setWidthPercentage(100);
     table.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
 
-    table.addCell(pdfService.getMessage("incident.blue", null, locale) + ":");
-    table.addCell(pdfService.getMessage(inc.isBlue() ? "yes" : "no", null, locale));
-    table.addCell("");
+    addCell(table, pdfService.getMessage("incident.blue", null, locale) + ":");
+    addCell(table, pdfService.getMessage(inc.isBlue() ? "yes" : "no", null, locale));
+    addCell(table, "");
 
-    table.addCell(pdfService.getMessage("incident.state", null, locale) + ":");
-    table.addCell(pdfService.getMessage("incident.state." + inc.getState().toString().toLowerCase(), null, inc.getState().toString(), locale));
-    table.addCell("");
+    addCell(table, pdfService.getMessage("incident.state", null, locale) + ":");
+    addCell(table, pdfService.getMessage("incident.state." + inc.getState().toString().toLowerCase(), null, inc.getState().toString(), locale));
+    addCell(table, "");
 
     if (inc.getType() == IncidentType.Task || inc.getType() == IncidentType.Transport) {
-      table.addCell(pdfService.getMessage("incident.bo", null, locale) + ":");
-      table.addCell(Point.isEmpty(inc.getBo())
+      addCell(table, pdfService.getMessage("incident.bo", null, locale) + ":");
+      addCell(table, Point.isEmpty(inc.getBo())
           ? pdfService.getMessage("incident.nobo", null, locale)
           : inc.getBo().getInfo());
-      table.addCell("");
+      addCell(table, "");
     }
 
-    table.addCell(pdfService.getMessage("incident.ao", null, locale) + ":");
-    table.addCell(Point.isEmpty(inc.getAo())
+    addCell(table, pdfService.getMessage("incident.ao", null, locale) + ":");
+    addCell(table, Point.isEmpty(inc.getAo())
         ? pdfService.getMessage("incident.noao", null, locale)
         : inc.getAo().getInfo());
-    table.addCell("");
+    addCell(table, "");
 
     if (inc.getInfo() != null && !inc.getInfo().isEmpty()) {
-      table.addCell(pdfService.getMessage("incident.info", null, locale) + ":");
-      table.addCell(inc.getInfo());
+      addCell(table, pdfService.getMessage("incident.info", null, locale) + ":");
+      addCell(table, inc.getInfo());
     }
     table.completeRow();
 
     if (inc.getCaller() != null && !inc.getCaller().isEmpty()) {
-      table.addCell(pdfService.getMessage("incident.caller", null, locale) + ":");
-      table.addCell(inc.getCaller());
-      table.addCell("");
+      addCell(table, pdfService.getMessage("incident.caller", null, locale) + ":");
+      addCell(table, inc.getCaller());
+      addCell(table, "");
     }
 
     if (inc.getCasusNr() != null && !inc.getCasusNr().isEmpty()) {
-      table.addCell(pdfService.getMessage("incident.casus", null, locale) + ":");
-      table.addCell(inc.getCasusNr());
-      table.addCell("");
+      addCell(table, pdfService.getMessage("incident.casus", null, locale) + ":");
+      addCell(table, inc.getCasusNr());
+      addCell(table, "");
     }
     table.completeRow();
 
@@ -367,43 +377,43 @@ public class PdfDocument extends Document {
     table.setWidthPercentage(100);
     table.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
 
-    table.addCell(pdfService.getMessage("patient", null, locale) + ":");
-    table.addCell(patient.getFirstname() + " " + patient.getLastname());
-    table.addCell("");
+    addCell(table, pdfService.getMessage("patient", null, locale) + ":");
+    addCell(table, patient.getFirstname() + " " + patient.getLastname());
+    addCell(table, "");
 
-    table.addCell(pdfService.getMessage("patient.sex", null, locale) + ":");
-    table.addCell(pdfService.getMessage("patient.sex." + patient.getSex(), null, patient.getSex().toString(), locale));
-    table.addCell("");
+    addCell(table, pdfService.getMessage("patient.sex", null, locale) + ":");
+    addCell(table, pdfService.getMessage("patient.sex." + patient.getSex(), null, patient.getSex().toString(), locale));
+    addCell(table, "");
 
     if (patient.getInsurance() != null && !patient.getInsurance().isEmpty()) {
-      table.addCell(pdfService.getMessage("patient.insurance", null, locale) + ":");
-      table.addCell(patient.getInsurance());
-      table.addCell("");
+      addCell(table, pdfService.getMessage("patient.insurance", null, locale) + ":");
+      addCell(table, patient.getInsurance());
+      addCell(table, "");
     }
 
     if (patient.getExternalId() != null && !patient.getExternalId().isEmpty()) {
-      table.addCell(pdfService.getMessage("patient.externalId", null, locale) + ":");
-      table.addCell(patient.getExternalId());
-      table.addCell("");
+      addCell(table, pdfService.getMessage("patient.externalId", null, locale) + ":");
+      addCell(table, patient.getExternalId());
+      addCell(table, "");
     }
     table.completeRow();
 
     if (patient.getDiagnosis() != null && !patient.getDiagnosis().isEmpty()) {
-      table.addCell(pdfService.getMessage("patient.diagnosis", null, locale) + ":");
-      table.addCell(patient.getDiagnosis());
-      table.addCell("");
+      addCell(table, pdfService.getMessage("patient.diagnosis", null, locale) + ":");
+      addCell(table, patient.getDiagnosis());
+      addCell(table, "");
     }
 
     if (patient.getErtype() != null && !patient.getErtype().isEmpty()) {
-      table.addCell(pdfService.getMessage("patient.ertype", null, locale) + ":");
-      table.addCell(patient.getErtype());
-      table.addCell("");
+      addCell(table, pdfService.getMessage("patient.ertype", null, locale) + ":");
+      addCell(table, patient.getErtype());
+      addCell(table, "");
     }
     table.completeRow();
 
     if (patient.getInfo() != null && !patient.getInfo().isEmpty()) {
-      table.addCell(pdfService.getMessage("patient.info", null, locale) + ":");
-      table.addCell(patient.getInfo());
+      addCell(table, pdfService.getMessage("patient.info", null, locale) + ":");
+      addCell(table, patient.getInfo());
     }
     table.completeRow();
 
@@ -414,24 +424,24 @@ public class PdfDocument extends Document {
     List<LogEntry> logs = pdfService.getLogByIncident(inc);
     Collections.reverse(logs);
 
-    Paragraph p = new Paragraph(pdfService.getMessage("log", null, locale), PdfStyle.descrFont);
+    Paragraph p = new Paragraph(pdfService.getMessage("log", null, locale), descrFont);
 
-    PdfPTable table = new PdfPTable(new float[]{2, 3, 4, 2, 1, 5});
+    PdfPTable table = new PdfPTable(new float[]{2, 2, 4, 2, 1, 5});
     table.setWidthPercentage(100);
     table.getDefaultCell().setBorder(PdfPCell.BOTTOM);
 
-    table.addCell(pdfService.getMessage("log.timestamp", null, locale));
-    table.addCell(pdfService.getMessage("user", null, locale));
-    table.addCell(pdfService.getMessage("log.text", null, locale));
-    table.addCell(pdfService.getMessage("unit", null, locale));
-    table.addCell(pdfService.getMessage("task.state", null, locale));
-    table.addCell(pdfService.getMessage("log.changes", null, locale));
+    addCell(table, pdfService.getMessage("log.timestamp", null, locale));
+    addCell(table, pdfService.getMessage("user", null, locale));
+    addCell(table, pdfService.getMessage("log.text", null, locale));
+    addCell(table, pdfService.getMessage("unit", null, locale));
+    addCell(table, pdfService.getMessage("task.state", null, locale));
+    addCell(table, pdfService.getMessage("log.changes", null, locale));
     logs.forEach(log -> {
-      table.addCell(getFormattedTime(log.getTimestamp()));
-      table.addCell(log.getUsername());
-      table.addCell(getLogText(log));
-      table.addCell(getUnitTitle(log.getUnit()));
-      table.addCell(getTaskState(log.getState()));
+      addCell(table, getFormattedTime(log.getTimestamp()));
+      addCell(table, log.getUsername());
+      addCell(table, getLogText(log));
+      addCell(table, getUnitTitle(log.getUnit()));
+      addCell(table, getTaskState(log.getState()));
       table.addCell(getLogChanges(log.getChanges()));
     });
 
@@ -444,19 +454,19 @@ public class PdfDocument extends Document {
       return null;
     }
 
-    Paragraph p = new Paragraph(pdfService.getMessage("units", null, locale), PdfStyle.descrFont);
+    Paragraph p = new Paragraph(pdfService.getMessage("units", null, locale), descrFont);
 
     PdfPTable table = new PdfPTable(new float[]{2, 1, 2});
     table.setWidthPercentage(100);
     table.getDefaultCell().setBorder(PdfPCell.BOTTOM);
 
-    table.addCell(pdfService.getMessage("unit", null, locale));
-    table.addCell(pdfService.getMessage("task.state", null, locale));
-    table.addCell(pdfService.getMessage("last_change", null, locale));
+    addCell(table, pdfService.getMessage("unit", null, locale));
+    addCell(table, pdfService.getMessage("task.state", null, locale));
+    addCell(table, pdfService.getMessage("last_change", null, locale));
     inc.getUnits().forEach((unit, state) -> {
-      table.addCell(getUnitTitle(unit));
-      table.addCell(getTaskState(state));
-      table.addCell(getFormattedTime(pdfService.getLastUpdate(inc, unit)));
+      addCell(table, getUnitTitle(unit));
+      addCell(table, getTaskState(state));
+      addCell(table, getFormattedTime(pdfService.getLastUpdate(inc, unit)));
     });
 
     p.add(table);
@@ -469,19 +479,19 @@ public class PdfDocument extends Document {
       return null;
     }
 
-    Paragraph p = new Paragraph(pdfService.getMessage("units", null, locale), PdfStyle.descrFont);
+    Paragraph p = new Paragraph(pdfService.getMessage("units", null, locale), descrFont);
 
     PdfPTable table = new PdfPTable(new float[]{2, 1, 2});
     table.setWidthPercentage(100);
     table.getDefaultCell().setBorder(PdfPCell.BOTTOM);
 
-    table.addCell(pdfService.getMessage("unit", null, locale));
-    table.addCell(pdfService.getMessage("task.state", null, locale));
-    table.addCell(pdfService.getMessage("last_change", null, locale));
+    addCell(table, pdfService.getMessage("unit", null, locale));
+    addCell(table, pdfService.getMessage("task.state", null, locale));
+    addCell(table, pdfService.getMessage("last_change", null, locale));
     units.forEach((unit, state) -> {
-      table.addCell(getUnitTitle(unit));
-      table.addCell(getTaskState(state));
-      table.addCell(getFormattedTime(pdfService.getLastUpdate(inc, unit)));
+      addCell(table, getUnitTitle(unit));
+      addCell(table, getTaskState(state));
+      addCell(table, getFormattedTime(pdfService.getLastUpdate(inc, unit)));
     });
 
     p.add(table);
@@ -490,7 +500,7 @@ public class PdfDocument extends Document {
 
   private Paragraph printUnitTitle(Unit unit) {
     Paragraph p = new Paragraph();
-    p.add(new Paragraph(unit.getCall() + " - #" + unit.getId(), PdfStyle.title2Font));
+    p.add(new Paragraph(unit.getCall() + " - #" + unit.getId(), title2Font));
     return p;
   }
 
@@ -499,41 +509,41 @@ public class PdfDocument extends Document {
     table.setWidthPercentage(100);
     table.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
 
-    table.addCell(pdfService.getMessage("unit.state", null, locale) + ":");
-    table.addCell(pdfService.getMessage("unit.state." + unit.getState().toString().toLowerCase(), null, unit.getState().toString(), locale));
-    table.addCell("");
+    addCell(table, pdfService.getMessage("unit.state", null, locale) + ":");
+    addCell(table, pdfService.getMessage("unit.state." + unit.getState().toString().toLowerCase(), null, unit.getState().toString(), locale));
+    addCell(table, "");
 
     if (unit.getAni() != null && !unit.getAni().isEmpty()) {
-      table.addCell(pdfService.getMessage("unit.ani", null, locale) + ":");
-      table.addCell(unit.getAni());
+      addCell(table, pdfService.getMessage("unit.ani", null, locale) + ":");
+      addCell(table, unit.getAni());
     }
     table.completeRow();
 
-    table.addCell(pdfService.getMessage("unit.position", null, locale) + ":");
-    table.addCell(Point.isEmpty(unit.getPosition()) ? "N/A" : unit.getPosition().getInfo());
-    table.addCell("");
+    addCell(table, pdfService.getMessage("unit.position", null, locale) + ":");
+    addCell(table, Point.isEmpty(unit.getPosition()) ? "N/A" : unit.getPosition().getInfo());
+    addCell(table, "");
 
-    table.addCell(pdfService.getMessage("unit.home", null, locale) + ":");
-    table.addCell(Point.isEmpty(unit.getHome()) ? "N/A" : unit.getHome().getInfo());
-    table.addCell("");
+    addCell(table, pdfService.getMessage("unit.home", null, locale) + ":");
+    addCell(table, Point.isEmpty(unit.getHome()) ? "N/A" : unit.getHome().getInfo());
+    addCell(table, "");
 
     if (unit.getInfo() != null && !unit.getInfo().isEmpty()) {
-      table.addCell(pdfService.getMessage("unit.info", null, locale) + ":");
-      table.addCell(unit.getInfo());
-      table.addCell("");
+      addCell(table, pdfService.getMessage("unit.info", null, locale) + ":");
+      addCell(table, unit.getInfo());
+      addCell(table, "");
     }
 
-    table.addCell(pdfService.getMessage("unit.withdoc", null, locale) + ":");
-    table.addCell(pdfService.getMessage(unit.isWithDoc() ? "yes" : "no", null, locale));
-    table.addCell("");
+    addCell(table, pdfService.getMessage("unit.withdoc", null, locale) + ":");
+    addCell(table, pdfService.getMessage(unit.isWithDoc() ? "yes" : "no", null, locale));
+    addCell(table, "");
 
-    table.addCell(pdfService.getMessage("unit.portable", null, locale) + ":");
-    table.addCell(pdfService.getMessage(unit.isPortable() ? "yes" : "no", null, locale));
-    table.addCell("");
+    addCell(table, pdfService.getMessage("unit.portable", null, locale) + ":");
+    addCell(table, pdfService.getMessage(unit.isPortable() ? "yes" : "no", null, locale));
+    addCell(table, "");
 
-    table.addCell(pdfService.getMessage("unit.vehicle", null, locale) + ":");
-    table.addCell(pdfService.getMessage(unit.isTransportVehicle() ? "yes" : "no", null, locale));
-    table.addCell("");
+    addCell(table, pdfService.getMessage("unit.vehicle", null, locale) + ":");
+    addCell(table, pdfService.getMessage(unit.isTransportVehicle() ? "yes" : "no", null, locale));
+    addCell(table, "");
 
     table.completeRow();
 
@@ -544,22 +554,22 @@ public class PdfDocument extends Document {
     List<LogEntry> logs = pdfService.getLogByUnit(unit);
     Collections.reverse(logs);
 
-    PdfPTable table = new PdfPTable(new float[]{2, 3, 4, 3, 1, 5});
+    PdfPTable table = new PdfPTable(new float[]{2, 2, 3.5F, 2.5F, 1, 5});
     table.setWidthPercentage(100);
     table.getDefaultCell().setBorder(PdfPCell.BOTTOM);
 
-    table.addCell(pdfService.getMessage("log.timestamp", null, locale));
-    table.addCell(pdfService.getMessage("user", null, locale));
-    table.addCell(pdfService.getMessage("log.text", null, locale));
-    table.addCell(pdfService.getMessage("incident", null, locale));
-    table.addCell(pdfService.getMessage("task.state", null, locale));
-    table.addCell(pdfService.getMessage("log.changes", null, locale));
+    addCell(table, pdfService.getMessage("log.timestamp", null, locale));
+    addCell(table, pdfService.getMessage("user", null, locale));
+    addCell(table, pdfService.getMessage("log.text", null, locale));
+    addCell(table, pdfService.getMessage("incident", null, locale));
+    addCell(table, pdfService.getMessage("task.state", null, locale));
+    addCell(table, pdfService.getMessage("log.changes", null, locale));
     logs.forEach(log -> {
-      table.addCell(getFormattedTime(log.getTimestamp()));
-      table.addCell(log.getUsername());
-      table.addCell(getLogText(log));
-      table.addCell(getIncidentTitle(log.getIncident()));
-      table.addCell(getTaskState(log.getState()));
+      addCell(table, getFormattedTime(log.getTimestamp()));
+      addCell(table, log.getUsername());
+      addCell(table, getLogText(log));
+      addCell(table, getIncidentTitle(log.getIncident()));
+      addCell(table, getTaskState(log.getState()));
       table.addCell(getLogChanges(log.getChanges()));
     });
 
@@ -571,23 +581,23 @@ public class PdfDocument extends Document {
       return null;
     }
 
-    Paragraph p = new Paragraph(pdfService.getMessage("incidents", null, locale), PdfStyle.descrFont);
+    Paragraph p = new Paragraph(pdfService.getMessage("incidents", null, locale), descrFont);
 
     PdfPTable table = new PdfPTable(new float[]{2, 3, 3, 1, 2});
     table.setWidthPercentage(100);
     table.getDefaultCell().setBorder(PdfPCell.BOTTOM);
 
-    table.addCell(pdfService.getMessage("incident", null, locale));
-    table.addCell(pdfService.getMessage("incident.bo", null, locale) + "/" + pdfService.getMessage("incident.ao", null, locale));
-    table.addCell(pdfService.getMessage("incident.info", null, locale));
-    table.addCell(pdfService.getMessage("task.state", null, locale));
-    table.addCell(pdfService.getMessage("last_change", null, locale));
+    addCell(table, pdfService.getMessage("incident", null, locale));
+    addCell(table, pdfService.getMessage("incident.bo", null, locale) + "/" + pdfService.getMessage("incident.ao", null, locale));
+    addCell(table, pdfService.getMessage("incident.info", null, locale));
+    addCell(table, pdfService.getMessage("task.state", null, locale));
+    addCell(table, pdfService.getMessage("last_change", null, locale));
     unit.getIncidents().forEach((inc, s) -> {
-      table.addCell(getIncidentTitle(inc));
+      addCell(table, getIncidentTitle(inc));
       table.addCell(getBoAo(inc));
-      table.addCell(inc.getInfo());
-      table.addCell(getTaskState(s));
-      table.addCell(getFormattedTime(pdfService.getLastUpdate(inc, unit)));
+      addCell(table, inc.getInfo());
+      addCell(table, getTaskState(s));
+      addCell(table, getFormattedTime(pdfService.getLastUpdate(inc, unit)));
     });
 
     p.add(table);
@@ -643,15 +653,15 @@ public class PdfDocument extends Document {
       if (Point.isEmpty(inc.getAo())) {
         table.getDefaultCell().setColspan(2);
       }
-      table.addCell(Point.isEmpty(inc.getBo())
+      addCell(table, Point.isEmpty(inc.getBo())
           ? pdfService.getMessage("incident.nobo", null, locale)
           : inc.getBo().getInfo());
       if (!Point.isEmpty(inc.getAo())) {
-        table.addCell(inc.getAo().getInfo());
+        addCell(table, inc.getAo().getInfo());
       }
     } else {
       table.getDefaultCell().setColspan(2);
-      table.addCell(Point.isEmpty(inc.getAo())
+      addCell(table, Point.isEmpty(inc.getAo())
           ? pdfService.getMessage("incident.noao", null, locale)
           : inc.getAo().getInfo());
     }
@@ -678,12 +688,16 @@ public class PdfDocument extends Document {
     table.setPaddingTop(-2);
 
     changes.forEach(c -> {
-      table.addCell(pdfService.getMessage(changes.getType() + "." + c.getKey(), null, c.getKey(), locale) + ": ");
-      table.addCell(c.getOldValue() != null ? c.getOldValue() + "" : "");
-      table.addCell(c.getNewValue() != null ? c.getNewValue() + "" : "[empty]");
+      addCell(table, pdfService.getMessage(changes.getType() + "." + c.getKey().toLowerCase(), null, c.getKey(), locale) + ": ");
+      addCell(table, c.getOldValue() != null ? c.getOldValue() + "" : "");
+      addCell(table, c.getNewValue() != null ? c.getNewValue() + "" : "[empty]");
     });
 
     return table;
+  }
+
+  private void addCell(PdfPTable table, String text) {
+    table.addCell(new Phrase(text, defFont));
   }
 
 }
