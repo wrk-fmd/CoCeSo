@@ -64,8 +64,8 @@ public class PdfDocument extends Document {
     addEmptyLine(p, 1);
 
     Paragraph p1 = new Paragraph(pdfService.getMessage("pdf.created",
-            new String[]{user.getFirstname(), user.getLastname(), new java.text.SimpleDateFormat(dateTimeFormat).format(new Date())},
-            locale), PdfStyle.subTitleFont);
+        new String[]{user.getFirstname(), user.getLastname(), new java.text.SimpleDateFormat(dateTimeFormat).format(new Date())},
+        locale), PdfStyle.subTitleFont);
     p1.setAlignment(Element.ALIGN_CENTER);
     p.add(p1);
 
@@ -80,7 +80,7 @@ public class PdfDocument extends Document {
 
   public void addLastPage() throws DocumentException {
     this.add(new Paragraph(pdfService.getMessage("pdf.complete",
-            new String[]{new java.text.SimpleDateFormat(dateTimeFormat).format(new Date())}, locale)));
+        new String[]{new java.text.SimpleDateFormat(dateTimeFormat).format(new Date())}, locale)));
   }
 
   public void addStatistics(List<Incident> incidents) throws DocumentException {
@@ -157,7 +157,7 @@ public class PdfDocument extends Document {
     Paragraph h = new Paragraph(pdfService.getMessage("log.custom", null, locale), PdfStyle.title2Font);
     p.add(h);
 
-    PdfPTable table = new PdfPTable(new float[]{1, 1, 3, 1});
+    PdfPTable table = new PdfPTable(new float[]{1, 2, 6, 2});
     table.setWidthPercentage(100);
     table.getDefaultCell().setBorder(PdfPCell.BOTTOM);
 
@@ -196,8 +196,10 @@ public class PdfDocument extends Document {
       Paragraph p = printIncidentTitle(incident);
       p.add(printIncidentDetails(incident));
       addEmptyLine(p, 1);
-      p.add(printPatientDetails(incident.getPatient()));
-      addEmptyLine(p, 1);
+      if (incident.getPatient() != null) {
+        p.add(printPatientDetails(incident.getPatient()));
+        addEmptyLine(p, 1);
+      }
       p.add(printRelatedUnits(incident));
       addEmptyLine(p, 1);
       p.add(printIncidentLog(incident));
@@ -225,8 +227,10 @@ public class PdfDocument extends Document {
       Paragraph p = printIncidentTitle(incident);
       p.add(printIncidentDetails(incident));
       addEmptyLine(p, 1);
-      p.add(printPatientDetails(incident.getPatient()));
-      addEmptyLine(p, 1);
+      if (incident.getPatient() != null) {
+        p.add(printPatientDetails(incident.getPatient()));
+        addEmptyLine(p, 1);
+      }
       p.add(printRelatedUnits(incident));
       addEmptyLine(p, 1);
       this.add(p);
@@ -252,8 +256,10 @@ public class PdfDocument extends Document {
       Paragraph p = printIncidentTitle(incident);
       p.add(printIncidentDetails(incident));
       addEmptyLine(p, 1);
-      p.add(printPatientDetails(incident.getPatient()));
-      addEmptyLine(p, 1);
+      if (incident.getPatient() != null) {
+        p.add(printPatientDetails(incident.getPatient()));
+        addEmptyLine(p, 1);
+      }
       p.add(printIncidentUnits(incident));
       addEmptyLine(p, 1);
       this.add(p);
@@ -323,15 +329,15 @@ public class PdfDocument extends Document {
     if (inc.getType() == IncidentType.Task || inc.getType() == IncidentType.Transport) {
       table.addCell(pdfService.getMessage("incident.bo", null, locale) + ":");
       table.addCell(Point.isEmpty(inc.getBo())
-              ? pdfService.getMessage("incident.nobo", null, locale)
-              : inc.getBo().getInfo());
+          ? pdfService.getMessage("incident.nobo", null, locale)
+          : inc.getBo().getInfo());
       table.addCell("");
     }
 
     table.addCell(pdfService.getMessage("incident.ao", null, locale) + ":");
     table.addCell(Point.isEmpty(inc.getAo())
-            ? pdfService.getMessage("incident.noao", null, locale)
-            : inc.getAo().getInfo());
+        ? pdfService.getMessage("incident.noao", null, locale)
+        : inc.getAo().getInfo());
     table.addCell("");
 
     if (inc.getInfo() != null && !inc.getInfo().isEmpty()) {
@@ -410,7 +416,7 @@ public class PdfDocument extends Document {
 
     Paragraph p = new Paragraph(pdfService.getMessage("log", null, locale), PdfStyle.descrFont);
 
-    PdfPTable table = new PdfPTable(new float[]{2, 2, 4, 2, 1, 5});
+    PdfPTable table = new PdfPTable(new float[]{2, 3, 4, 2, 1, 5});
     table.setWidthPercentage(100);
     table.getDefaultCell().setBorder(PdfPCell.BOTTOM);
 
@@ -538,7 +544,7 @@ public class PdfDocument extends Document {
     List<LogEntry> logs = pdfService.getLogByUnit(unit);
     Collections.reverse(logs);
 
-    PdfPTable table = new PdfPTable(new float[]{2, 2, 4, 3, 1, 5});
+    PdfPTable table = new PdfPTable(new float[]{2, 3, 4, 3, 1, 5});
     table.setWidthPercentage(100);
     table.getDefaultCell().setBorder(PdfPCell.BOTTOM);
 
@@ -600,8 +606,8 @@ public class PdfDocument extends Document {
 
   private String getLogText(LogEntry log) {
     return log.getType() == LogEntryType.CUSTOM
-            ? log.getText()
-            : pdfService.getMessage("log.type." + log.getType(), null, log.getText(), locale);
+        ? log.getText()
+        : pdfService.getMessage("log.type." + log.getType(), null, log.getText(), locale);
   }
 
   private String getIncidentTitle(Incident inc) {
@@ -638,16 +644,16 @@ public class PdfDocument extends Document {
         table.getDefaultCell().setColspan(2);
       }
       table.addCell(Point.isEmpty(inc.getBo())
-              ? pdfService.getMessage("incident.nobo", null, locale)
-              : inc.getBo().getInfo());
+          ? pdfService.getMessage("incident.nobo", null, locale)
+          : inc.getBo().getInfo());
       if (!Point.isEmpty(inc.getAo())) {
         table.addCell(inc.getAo().getInfo());
       }
     } else {
       table.getDefaultCell().setColspan(2);
       table.addCell(Point.isEmpty(inc.getAo())
-              ? pdfService.getMessage("incident.noao", null, locale)
-              : inc.getAo().getInfo());
+          ? pdfService.getMessage("incident.noao", null, locale)
+          : inc.getAo().getInfo());
     }
 
     return table;
@@ -669,6 +675,7 @@ public class PdfDocument extends Document {
     PdfPTable table = new PdfPTable(new float[]{1, 1, 1});
     table.setWidthPercentage(100);
     table.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+    table.setPaddingTop(-2);
 
     changes.forEach(c -> {
       table.addCell(pdfService.getMessage(changes.getType() + "." + c.getKey(), null, c.getKey(), locale) + ": ");
