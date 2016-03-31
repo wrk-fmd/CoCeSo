@@ -94,6 +94,7 @@ public class PostprocessingServiceImpl implements PostprocessingService {
 
   private Patient prepareForUpdate(PostprocessingForm form) {
     Patient p = new Patient();
+    p.setId(form.getPatient());
     p.setLastname(form.getLastname());
     p.setFirstname(form.getFirstname());
     p.setExternalId(form.getExternalId());

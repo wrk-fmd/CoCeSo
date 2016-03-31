@@ -90,9 +90,10 @@
             <form:input path="ertype" cssClass="form-control" maxlength="40" required="required" data-bind="ertype: true"/>
           </div>
           <div class="form-group col-md-2 col-md-offset-1">
-            <form:label path="ambulance"><spring:message code="patient.ambulance" text="ambulance"/></form:label>
+            <spring:message code="patient.ambulance.choose" var="ambulance"/>
+            <form:label path="ambulance"><spring:message code="patient.ambulance"/></form:label>
             <form:select path="ambulance" cssClass="form-control" data-bind="valueInit: ambulance">
-              <form:option value="" label="ambulance..."/>
+              <form:option value="" label="${ambulance}..."/>
               <c:forEach items="<%= at.wrk.coceso.entity.enums.Ambulance.values()%>" var="ambulance">
                 <form:option value="${ambulance}"/>
               </c:forEach>

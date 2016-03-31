@@ -134,7 +134,7 @@ public class TriageServiceImpl implements TriageService {
     Patient patient = patientService.update(new Patient(), incident.getConcern(), user, notify);
 
     incident.setPatient(patient);
-    incidentService.assignPatient(incidentId, incidentId, user, notify);
+    incidentService.assignPatient(incident, patient, user, notify);
 
     return patient;
   }
@@ -161,8 +161,9 @@ public class TriageServiceImpl implements TriageService {
   }
 
   private Patient prepare(TriageForm form) {
-    Patient patient = form.getPatient() == null ? new Patient() : new Patient(form.getPatient());
+    Patient patient = new Patient();
 
+    patient.setId(form.getPatient());
     patient.setLastname(form.getLastname());
     patient.setFirstname(form.getFirstname());
     patient.setExternalId(form.getExternalId());
