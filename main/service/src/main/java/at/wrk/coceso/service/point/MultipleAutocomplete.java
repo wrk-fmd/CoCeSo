@@ -1,5 +1,6 @@
 package at.wrk.coceso.service.point;
 
+import at.wrk.coceso.entity.Concern;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,18 +30,28 @@ public class MultipleAutocomplete implements IAutocomplete {
 
   @Override
   public Collection<String> getAll(String filter, Integer max) {
-    List<String> filtered = autocomplete.stream().flatMap(a -> a.getAll(filter, 0).stream()).collect(Collectors.toList());
-    filtered.addAll(getContaining(filter, max == null ? null : max - filtered.size()).collect(Collectors.toList()));
+    return getAll(filter, max, null);
+  }
+
+  @Override
+  public Collection<String> getAll(String filter, Integer max, Concern concern) {
+    List<String> filtered = autocomplete.stream().flatMap(a -> a.getAll(filter, 0, concern).stream()).collect(Collectors.toList());
+    filtered.addAll(getContaining(filter, max == null ? null : max - filtered.size(), concern).collect(Collectors.toList()));
     return filtered;
   }
 
   @Override
   public Stream<String> getContaining(String filter, Integer max) {
+    return getContaining(filter, max, null);
+  }
+
+  @Override
+  public Stream<String> getContaining(String filter, Integer max, Concern concern) {
     if (max != null && max <= 0) {
       return Stream.empty();
     }
 
-    Stream<String> filtered = autocomplete.stream().flatMap(a -> a.getContaining(filter, null));
+    Stream<String> filtered = autocomplete.stream().flatMap(a -> a.getContaining(filter, null, concern));
     return max == null ? filtered : filtered.limit(max);
   }
 

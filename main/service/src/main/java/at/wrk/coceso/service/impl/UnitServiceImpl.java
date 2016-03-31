@@ -66,11 +66,6 @@ class UnitServiceImpl implements UnitService {
   }
 
   @Override
-  public List<Unit> getByType(Concern concern, UnitType type) {
-    return unitRepository.findByConcernAndType(concern, type);
-  }
-
-  @Override
   public List<Unit> getByUser(User user, Collection<UnitType> types) {
     return user == null ? null : unitRepository.findByUser(user, types);
   }
@@ -120,7 +115,7 @@ class UnitServiceImpl implements UnitService {
     }
     if (unit.getPosition() != null && !Objects.equals(unit.getPosition(), save.getPosition())
         && (!Point.isEmpty(save.getPosition()) || !Point.isEmpty(unit.getPosition()))) {
-      Point p = pointService.createIfNotExists(unit.getPosition());
+      Point p = pointService.createIfNotExists(unit.getPosition(), save.getConcern());
       changes.put("position", Point.toStringOrNull(save.getPosition()), Point.toStringOrNull(p));
       save.setPosition(p);
     }

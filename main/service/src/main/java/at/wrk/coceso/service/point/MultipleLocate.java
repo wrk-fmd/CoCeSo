@@ -1,5 +1,6 @@
 package at.wrk.coceso.service.point;
 
+import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Point;
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,7 +28,12 @@ public class MultipleLocate implements ILocate {
 
   @Override
   public boolean locate(Point p) {
-    return locate.stream().anyMatch((l) -> (l.locate(p)));
+    return locate(p, null);
+  }
+
+  @Override
+  public boolean locate(Point p, Concern concern) {
+    return locate.stream().anyMatch((l) -> (l.locate(p, concern)));
   }
 
 }

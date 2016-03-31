@@ -17,7 +17,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Component;
 
 @Component
-@Order(3)
+@Order(30)
 public class ViennaAutocomplete extends CsvAutocomplete {
 
   private final static String cache = "streetnames.csv";

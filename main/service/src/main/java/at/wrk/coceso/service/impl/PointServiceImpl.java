@@ -1,5 +1,6 @@
 package at.wrk.coceso.service.impl;
 
+import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Point;
 import at.wrk.coceso.repository.PointRepository;
 import at.wrk.coceso.service.PointService;
@@ -26,6 +27,11 @@ class PointServiceImpl implements PointService {
 
   @Override
   public Point createIfNotExists(Point dummy) {
+    return createIfNotExists(dummy, null);
+  }
+
+  @Override
+  public Point createIfNotExists(Point dummy, Concern concern) {
     if (dummy == null) {
       return null;
     }
@@ -34,7 +40,7 @@ class PointServiceImpl implements PointService {
       // If the id already exists, return Point from Database
       Point p = pointRepository.findOne(dummy.getId());
       if (p != null) {
-        return locate(p);
+        return locate(p, concern);
       }
       dummy.setId(null);
     }
@@ -43,12 +49,12 @@ class PointServiceImpl implements PointService {
     if (dummy.getInfo() != null) {
       Point p = pointRepository.findByInfo(dummy.getInfo());
       if (p != null) {
-        return locate(p);
+        return locate(p, concern);
       }
 
       dummy.setLatitude(null);
       dummy.setLongitude(null);
-      return locate(pointRepository.save(dummy));
+      return locate(pointRepository.save(dummy), concern);
     }
 
     if (dummy.getLatitude() != null && dummy.getLongitude() != null) {
@@ -60,17 +66,22 @@ class PointServiceImpl implements PointService {
 
   @Override
   public Collection<String> autocomplete(String filter) {
+    return autocomplete(filter, null);
+  }
+
+  @Override
+  public Collection<String> autocomplete(String filter, Concern concern) {
     if (filter == null || filter.length() <= 1) {
       return null;
     }
-    return autocomplete.getAll(filter.toLowerCase().replaceAll("\n", ", "), 20);
+    return autocomplete.getAll(filter.toLowerCase().replaceAll("\n", ", "), 20, concern);
   }
 
-  private Point locate(Point p) {
+  private Point locate(Point p, Concern concern) {
     if (locate == null || StringUtils.isEmpty(p.getInfo()) || (p.getLatitude() != null && p.getLongitude() != null)) {
       return p;
     }
-    if (locate.locate(p)) {
+    if (locate.locate(p, concern)) {
       p = pointRepository.save(p);
     }
     return p;

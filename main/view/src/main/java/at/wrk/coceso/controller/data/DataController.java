@@ -11,6 +11,7 @@ import at.wrk.coceso.service.ConcernService;
 import at.wrk.coceso.service.UserService;
 import at.wrk.coceso.service.PointService;
 import at.wrk.coceso.service.TaskSocketService;
+import at.wrk.coceso.utils.ActiveConcern;
 import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -74,7 +75,7 @@ public class DataController {
 
   @PreAuthorize("@auth.hasAccessLevel('Main')")
   @RequestMapping(value = "poiAutocomplete", produces = "application/json", method = RequestMethod.GET)
-  public Collection<String> poiAutocomplete(@RequestParam("q") String q) {
-    return pointService.autocomplete(q);
+  public Collection<String> poiAutocomplete(@RequestParam("q") String q, @ActiveConcern Concern concern) {
+    return pointService.autocomplete(q, concern);
   }
 }

@@ -20,8 +20,6 @@ public interface UnitService {
 
   public List<Unit> getAll(Concern concern);
 
-  public List<Unit> getByType(Concern concern, UnitType type);
-
   public List<Unit> getByUser(User user, Collection<UnitType> types);
 
   public List<Unit> getByConcernUser(Concern concern, User user);
