@@ -42,9 +42,7 @@ public class Point implements Serializable {
 
   @PrePersist
   public void prePersist() {
-    if (info == null) {
-      info = "";
-    }
+    info = StringUtils.defaultString(info);
   }
 
   public Integer getId() {
@@ -60,7 +58,7 @@ public class Point implements Serializable {
   }
 
   public void setInfo(String info) {
-    this.info = info;
+    this.info = StringUtils.trimToEmpty(info);
   }
 
   public Double getLongitude() {
@@ -97,6 +95,13 @@ public class Point implements Serializable {
     return isEmpty(point) ? null : point.toString();
   }
 
+  public static boolean infoEquals(Point a, Point b) {
+    return Objects.equals(
+        a == null ? null : StringUtils.defaultIfEmpty(a.info, null),
+        b == null ? null : StringUtils.defaultIfEmpty(b.info, null)
+    );
+  }
+
   @Override
   public String toString() {
     if (!StringUtils.isEmpty(info)) {
@@ -118,11 +123,11 @@ public class Point implements Serializable {
     }
     Point p = (Point) obj;
     if (this.id != null && p.id != null && this.id.equals(p.id)) {
-      return false;
+      return true;
     }
 
     return (Objects.equals(this.info, p.info)
-            && Objects.equals(this.latitude, p.latitude) && Objects.equals(this.longitude, p.longitude));
+        && Objects.equals(this.latitude, p.latitude) && Objects.equals(this.longitude, p.longitude));
   }
 
   @Override

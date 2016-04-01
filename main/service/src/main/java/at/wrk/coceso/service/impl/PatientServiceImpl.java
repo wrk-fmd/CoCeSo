@@ -20,6 +20,7 @@ import at.wrk.coceso.repository.MedinfoRepository;
 import at.wrk.coceso.service.LogService;
 import at.wrk.coceso.service.PatientService;
 import at.wrk.coceso.utils.DataAccessLogger;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import javax.annotation.PreDestroy;
@@ -203,7 +204,7 @@ class PatientServiceImpl implements PatientService {
     }
 
     if (patient.getBirthday() != null) {
-      changes.put("birthday", null, patient.getBirthday());
+      changes.put("birthday", null, patient.getBirthday().format(DateTimeFormatter.ISO_DATE));
       save.setBirthday(patient.getBirthday());
     }
 
@@ -275,11 +276,12 @@ class PatientServiceImpl implements PatientService {
     }
 
     if (!Objects.equals(save.getBirthday(), patient.getBirthday())) {
-      changes.put("birthday", save.getBirthday(), patient.getBirthday());
+      changes.put("birthday", save.getBirthday() == null ? null : save.getBirthday().format(DateTimeFormatter.ISO_DATE),
+          patient.getBirthday() == null ? null : patient.getBirthday().format(DateTimeFormatter.ISO_DATE));
       save.setBirthday(patient.getBirthday());
     }
 
-    if (patient.getNaca() != save.getNaca()) {
+    if (patient.getNaca() != null && patient.getNaca() != save.getNaca()) {
       changes.put("naca", save.getNaca(), patient.getNaca());
       save.setNaca(patient.getNaca());
     }

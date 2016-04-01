@@ -59,15 +59,13 @@ public class PostprocessingServiceImpl implements PostprocessingService {
 
   @Override
   public Patient update(PostprocessingForm form, User user, NotifyList notify) {
-    Patient patient = prepareForUpdate(form);
+    Patient patient = prepareForUpdate(form, patientService.getByIdNoLog(form.getPatient()));
     return patientService.update(patient, patient.getConcern(), user, notify);
   }
 
   @Override
   public Patient discharge(PostprocessingForm form, User user, NotifyList notify) {
-    getActivePatientNoLog(form.getPatient());
-
-    Patient patient = prepareForUpdate(form);
+    Patient patient = prepareForUpdate(form, getActivePatientNoLog(form.getPatient()));
     return patientService.updateAndDischarge(patient, user, notify);
   }
 
@@ -80,9 +78,7 @@ public class PostprocessingServiceImpl implements PostprocessingService {
 
   @Override
   public Patient transport(TransportForm form, User user, NotifyList notify) {
-    getActivePatientNoLog(form.getPatient());
-
-    Patient patient = prepareForUpdate(form);
+    Patient patient = prepareForUpdate(form, getActivePatientNoLog(form.getPatient()));
     patient.setErtype(form.getErtype());
     patient = patientService.update(patient, patient.getConcern(), user, notify);
 
@@ -92,8 +88,11 @@ public class PostprocessingServiceImpl implements PostprocessingService {
     return patient;
   }
 
-  private Patient prepareForUpdate(PostprocessingForm form) {
+  private Patient prepareForUpdate(PostprocessingForm form, Patient old) {
     Patient p = new Patient();
+
+    p.setErtype(old.getErtype());
+
     p.setId(form.getPatient());
     p.setLastname(form.getLastname());
     p.setFirstname(form.getFirstname());

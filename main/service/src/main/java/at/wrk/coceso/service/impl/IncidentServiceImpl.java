@@ -326,12 +326,12 @@ class IncidentServiceImpl implements IncidentService {
       save.setBlue(incident.isBlue());
     }
 
-    if (!Objects.equals(incident.getBo(), save.getBo()) && (!Point.isEmpty(save.getBo()) || !Point.isEmpty(incident.getBo()))) {
+    if (!Point.infoEquals(incident.getBo(), save.getBo())) {
       changes.put("bo", Point.toStringOrNull(save.getBo()), Point.toStringOrNull(incident.getBo()));
       save.setBo(pointService.createIfNotExists(incident.getBo(), save.getConcern()));
     }
 
-    if (!Objects.equals(incident.getAo(), save.getAo()) && (!Point.isEmpty(save.getAo()) || !Point.isEmpty(incident.getAo()))) {
+    if (!Point.infoEquals(incident.getAo(), save.getAo())) {
       changes.put("ao", Point.toStringOrNull(save.getAo()), Point.toStringOrNull(incident.getAo()));
       save.setAo(pointService.createIfNotExists(incident.getAo(), save.getConcern()));
     }

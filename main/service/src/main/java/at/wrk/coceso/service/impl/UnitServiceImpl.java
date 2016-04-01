@@ -119,8 +119,7 @@ class UnitServiceImpl implements UnitService {
       changes.put("info", save.getInfo(), unit.getInfo());
       save.setInfo(unit.getInfo());
     }
-    if (unit.getPosition() != null && !Objects.equals(unit.getPosition(), save.getPosition())
-        && (!Point.isEmpty(save.getPosition()) || !Point.isEmpty(unit.getPosition()))) {
+    if (unit.getPosition() != null && !Point.infoEquals(unit.getPosition(), save.getPosition())) {
       Point p = pointService.createIfNotExists(unit.getPosition(), save.getConcern());
       changes.put("position", Point.toStringOrNull(save.getPosition()), Point.toStringOrNull(p));
       save.setPosition(p);
@@ -219,7 +218,7 @@ class UnitServiceImpl implements UnitService {
         save.setInfo(unit.getInfo());
       }
 
-      if (!Objects.equals(unit.getHome(), save.getHome()) && (!Point.isEmpty(save.getHome()) || !Point.isEmpty(unit.getHome()))) {
+      if (!Point.infoEquals(unit.getHome(), save.getHome())) {
         Point p = pointService.createIfNotExists(unit.getHome());
         changes.put("home", Point.toStringOrNull(save.getHome()), Point.toStringOrNull(p));
         save.setHome(p);
