@@ -136,7 +136,7 @@ define(["knockout", "../models/call", "data/load", "data/stomp", "data/store/rad
             stomp.unsubscribe(options.stomp);
             window.clearInterval(store.interval);
 
-            ko.utils.arrayForEach(store.calls(), store.calls(), function(call) {
+            ko.utils.arrayForEach(store.calls(), function(call) {
               destroy(call);
             });
             store.calls([]);

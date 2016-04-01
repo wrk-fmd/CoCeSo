@@ -253,7 +253,7 @@ define(["jquery", "knockout", "./leaflet", "./layers", "./legend", "./markerlaye
 
           map.remove();
           clean(map);
-          map = markerLayer = noCoordsControl = layers = null;
+          map = markerLayer = noCoordsControl = null;
         };
       };
 

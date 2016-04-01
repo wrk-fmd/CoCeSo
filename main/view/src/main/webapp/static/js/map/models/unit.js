@@ -17,9 +17,10 @@
  * @param {module:main/models/point} Point
  * @param {module:map/models/task} Task
  * @param {module:utils/constants} constants
+ * @param {module:utils/destroy} destroy
  */
-define(["knockout", "main/models/point", "./task", "utils/constants", "ko/extenders/isvalue"],
-  function(ko, Point, Task, constants) {
+define(["knockout", "main/models/point", "./task", "utils/constants", "utils/destroy", "ko/extenders/isvalue"],
+  function(ko, Point, Task, constants, destroy) {
     "use strict";
 
     /**
