@@ -14,6 +14,8 @@ public interface PatientService {
 
   List<Patient> getAll(Concern concern, User user);
 
+  List<Patient> getAllSorted(Concern concern, User user);
+
   Patient getByIdNoLog(int patientId);
 
   Patient getById(int patientId, User user);

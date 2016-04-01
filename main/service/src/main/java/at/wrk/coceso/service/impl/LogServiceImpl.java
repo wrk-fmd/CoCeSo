@@ -18,7 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 class LogServiceImpl implements LogService {
 
-  private final static Sort sort = new Sort(Sort.Direction.DESC, "timestamp");
+  private final static Sort sortDesc = new Sort(Sort.Direction.DESC, "timestamp");
+  private final static Sort sortAsc = new Sort(Sort.Direction.ASC, "timestamp");
 
   @Autowired
   private LogRepository logRepository;
@@ -60,32 +61,42 @@ class LogServiceImpl implements LogService {
 
   @Override
   public List<LogEntry> getAll(Concern concern) {
-    return logRepository.findByConcern(concern, sort);
+    return logRepository.findByConcern(concern, sortDesc);
   }
 
   @Override
   public List<LogEntry> getLast(Concern concern, int count) {
-    return logRepository.findByConcern(concern, new PageRequest(0, count, sort));
+    return logRepository.findByConcern(concern, new PageRequest(0, count, sortDesc));
   }
 
   @Override
   public List<LogEntry> getByIncident(Incident incident) {
-    return logRepository.findByIncident(incident, sort);
+    return logRepository.findByIncident(incident, sortDesc);
+  }
+
+  @Override
+  public List<LogEntry> getByIncidentAsc(Incident incident) {
+    return logRepository.findByIncident(incident, sortAsc);
   }
 
   @Override
   public List<LogEntry> getByUnit(Unit unit) {
-    return logRepository.findByUnit(unit, sort);
+    return logRepository.findByUnit(unit, sortDesc);
+  }
+
+  @Override
+  public List<LogEntry> getByUnitAsc(Unit unit) {
+    return logRepository.findByUnit(unit, sortAsc);
   }
 
   @Override
   public List<LogEntry> getLimitedByUnit(Unit unit, int count) {
-    return logRepository.findByUnit(unit, new PageRequest(0, count, sort));
+    return logRepository.findByUnit(unit, new PageRequest(0, count, sortDesc));
   }
 
   @Override
   public List<LogEntry> getByIncidentAndUnit(Incident incident, Unit unit) {
-    return logRepository.findByIncidentAndUnit(incident, unit, sort);
+    return logRepository.findByIncidentAndUnit(incident, unit, sortDesc);
   }
 
   @Override
@@ -97,7 +108,12 @@ class LogServiceImpl implements LogService {
 
   @Override
   public List<LogEntry> getCustom(Concern concern) {
-    return logRepository.findByConcernAndType(concern, LogEntryType.CUSTOM, sort);
+    return logRepository.findByConcernAndType(concern, LogEntryType.CUSTOM, sortDesc);
+  }
+
+  @Override
+  public List<LogEntry> getCustomAsc(Concern concern) {
+    return logRepository.findByConcernAndType(concern, LogEntryType.CUSTOM, sortAsc);
   }
 
   @Override

@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import at.wrk.coceso.service.UserService;
+import org.springframework.data.domain.Sort;
 
 @Service
 @Transactional
@@ -63,6 +64,11 @@ class UnitServiceImpl implements UnitService {
   @Override
   public List<Unit> getAll(Concern concern) {
     return unitRepository.findByConcern(concern);
+  }
+
+  @Override
+  public List<Unit> getAllSorted(Concern concern) {
+    return unitRepository.findByConcern(concern, new Sort(Sort.Direction.ASC, "id"));
   }
 
   @Override

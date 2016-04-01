@@ -5,6 +5,7 @@ import at.wrk.coceso.entity.Patient;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -19,6 +20,8 @@ public interface PatientRepository extends JpaRepository<Patient, Integer> {
   public List<Patient> findByConcern(Concern concern);
 
   public Page<Patient> findByConcern(Concern concern, Pageable pageable);
+
+  public List<Patient> findByConcern(Concern concern, Sort sort);
 
   public List<Patient> findAll(Specification<Patient> spec);
 

@@ -23,6 +23,12 @@ public interface IncidentService {
 
   List<Incident> getAllRelevant(Concern concern);
 
+  List<Incident> getAllForReport(Concern concern);
+
+  List<Incident> getAllForDump(Concern concern);
+
+  List<Incident> getAllTransports(Concern concern);
+
   List<Incident> getAllActive(Concern concern);
 
   Map<Incident, TaskState> getRelated(Unit unit);

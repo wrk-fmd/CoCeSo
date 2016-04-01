@@ -1,17 +1,11 @@
 package at.wrk.coceso.controller.pdf;
 
 import at.wrk.coceso.entity.Concern;
-import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.User;
 import at.wrk.coceso.exceptions.ConcernException;
 import at.wrk.coceso.service.ConcernService;
 import at.wrk.coceso.service.PdfService;
-import at.wrk.coceso.utils.PdfDocument;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.PageSize;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
 import java.util.Locale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,25 +40,7 @@ public class PdfController {
 
     LOG.info("{}: Requested final report for concern {}", user, concern);
 
-    List<Incident> incidents = pdfService.getIncidents(concern);
-    PdfDocument document = null;
-    try {
-      document = pdfService.getDocument(PageSize.A4.rotate(), fullDate, response, locale);
-      document.addFrontPage("pdf.report.header", concern, user);
-      document.addStatistics(incidents);
-      document.addCustomLog(concern);
-      document.addUnitsLog(concern);
-      document.addIncidentsLog(incidents);
-      document.addLastPage();
-
-      LOG.info("{}: Final report for concern {} completely written", user, concern);
-    } catch (IOException | DocumentException e) {
-      LOG.error("{}: Error on printing final report for concern {}", user, concern, e);
-    } finally {
-      if (document != null) {
-        document.close();
-      }
-    }
+    pdfService.generateReport(concern, fullDate, response, locale, user);
   }
 
   @RequestMapping(value = "dump", produces = "application/pdf", method = RequestMethod.GET)
@@ -77,22 +53,7 @@ public class PdfController {
 
     LOG.info("{}: Requested pdf dump for concern {}", user, concern);
 
-    PdfDocument document = null;
-    try {
-      document = pdfService.getDocument(PageSize.A4.rotate(), fullDate, response, locale);
-      document.addFrontPage("pdf.dump.header", concern, user);
-      document.addUnitsCurrent(concern);
-      document.addIncidentsCurrent(concern);
-      document.addLastPage();
-
-      LOG.info("{}: PDF dump for concern {} completely written", user, concern);
-    } catch (IOException | DocumentException e) {
-      LOG.error("{}: Error on printing pdf dump for concern {}", user, concern, e);
-    } finally {
-      if (document != null) {
-        document.close();
-      }
-    }
+    pdfService.generateDump(concern, fullDate, response, locale, user);
   }
 
   @RequestMapping(value = "transport", produces = "application/pdf", method = RequestMethod.GET)
@@ -105,21 +66,19 @@ public class PdfController {
 
     LOG.info("{}: Requested transport list for concern {}", user, concern);
 
-    PdfDocument document = null;
-    try {
-      document = pdfService.getDocument(PageSize.A4, fullDate, response, locale);
-      document.addFrontPage("pdf.transport.header", concern, user);
-      document.addTransports(concern);
-      document.addLastPage();
+    pdfService.generateTransport(concern, fullDate, response, locale, user);
+  }
 
-      LOG.info("{}: Transport list for concern {} completely written", user, concern);
-    } catch (IOException | DocumentException e) {
-      LOG.error("{}: Error on printing transport list for concern {}", user, concern, e);
-    } finally {
-      if (document != null) {
-        document.close();
-      }
+  @RequestMapping(value = "patients", produces = "application/pdf", method = RequestMethod.GET)
+  public void patients(@RequestParam(value = "id") int id, HttpServletResponse response, @AuthenticationPrincipal User user, Locale locale) throws ConcernException {
+    Concern concern = concernService.getById(id);
+    if (concern == null) {
+      throw new ConcernException();
     }
+
+    LOG.info("{}: Requested patient list for concern {}", user, concern);
+
+    pdfService.generatePatients(concern, response, locale, user);
   }
 
 }

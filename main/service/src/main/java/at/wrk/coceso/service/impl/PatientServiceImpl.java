@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,6 +66,13 @@ class PatientServiceImpl implements PatientService {
   @Override
   public List<Patient> getAll(Concern concern, User user) {
     List<Patient> patients = patientRepository.findByConcern(concern);
+    DataAccessLogger.logPatientAccess(patients, concern, user);
+    return patients;
+  }
+
+  @Override
+  public List<Patient> getAllSorted(Concern concern, User user) {
+    List<Patient> patients = patientRepository.findByConcern(concern, new Sort(Sort.Direction.ASC, "id"));
     DataAccessLogger.logPatientAccess(patients, concern, user);
     return patients;
   }

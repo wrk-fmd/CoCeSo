@@ -6,6 +6,7 @@ import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entity.helper.Changes;
 import java.sql.Timestamp;
 import java.util.List;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +34,11 @@ public interface LogService {
 
   List<LogEntry> getByIncident(Incident incident);
 
+  List<LogEntry> getByIncidentAsc(Incident incident);
+
   List<LogEntry> getByUnit(Unit unit);
+
+  List<LogEntry> getByUnitAsc(Unit unit);
 
   List<LogEntry> getLimitedByUnit(Unit unit, int count);
 
@@ -42,6 +47,8 @@ public interface LogService {
   Timestamp getLastTaskStateUpdate(Incident incident, Unit unit);
 
   List<LogEntry> getCustom(Concern concern);
+
+  List<LogEntry> getCustomAsc(Concern concern);
 
   void updateForRemoval(Unit unit);
 

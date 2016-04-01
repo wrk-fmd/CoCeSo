@@ -136,6 +136,7 @@
                   <sec:authorize access="@auth.hasAccessLevel('Report')">
                     <a target="_blank" class="btn btn-sm btn-success" data-bind="attr: {href: '<c:url value="/pdf/report.pdf?id="/>' + id}"><spring:message code="pdf.report"/></a>
                     <a target="_blank" class="btn btn-sm btn-warning" data-bind="attr: {href: '<c:url value="/pdf/transport.pdf?id="/>' + id}"><spring:message code="pdf.transport"/></a>
+                    <a target="_blank" class="btn btn-sm btn-warning" data-bind="attr: {href: '<c:url value="/pdf/patients.pdf?id="/>' + id}"><spring:message code="pdf.patients"/></a>
                   </sec:authorize>
                   <sec:authorize access="@auth.hasAccessLevel('CloseConcern')">
                     <button type="button" class="btn btn-sm btn-danger" data-bind="click: reopen"><spring:message code="concern.reopen"/></button>

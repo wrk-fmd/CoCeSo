@@ -4,21 +4,24 @@ import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.LogEntry;
 import at.wrk.coceso.entity.Unit;
+import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.service.IncidentService;
 import at.wrk.coceso.service.LogService;
+import at.wrk.coceso.service.PatientService;
 import at.wrk.coceso.service.PdfService;
 import at.wrk.coceso.service.UnitService;
 import at.wrk.coceso.utils.PdfDocument;
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.PageSize;
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
@@ -27,6 +30,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 class PdfServiceImpl implements PdfService {
+
+  private final static Logger LOG = LoggerFactory.getLogger(PdfServiceImpl.class);
 
   @Autowired
   private MessageSource messageSource;
@@ -38,62 +43,79 @@ class PdfServiceImpl implements PdfService {
   private IncidentService incidentService;
 
   @Autowired
+  private PatientService patientService;
+
+  @Autowired
   private UnitService unitService;
 
   @Override
-  public PdfDocument getDocument(Rectangle pageSize, boolean fullDate, HttpServletResponse response, Locale locale) throws IOException, DocumentException {
-    PdfDocument export = new PdfDocument(pageSize, fullDate, this, locale);
-    export.start(response);
-    return export;
+  public void generateReport(Concern concern, boolean fullDate, HttpServletResponse response, Locale locale, User user) {
+    try (PdfDocument doc = new PdfDocument(PageSize.A4.rotate(), fullDate, this, messageSource, locale)) {
+      doc.start(response);
+      doc.addFrontPage("pdf.report.header", concern, user);
+      doc.addStatistics(incidentService.getAll(concern));
+      doc.addCustomLog(logService.getCustomAsc(concern));
+      doc.addUnitsLog(unitService.getAllSorted(concern));
+      doc.addIncidentsLog(incidentService.getAllForReport(concern));
+      doc.addLastPage();
+
+      LOG.info("{}: PDF for concern {} completely written", user, concern);
+    } catch (IOException | DocumentException e) {
+      LOG.error("{}: Error on printing pdf for concern {}", user, concern, e);
+    }
   }
 
   @Override
-  public String getMessage(String code, Object[] args, Locale locale) {
-    return messageSource.getMessage(code, args, locale);
+  public void generateDump(Concern concern, boolean fullDate, HttpServletResponse response, Locale locale, User user) {
+    try (PdfDocument doc = new PdfDocument(PageSize.A4.rotate(), fullDate, this, messageSource, locale)) {
+      doc.start(response);
+      doc.addFrontPage("pdf.dump.header", concern, user);
+      doc.addUnitsCurrent(unitService.getAllSorted(concern));
+      doc.addIncidentsCurrent(incidentService.getAllForDump(concern));
+      doc.addLastPage();
+
+      LOG.info("{}: PDF for concern {} completely written", user, concern);
+    } catch (IOException | DocumentException e) {
+      LOG.error("{}: Error on printing pdf for concern {}", user, concern, e);
+    }
   }
 
   @Override
-  public String getMessage(String code, Object[] args, String text, Locale locale) {
-    return messageSource.getMessage(code, args, text, locale);
+  public void generateTransport(Concern concern, boolean fullDate, HttpServletResponse response, Locale locale, User user) {
+    try (PdfDocument doc = new PdfDocument(PageSize.A4.rotate(), fullDate, this, messageSource, locale)) {
+      doc.start(response);
+      doc.addFrontPage("pdf.transport.header", concern, user);
+      doc.addTransports(incidentService.getAllTransports(concern));
+      doc.addLastPage();
+
+      LOG.info("{}: PDF for concern {} completely written", user, concern);
+    } catch (IOException | DocumentException e) {
+      LOG.error("{}: Error on printing pdf for concern {}", user, concern, e);
+    }
   }
 
   @Override
-  public List<Incident> getIncidents(Concern concern) {
-    List<Incident> incidents = incidentService.getAll(concern);
-    Collections.sort(incidents);
-    return incidents;
-  }
+  public void generatePatients(Concern concern, HttpServletResponse response, Locale locale, User user) {
+    try (PdfDocument doc = new PdfDocument(PageSize.A4.rotate(), false, this, messageSource, locale)) {
+      doc.start(response);
+      doc.addFrontPage("pdf.patients.header", concern, user);
+      doc.addPatients(patientService.getAllSorted(concern, user));
+      doc.addLastPage();
 
-  @Override
-  public List<Unit> getUnits(Concern concern) {
-    List<Unit> units = unitService.getAll(concern);
-    Collections.sort(units);
-    return units;
-  }
-
-  @Override
-  public List<LogEntry> getLogCustom(Concern concern) {
-    return logService.getCustom(concern);
+      LOG.info("{}: PDF for concern {} completely written", user, concern);
+    } catch (IOException | DocumentException e) {
+      LOG.error("{}: Error on printing pdf for concern {}", user, concern, e);
+    }
   }
 
   @Override
   public List<LogEntry> getLogByIncident(Incident incident) {
-    return logService.getByIncident(incident);
+    return logService.getByIncidentAsc(incident);
   }
 
   @Override
   public List<LogEntry> getLogByUnit(Unit unit) {
-    return logService.getByUnit(unit);
-  }
-
-  @Override
-  public Incident getIncidentById(int incidentId) {
-    return incidentService.getById(incidentId);
-  }
-
-  @Override
-  public Unit getUnitById(int unitId) {
-    return unitService.getById(unitId);
+    return logService.getByUnitAsc(unit);
   }
 
   @Override

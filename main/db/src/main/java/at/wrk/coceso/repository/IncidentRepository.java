@@ -5,6 +5,7 @@ import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.enums.IncidentState;
 import java.util.List;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,6 +23,15 @@ public interface IncidentRepository extends JpaRepository<Incident, Integer> {
 
   @Query("SELECT i FROM Incident i WHERE concern = :concern AND state != 'Done'")
   List<Incident> findActive(@Param("concern") Concern concern);
+
+  @Query("SELECT i FROM Incident i WHERE concern = :concern AND type NOT IN ('ToHome', 'Standby', 'HoldPosition', 'Treatment')")
+  List<Incident> findNonSingleUnit(@Param("concern") Concern concern, Sort sort);
+
+  @Query("SELECT i FROM Incident i WHERE concern = :concern AND state != 'Done' AND type NOT IN ('ToHome', 'Standby', 'HoldPosition', 'Treatment')")
+  List<Incident> findActiveNonSingleUnit(@Param("concern") Concern concern, Sort sort);
+
+  @Query("SELECT i FROM Incident i WHERE concern = :concern AND type = 'Transport'")
+  List<Incident> findTransports(@Param("concern") Concern concern, Sort sort);
 
   @Query("SELECT i FROM Incident i WHERE i.concern = :concern AND state IN :states")
   List<Incident> findByState(@Param("concern") Concern concern, @Param("states") IncidentState... states);

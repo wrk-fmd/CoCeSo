@@ -7,6 +7,7 @@ import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.enums.UnitType;
 import java.util.Collection;
 import java.util.List;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,6 +19,8 @@ public interface UnitRepository extends JpaRepository<Unit, Integer> {
   public List<Unit> findByIdIn(List<Integer> id);
 
   public List<Unit> findByConcern(Concern concern);
+
+  public List<Unit> findByConcern(Concern concern, Sort sort);
 
   public List<Unit> findByConcernAndType(Concern concern, UnitType type);
 

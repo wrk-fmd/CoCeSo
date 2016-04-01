@@ -31,6 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +40,8 @@ import org.springframework.transaction.annotation.Transactional;
 class IncidentServiceImpl implements IncidentService {
 
   private final static Logger LOG = LoggerFactory.getLogger(IncidentServiceImpl.class);
+
+  private final static Sort sort = new Sort(Sort.Direction.ASC, "id");
 
   @Autowired
   private IncidentRepository incidentRepository;
@@ -74,6 +77,21 @@ class IncidentServiceImpl implements IncidentService {
   @Override
   public List<Incident> getAllRelevant(Concern concern) {
     return incidentRepository.findRelevant(concern);
+  }
+
+  @Override
+  public List<Incident> getAllForReport(Concern concern) {
+    return incidentRepository.findNonSingleUnit(concern, sort);
+  }
+
+  @Override
+  public List<Incident> getAllForDump(Concern concern) {
+    return incidentRepository.findActiveNonSingleUnit(concern, sort);
+  }
+
+  @Override
+  public List<Incident> getAllTransports(Concern concern) {
+    return incidentRepository.findTransports(concern, sort);
   }
 
   @Override

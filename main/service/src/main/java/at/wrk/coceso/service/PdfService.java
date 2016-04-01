@@ -4,11 +4,8 @@ import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.LogEntry;
 import at.wrk.coceso.entity.Unit;
+import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.enums.TaskState;
-import at.wrk.coceso.utils.PdfDocument;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Rectangle;
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Locale;
@@ -21,25 +18,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public interface PdfService {
 
-  PdfDocument getDocument(Rectangle pageSize, boolean fullDate, HttpServletResponse response, Locale locale) throws IOException, DocumentException;
+  void generateReport(Concern concern, boolean fullDate, HttpServletResponse response, Locale locale, User user);
 
-  String getMessage(String code, Object[] args, Locale locale);
+  void generateDump(Concern concern, boolean fullDate, HttpServletResponse response, Locale locale, User user);
 
-  String getMessage(String code, Object[] args, String text, Locale locale);
+  void generateTransport(Concern concern, boolean fullDate, HttpServletResponse response, Locale locale, User user);
 
-  List<Incident> getIncidents(Concern concern);
-
-  List<Unit> getUnits(Concern concern);
-
-  List<LogEntry> getLogCustom(Concern concern);
+  void generatePatients(Concern concern, HttpServletResponse response, Locale locale, User user);
 
   List<LogEntry> getLogByIncident(Incident incident);
 
   List<LogEntry> getLogByUnit(Unit unit);
-
-  Incident getIncidentById(int incidentId);
-
-  Unit getUnitById(int unitId);
 
   Map<Unit, TaskState> getRelatedUnits(Incident incident);
 
