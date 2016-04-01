@@ -18,11 +18,13 @@ public interface IncidentRepository extends JpaRepository<Incident, Integer> {
 
   List<Incident> findByConcern(Concern concern);
 
+  List<Incident> findByConcern(Concern concern, Sort sort);
+
   @Query("SELECT i FROM Incident i WHERE concern = :concern AND type != 'Treatment' AND (state != 'Done' OR type NOT IN ('ToHome', 'Standby', 'HoldPosition'))")
   List<Incident> findRelevant(@Param("concern") Concern concern);
 
   @Query("SELECT i FROM Incident i WHERE concern = :concern AND state != 'Done'")
-  List<Incident> findActive(@Param("concern") Concern concern);
+  List<Incident> findActive(@Param("concern") Concern concern, Sort sort);
 
   @Query("SELECT i FROM Incident i WHERE concern = :concern AND type NOT IN ('ToHome', 'Standby', 'HoldPosition', 'Treatment')")
   List<Incident> findNonSingleUnit(@Param("concern") Concern concern, Sort sort);

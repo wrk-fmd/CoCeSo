@@ -75,6 +75,11 @@ class IncidentServiceImpl implements IncidentService {
   }
 
   @Override
+  public List<Incident> getAllSorted(Concern concern) {
+    return incidentRepository.findByConcern(concern, sort);
+  }
+
+  @Override
   public List<Incident> getAllRelevant(Concern concern) {
     return incidentRepository.findRelevant(concern);
   }
@@ -96,7 +101,7 @@ class IncidentServiceImpl implements IncidentService {
 
   @Override
   public List<Incident> getAllActive(Concern concern) {
-    return incidentRepository.findActive(concern);
+    return incidentRepository.findActive(concern, sort);
   }
 
   @Override
@@ -181,10 +186,8 @@ class IncidentServiceImpl implements IncidentService {
     changes.put("state", null, IncidentState.Working);
     incident.setState(IncidentState.Working);
 
-    if (!Point.isEmpty(group.getHome())) {
-      changes.put("ao", null, group.getHome().toString());
-      incident.setAo(group.getHome());
-    }
+    changes.put("ao", null, group.getCall());
+    incident.setAo(pointService.createIfNotExists(new Point(group.getCall()), group.getConcern()));
 
     changes.put("type", null, IncidentType.Treatment);
     incident.setType(IncidentType.Treatment);

@@ -20,6 +20,7 @@
 
 <c:url var="get_inc" value="?iid="/>
 <c:url var="get_unit" value="?uid="/>
+<c:url var="get_patient" value="?pid="/>
 
 <table class="table table-striped table-hover">
   <thead>
@@ -29,6 +30,7 @@
       <th><spring:message code="log.text"/></th>
       <th><spring:message code="incident"/></th>
       <th><spring:message code="unit"/></th>
+      <th><spring:message code="patient"/></th>
       <th><spring:message code="task.state"/></th>
       <th><spring:message code="log.changes"/></th>
     </tr>
@@ -47,6 +49,11 @@
         <td>
           <c:if test="${not empty log.unit}">
             <a href="${get_unit}${log.unit.id}"><c:out value="${log.unit.call}"/></a>
+          </c:if>
+        </td>
+        <td>
+          <c:if test="${not empty log.patient}">
+            <a href="${get_patient}${log.patient.id}"><c:out value="${log.patient.fullName}"/></a>
           </c:if>
         </td>
         <td>

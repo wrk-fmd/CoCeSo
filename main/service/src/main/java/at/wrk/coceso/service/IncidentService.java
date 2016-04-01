@@ -21,6 +21,8 @@ public interface IncidentService {
 
   List<Incident> getAll(Concern concern);
 
+  List<Incident> getAllSorted(Concern concern);
+
   List<Incident> getAllRelevant(Concern concern);
 
   List<Incident> getAllForReport(Concern concern);

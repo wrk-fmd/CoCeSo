@@ -54,6 +54,9 @@
                 <li><a href="?concern=${concern}&amp;view=incident&amp;active=1"><spring:message code="main.incident.active"/></a></li>
               </ul>
             </li>
+            <li class="${patient_menu}">
+              <a href="<c:url value="?concern=${concern}&amp;view=patient"/>"><spring:message code="patients"/></a>
+            </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <li class="dropdown">
@@ -81,9 +84,11 @@
       <c:choose>
         <c:when test="${template == 'incident_list'}"><%@include file="dashboard/incident_list.jsp"%></c:when>
         <c:when test="${template == 'unit_list'}"><%@include file="dashboard/unit_list.jsp"%></c:when>
+        <c:when test="${template == 'patient_list'}"><%@include file="dashboard/patient_list.jsp"%></c:when>
         <c:when test="${template == 'cross_detail'}"><%@include file="dashboard/cross_detail.jsp"%></c:when>
         <c:when test="${template == 'incident_detail'}"><%@include file="dashboard/incident_detail.jsp"%></c:when>
         <c:when test="${template == 'unit_detail'}"><%@include file="dashboard/unit_detail.jsp"%></c:when>
+        <c:when test="${template == 'patient_detail'}"><%@include file="dashboard/patient_detail.jsp"%></c:when>
         <c:when test="${template == 'log_table'}"><%@include file="dashboard/log_table.jsp"%></c:when>
       </c:choose>
     </div>

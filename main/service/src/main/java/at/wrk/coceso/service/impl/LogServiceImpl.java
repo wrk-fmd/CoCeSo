@@ -90,6 +90,11 @@ class LogServiceImpl implements LogService {
   }
 
   @Override
+  public List<LogEntry> getByPatient(Patient patient) {
+    return logRepository.findByPatient(patient, patient.getIncidents(), sortDesc);
+  }
+
+  @Override
   public List<LogEntry> getLimitedByUnit(Unit unit, int count) {
     return logRepository.findByUnit(unit, new PageRequest(0, count, sortDesc));
   }

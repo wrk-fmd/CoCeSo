@@ -3,8 +3,10 @@ package at.wrk.coceso.repository;
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.LogEntry;
+import at.wrk.coceso.entity.Patient;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.enums.LogEntryType;
+import java.util.Collection;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -30,10 +32,13 @@ public interface LogRepository extends JpaRepository<LogEntry, Integer> {
 
   public List<LogEntry> findByUnit(Unit unit, Sort sort);
 
+  @Query("SELECT l FROM LogEntry l WHERE l.patient = :patient OR l.incident IN :incidents")
+  public List<LogEntry> findByPatient(@Param("patient") Patient patient, @Param("incidents") Collection<Incident> incidents, Sort sort);
+
   public List<LogEntry> findByIncidentAndUnit(Incident incident, Unit unit, Sort sort);
 
   @Query("SELECT l FROM LogEntry l WHERE l.incident = :incident AND l.unit = :unit AND l.type IN :types "
-          + "ORDER BY l.timestamp DESC")
+      + "ORDER BY l.timestamp DESC")
   public List<LogEntry> findLast(Pageable pageable, @Param("incident") Incident incident, @Param("unit") Unit unit, @Param("types") LogEntryType... types);
 
   public List<LogEntry> findByConcernAndType(Concern concern, LogEntryType type, Sort sort);
@@ -41,6 +46,6 @@ public interface LogRepository extends JpaRepository<LogEntry, Integer> {
   @Modifying
   @Transactional
   @Query("UPDATE LogEntry SET unit = NULL, text = 'Unit created - REMOVED', type = 'UNIT_CREATE_REMOVED' "
-          + "WHERE type = 'UNIT_CREATE' AND unit = :unit")
+      + "WHERE type = 'UNIT_CREATE' AND unit = :unit")
   public void updateForRemoval(@Param("unit") Unit unit);
 }
