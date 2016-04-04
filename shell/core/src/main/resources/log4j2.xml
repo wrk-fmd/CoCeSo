@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+  <Appenders>
+    <File name="file_shell" fileName="coceso_shell.${date:yyyy-MM-dd}.log" append="true">
+      <PatternLayout pattern="%d{DEFAULT} %-5p %c{2} - %m%n"/>
+    </File>
+  </Appenders>
+  <Loggers>
+    <Logger name="at.wrk.coceso" additivity="false" level="debug">
+      <AppenderRef ref="file_shell"/>
+    </Logger>
+    <Logger name="" level="warn"/>
+
+    <Root level="info">
+      <AppenderRef ref="file_shell"/>
+    </Root>
+  </Loggers>
+</Configuration>

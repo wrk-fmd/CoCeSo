@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+  <Appenders>
+    <File name="file_server" fileName="${sys:catalina.base}/logs/coceso_server.${date:yyyy-MM-dd}.log" append="true">
+      <PatternLayout pattern="%d{DEFAULT} %-5p %c{2} - %m%n"/>
+    </File>
+    <File name="file_application" fileName="${sys:catalina.base}/logs/coceso_application.${date:yyyy-MM-dd}.log" append="true">
+      <PatternLayout pattern="%d{DEFAULT} %-5p %c{2} - %m%n"/>
+    </File>
+    <File name="file_access" fileName="${sys:catalina.base}/logs/coceso_access.${date:yyyy-MM-dd}.log" append="true">
+      <PatternLayout pattern="%d{DEFAULT} %-5p - %m%n"/>
+    </File>
+    <File name="file_client" fileName="${sys:catalina.base}/logs/coceso_client.${date:yyyy-MM-dd}.log" append="true">
+      <PatternLayout pattern="%d{DEFAULT} %-5p - %m%n"/>
+    </File>
+    <File name="file_radio" fileName="${sys:catalina.base}/logs/coceso_radio.${date:yyyy-MM-dd}.log" append="true">
+      <PatternLayout pattern="%d{DEFAULT} %-5p %c{2} - %m%n"/>
+    </File>
+  </Appenders>
+  <Loggers>
+    <Logger name="at.wrk.coceso" additivity="false" level="debug">
+      <AppenderRef ref="file_application"/>
+    </Logger>
+    <Logger name="at.wrk.coceso.utils.DataAccessLogger" additivity="false" level="debug">
+      <AppenderRef ref="file_access"/>
+    </Logger>
+    <Logger name="at.wrk.coceso.entity.helper.ClientLog" additivity="false" level="debug">
+      <AppenderRef ref="file_client"/>
+    </Logger>
+    <Logger name="at.wrk.coceso.radio" additivity="false" level="debug">
+      <AppenderRef ref="file_radio"/>
+    </Logger>
+
+    <Logger name="org.springframework" level="warn"/>
+    <Logger name="org.hibernate.SQL" level="warn"/>
+
+    <Root level="info">
+      <AppenderRef ref="file_server"/>
+    </Root>
+  </Loggers>
+</Configuration>

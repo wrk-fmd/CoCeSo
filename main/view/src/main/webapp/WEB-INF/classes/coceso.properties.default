@@ -1,0 +1,22 @@
+# DB config
+db.driver=org.postgresql.Driver
+db.url=jdbc:postgresql://localhost:5432/coceso
+db.username=coceso
+db.password=password
+
+# Authentication config
+auth.authUrl=
+auth.useAuthUrl=false
+auth.firstUse=false
+
+# Enable debug js and css files
+debug=false
+
+# Default language
+locale.default=en
+
+# JS plugins
+js.plugins={}
+
+# Google Maps ApiKey
+gmaps.apikey=
