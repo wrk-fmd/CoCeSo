@@ -22,5 +22,6 @@
     <module>radio</module>
     <module>vcm</module>
     <module>vienna</module>
+    <module>cocecl</module>
   </modules>
 </project>
