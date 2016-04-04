@@ -1,32 +1,70 @@
 {
-  "success":true,
-  "activeIncidents":{
-    "358":{
-      "id":358,
-      "incidentState":"Dispo",
-      "priority":20, // not used!
-      "blue":true,
-      "units":{
-        "94":{
-          "id":94,
-          "call":"TRP-2"
+  "success": true,
+  "activeIncidents": [
+    {
+      "id": 358,
+      "incidentState": "Dispo",
+      "priority": 20,
+      // not used!
+      "blue": true,
+      "units": [
+        {
+          "id": 94,
+          "call": "TRP-2",
+          "state": "ABO"
         },
-        "95":{
-          "id":95,
-          "call":"NEF"
+        {
+          "id": 95,
+          "call": "NEF",
+          "state": "ZBO"
         }
+      ],
+      "bo": {
+        "id": 3105,
+        "info": "Hinterholz 8",
+        "longitude": 0.0,
+        "latitude": 0.0
       },
-      "bo":{
-        "id":"3105",
-        "info":"Hinterholz 8",
-        "longitude":0.0,
-        "latitude":0.0
+      "ao": null,
+      "casusNr": null,
+      "info": "there is something",
+      "caller": "Heinzi 0676/123 45 67",
+      "type": "Task"
+    },
+    {
+      "id": 741,
+      "incidentState": "Working",
+      "priority": 10,
+      // not used!
+      "blue": false,
+      "units": [
+        {
+          "id": 25,
+          "call": "TRP-5",
+          "state": "Assigned"
+        },
+        {
+          "id": 31,
+          "call": "KTW 2",
+          "state": "ZAO"
+        }
+      ],
+      "bo": {
+        "id": 3105,
+        "info": "Hinterholz 8",
+        "longitude": 0.0,
+        "latitude": 0.0
       },
-      "ao":null,
-      "casusNr":null,
-      "info":"there is something",
-      "caller":"Heinzi 0676/123 45 67",
-      "type":"Task"
+      "ao": {
+        "id": 3105,
+        "info": "Hinterholz 8",
+        "longitude": 0.0,
+        "latitude": 0.0
+      },
+      "casusNr": "T16 123456-01",
+      "info": "there is something",
+      "caller": "Heinzi 0676/123 45 67",
+      "type": "Task"
     }
-  }
+  ]
 }

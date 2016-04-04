@@ -1,4 +1,4 @@
 {
-  "success":false
+  "success": false
   /* user is logged out, session invalid => http code 401, success false*/
 }

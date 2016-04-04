@@ -1,17 +1,17 @@
 {
-  "success":true,
-  "units":{
-    "94":{
-      "id":94,
-      "call":"TRP-2"
+  "success": true,
+  "units": [
+    {
+      "id": 94,
+      "call": "TRP-2"
     },
-    "101":{
-      "id":101,
-      "call":"TRP-5"
+    {
+      "id": 101,
+      "call": "TRP-5"
     },
-    "190":{
-      "id":190,
-      "call":"Vehicle 1"
+    {
+      "id": 190,
+      "call": "Vehicle 1"
     }
-  }
+  ]
 }
