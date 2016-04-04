@@ -4,6 +4,7 @@ import at.wrk.cocecl.dto.Answer;
 import at.wrk.cocecl.dto.Incident;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -12,15 +13,17 @@ import java.util.Collection;
 public class GetActiveIncidentsAnswer extends Answer implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private Boolean success;
     private Collection<Incident> activeIncidents;
 
-    public Boolean getSuccess() {
-        return success;
+    private GetActiveIncidentsAnswer() {
+        super();
     }
 
-    public void setSuccess(Boolean success) {
-        this.success = success;
+    private GetActiveIncidentsAnswer(final boolean success, final Collection<Incident> activeIncidents) {
+        super();
+        setSuccess(success);
+        // NullPointerException on given null parameter intended
+        this.activeIncidents = new ArrayList<>(activeIncidents);
     }
 
     public Collection<Incident> getActiveIncidents() {
@@ -29,5 +32,17 @@ public class GetActiveIncidentsAnswer extends Answer implements Serializable {
 
     public void setActiveIncidents(Collection<Incident> activeIncidents) {
         this.activeIncidents = activeIncidents;
+    }
+
+    public static GetActiveIncidentsAnswer create(boolean success, Collection<Incident> activeIncidents) {
+        return new GetActiveIncidentsAnswer(success, activeIncidents);
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + "[" +
+                "success=" + getSuccess() + "," +
+                "activeIncidents=" + activeIncidents +
+                "]";
     }
 }

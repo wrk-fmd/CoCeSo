@@ -18,19 +18,24 @@ public class Incident implements Serializable {
     private Position ao;
     private IncidentType type;
 
-    public int getId() {
-        return id;
+    private Incident() {
+        super();
     }
 
-    public void setId(int id) {
+    private Incident(final int id) {
+        super();
         this.id = id;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public IncidentState getIncidentState() {
         return incidentState;
     }
 
-    public void setIncidentState(IncidentState incidentState) {
+    public void setIncidentState(final IncidentState incidentState) {
         this.incidentState = incidentState;
     }
 
@@ -38,7 +43,7 @@ public class Incident implements Serializable {
         return priority;
     }
 
-    public void setPriority(Integer priority) {
+    public void setPriority(final Integer priority) {
         this.priority = priority;
     }
 
@@ -46,7 +51,7 @@ public class Incident implements Serializable {
         return blue;
     }
 
-    public void setBlue(Boolean blue) {
+    public void setBlue(final boolean blue) {
         this.blue = blue;
     }
 
@@ -54,7 +59,7 @@ public class Incident implements Serializable {
         return units;
     }
 
-    public void setUnits(Collection<Unit> units) {
+    public void setUnits(final Collection<Unit> units) {
         this.units = units;
     }
 
@@ -62,7 +67,7 @@ public class Incident implements Serializable {
         return casusNr;
     }
 
-    public void setCasusNr(String casusNr) {
+    public void setCasusNr(final String casusNr) {
         this.casusNr = casusNr;
     }
 
@@ -70,7 +75,7 @@ public class Incident implements Serializable {
         return info;
     }
 
-    public void setInfo(String info) {
+    public void setInfo(final String info) {
         this.info = info;
     }
 
@@ -78,7 +83,7 @@ public class Incident implements Serializable {
         return caller;
     }
 
-    public void setCaller(String caller) {
+    public void setCaller(final String caller) {
         this.caller = caller;
     }
 
@@ -86,7 +91,7 @@ public class Incident implements Serializable {
         return bo;
     }
 
-    public void setBo(Position bo) {
+    public void setBo(final Position bo) {
         this.bo = bo;
     }
 
@@ -94,7 +99,7 @@ public class Incident implements Serializable {
         return ao;
     }
 
-    public void setAo(Position ao) {
+    public void setAo(final Position ao) {
         this.ao = ao;
     }
 
@@ -102,7 +107,21 @@ public class Incident implements Serializable {
         return type;
     }
 
-    public void setType(IncidentType type) {
+    public void setType(final IncidentType type) {
         this.type = type;
+    }
+
+    public static Incident create(final int id) {
+        return new Incident(id);
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + "[" +
+                "id=" + id + "," +
+                "type=" + type + "," +
+                "units=" + units + "," +
+                "...TODO..." +
+                "]";
     }
 }
