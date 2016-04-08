@@ -33,7 +33,7 @@
     </form>
     <ul class="nav navbar-nav">
       <li><a href="<c:url value="/patadmin/triage"/>"><spring:message code="patadmin.triage"/></a></li>
-      <li><a href="<c:url value="/patadmin/triage/add"/>"><spring:message code="patient.add"/></a></li>
+      <li><a href="<c:url value="/patadmin/triage/add"/>" accesskey="a"><spring:message code="patient.add"/></a></li>
         <c:if test="${accessLevels[0]}">
         <li class="${nav_settings}"><a href="<c:url value="/patadmin/settings"/>"><spring:message code="patadmin.settings"/></a></li>
         </c:if>

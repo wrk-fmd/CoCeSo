@@ -56,7 +56,7 @@ public class PatadminController {
     return "patadmin/index";
   }
 
-  @PreAuthorize("@auth.hasPermission(#concern, 'PatadminRoot')")
+  @PreAuthorize("@auth.hasPermission(#concern, 'PatadminSettings')")
   @RequestMapping(value = "/settings", method = RequestMethod.GET)
   public ModelAndView showSettings(ModelMap map, @ActiveConcern Concern concern) {
     try {
@@ -72,7 +72,7 @@ public class PatadminController {
     return new ModelAndView("patadmin/settings", "form", form);
   }
 
-  @PreAuthorize("@auth.hasPermission(#concern, 'PatadminRoot')")
+  @PreAuthorize("@auth.hasPermission(#concern, 'PatadminSettings')")
   @RequestMapping(value = "/settings", method = RequestMethod.POST)
   public String saveSettings(@ModelAttribute GroupsForm form, @ActiveConcern Concern concern, @AuthenticationPrincipal User user) {
     patadminSocketService.update(form, concern, user);

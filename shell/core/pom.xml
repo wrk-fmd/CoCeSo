@@ -70,7 +70,7 @@
               <goal>copy-resources</goal>
             </goals>
             <configuration>
-              <outputDirectory>${project.build.directory}/classes/META-INF</outputDirectory>
+              <outputDirectory>${project.build.directory}/classes</outputDirectory>
               <resources>
                 <resource>
                   <directory>../../main/view/src/main/webapp/WEB-INF/classes</directory>

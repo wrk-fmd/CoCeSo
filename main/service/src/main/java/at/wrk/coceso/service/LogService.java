@@ -41,6 +41,8 @@ public interface LogService {
 
   List<LogEntry> getByPatient(Patient patient);
 
+  List<LogEntry> getStatesByPatient(Patient patient);
+
   List<LogEntry> getLimitedByUnit(Unit unit, int count);
 
   List<LogEntry> getByIncidentAndUnit(Incident incident, Unit unit);

@@ -9,9 +9,7 @@
         http://www.springframework.org/schema/util
         http://www.springframework.org/schema/util/spring-util.xsd">
 
-  <context:component-scan base-package="at.wrk.coceso, at.wrk.patadmin"/>
-
-  <util:properties id="cocesoProperties" location="/META-INF/coceso.properties"/>
-  <context:property-placeholder properties-ref="cocesoProperties"/>
+  <context:component-scan base-package="at.wrk.coceso"/>
+  <bean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper"/>
   <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
 </beans>

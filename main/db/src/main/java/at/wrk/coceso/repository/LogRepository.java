@@ -35,6 +35,10 @@ public interface LogRepository extends JpaRepository<LogEntry, Integer> {
   @Query("SELECT l FROM LogEntry l WHERE l.patient = :patient OR l.incident IN :incidents")
   public List<LogEntry> findByPatient(@Param("patient") Patient patient, @Param("incidents") Collection<Incident> incidents, Sort sort);
 
+  @Query("SELECT l FROM LogEntry l WHERE (l.patient = :patient OR l.incident IN :incidents) "
+      + "AND l.type IN ('UNIT_ASSIGN', 'UNIT_DETACH', 'UNIT_AUTO_DETACH', 'TASKSTATE_CHANGED')")
+  public List<LogEntry> findStatesByPatient(@Param("patient") Patient patient, @Param("incidents") Collection<Incident> incidents, Sort sort);
+
   public List<LogEntry> findByIncidentAndUnit(Incident incident, Unit unit, Sort sort);
 
   @Query("SELECT l FROM LogEntry l WHERE l.incident = :incident AND l.unit = :unit AND l.type IN :types "

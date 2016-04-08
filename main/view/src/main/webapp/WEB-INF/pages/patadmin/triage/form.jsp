@@ -54,16 +54,16 @@
               </div>
               <div class="form-group col-md-6">
                 <form:label path="externalId"><spring:message code="patient.externalId"/></form:label>
-                <form:input path="externalId" cssClass="form-control" data-bind="valueInit: externalId, patient: {key: 'externalId', types: types, callback: callback}"/>
+                <form:input path="externalId" cssClass="form-control" autofocus="autofocus" data-bind="valueInit: externalId, patient: {key: 'externalId', types: types, callback: callback}"/>
               </div>
-              <div class="form-group col-md-6">
+              <div class="form-group col-md-6 hidden">
                 <form:label path="birthday"><spring:message code="patient.birthday"/></form:label>
                 <form:input type="date" path="birthday" cssClass="form-control" data-bind="valueInit: birthday"/>
               </div>
-            </div>
+<%--            </div>
 
             <h3 class="page-header"><spring:message code="patient.treatment"/></h3>
-            <div class="clearfix">
+            <div class="clearfix">--%>
               <div class="form-group col-md-6 required">
                 <form:label path="group"><spring:message code="patadmin.group"/></form:label>
                 <form:select path="group" cssClass="form-control" data-bind="valueInit: group">
@@ -72,7 +72,7 @@
                   </c:forEach>
                 </form:select>
               </div>
-              <div class="form-group col-md-6 required">
+              <div class="form-group col-md-6 hidden">
                 <form:label path="naca"><spring:message code="patient.naca"/></form:label>
                 <form:select path="naca" cssClass="form-control" data-bind="valueInit: naca">
                   <c:forEach items="<%= at.wrk.coceso.entity.enums.Naca.values()%>" var="naca">
@@ -80,7 +80,7 @@
                   </c:forEach>
                 </form:select>
               </div>
-              <div class="form-group col-md-6">
+              <div class="form-group col-md-6 hidden">
                 <form:label path="diagnosis"><spring:message code="patient.diagnosis"/></form:label>
                 <form:textarea path="diagnosis" cssClass="form-control" data-bind="valueInit: diagnosis"/>
               </div>
@@ -90,7 +90,7 @@
               </div>
             </div>
             <form:button class="btn btn-success"><spring:message code="patient.save"/></form:button>
-            <a href="#" class="btn btn-default" data-bind="visible: medinfo, click: openMedinfo"><spring:message code="medinfo.details"/></a>
+            <a href="#" class="btn btn-default" data-bind="visible: medinfo, click: openMedinfo" accesskey="m"><spring:message code="medinfo.details"/></a>
           </form:form>
         </div>
 

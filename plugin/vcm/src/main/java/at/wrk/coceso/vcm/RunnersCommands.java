@@ -1,4 +1,4 @@
-package at.wrk.patadmin.vcm;
+package at.wrk.coceso.vcm;
 
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Medinfo;

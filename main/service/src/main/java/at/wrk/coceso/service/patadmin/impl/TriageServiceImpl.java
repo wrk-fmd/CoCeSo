@@ -141,7 +141,7 @@ public class TriageServiceImpl implements TriageService {
 
   @Override
   public Patient update(TriageForm form, Concern concern, User user, NotifyList notify) {
-    Patient old =  form.getPatient() == null ? null : getActivePatient(form.getPatient(), user);
+    Patient old = form.getPatient() == null ? null : getActivePatient(form.getPatient(), user);
 
     Patient patient = prepare(form, old);
     patient = patientService.update(patient, concern, user, notify);
@@ -161,9 +161,11 @@ public class TriageServiceImpl implements TriageService {
   private Patient prepare(TriageForm form, Patient old) {
     Patient patient = new Patient();
 
-    patient.setSex(old.getSex());
-    patient.setInsurance(old.getInsurance());
-    patient.setErtype(old.getErtype());
+    if (old != null) {
+      patient.setSex(old.getSex());
+      patient.setInsurance(old.getInsurance());
+      patient.setErtype(old.getErtype());
+    }
 
     patient.setId(form.getPatient());
     patient.setLastname(form.getLastname());

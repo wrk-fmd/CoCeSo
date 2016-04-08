@@ -54,7 +54,7 @@ public class PatadminServiceImpl implements PatadminService {
   @Override
   public boolean[] getAccessLevels(Concern concern) {
     return new boolean[]{
-      auth.hasPermission(concern, AccessLevel.PatadminRoot),
+      auth.hasPermission(concern, AccessLevel.PatadminSettings),
       auth.hasPermission(concern, AccessLevel.PatadminTriage),
       auth.hasPermission(concern, AccessLevel.PatadminPostprocessing),
       auth.hasPermission(concern, AccessLevel.PatadminInfo)

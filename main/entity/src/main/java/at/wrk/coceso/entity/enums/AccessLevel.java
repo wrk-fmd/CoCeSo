@@ -13,6 +13,7 @@ public enum AccessLevel {
   Client(false, UnitType.Portable, UnitType.Officer),
   PatadminRoot(Authority.MLS),
   PatadminTriage(null, new UnitType[]{UnitType.Triage}, null, new AccessLevel[]{PatadminRoot}),
+  PatadminSettings(PatadminTriage),
   PatadminPostprocessing(null, new UnitType[]{UnitType.Postprocessing}, null, new AccessLevel[]{PatadminRoot}),
   PatadminInfo(null, new UnitType[]{UnitType.Info}, null, new AccessLevel[]{PatadminRoot}),
   Patadmin(PatadminTriage, PatadminPostprocessing, PatadminInfo, PatadminRoot),
