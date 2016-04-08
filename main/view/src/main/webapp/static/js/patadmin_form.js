@@ -27,6 +27,12 @@ require(["config"], function() {
       ko.applyBindings(store, $("#treatment_groups")[0]);
       ko.applyBindings(new Form(), $("#command")[0]);
       $(".autofocus").focus();
+      $(".nosubmit").on("keyup keypress", function(e) {
+        if (e.which === 13) {
+          e.preventDefault();
+          return false;
+        }
+      });
     }
   );
 });

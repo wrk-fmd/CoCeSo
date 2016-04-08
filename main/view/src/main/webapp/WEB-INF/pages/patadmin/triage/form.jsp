@@ -46,15 +46,15 @@
             <div class="clearfix">
               <div class="form-group col-md-6">
                 <form:label path="lastname"><spring:message code="patient.lastname"/></form:label>
-                <form:input path="lastname" cssClass="form-control" data-bind="valueInit: lastname, patient: {key: 'lastname', types: types, callback: callback}"/>
+                <form:input path="lastname" cssClass="form-control nosubmit" data-bind="valueInit: lastname, patient: {key: 'lastname', types: types, callback: callback}"/>
               </div>
               <div class="form-group col-md-6">
                 <form:label path="firstname"><spring:message code="patient.firstname"/></form:label>
-                <form:input path="firstname" cssClass="form-control" data-bind="valueInit: firstname, patient: {key: 'firstname', types: types, callback: callback}"/>
+                <form:input path="firstname" cssClass="form-control nosubmit" data-bind="valueInit: firstname, patient: {key: 'firstname', types: types, callback: callback}"/>
               </div>
               <div class="form-group col-md-6">
                 <form:label path="externalId"><spring:message code="patient.externalId"/></form:label>
-                <form:input path="externalId" cssClass="form-control autofocus" data-bind="valueInit: externalId, patient: {key: 'externalId', types: types, callback: callback}"/>
+                <form:input path="externalId" cssClass="form-control autofocus nosubmit" data-bind="valueInit: externalId, patient: {key: 'externalId', types: types, callback: callback}"/>
               </div>
               <div class="form-group col-md-6 hidden">
                 <form:label path="birthday"><spring:message code="patient.birthday"/></form:label>
