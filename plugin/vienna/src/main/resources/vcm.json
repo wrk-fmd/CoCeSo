@@ -271,28 +271,33 @@
   },
   {
     "info": "VCM/Sichtung",
-    "latitude": 48.211583,
-    "longitude": 16.36112
+    "latitude": 48.211826,
+    "longitude": 16.361218
   },
   {
     "info": "VCM/Behandlung A",
-    "latitude": 48.211886,
-    "longitude": 16.361115
+    "latitude": 48.211706,
+    "longitude": 16.361186
   },
   {
     "info": "VCM/Behandlung B",
-    "latitude": 48.21185,
-    "longitude": 16.361281
+    "latitude": 48.211931,
+    "longitude": 16.361255
   },
   {
-    "info": "VCM/SanHiSt",
-    "latitude": 48.207012,
-    "longitude": 16.364469
+    "info": "VCM/VD",
+    "latitude": 48.212292,
+    "longitude": 16.361361
+  },
+  {
+    "info": "VCM/Verladestelle",
+    "latitude": 48.211836,
+    "longitude": 16.36133
   },
   {
     "info": "VCM/WaHaPl Universitätsring",
-    "latitude": 48.212545,
-    "longitude": 16.361313
+    "latitude": 48.212496,
+    "longitude": 16.361256
   },
   {
     "info": "VCM/Kinderläufe Start 4,2",
