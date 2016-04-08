@@ -26,7 +26,7 @@ require(["config"], function() {
 
       ko.applyBindings(store, $("#treatment_groups")[0]);
       ko.applyBindings(new Form(), $("#command")[0]);
-      $("[autofocus]").focus();
+      $(".autofocus").focus();
     }
   );
 });

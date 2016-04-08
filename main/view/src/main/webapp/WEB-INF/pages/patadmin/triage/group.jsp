@@ -55,7 +55,7 @@
       </dl>
 
       <p>
-        <a class="btn btn-default" href="<c:url value="/patadmin/triage/add?group=${group.id}"/>">
+        <a class="btn btn-default autofocus" href="<c:url value="/patadmin/triage/add?group=${group.id}"/>">
           <spring:message code="patient.add"/>
         </a>
       </p>

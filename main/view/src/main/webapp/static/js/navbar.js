@@ -12,5 +12,7 @@
  */
 
 require(["config"], function() {
-  require(["bootstrap/collapse", "bootstrap/dropdown"]);
+  require(["jquery", "bootstrap/collapse", "bootstrap/dropdown"], function($) {
+    $(".autofocus").first().focus();
+  });
 });

@@ -54,7 +54,7 @@
               </div>
               <div class="form-group col-md-6">
                 <form:label path="externalId"><spring:message code="patient.externalId"/></form:label>
-                <form:input path="externalId" cssClass="form-control" autofocus="autofocus" data-bind="valueInit: externalId, patient: {key: 'externalId', types: types, callback: callback}"/>
+                <form:input path="externalId" cssClass="form-control autofocus" data-bind="valueInit: externalId, patient: {key: 'externalId', types: types, callback: callback}"/>
               </div>
               <div class="form-group col-md-6 hidden">
                 <form:label path="birthday"><spring:message code="patient.birthday"/></form:label>

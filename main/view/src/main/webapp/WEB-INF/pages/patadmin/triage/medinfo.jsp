@@ -65,7 +65,7 @@
       <div>
         <h3><spring:message code="patients"/></h3>
         <p>
-          <a href="<c:url value="/patadmin/triage/add?medinfo=${medinfo.id}"/>" class="btn btn-default"><spring:message code="patient.add"/></a>
+          <a href="<c:url value="/patadmin/triage/add?medinfo=${medinfo.id}"/>" class="btn btn-default autofocus"><spring:message code="patient.add"/></a>
         </p>
         <c:if test="${not empty medinfo.patients}">
           <p:patients patients="${medinfo.patients}"/>

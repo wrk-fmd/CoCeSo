@@ -36,7 +36,7 @@
 
       <h2><spring:message code="patadmin.triage"/></h2>
       <p>
-        <a href="<c:url value="/patadmin/triage/add"/>" class="btn btn-default">
+        <a href="<c:url value="/patadmin/triage/add"/>" class="btn btn-default autofocus">
           <spring:message code="patient.add"/>
         </a>
       </p>

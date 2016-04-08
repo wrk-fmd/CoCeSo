@@ -24,6 +24,7 @@ require(["config"], function() {
       });
 
       ko.applyBindings(store, $("#treatment_groups")[0]);
+      $(".autofocus").first().focus();
     }
   );
 });

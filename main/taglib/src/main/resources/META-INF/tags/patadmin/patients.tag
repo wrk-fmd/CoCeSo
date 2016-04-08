@@ -52,7 +52,7 @@
         <td>
           <a href="${viewUrl}${patient.id}" class="btn btn-default btn-xs"><spring:message code="patient.details"/></a>
           <c:if test="${not patient.done}">
-            <a href="${editUrl}${patient.id}" class="btn btn-default btn-xs"><spring:message code="patient.edit"/></a>
+            <a href="${editUrl}${patient.id}" class="btn btn-default btn-xs autofocus"><spring:message code="patient.edit"/></a>
           </c:if>
         </td>
       </tr>

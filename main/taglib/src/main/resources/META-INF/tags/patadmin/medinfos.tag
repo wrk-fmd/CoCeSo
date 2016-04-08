@@ -35,7 +35,7 @@
         <td><c:out value="${medinfo.firstname}"/></td>
         <td>
           <a href="${viewUrl}${medinfo.id}" class="btn btn-default btn-xs"><spring:message code="medinfo.details"/></a>
-          <a href="${addUrl}${medinfo.id}" class="btn btn-default btn-xs"><spring:message code="patient.add"/></a>
+          <a href="${addUrl}${medinfo.id}" class="btn btn-default btn-xs autofocus"><spring:message code="patient.add"/></a>
         </td>
       </tr>
     </c:forEach>
