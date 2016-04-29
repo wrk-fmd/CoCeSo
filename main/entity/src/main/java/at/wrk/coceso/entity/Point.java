@@ -58,7 +58,7 @@ public class Point implements Serializable {
   }
 
   public void setInfo(String info) {
-    this.info = StringUtils.trimToEmpty(info);
+    this.info = info;
   }
 
   public Double getLongitude() {
