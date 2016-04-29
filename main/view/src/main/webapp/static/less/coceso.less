@@ -794,6 +794,26 @@ body.map {
   height: 18px;
 }
 
+.distance-marker {
+  width: auto !important;
+  padding: 0 5px;
+  white-space: nowrap;
+  background: #fff;
+  border-radius: 6px;
+  .box-shadow(1px 1px 2px rgba(0,0,0,.5));
+
+  &:after {
+    display: block;
+    content: attr(title);
+    color: #003063;
+    font-size: 11px
+  }
+
+  &:hover {
+    z-index: 500 !important
+  }
+}
+
 /**
  * Patadmin
  */

@@ -1,6 +1,6 @@
 /**
  * CoCeSo
- * Client JS - main/viewmodels/incidents
+ * Client JS - map/layers
  * Copyright (c) WRK\Coceso-Team
  *
  * Licensed under the GNU General Public License, version 3 (GPL-3.0)
@@ -11,7 +11,15 @@
  * @license GPL-3.0 http://opensource.org/licenses/GPL-3.0
  */
 
-define(["./leaflet", "./popup", "utils/i18n", "./wfs"], function(L, Popup, _) {
+/**
+ * @module map/layers
+ * @param {module:map/leaflet} L
+ * @param {module:map/ajaxgeojson} AjaxGeoJSON
+ * @param {module:map/popup} Popup
+ * @param {module:map/wfs} getWfsUrl
+ * @param {module:utils/i18n} _
+ */
+define(["./leaflet", "./ajaxgeojson","./popup", "./wfs", "utils/i18n"], function(L, AjaxGeoJSON, Popup, getWfsUrl, _) {
   "use strict";
 
   // Define Layers
@@ -28,7 +36,7 @@ define(["./leaflet", "./popup", "utils/i18n", "./wfs"], function(L, Popup, _) {
     subdomains: ["maps", "maps1", "maps2", "maps3", "maps4"],
     bounds: [[46.358770, 8.782379], [49.037872, 17.189532]],
     attribution: _("map.source") + ": <a href='http://basemap.at' target='_blank'>basemap.at</a>, " +
-        "<a href='http://creativecommons.org/licenses/by/3.0/at/deed.de' target='_blank'>CC-BY 3.0</a>"
+      "<a href='http://creativecommons.org/licenses/by/3.0/at/deed.de' target='_blank'>CC-BY 3.0</a>"
   });
   base[names.ortho] = L.layerGroup([
     L.tileLayer("https://{s}.wien.gv.at/basemap/bmaporthofoto30cm/normal/google3857/{z}/{y}/{x}.jpeg", {
@@ -36,7 +44,7 @@ define(["./leaflet", "./popup", "utils/i18n", "./wfs"], function(L, Popup, _) {
       subdomains: ["maps", "maps1", "maps2", "maps3", "maps4"],
       bounds: [[46.358770, 8.782379], [49.037872, 17.189532]],
       attribution: _("map.source") + ": <a href='http://basemap.at' target='_blank'>basemap.at</a>, " +
-          "<a href='http://creativecommons.org/licenses/by/3.0/at/deed.de' target='_blank'>CC-BY 3.0</a>"
+        "<a href='http://creativecommons.org/licenses/by/3.0/at/deed.de' target='_blank'>CC-BY 3.0</a>"
     }),
     L.tileLayer("https://{s}.wien.gv.at/basemap/bmapoverlay/normal/google3857/{z}/{y}/{x}.png", {
       maxZoom: 19,
@@ -45,7 +53,7 @@ define(["./leaflet", "./popup", "utils/i18n", "./wfs"], function(L, Popup, _) {
     })
   ]);
 
-  overlay[names.hospitals] = new L.GeoJSON.WFS("https://data.wien.gv.at/daten/geo", "ogdwien:KRANKENHAUSOGD", {
+  overlay[names.hospitals] = new AjaxGeoJSON(getWfsUrl("https://data.wien.gv.at/daten/geo", "ogdwien:KRANKENHAUSOGD"), {
     pointToLayer: function(feature, latlng) {
       return L.marker(latlng, {
         icon: L.icon({
@@ -61,7 +69,7 @@ define(["./leaflet", "./popup", "utils/i18n", "./wfs"], function(L, Popup, _) {
     }
   });
 
-  overlay[names.defi] = new L.GeoJSON.WFS("https://data.wien.gv.at/daten/geo", "ogdwien:DEFIBRILLATOROGD", {
+  overlay[names.defi] = new AjaxGeoJSON(getWfsUrl("https://data.wien.gv.at/daten/geo", "ogdwien:DEFIBRILLATOROGD"), {
     pointToLayer: function(feature, latlng) {
       return L.marker(latlng, {
         icon: L.icon({

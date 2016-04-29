@@ -1,6 +1,6 @@
 /**
  * CoCeSo
- * Client JS - main/viewmodels/incidents
+ * Client JS - map/wfs
  * Copyright (c) WRK\Coceso-Team
  *
  * Licensed under the GNU General Public License, version 3 (GPL-3.0)
@@ -11,39 +11,21 @@
  * @license GPL-3.0 http://opensource.org/licenses/GPL-3.0
  */
 
-define(["jquery", "./leaflet"], function($, L) {
+/**
+ * @module map/wfs
+ */
+define([], function() {
   "use strict";
 
   /**
-   * Layer to show WFS data
+   * Get URL for WFS service
    *
-   * @constructor
-   * @extends L.GeoJSON
+   * @alias module:map/wfs
    * @param {String} serviceUrl
    * @param {String} featureType
-   * @param {GeoJSONOptions} options
    */
-  L.GeoJSON.WFS = L.GeoJSON.extend({
-    initialize: function(serviceUrl, featureType, options) {
-      L.GeoJSON.prototype.initialize.call(this, null, options);
-      this._featureUrl = serviceUrl + "?service=WFS&request=GetFeature&outputFormat=json&version=1.1.0&srsName=EPSG:4326&typeName=" + featureType;
-      this._loaded = false;
-    },
-    onAdd: function(map) {
-      L.LayerGroup.prototype.onAdd.call(this, map);
-      if (!this._loaded) {
-        var self = this;
-        $.ajax({
-          dataType: "json",
-          url: this._featureUrl,
-          success: function(response) {
-            if (response.type && response.type === "FeatureCollection") {
-              self.addData(response);
-              self._loaded = true;
-            }
-          }
-        });
-      }
-    }
-  });
+  var getWfsUrl = function(serviceUrl, featureType) {
+    return serviceUrl + "?service=WFS&request=GetFeature&outputFormat=json&version=1.1.0&srsName=EPSG:4326&typeName=" + featureType;
+  };
+  return getWfsUrl;
 });
