@@ -408,7 +408,9 @@ public class PdfDocument extends Document implements AutoCloseable {
     addCell(table, "");
 
     addCell(table, getMessage("patient.sex", null) + ":");
-    addCell(table, getMessage("patient.sex." + patient.getSex(), null, patient.getSex().toString()));
+    addCell(table, patient.getSex() == null
+        ? getMessage("patient.sex.u", null)
+        : getMessage("patient.sex.long." + patient.getSex().toString().toLowerCase(), null, patient.getSex().toString()));
     addCell(table, "");
 
     if (patient.getInsurance() != null && !patient.getInsurance().isEmpty()) {
