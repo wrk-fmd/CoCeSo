@@ -15,8 +15,10 @@ public class ViennaJsonPoi extends JsonPoi {
   @Autowired
   public ViennaJsonPoi(ObjectMapper mapper) throws IOException {
     super(mapper,
-        new ClassPathResource("ehs.json"), new ClassPathResource("vcm.json"),
-        new ClassPathResource("hospitals.json"), new ClassPathResource("wrk.json"));
+        new ClassPathResource("ehs.json"),
+//        new ClassPathResource("vcm.json"),
+        new ClassPathResource("hospitals.json"), new ClassPathResource("wrk.json"),
+        new ClassPathResource("wflwr.json"));
   }
 
 }

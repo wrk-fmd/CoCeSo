@@ -4,7 +4,7 @@ import at.wrk.coceso.service.point.GridSquare;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-@Component
+//@Component
 @Order(20)
 public class VcmGridSquare extends GridSquare {
 
