@@ -18,6 +18,7 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
@@ -637,7 +638,7 @@ public class PdfDocument extends Document implements AutoCloseable {
   }
 
   private String getFormattedTime(Timestamp timestamp) {
-    return new java.text.SimpleDateFormat(fullDate ? dateTimeFormat : timeFormat).format(timestamp);
+    return timestamp == null ? "" : new SimpleDateFormat(fullDate ? dateTimeFormat : timeFormat).format(timestamp);
   }
 
   private String getLogText(LogEntry log) {
