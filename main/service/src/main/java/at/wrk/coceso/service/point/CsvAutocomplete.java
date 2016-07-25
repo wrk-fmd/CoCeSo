@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StreamUtils;
 
-public class CsvAutocomplete extends PreloadedAutocomplete {
+public abstract class CsvAutocomplete extends PreloadedAutocomplete {
 
   private final static Logger LOG = LoggerFactory.getLogger(CsvAutocomplete.class);
 

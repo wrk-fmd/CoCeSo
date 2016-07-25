@@ -4,7 +4,7 @@ import at.wrk.coceso.entity.Point;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class GridSquare extends PreloadedAutocomplete implements ILocate {
+public abstract class GridSquare extends PreloadedAutocomplete implements ILocate {
 
   private final String name;
   private final double lat, lng, xLat, xLng, yLat, yLng;

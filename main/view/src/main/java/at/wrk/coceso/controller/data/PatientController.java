@@ -7,9 +7,10 @@ import at.wrk.coceso.entity.helper.JsonViews;
 import at.wrk.coceso.entity.helper.RestProperty;
 import at.wrk.coceso.entity.helper.RestResponse;
 import at.wrk.coceso.entity.helper.SequencedResponse;
+import at.wrk.coceso.entityevent.EntityEventFactory;
 import at.wrk.coceso.entityevent.EntityEventHandler;
 import at.wrk.coceso.service.PatientService;
-import at.wrk.coceso.service.PatientSocketService;
+import at.wrk.coceso.service.PatientWriteService;
 import at.wrk.coceso.utils.ActiveConcern;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.util.List;
@@ -24,13 +25,18 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/data/patient")
 public class PatientController {
 
-  private final EntityEventHandler<Patient> entityEventHandler = EntityEventHandler.getInstance(Patient.class);
+  private final EntityEventHandler<Patient> entityEventHandler;
+
+  @Autowired
+  public PatientController(EntityEventFactory eehf) {
+    this.entityEventHandler = eehf.getEntityEventHandler(Patient.class);
+  }
 
   @Autowired
   private PatientService patientService;
 
   @Autowired
-  private PatientSocketService patientSocketService;
+  private PatientWriteService patientWriteService;
 
   @JsonView(JsonViews.Main.class)
   @RequestMapping(value = "main", produces = "application/json", method = RequestMethod.GET)
@@ -40,13 +46,13 @@ public class PatientController {
 
   @RequestMapping(value = "update", produces = "application/json", method = RequestMethod.POST)
   public RestResponse update(@RequestBody Patient patient, BindingResult result,
-      @ActiveConcern Concern concern, @AuthenticationPrincipal User user) {
+          @ActiveConcern Concern concern, @AuthenticationPrincipal User user) {
     if (result.hasErrors()) {
       return new RestResponse(result);
     }
 
     boolean isNew = patient.getId() == null;
-    patient = patientSocketService.update(patient, concern, user);
+    patient = patientWriteService.update(patient, concern, user);
     return new RestResponse(true, new RestProperty("new", isNew), new RestProperty("patient_id", patient.getId()));
   }
 

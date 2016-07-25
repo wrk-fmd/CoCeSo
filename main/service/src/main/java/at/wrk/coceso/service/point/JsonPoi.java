@@ -8,7 +8,7 @@ import java.util.HashSet;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
-public class JsonPoi extends PreloadedAutocomplete implements ILocate {
+public abstract class JsonPoi extends PreloadedAutocomplete implements ILocate {
 
   private final Collection<Point> points;
 

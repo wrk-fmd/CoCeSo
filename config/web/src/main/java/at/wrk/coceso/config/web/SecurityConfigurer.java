@@ -1,22 +1,24 @@
 package at.wrk.coceso.config.web;
 
-import at.wrk.coceso.auth.JsonAuthHandler;
-import at.wrk.coceso.auth.JsonAuthError;
-import at.wrk.coceso.auth.AuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class SecurityConfigurer {
+class SecurityConfigurer {
 
   @Autowired
   public void configureGlobal(AuthenticationManagerBuilder auth, AuthenticationProvider authenticationProvider) {
@@ -28,19 +30,25 @@ public class SecurityConfigurer {
   public static class ClientSecurityConfigurer extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private JsonAuthError jsonAuthError;
+    private AccessDeniedHandler adh;
 
     @Autowired
-    private JsonAuthHandler jsonAuthHandler;
+    private AuthenticationEntryPoint aep;
+
+    @Autowired
+    private AuthenticationSuccessHandler ash;
+
+    @Autowired
+    private AuthenticationFailureHandler afh;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
       http.antMatcher("/client/**")
-          .exceptionHandling().accessDeniedHandler(jsonAuthError).authenticationEntryPoint(jsonAuthError).and()
+          .exceptionHandling().accessDeniedHandler(adh).authenticationEntryPoint(aep).and()
           .csrf().disable()
           .headers().disable()
           .logout().logoutUrl("/client/logout").and()
-          .formLogin().loginProcessingUrl("/client/login").successHandler(jsonAuthHandler).failureHandler(jsonAuthHandler).and()
+          .formLogin().loginProcessingUrl("/client/login").successHandler(ash).failureHandler(afh).and()
           .authorizeRequests()
           .antMatchers("/client/login").permitAll()
           .antMatchers("/client/**").authenticated();
@@ -52,12 +60,15 @@ public class SecurityConfigurer {
   public static class DataSecurityConfigurer extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private JsonAuthError jsonAuthError;
+    private AccessDeniedHandler adh;
+
+    @Autowired
+    private AuthenticationEntryPoint aep;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
       http.antMatcher("/data/**")
-          .exceptionHandling().accessDeniedHandler(jsonAuthError).authenticationEntryPoint(jsonAuthError).and()
+          .exceptionHandling().accessDeniedHandler(adh).authenticationEntryPoint(aep).and()
           .csrf().disable()
           .headers().disable()
           .authorizeRequests()

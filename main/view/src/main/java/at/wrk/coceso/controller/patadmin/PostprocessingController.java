@@ -8,7 +8,7 @@ import at.wrk.coceso.form.TransportForm;
 import at.wrk.coceso.service.PatientService;
 import at.wrk.coceso.service.patadmin.PatadminService;
 import at.wrk.coceso.service.patadmin.PostprocessingService;
-import at.wrk.coceso.service.patadmin.PostprocessingSocketService;
+import at.wrk.coceso.service.patadmin.PostprocessingWriteService;
 import at.wrk.coceso.utils.ActiveConcern;
 import at.wrk.coceso.utils.Initializer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,7 @@ public class PostprocessingController {
   private PostprocessingService postprocessingService;
 
   @Autowired
-  private PostprocessingSocketService postprocessingSocketService;
+  private PostprocessingWriteService postprocessingWriteService;
 
   @PreAuthorize("@auth.hasPermission(#concern, 'PatadminPostprocessing')")
   @Transactional
@@ -81,7 +81,7 @@ public class PostprocessingController {
   @PreAuthorize("@auth.hasPermission(#form.patient, 'at.wrk.coceso.entity.Patient', 'PatadminPostprocessing')")
   @RequestMapping(value = "/save", method = RequestMethod.POST)
   public String save(@ModelAttribute PostprocessingForm form, @AuthenticationPrincipal User user) {
-    Patient patient = postprocessingSocketService.update(form, user);
+    Patient patient = postprocessingWriteService.update(form, user);
     return String.format("redirect:/patadmin/postprocessing/view/%d", patient.getId());
   }
 
@@ -96,7 +96,7 @@ public class PostprocessingController {
   @PreAuthorize("@auth.hasPermission(#form.patient, 'at.wrk.coceso.entity.Patient', 'PatadminPostprocessing')")
   @RequestMapping(value = "/discharge", method = RequestMethod.POST)
   public String saveDischarge(@ModelAttribute PostprocessingForm form, @AuthenticationPrincipal User user) {
-    Patient patient = postprocessingSocketService.discharge(form, user);
+    Patient patient = postprocessingWriteService.discharge(form, user);
     return String.format("redirect:/patadmin/postprocessing/view/%d", patient.getId());
   }
 
@@ -111,7 +111,7 @@ public class PostprocessingController {
   @PreAuthorize("@auth.hasPermission(#form.patient, 'at.wrk.coceso.entity.Patient', 'PatadminPostprocessing')")
   @RequestMapping(value = "/transport", method = RequestMethod.POST)
   public String requestTransport(@ModelAttribute TransportForm form, @AuthenticationPrincipal User user) {
-    Patient patient = postprocessingSocketService.transport(form, user);
+    Patient patient = postprocessingWriteService.transport(form, user);
     return String.format("redirect:/patadmin/postprocessing/view/%d", patient.getId());
   }
 
@@ -127,7 +127,7 @@ public class PostprocessingController {
   @PreAuthorize("@auth.hasPermission(#patientId, 'at.wrk.coceso.entity.Patient', 'PatadminPostprocessing')")
   @RequestMapping(value = "/transported", method = RequestMethod.POST)
   public String saveTransported(@RequestParam("patient") int patientId, @AuthenticationPrincipal User user) {
-    Patient patient = postprocessingSocketService.transported(patientId, user);
+    Patient patient = postprocessingWriteService.transported(patientId, user);
     return String.format("redirect:/patadmin/postprocessing/view/%d", patient.getId());
   }
 

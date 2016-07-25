@@ -5,9 +5,10 @@ import at.wrk.coceso.entity.Container;
 import at.wrk.coceso.entity.helper.RestProperty;
 import at.wrk.coceso.entity.helper.RestResponse;
 import at.wrk.coceso.entity.helper.SequencedResponse;
+import at.wrk.coceso.entityevent.EntityEventFactory;
 import at.wrk.coceso.entityevent.EntityEventHandler;
 import at.wrk.coceso.service.ContainerService;
-import at.wrk.coceso.service.ContainerSocketService;
+import at.wrk.coceso.service.ContainerWriteService;
 import at.wrk.coceso.utils.ActiveConcern;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +24,14 @@ public class ContainerController {
   private ContainerService containerService;
 
   @Autowired
-  private ContainerSocketService containerSocketService;
+  private ContainerWriteService containerWriteService;
 
-  private final EntityEventHandler<Container> entityEventHandler = EntityEventHandler.getInstance(Container.class);
+  private final EntityEventHandler<Container> entityEventHandler;
+
+  @Autowired
+  public ContainerController(EntityEventFactory eehf) {
+    this.entityEventHandler = eehf.getEntityEventHandler(Container.class);
+  }
 
   @RequestMapping(value = "getAll", produces = "application/json", method = RequestMethod.GET)
   public SequencedResponse<List<Container>> getAll(@ActiveConcern Concern concern) {
@@ -34,26 +40,26 @@ public class ContainerController {
 
   @RequestMapping(value = "updateContainer", produces = "application/json", method = RequestMethod.POST)
   public RestResponse updateContainer(@RequestBody Container container, @ActiveConcern Concern concern) {
-    container = containerSocketService.update(container, concern);
+    container = containerWriteService.update(container, concern);
     return new RestResponse(true, new RestProperty("id", container.getId()));
   }
 
   @RequestMapping(value = "removeContainer", produces = "application/json", method = RequestMethod.POST)
   public RestResponse removeContainer(@RequestParam("container_id") int containerId) {
-    containerSocketService.remove(containerId);
+    containerWriteService.remove(containerId);
     return new RestResponse(true);
   }
 
   @RequestMapping(value = "updateUnit", produces = "application/json", method = RequestMethod.POST)
   public RestResponse updateUnit(@RequestParam("container_id") int containerId,
       @RequestParam("unit_id") int unitId, @RequestParam("ordering") double ordering) {
-    containerSocketService.updateUnit(containerId, unitId, ordering);
+    containerWriteService.updateUnit(containerId, unitId, ordering);
     return new RestResponse(true);
   }
 
   @RequestMapping(value = "removeUnit", produces = "application/json", method = RequestMethod.POST)
   public RestResponse removeUnit(@RequestParam("unit_id") int unitId) {
-    containerSocketService.removeUnit(unitId);
+    containerWriteService.removeUnit(unitId);
     return new RestResponse(true);
   }
 

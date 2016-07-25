@@ -1,8 +1,8 @@
 package at.wrk.coceso.radio;
 
+import at.wrk.coceso.entityevent.EntityEventFactory;
 import at.wrk.coceso.entityevent.EntityEventHandler;
-import at.wrk.coceso.entityevent.SocketMessagingTemplate;
-import at.wrk.coceso.entityevent.WebSocketWriter;
+import at.wrk.coceso.entityevent.EntityEventListener;
 import java.time.OffsetDateTime;
 import java.util.EnumSet;
 import java.util.List;
@@ -26,14 +26,16 @@ public class RadioService implements SelcallListener {
 
   private final TransceiverManager transceivers;
 
-  private final WebSocketWriter<Selcall> webSocketWriter;
+  private final EntityEventListener<Selcall> webSocketWriter;
+
+  private final EntityEventHandler<Selcall> entityEventHandler;
 
   @Autowired
-  public RadioService(Environment env, SocketMessagingTemplate template) {
-    transceivers = TransceiverManager.getInstance(env);
-
-    webSocketWriter = new WebSocketWriter<>(template, "/topic/radio/incoming", null, null);
-    EntityEventHandler.getInstance(Selcall.class).addListener(webSocketWriter);
+  public RadioService(Environment env, EntityEventFactory eef) {
+    entityEventHandler = eef.getEntityEventHandler(Selcall.class);
+    webSocketWriter = eef.getWebSocketWriter("/topic/radio/incoming", null, null);
+    entityEventHandler.addListener(webSocketWriter);
+    transceivers = TransceiverManager.getInstance(env, entityEventHandler);
   }
 
   @PostConstruct
@@ -44,7 +46,7 @@ public class RadioService implements SelcallListener {
   @PreDestroy
   private void destroy() {
     transceivers.removeListener(this);
-    EntityEventHandler.getInstance(Selcall.class).removeListener(webSocketWriter);
+    entityEventHandler.removeListener(webSocketWriter);
   }
 
   public boolean reloadPorts() {
@@ -59,7 +61,7 @@ public class RadioService implements SelcallListener {
 
   public List<Selcall> getLastMinutes(int minutes) {
     return selcallRepository.findByTimestampGreaterThanAndDirectionIn(
-            OffsetDateTime.now().minusMinutes(minutes), EnumSet.of(Selcall.Direction.RX, Selcall.Direction.RX_EMG));
+        OffsetDateTime.now().minusMinutes(minutes), EnumSet.of(Selcall.Direction.RX, Selcall.Direction.RX_EMG));
   }
 
   public boolean sendSelcall(Selcall selcall) {

@@ -21,18 +21,19 @@ public class TransceiverManager {
   private final Set<SelcallListener> listeners;
   private final Environment properties;
 
-  private final EntityEventHandler<Selcall> entityEventHandler = EntityEventHandler.getInstance(Selcall.class);
+  private final EntityEventHandler<Selcall> entityEventHandler;
 
-  private TransceiverManager(Environment properties) {
+  private TransceiverManager(Environment properties, EntityEventHandler<Selcall> entityEventHandler) {
     this.properties = properties;
+    this.entityEventHandler = entityEventHandler;
     transceivers = new HashMap<>();
     listeners = new HashSet<>();
     reloadPorts();
   }
 
-  public static synchronized TransceiverManager getInstance(Environment properties) {
+  public static synchronized TransceiverManager getInstance(Environment properties, EntityEventHandler<Selcall> entityEventHandler) {
     if (instance == null) {
-      instance = new TransceiverManager(properties);
+      instance = new TransceiverManager(properties, entityEventHandler);
     }
     return instance;
   }

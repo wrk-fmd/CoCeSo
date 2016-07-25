@@ -13,7 +13,7 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 
 @Configuration
 @EnableWebSocketMessageBroker
-public class WebSocketConfigurer extends AbstractWebSocketMessageBrokerConfigurer {
+class WebSocketConfigurer extends AbstractWebSocketMessageBrokerConfigurer {
 
   @Autowired
   private ObjectMapper objectMapper;

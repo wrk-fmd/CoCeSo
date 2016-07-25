@@ -29,6 +29,12 @@
     </dependency>
     <dependency>
       <groupId>at.wrk.coceso</groupId>
+      <artifactId>coceso-service-impl</artifactId>
+      <version>${project.parent.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>at.wrk.coceso</groupId>
       <artifactId>coceso-taglib</artifactId>
       <version>${project.parent.version}</version>
       <scope>runtime</scope>
@@ -108,6 +114,12 @@
       <version>${spring.security.version}</version>
       <scope>runtime</scope>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-web</artifactId>
+      <version>${spring.security.version}</version>
+    </dependency>
+
 
     <!-- Spring Data -->
     <dependency>

@@ -7,6 +7,7 @@ import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.helper.JsonViews;
 import at.wrk.coceso.entity.helper.SequencedResponse;
+import at.wrk.coceso.entityevent.EntityEventFactory;
 import at.wrk.coceso.entityevent.EntityEventHandler;
 import at.wrk.coceso.service.patadmin.MedinfoService;
 import at.wrk.coceso.service.patadmin.PatadminService;
@@ -37,7 +38,12 @@ public class TriageRestController {
   @Autowired
   private MedinfoService medinfoService;
 
-  private final EntityEventHandler<Unit> entityEventHandler = EntityEventHandler.getInstance(Unit.class);
+  private final EntityEventHandler<Unit> entityEventHandler;
+
+  @Autowired
+  public TriageRestController(EntityEventFactory eehf) {
+    this.entityEventHandler = eehf.getEntityEventHandler(Unit.class);
+  }
 
   @PreAuthorize("@auth.hasPermission(#concern, 'PatadminTriage')")
   @Transactional

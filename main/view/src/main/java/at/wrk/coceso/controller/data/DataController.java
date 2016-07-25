@@ -10,7 +10,7 @@ import at.wrk.coceso.entity.helper.RestResponse;
 import at.wrk.coceso.service.ConcernService;
 import at.wrk.coceso.service.UserService;
 import at.wrk.coceso.service.PointService;
-import at.wrk.coceso.service.TaskSocketService;
+import at.wrk.coceso.service.TaskWriteService;
 import at.wrk.coceso.utils.ActiveConcern;
 import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 public class DataController {
 
   @Autowired
-  private TaskSocketService taskSocketService;
+  private TaskWriteService taskWriteService;
 
   @Autowired
   private ConcernService concernService;
@@ -39,7 +39,7 @@ public class DataController {
   @RequestMapping(value = "assignUnit", produces = "application/json", method = RequestMethod.POST)
   public RestResponse assignUnit(@RequestParam("incident_id") int incident_id, @RequestParam("unit_id") int unit_id,
       @AuthenticationPrincipal User user) {
-    taskSocketService.changeState(incident_id, unit_id, TaskState.Assigned, user);
+    taskWriteService.changeState(incident_id, unit_id, TaskState.Assigned, user);
     return new RestResponse(true);
   }
 

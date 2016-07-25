@@ -5,7 +5,7 @@ import at.wrk.coceso.entity.User;
 import at.wrk.coceso.form.GroupsForm;
 import at.wrk.coceso.utils.ActiveConcern;
 import at.wrk.coceso.service.patadmin.PatadminService;
-import at.wrk.coceso.service.patadmin.PatadminSocketService;
+import at.wrk.coceso.service.patadmin.PatadminWriteService;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -32,7 +32,7 @@ public class PatadminController {
   private PatadminService patadminService;
 
   @Autowired
-  private PatadminSocketService patadminSocketService;
+  private PatadminWriteService patadminWriteService;
 
   @PreAuthorize("@auth.hasPermission(#concern, 'Patadmin')")
   @RequestMapping(value = "", method = RequestMethod.GET)
@@ -75,7 +75,7 @@ public class PatadminController {
   @PreAuthorize("@auth.hasPermission(#concern, 'PatadminSettings')")
   @RequestMapping(value = "/settings", method = RequestMethod.POST)
   public String saveSettings(@ModelAttribute GroupsForm form, @ActiveConcern Concern concern, @AuthenticationPrincipal User user) {
-    patadminSocketService.update(form, concern, user);
+    patadminWriteService.update(form, concern, user);
     return "redirect:settings";
   }
 

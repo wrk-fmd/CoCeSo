@@ -19,6 +19,7 @@
     <module>db</module>
     <module>entity</module>
     <module>service</module>
+    <module>service-impl</module>
     <module>taglib</module>
     <module>view</module>
   </modules>

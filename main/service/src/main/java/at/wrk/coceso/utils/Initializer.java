@@ -3,7 +3,7 @@ package at.wrk.coceso.utils;
 import at.wrk.coceso.entity.Patient;
 import java.util.Collection;
 
-public class Initializer {
+public abstract class Initializer {
 
   public static <T extends Patient> T incidents(T patient) {
     if (patient.getIncidents() != null) {

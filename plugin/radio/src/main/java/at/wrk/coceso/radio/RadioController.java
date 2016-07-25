@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import at.wrk.coceso.entityevent.EntityEventFactory;
 
 @RestController
 @RequestMapping("/data/radio")
@@ -20,7 +21,12 @@ public class RadioController {
   @Autowired
   private RadioService radioService;
 
-  private final EntityEventHandler<Selcall> entityEventHandler = EntityEventHandler.getInstance(Selcall.class);
+  private final EntityEventHandler<Selcall> entityEventHandler;
+
+  @Autowired
+  public RadioController(EntityEventFactory eehf) {
+    this.entityEventHandler = eehf.getEntityEventHandler(Selcall.class);
+  }
 
   @RequestMapping(value = "send", method = RequestMethod.POST, produces = "application/json")
   public RestResponse send(@RequestBody Selcall selcall) {

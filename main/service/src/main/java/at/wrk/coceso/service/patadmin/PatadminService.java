@@ -4,8 +4,6 @@ import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Patient;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.User;
-import at.wrk.coceso.entityevent.NotifyList;
-import at.wrk.coceso.form.Group;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,8 +24,6 @@ public interface PatadminService {
   List<Unit> getGroups(Concern concern);
 
   Unit getGroup(int id);
-
-  List<Unit> update(List<Group> groups, Concern concern, User user, NotifyList notify);
 
   int removeMedinfos(Concern concern);
 }

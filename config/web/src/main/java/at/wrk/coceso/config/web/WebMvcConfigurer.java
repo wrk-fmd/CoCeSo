@@ -33,7 +33,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 @Configuration
 @ComponentScan(basePackages = {"at.wrk.coceso"})
 @EnableWebMvc
-public class WebMvcConfigurer extends WebMvcConfigurerAdapter {
+class WebMvcConfigurer extends WebMvcConfigurerAdapter {
 
   @Autowired
   private ActiveConcernResolver activeConcernResolver;
@@ -70,7 +70,7 @@ public class WebMvcConfigurer extends WebMvcConfigurerAdapter {
   @Override
   public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
     StringHttpMessageConverter stringConverter = new StringHttpMessageConverter();
-  	stringConverter.setWriteAcceptCharset(false);
+    stringConverter.setWriteAcceptCharset(false);
     converters.add(stringConverter);
 
     converters.add(new MappingJackson2HttpMessageConverter(objectMapper));

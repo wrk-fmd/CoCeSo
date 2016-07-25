@@ -11,7 +11,7 @@ import at.wrk.coceso.service.PatientService;
 import at.wrk.coceso.service.patadmin.MedinfoService;
 import at.wrk.coceso.service.patadmin.PatadminService;
 import at.wrk.coceso.service.patadmin.TriageService;
-import at.wrk.coceso.service.patadmin.TriageSocketService;
+import at.wrk.coceso.service.patadmin.TriageWriteService;
 import at.wrk.coceso.utils.ActiveConcern;
 import at.wrk.coceso.utils.Initializer;
 import java.util.Objects;
@@ -43,7 +43,7 @@ public class TriageController {
   private TriageService triageService;
 
   @Autowired
-  private TriageSocketService triageSocketService;
+  private TriageWriteService triageWriteService;
 
   @Autowired
   private MedinfoService medinfoService;
@@ -122,7 +122,7 @@ public class TriageController {
   @PreAuthorize("@auth.hasPermission(#id, 'at.wrk.coceso.entity.Incident', 'PatadminTriage')")
   @RequestMapping(value = "/takeover/{id}", method = RequestMethod.GET)
   public String showTakeover(@PathVariable int id, @AuthenticationPrincipal User user) {
-    Patient patient = triageSocketService.takeover(id, user);
+    Patient patient = triageWriteService.takeover(id, user);
     return String.format("redirect:/patadmin/triage/edit/%d", patient.getId());
   }
 
@@ -131,7 +131,7 @@ public class TriageController {
   @RequestMapping(value = "/save", method = RequestMethod.POST)
   public String save(@ModelAttribute TriageForm form, @ActiveConcern Concern concern,
       @AuthenticationPrincipal User user) {
-    Patient patient = triageSocketService.update(form, concern, user);
+    Patient patient = triageWriteService.update(form, concern, user);
     return String.format("redirect:/patadmin/triage/view/%d", patient.getId());
   }
 
