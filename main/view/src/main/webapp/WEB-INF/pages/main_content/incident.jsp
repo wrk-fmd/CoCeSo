@@ -68,28 +68,22 @@
           <div class="form-group" data-bind="visible: (disableFilter.state !== true)">
             <label><spring:message code="incident.state"/>:</label>
             <div class="clearfix">
-              <div class="checkbox-inline" data-bind="visible: (!disableFilter.state || disableFilter.state.new !== true)">
-                <label>
-                  <input type="checkbox" data-bind="value: constants.state.new, checked: filter.state"/>
-                  <spring:message code="incident.state.new"/>
-                </label>
-              </div>
               <div class="checkbox-inline" data-bind="visible: (!disableFilter.state || disableFilter.state.open !== true)">
                 <label>
                   <input type="checkbox" data-bind="value: constants.state.open, checked: filter.state"/>
                   <spring:message code="incident.state.open"/>
                 </label>
               </div><br/>
-              <div class="checkbox-inline" data-bind="visible: (!disableFilter.state || disableFilter.state.dispo !== true)">
+              <div class="checkbox-inline" data-bind="visible: (!disableFilter.state || disableFilter.state.demand !== true)">
                 <label>
-                  <input type="checkbox" data-bind="value: constants.state.dispo, checked: filter.state"/>
-                  <spring:message code="incident.state.dispo"/>
+                  <input type="checkbox" data-bind="value: constants.state.demand, checked: filter.state"/>
+                  <spring:message code="incident.state.demand"/>
                 </label>
               </div>
-              <div class="checkbox-inline" data-bind="visible: (!disableFilter.state || disableFilter.state.working !== true)">
+              <div class="checkbox-inline" data-bind="visible: (!disableFilter.state || disableFilter.state.inprogress !== true)">
                 <label>
-                  <input type="checkbox" data-bind="value: constants.state.working, checked: filter.state"/>
-                  <spring:message code="incident.state.working"/>
+                  <input type="checkbox" data-bind="value: constants.state.inprogress, checked: filter.state"/>
+                  <spring:message code="incident.state.inprogress"/>
                 </label>
               </div><br/>
               <div class="checkbox-inline" data-bind="visible: (!disableFilter.state || disableFilter.state.done !== true)">
@@ -105,7 +99,7 @@
 
       <ul data-bind="foreach: filtered, accordion: {active: false, collapsible: true, heightStyle: 'content'}, accordionRefresh: filtered">
         <li data-bind="droppable: {drop: assignUnitList, tolerance: 'pointer'}">
-          <h3 class="clearfix" data-bind="css: {incident_open: isNewOrOpen, incident_priority: priority}">
+          <h3 class="clearfix" data-bind="css: {incident_open: isHighlighted, incident_priority: priority}">
             <span class="incident_type_text" data-bind="text: typeChar, css: {incident_blue: blue}"></span>
 
             <span data-bind="text: title"></span>

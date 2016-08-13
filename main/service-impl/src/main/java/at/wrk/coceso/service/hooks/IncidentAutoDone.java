@@ -35,19 +35,17 @@ class IncidentAutoDone implements TaskStateHook {
 
   @Override
   public TaskState call(final Incident incident, final Unit unit, final TaskState taskState, final User user, final NotifyList notify) {
-    if (taskState != TaskState.Detached || incident.getState() == IncidentState.Done) {
+    if (taskState != TaskState.Detached || incident.getState().isDone()) {
       // Not detaching or already set to done
       return taskState;
     }
 
-    if ((incident.getState() == IncidentState.New || incident.getState() == IncidentState.Open)
-        && !incident.getType().isSingleUnit()) {
-      // Don't autoclose new or open incidents
+    if (incident.getState().isOpen() && !incident.getType().isSingleUnit()) {
+      // Don't autoclose open incidents
       return taskState;
     }
 
-    if (incident.getUnits() != null && incident.getUnits().keySet().stream()
-        .anyMatch(u -> !u.equals(unit))) {
+    if (incident.getUnits() != null && incident.getUnits().keySet().stream().anyMatch(u -> !u.equals(unit))) {
       // Other units attached
       return taskState;
     }
@@ -67,7 +65,7 @@ class IncidentAutoDone implements TaskStateHook {
     }
 
     notify.add(incident);
-    hookService.callIncidentDone(incident, IncidentState.Done, user, notify);
+    hookService.callIncidentDone(incident, user, notify);
 
     return taskState;
   }

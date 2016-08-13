@@ -282,39 +282,15 @@ define(["knockout", "./form", "../models/incident", "../models/task", "../models
       }, this);
 
       /**
-       * Disable IncidentState New
+       * Disable IncidentState InProgress
        *
        * @function
        * @type ko.computed
        * @returns {boolean}
        */
-      this.disableNew = ko.computed(function() {
-        return (this.idObs() && this.state.orig() !== constants.Incident.state["new"]);
-      }, this);
-
-      /**
-       * Disable IncidentState Dispo
-       *
-       * @function
-       * @type ko.computed
-       * @returns {boolean}
-       */
-      this.disableDispo = ko.computed(function() {
+      this.disableInProgress = ko.computed(function() {
         return (ko.utils.arrayFirst(this.units(), function(task) {
-          return (task.isAssigned() || task.isZBO());
-        }) === null);
-      }, this);
-
-      /**
-       * Disable IncidentState Working
-       *
-       * @function
-       * @type ko.computed
-       * @returns {boolean}
-       */
-      this.disableWorking = ko.computed(function() {
-        return (ko.utils.arrayFirst(this.units(), function(task) {
-          return (task.isABO() || task.isZAO() || task.isAAO());
+          return !task.isDetached();
         }) === null);
       }, this);
 

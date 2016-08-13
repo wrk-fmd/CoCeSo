@@ -1,5 +1,14 @@
 package at.wrk.coceso.entity.enums;
 
 public enum IncidentState {
-  New, Open, Dispo, Working, Done
+  Open, Demand, InProgress, Done;
+
+  public boolean isOpen() {
+    return this == Open || this == Demand;
+  }
+
+  public boolean isDone() {
+    return this == Done;
+  }
+
 }

@@ -3,7 +3,7 @@ CREATE TYPE E_DIRECTION AS ENUM ('RX', 'RX_ACK', 'RX_EMG', 'TX', 'TX_FAILED');
 CREATE TYPE E_UNITSTATE AS ENUM ('AD', 'EB', 'NEB');
 CREATE TYPE E_UNITTYPE AS ENUM ('Portable', 'Triage', 'Treatment', 'Postprocessing', 'Info', 'Officer');
 CREATE TYPE E_ROLE AS ENUM ('Dashboard', 'MLS', 'Kdt', 'Root');
-CREATE TYPE E_INCIDENTSTATE AS ENUM ('New', 'Open', 'Dispo', 'Working', 'Done');
+CREATE TYPE E_INCIDENTSTATE AS ENUM ('Open', 'Demand', 'InProgress', 'Done');
 CREATE TYPE E_INCIDENTTYPE AS ENUM ('HoldPosition', 'Standby', 'Relocation', 'ToHome', 'Treatment', 'Task', 'Transport');
 CREATE TYPE E_LOGTYPE AS ENUM ('CONCERN_CREATE', 'CONCERN_UPDATE', 'CONCERN_REMOVE', 'CONCERN_CLOSE', 'CONCERN_REOPEN',
   'INCIDENT_CREATE', 'INCIDENT_UPDATE', 'INCIDENT_DELETE', 'INCIDENT_AUTO_STATE', 'INCIDENT_AUTO_DONE',

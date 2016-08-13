@@ -54,16 +54,16 @@ define(["knockout", "./filterable", "data/store/incidents", "utils/constants", "
        * @type ko.computed
        * @returns {Array}
        */
-      this.filtered = store.list.extend({list: {filter: this.activeFilters, sort: true, field: ["isNewOrOpen", "priority", "blue"], asc: false}});
+      this.filtered = store.list.extend({list: {filter: this.activeFilters, sort: true, field: ["isHighlighted", "priority", "blue"], asc: false}});
 
       var title = options.title || _("incidents");
       this.dialogTitle = ko.computed(function() {
-        var open = ko.utils.arrayFilter(this.filtered(), function(i) {
-          return i.isNewOrOpen();
+        var highlighted = ko.utils.arrayFilter(this.filtered(), function(i) {
+          return i.isHighlighted();
         }).length,
           total = this.filtered().length;
 
-        return {dialog: title + " (" + open + "/" + total + ")", button: title};
+        return {dialog: title + " (" + highlighted + "/" + total + ")", button: title};
       }, this);
 
       this.constants = _constants.Incident;
@@ -86,17 +86,13 @@ define(["knockout", "./filterable", "data/store/incidents", "utils/constants", "
             disable: {state: {done: true}},
             filter: {isDone: false}
           },
-          "new": {
-            disable: {state: true},
-            filter: {isNew: true}
-          },
           open: {
             disable: {state: true},
             filter: {isOpen: true}
           },
-          new_or_open: {
+          highlighted: {
             disable: {state: true},
-            filter: {isNewOrOpen: true}
+            filter: {isHighlighted: true}
           },
           completed: {
             disable: {state: true},

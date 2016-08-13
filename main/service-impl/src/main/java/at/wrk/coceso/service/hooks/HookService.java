@@ -4,7 +4,6 @@ import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.Patient;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.User;
-import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entityevent.impl.NotifyList;
 import java.util.List;
@@ -18,7 +17,7 @@ public class HookService {
   private List<TaskStateHook> taskStateHooks;
 
   @Autowired
-  private List<IncidentStateHook> incidentStateHooks;
+  private List<IncidentDoneHook> incidentStateHooks;
 
   @Autowired
   private List<PatientDoneHook> patientDoneHooks;
@@ -30,8 +29,8 @@ public class HookService {
     return state;
   }
 
-  public void callIncidentDone(Incident incident, IncidentState state, User user, NotifyList notify) {
-    incidentStateHooks.forEach(h -> h.call(incident, state, user, notify));
+  public void callIncidentDone(Incident incident, User user, NotifyList notify) {
+    incidentStateHooks.forEach(h -> h.call(incident, user, notify));
   }
 
   public void callPatientDone(Patient patient, User user, NotifyList notify) {

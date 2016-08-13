@@ -312,7 +312,7 @@ class UnitServiceImpl implements UnitServiceInternal {
     }
 
     Incident inc = new Incident();
-    inc.setState(IncidentState.Dispo);
+    inc.setState(IncidentState.InProgress);
     inc.setType(IncidentType.ToHome);
     inc.setCaller(user.getUsername());
     inc.setAo(unit.getHome());
@@ -354,7 +354,7 @@ class UnitServiceImpl implements UnitServiceInternal {
     }
 
     Incident inc = new Incident();
-    inc.setState(IncidentState.Dispo);
+    inc.setState(IncidentState.InProgress);
     inc.setType(IncidentType.Standby);
     inc.setCaller(user.getUsername());
     inc.setAo(unit.getHome());

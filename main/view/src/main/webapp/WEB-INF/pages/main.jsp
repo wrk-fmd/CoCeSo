@@ -63,8 +63,8 @@
                 </a>
               </li>
               <li>
-                <a href="#" title="<spring:message code="main.incident.new_or_open"/>"
-                   data-bind="click: function() {openIncidents({filter: ['overview', 'new_or_open'], title: '<spring:message code="main.incident.new_or_open"/>'})}"
+                <a href="#" title="<spring:message code="main.incident.highlighted"/>"
+                   data-bind="click: function() {openIncidents({filter: ['overview', 'highlighted'], title: '<spring:message code="main.incident.highlighted"/>'})}"
                    data-toggle="tooltip" data-placement="bottom" class="tooltipped notification-icon">
                   <span class="glyphicon glyphicon-time "></span>
                   <span class="badge" data-bind="text: openIncidentCounter, css: cssOpen"></span>
@@ -72,7 +72,7 @@
               </li>
               <li>
                 <a href="#" title="<spring:message code="main.incident.open_transport"/>"
-                   data-bind="click: function() {openIncidents({filter: ['transport', 'new_or_open'], title: '<spring:message code="main.incident.open_transport"/>'})}"
+                   data-bind="click: function() {openIncidents({filter: ['transport', 'highlighted'], title: '<spring:message code="main.incident.open_transport"/>'})}"
                    data-toggle="tooltip" data-placement="bottom" class="tooltipped notification-icon">
                   <span class="glyphicon glyphicon-log-out"></span>
                   <span class="badge" data-bind="text: openTransportCounter, css: cssTransport"></span>
@@ -166,16 +166,6 @@
                   <a href="#" title="<spring:message code="main.incident.active"/>"
                      data-bind="click: function() {openIncidents({filter: ['overview', 'active'], title: this.title})}">
                     <span class="glyphicon glyphicon-list-alt"></span> <spring:message code="main.incident.active"/></a>
-                </li>
-                <li>
-                  <a href="#" title="<spring:message code="main.incident.new"/>"
-                     data-bind="click: function() {openIncidents({filter: ['overview', 'new'], title: this.title})}">
-                    <span class="glyphicon glyphicon-list-alt"></span> <spring:message code="main.incident.new"/></a>
-                </li>
-                <li>
-                  <a href="#" title="<spring:message code="main.incident.open"/>"
-                     data-bind="click: function() {openIncidents({filter: ['overview', 'open'], title: this.title})}">
-                    <span class="glyphicon glyphicon-list-alt"></span> <spring:message code="main.incident.open"/></a>
                 </li>
                 <li>
                   <a href="#" title="<spring:message code="main.incident.complete"/>"

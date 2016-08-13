@@ -30,29 +30,12 @@ class IncidentAutoState implements TaskStateHook {
 
   @Override
   public TaskState call(final Incident incident, final Unit unit, final TaskState taskState, final User user, final NotifyList notify) {
-    IncidentState incidentState = null;
-
-    switch (taskState) {
-      case Assigned:
-      case ZBO:
-        if (incident.getUnits() == null || !incident.getUnits().entrySet().stream()
-            .anyMatch(e -> !e.getKey().equals(unit) && e.getValue().isWorking())) {
-          incidentState = IncidentState.Dispo;
-        }
-        break;
-      case ABO:
-      case ZAO:
-      case AAO:
-        incidentState = IncidentState.Working;
-        break;
-    }
-
-    if (incidentState != null && incidentState != incident.getState()) {
-      LOG.debug("{}: Autosetting state for incident {} to {}", user, incident, incidentState);
+    if (taskState != TaskState.Detached && incident.getState() != IncidentState.Demand && incident.getState() != IncidentState.InProgress) {
+      LOG.debug("{}: Autosetting state for incident {} to InProgress", user, incident);
 
       Changes changes = new Changes("incident");
-      changes.put("state", incident.getState(), incidentState);
-      incident.setState(incidentState);
+      changes.put("state", incident.getState(), IncidentState.InProgress);
+      incident.setState(IncidentState.InProgress);
 
       incidentRepository.save(incident);
       logService.logAuto(user, LogEntryType.INCIDENT_AUTO_STATE, incident.getConcern(), unit, incident, taskState, changes);

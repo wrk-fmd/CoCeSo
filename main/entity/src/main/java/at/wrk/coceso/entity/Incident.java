@@ -96,7 +96,7 @@ public class Incident implements Serializable, Comparable<Incident>, ConcernBoun
   @PreUpdate
   public void prePersist() {
     if (state == null) {
-      state = IncidentState.New;
+      state = IncidentState.Open;
     }
     if (casusNr == null) {
       casusNr = "";
@@ -301,7 +301,7 @@ public class Incident implements Serializable, Comparable<Incident>, ConcernBoun
   @JsonIgnore
   public boolean isRelevant() {
     return type != IncidentType.Treatment
-        && (state != IncidentState.Done || (type != IncidentType.HoldPosition
+        && (!state.isDone() || (type != IncidentType.HoldPosition
         && type != IncidentType.ToHome && type != IncidentType.Standby));
   }
 

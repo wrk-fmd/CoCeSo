@@ -109,7 +109,7 @@ class PostprocessingServiceImpl implements PostprocessingServiceInternal {
   private Incident createTransport(Patient patient, TransportForm form) {
     Incident incident = new Incident();
 
-    incident.setState(IncidentState.New);
+    incident.setState(IncidentState.Open);
     incident.setType(IncidentType.Transport);
     incident.setBlue(true);
 

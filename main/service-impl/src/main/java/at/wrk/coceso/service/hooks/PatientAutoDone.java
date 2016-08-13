@@ -2,7 +2,6 @@ package at.wrk.coceso.service.hooks;
 
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.User;
-import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entityevent.impl.NotifyList;
 import at.wrk.coceso.service.internal.PatientServiceInternal;
@@ -14,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Order(2)
-class PatientAutoDone implements IncidentStateHook {
+class PatientAutoDone implements IncidentDoneHook {
 
   private static final Logger LOG = LoggerFactory.getLogger(PatientAutoDone.class);
 
@@ -22,8 +21,8 @@ class PatientAutoDone implements IncidentStateHook {
   private PatientServiceInternal patientService;
 
   @Override
-  public void call(final Incident incident, final IncidentState state, final User user, final NotifyList notify) {
-    if (incident.getType() == IncidentType.Transport && state == IncidentState.Done) {
+  public void call(final Incident incident, final User user, final NotifyList notify) {
+    if (incident.getType() == IncidentType.Transport) {
       LOG.debug("{}: Autodischarging patient {} after transport", user, incident.getPatient());
       patientService.discharge(incident.getPatient(), user, notify);
     }

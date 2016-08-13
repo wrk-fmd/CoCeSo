@@ -32,7 +32,7 @@ define(["knockout", "./leaflet", "utils/destroy"], function(ko, L, destroyComput
 
     this.type = inc.type;
     this.blue = inc.blue;
-    this.isNewOrOpen = inc.isNewOrOpen;
+    this.isHighlighted = inc.isHighlighted;
     this.disableBO = inc.disableBO;
 
     /**

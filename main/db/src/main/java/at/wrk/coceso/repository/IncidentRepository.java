@@ -3,7 +3,6 @@ package at.wrk.coceso.repository;
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.Unit;
-import at.wrk.coceso.entity.enums.IncidentState;
 import java.util.List;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -34,9 +33,6 @@ public interface IncidentRepository extends JpaRepository<Incident, Integer> {
 
   @Query("SELECT i FROM Incident i WHERE concern = :concern AND type = 'Transport'")
   List<Incident> findTransports(@Param("concern") Concern concern, Sort sort);
-
-  @Query("SELECT i FROM Incident i WHERE i.concern = :concern AND state IN :states")
-  List<Incident> findByState(@Param("concern") Concern concern, @Param("states") IncidentState... states);
 
   @Query("SELECT l.incident.id FROM LogEntry l WHERE l.unit = :unit AND l.incident IS NOT NULL GROUP BY l.incident")
   List<Integer> findRelated(@Param("unit") Unit unit);

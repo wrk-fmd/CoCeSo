@@ -1,6 +1,5 @@
 package at.wrk.coceso.entity;
 
-import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entity.enums.UnitState;
@@ -358,7 +357,7 @@ public class Unit implements Serializable, Comparable<Unit>, ConcernBoundEntity 
   @JsonView(JsonViews.Patadmin.class)
   public int getPatients() {
     return incidents == null ? 0 : (int) incidents.keySet().stream()
-        .filter(i -> i.getType() == IncidentType.Treatment && i.getState() != IncidentState.Done)
+        .filter(i -> i.getType() == IncidentType.Treatment && !i.getState().isDone())
         .count();
   }
 

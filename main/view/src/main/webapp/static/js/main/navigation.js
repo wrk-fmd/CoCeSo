@@ -234,7 +234,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
 
     var incidentsFiltered = incidents.list.extend({list: {filter: {
           type: [constants.Incident.type.task, constants.Incident.type.transport, constants.Incident.type.relocation],
-          isNewOrOpen: true
+          isHighlighted: true
         }}});
 
     /**

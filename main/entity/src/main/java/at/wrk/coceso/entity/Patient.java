@@ -1,6 +1,5 @@
 package at.wrk.coceso.entity;
 
-import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.Naca;
 import at.wrk.coceso.entity.enums.Sex;
@@ -270,7 +269,7 @@ public class Patient implements Serializable, ConcernBoundEntity {
     }
 
     return incidents.stream()
-        .filter(i -> i.getType() == IncidentType.Treatment && i.getState() != IncidentState.Done)
+        .filter(i -> i.getType() == IncidentType.Treatment && !i.getState().isDone())
         .flatMap(i -> i.getUnits().keySet().stream())
         .collect(Collectors.toSet());
   }
@@ -283,7 +282,7 @@ public class Patient implements Serializable, ConcernBoundEntity {
     }
 
     return incidents.stream()
-        .filter(i -> i.getType() == IncidentType.Treatment && i.getState() != IncidentState.Done)
+        .filter(i -> i.getType() == IncidentType.Treatment && !i.getState().isDone())
         .flatMap(i -> i.getUnits().keySet().stream())
         .findFirst()
         .map(Unit::getId)

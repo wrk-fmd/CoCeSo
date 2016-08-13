@@ -8,7 +8,6 @@ import at.wrk.coceso.entity.Patient_;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.enums.Errors;
-import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entityevent.impl.NotifyList;
 import at.wrk.coceso.exceptions.ErrorsException;
@@ -119,7 +118,7 @@ class TriageServiceImpl implements TriageServiceInternal {
 
     final Incident inc = incident;
     if ((incident.getType() != IncidentType.Task && incident.getType() != IncidentType.Transport)
-        || incident.getState() == IncidentState.Done || incident.getAo() == null
+        || !incident.getState().isDone() || incident.getAo() == null
         || !patadminService.getGroups(inc.getConcern()).stream().anyMatch(u -> u.getCall().equals(inc.getAo().getInfo()))) {
       throw new ErrorsException(Errors.IncidentNotAllowed);
     }

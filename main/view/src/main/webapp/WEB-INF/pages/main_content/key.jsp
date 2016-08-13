@@ -46,7 +46,7 @@
               <span class="glyphicon glyphicon-time"></span>
             </td>
             <td>
-              <spring:message code="main.incident.new_or_open"/>: <spring:message code="key.incident.new_or_open"/>
+              <spring:message code="main.incident.highlighted"/>: <spring:message code="key.incident.highlighted"/>
             </td>
           </tr>
           <tr>

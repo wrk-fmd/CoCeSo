@@ -42,7 +42,7 @@ define(["knockout", "main/models/point", "./task", "utils/constants", "utils/des
         this.bo = new Point();
         this.units = ko.observableArray([]);
         this.blue = ko.observable(false);
-        this.state = ko.observable(constants.Incident.state["new"]);
+        this.state = ko.observable(constants.Incident.state.open);
         this.type = ko.observable(constants.Incident.type.task);
 
         /**
@@ -79,7 +79,7 @@ define(["knockout", "main/models/point", "./task", "utils/constants", "utils/des
             self.units([]);
           }
           self.blue(data.blue || false);
-          self.state(data.state || constants.Incident.state["new"]);
+          self.state(data.state || constants.Incident.state.open);
           self.type(data.type || constants.Incident.type.task);
         };
 
@@ -141,15 +141,6 @@ define(["knockout", "main/models/point", "./task", "utils/constants", "utils/des
         this.isStandby = this.type.extend({isValue: constants.Incident.type.standby});
 
         /**
-         * Incident has state "New"
-         *
-         * @function
-         * @type ko.pureComputed
-         * @returns {boolean}
-         */
-        this.isNew = this.state.extend({isValue: constants.Incident.state["new"]});
-
-        /**
          * Incident has state "Open"
          *
          * @function
@@ -159,22 +150,22 @@ define(["knockout", "main/models/point", "./task", "utils/constants", "utils/des
         this.isOpen = this.state.extend({isValue: constants.Incident.state.open});
 
         /**
-         * Incident has state "Dispo"
+         * Incident has state "Demand"
          *
          * @function
          * @type ko.pureComputed
          * @returns {boolean}
          */
-        this.isDispo = this.state.extend({isValue: constants.Incident.state.dispo});
+        this.isDemand = this.state.extend({isValue: constants.Incident.state.demand});
 
         /**
-         * Incident has state "Working"
+         * Incident has state "InProgress"
          *
          * @function
          * @type ko.pureComputed
          * @returns {boolean}
          */
-        this.isWorking = this.state.extend({isValue: constants.Incident.state.working});
+        this.isInProgress = this.state.extend({isValue: constants.Incident.state.inprogress});
 
         /**
          * Incident has state "Done"
@@ -192,8 +183,8 @@ define(["knockout", "main/models/point", "./task", "utils/constants", "utils/des
          * @type ko.computed
          * @returns {boolean}
          */
-        this.isNewOrOpen = ko.computed(function() {
-          return (this.isOpen() || this.isNew());
+        this.isHighlighted = ko.computed(function() {
+          return (this.isOpen() || this.isDemand());
         }, this);
 
         /**

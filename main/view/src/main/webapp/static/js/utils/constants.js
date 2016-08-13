@@ -29,10 +29,9 @@ define({
       task: "Task"
     },
     state: {
-      "new": "New",
       open: "Open",
-      dispo: "Dispo",
-      working: "Working",
+      demand: "Demand",
+      inprogress: "InProgress",
       done: "Done"
     }
   },

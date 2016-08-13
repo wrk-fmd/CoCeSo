@@ -70,7 +70,7 @@ define(["knockout", "utils/constants", "utils/destroy"], function(ko, constants,
       });
 
       ko.utils.arrayForEach(this.bo(), function(inc) {
-        if (inc.isNewOrOpen()) {
+        if (inc.isHighlighted()) {
           value |= 1;
         }
         switch (inc.type()) {
@@ -88,7 +88,7 @@ define(["knockout", "utils/constants", "utils/destroy"], function(ko, constants,
       });
 
       ko.utils.arrayForEach(this.ao(), function(inc) {
-        if (inc.disableBO() && inc.isNewOrOpen()) {
+        if (inc.disableBO() && inc.isHighlighted()) {
           value |= 1;
         }
         switch (inc.type()) {

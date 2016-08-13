@@ -126,17 +126,14 @@
           <div class="form-group col-md-offset-2 col-md-10">
             <label class="sr-only"><spring:message code="incident.state"/>:</label>
             <div class="btn-group btn-group-sm">
-              <button type="button" class="btn btn-default" data-bind="disable: disableNew, click: isNew.set, css: isNew.state">
-                <spring:message code="incident.state.new"/>
-              </button>
               <button type="button" class="btn btn-default" data-bind="click: isOpen.set, css: isOpen.state">
                 <spring:message code="incident.state.open"/>
               </button>
-              <button type="button" class="btn btn-default" data-bind="disable: disableDispo, click: isDispo.set, css: isDispo.state">
-                <spring:message code="incident.state.dispo"/>
+              <button type="button" class="btn btn-default" data-bind="click: isDemand.set, css: isDemand.state">
+                <spring:message code="incident.state.demand"/>
               </button>
-              <button type="button" class="btn btn-default" data-bind="disable: disableWorking, click: isWorking.set, css: isWorking.state">
-                <spring:message code="incident.state.working"/>
+              <button type="button" class="btn btn-default" data-bind="disable: disableInProgress, click: isInProgress.set, css: isInProgress.state">
+                <spring:message code="incident.state.inprogress"/>
               </button>
               <button type="button" class="btn btn-default" data-bind="click: isDone.set, css: isDone.state">
                 <spring:message code="incident.state.done"/>

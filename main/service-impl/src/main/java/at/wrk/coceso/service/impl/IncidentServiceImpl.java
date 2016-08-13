@@ -128,8 +128,8 @@ class IncidentServiceImpl implements IncidentServiceInternal {
       }
     }
 
-    if (incident.getState() == IncidentState.Done) {
-      hookService.callIncidentDone(incident, IncidentState.Done, user, notify);
+    if (incident.getState().isDone()) {
+      hookService.callIncidentDone(incident, user, notify);
     } else if (units != null) {
       final Incident i = incident;
       units.forEach((unit, state) -> taskService.changeState(i, unitService.getById(unit.getId()), state, user, notify));
@@ -141,7 +141,7 @@ class IncidentServiceImpl implements IncidentServiceInternal {
   @Override
   public Incident createHoldPosition(Point position, Unit unit, TaskState state, User user, NotifyList notify) {
     Incident hold = new Incident();
-    hold.setState(state == TaskState.AAO ? IncidentState.Working : IncidentState.Dispo);
+    hold.setState(IncidentState.InProgress);
     hold.setType(IncidentType.HoldPosition);
     hold.setAo(position);
 
@@ -155,7 +155,7 @@ class IncidentServiceImpl implements IncidentServiceInternal {
   public void endTreatments(Patient patient, User user, NotifyList notify) {
     if (patient != null && patient.getIncidents() != null) {
       patient.getIncidents().stream()
-          .filter(i -> i.getType() == IncidentType.Treatment && i.getState() != IncidentState.Done)
+          .filter(i -> i.getType() == IncidentType.Treatment && !i.getState().isDone())
           .forEach(i -> {
             Changes changes = new Changes("incident");
             changes.put("state", i.getState(), IncidentState.Done);
@@ -165,7 +165,7 @@ class IncidentServiceImpl implements IncidentServiceInternal {
             logService.logAuto(user, LogEntryType.INCIDENT_AUTO_DONE, i.getConcern(), null, i, changes);
             notify.add(i);
 
-            hookService.callIncidentDone(i, IncidentState.Done, user, notify);
+            hookService.callIncidentDone(i, user, notify);
           });
     }
   }
@@ -183,8 +183,8 @@ class IncidentServiceImpl implements IncidentServiceInternal {
     incident.setPatient(patient);
     incident.setConcern(patient.getConcern());
 
-    changes.put("state", null, IncidentState.Working);
-    incident.setState(IncidentState.Working);
+    changes.put("state", null, IncidentState.InProgress);
+    incident.setState(IncidentState.InProgress);
 
     changes.put("ao", null, group.getCall());
     incident.setAo(pointService.createIfNotExists(new Point(group.getCall()), group.getConcern()));
