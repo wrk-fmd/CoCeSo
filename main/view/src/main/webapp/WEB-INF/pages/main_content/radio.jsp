@@ -29,7 +29,7 @@
 
       <!-- ko if: calls().length -->
       <div class="alert alert-success" data-bind="with: calls()[0].call, css: calls()[0].emergency ? 'alert-danger' : 'alert-success'">
-        <p><spring:message code="radio.last"/>: <strong class="pull-right" data-bind="text: fmtTimer"></strong></p>
+        <p><spring:message code="radio.last"/>: <strong class="pull-right" data-bind="text: timestamp.fmtInterval"></strong></p>
 
         <!-- ko if: unit -->
         <!-- ko with: unit -->
@@ -63,7 +63,7 @@
       <ul class="calls-list" data-bind="foreach: calls, accordion: accordionOptions, accordionRefresh: calls">
         <li>
           <h3 data-bind="css: {'calls-single': !additional.length, 'no-open': !additional.length && !call.unit()}">
-            <span data-bind="text: call.time"></span>:
+            <span data-bind="text: call.timestamp.formatted"></span>:
             <!-- ko if: call.unit -->
             <strong data-bind="text: call.unit().call, css: {'text-danger': emergency}"></strong>
             <!-- /ko -->
@@ -75,9 +75,9 @@
           <div>
             <!-- ko if: additional.length -->
             <ul class="list-unstyled pull-right">
-              <li data-bind="text: call.time"></li>
+              <li data-bind="text: call.timestamp.formatted"></li>
               <!-- ko foreach: additional -->
-              <li data-bind="text: time"></li>
+              <li data-bind="text: timestamp.formatted"></li>
               <!-- /ko -->
             </ul>
             <!-- /ko -->

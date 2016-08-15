@@ -72,11 +72,10 @@ define(["knockout", "../models/call", "data/load", "data/stomp", "data/store/rad
           });
         })();
 
-        // Remove all entries older than 10 minutes
+        // Remove all entries older than x minutes
         store.interval = window.setInterval(function() {
-          var time = new Date() - minutes * 60000;
           store.calls.remove(function(call) {
-            return call.timestamp < time;
+            return call.timestamp.interval() > minutes * 60000;
           });
         }, 60000);
       }
@@ -91,7 +90,7 @@ define(["knockout", "../models/call", "data/load", "data/stomp", "data/store/rad
 
       this.calls = ko.computed(function() {
         var data = store.calls().sort(function(a, b) {
-          return b.timestamp - a.timestamp;
+          return b.timestamp() - a.timestamp();
         }), calls = [], last = null, port = self.port();
         ko.utils.arrayForEach(data, function(item) {
           if (port && item.port && port.path !== item.port) {

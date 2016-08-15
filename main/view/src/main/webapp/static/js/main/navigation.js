@@ -17,6 +17,7 @@
  * @param {module:knockout} ko
  * @param {module:data/store/incidents} incidents
  * @param {module:data/store/units} units
+ * @param {module:data/store/sections} sections
  * @param {module:utils/conf} conf
  * @param {module:utils/constants} constants
  * @param {module:utils/clock} clock
@@ -221,7 +222,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
      * @type ko.computed
      * @returns {string}
      */
-    nav.clock_time = clock.time;
+    nav.clock_time = clock.timestamp.formatted;
 
     /**
      * Connection error

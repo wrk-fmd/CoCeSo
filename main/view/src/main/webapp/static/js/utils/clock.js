@@ -16,9 +16,8 @@
  * @param {jquery} $
  * @param {module:knockout} ko
  * @param {module:utils/conf} conf
- * @param {module:utils/format} format
  */
-define(["jquery", "knockout", "./conf", "./format"], function($, ko, conf, format) {
+define(["jquery", "knockout", "./conf", "ko/extenders/timeformat"], function($, ko, conf) {
   "use strict";
 
   /**
@@ -31,20 +30,9 @@ define(["jquery", "knockout", "./conf", "./format"], function($, ko, conf, forma
    *
    * @function
    * @type ko.observable
-   * @returns {Date}
+   * @returns {Integer}
    */
-  obj.timestamp = ko.observable(new Date());
-
-  /**
-   * Current clock time
-   *
-   * @function
-   * @type ko.observable
-   * @returns {string}
-   */
-  obj.time = ko.pureComputed(function() {
-    return format.time(this.timestamp());
-  }, obj);
+  obj.timestamp = ko.observable(Date.now()).extend({timeformat: false});
 
   /**
    * Local clock offset to correct time
@@ -56,11 +44,11 @@ define(["jquery", "knockout", "./conf", "./format"], function($, ko, conf, forma
   //Start clock
   $.get(conf.get("jsonBase") + "timestamp", function(data) {
     if (data.time) {
-      offset = new Date() - data.time;
+      offset = Date.now() - data.time;
     }
   });
   setInterval(function() {
-    obj.timestamp(new Date() - offset);
+    obj.timestamp(Date.now() - offset);
   }, 1000);
 
   return obj;

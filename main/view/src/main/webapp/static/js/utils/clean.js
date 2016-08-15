@@ -1,6 +1,6 @@
 /**
  * CoCeSo
- * Client JS - utils/clock
+ * Client JS - utils/clean
  * Copyright (c) WRK\Coceso-Team
  *
  * Licensed under the GNU General Public License, version 3 (GPL-3.0)

@@ -16,70 +16,48 @@
  * @param {module:knockout} ko
  * @param {module:data/store/radio} store
  * @param {module:data/store/units} units
- * @param {module:utils/clock} clock
- * @param {module:utils/format} format
  * @returns {Call}
  */
-define(["knockout", "data/store/radio", "data/store/units", "utils/clock", "utils/format"],
-    function(ko, store, units, clock, format) {
-      "use strict";
+define(["knockout", "data/store/radio", "data/store/units", "ko/extenders/timeformat", "ko/extenders/timeinterval"],
+  function(ko, store, units) {
+    "use strict";
+
+    /**
+     * @constructor
+     * @alias module:main/models/call
+     * @param {type} data The call data
+     */
+    var Call = function(data) {
+      data = data || {};
+
+      /** @type ko.observable */
+      this.timestamp = ko.observable(data.timestamp).extend({timeformat: false, timeinterval: false});
+      /** @type String */
+      this.ani = data.ani;
+      /** @type String */
+      this.port = data.port;
+      /** @type Boolean */
+      this.emergency = (data.direction === "RX_EMG");
 
       /**
-       * @constructor
-       * @alias module:main/models/call
-       * @param {type} data The call data
+       * @function
+       * @type ko.pureComputed
+       * @returns {module:main/model/unit} The associated Unit
        */
-      var Call = function(data) {
-        data = data || {};
-
-        /** @type Integer */
-        this.timestamp = new Date(data.timestamp);
-        /** @type String */
-        this.time = format.time(data.timestamp);
-        /** @type String */
-        this.ani = data.ani;
-        /** @type String */
-        this.port = data.port;
-        /** @type Boolean */
-        this.emergency = (data.direction === "RX_EMG");
-
-        /**
-         * @function
-         * @type ko.pureComputed
-         * @returns {module:main/model/unit} The associated Unit
-         */
-        this.unit = ko.pureComputed(function() {
-          if (store.aniMap[this.ani]) {
-            return units.get(store.aniMap[this.ani]);
+      this.unit = ko.pureComputed(function() {
+        if (store.aniMap[this.ani]) {
+          return units.get(store.aniMap[this.ani]);
+        }
+        var id, models = units.models();
+        for (id in models) {
+          if (models[id].ani === this.ani) {
+            store.aniMap[this.ani] = id;
+            return models[id];
           }
-          var id, models = units.models();
-          for (id in models) {
-            if (models[id].ani === this.ani) {
-              store.aniMap[this.ani] = id;
-              return models[id];
-            }
-          }
-          return null;
-        }, this);
+        }
+        return null;
+      }, this);
+    };
 
-        /**
-         * @function
-         * @type ko.pureComputed
-         * @returns {Integer} Time since the call was sent
-         */
-        this.timer = ko.pureComputed(function() {
-          return clock.timestamp() - this.timestamp;
-        }, this);
-
-        /**
-         * @function
-         * @type ko.pureComputed
-         * @returns {String} Formatted interval since the call was sent
-         */
-        this.fmtTimer = ko.pureComputed(function() {
-          return format.interval(this.timer());
-        }, this);
-      };
-
-      return Call;
-    });
+    return Call;
+  });

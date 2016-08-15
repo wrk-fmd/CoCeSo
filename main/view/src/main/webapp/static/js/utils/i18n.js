@@ -1,6 +1,6 @@
 /**
  * CoCeSo
- * Client JS - utils/clock
+ * Client JS - utils/i18n
  * Copyright (c) WRK\Coceso-Team
  *
  * Licensed under the GNU General Public License, version 3 (GPL-3.0)
@@ -11,6 +11,11 @@
  * @license GPL-3.0 http://opensource.org/licenses/GPL-3.0
  */
 
+/**
+ * @module {Object} utils/i18n
+ * @param {jquery} $
+ * @param {module:utils/conf} conf
+ */
 define(["jquery", "utils/conf", "jquery-i18n"], function($, conf) {
   "use strict";
 

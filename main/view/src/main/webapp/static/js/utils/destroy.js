@@ -1,6 +1,6 @@
 /**
  * CoCeSo
- * Client JS - utils/clock
+ * Client JS - utils/destroy
  * Copyright (c) WRK\Coceso-Team
  *
  * Licensed under the GNU General Public License, version 3 (GPL-3.0)
@@ -11,6 +11,10 @@
  * @license GPL-3.0 http://opensource.org/licenses/GPL-3.0
  */
 
+/**
+ * @module {Object} utils/destroy
+ * @param {module:knockout} ko
+ */
 define(["knockout"], function(ko) {
   "use strict";
 
