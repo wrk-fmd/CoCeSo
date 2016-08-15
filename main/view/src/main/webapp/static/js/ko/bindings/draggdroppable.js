@@ -17,7 +17,7 @@
  * @param {module:knockout} ko
  * @param {module:ko/bindings/uibinding} uiBindingHandler
  */
-define(["jquery", "knockout", "./uibinding", "jquery-ui/draggable", "jquery-ui/droppable"],
+define(["jquery", "knockout", "./uibinding", "jquery-ui/widgets/draggable", "jquery-ui/widgets/droppable"],
   function($, ko, uiBindingHandler) {
     "use strict";
 

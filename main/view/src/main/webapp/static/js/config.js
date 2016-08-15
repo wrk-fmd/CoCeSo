@@ -29,6 +29,13 @@ define(function() {
     bundles: {
       "typeahead-bundle": ["bloodhound", "typeahead.js"]
     },
+    map: {
+      "knockout-sortable": {
+        // Workaround for knockout-sortable until module names are changed for jQuery-UI 1.12
+        "jquery-ui/draggable": "jquery-ui/widgets/draggable",
+        "jquery-ui/sortable": "jquery-ui/widgets/sortable"
+      }
+    },
     shim: {
       "bootstrap/alert": {deps: ["jquery", "bootstrap/transition"]},
       "bootstrap/collapse": {deps: ["jquery", "bootstrap/transition"]},

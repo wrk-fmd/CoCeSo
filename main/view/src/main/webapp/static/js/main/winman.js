@@ -11,7 +11,7 @@
  * @license GPL-3.0 http://opensource.org/licenses/GPL-3.0
  */
 
-define(["jquery", "knockout", "jquery-ui/dialog"], function($, ko) {
+define(["jquery", "knockout", "jquery-ui/widgets/dialog"], function($, ko) {
   "use strict";
 
   //Modify behaviour of JQueryUI Dialog widget

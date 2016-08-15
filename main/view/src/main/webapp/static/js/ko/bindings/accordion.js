@@ -17,7 +17,7 @@
  * @param {module:knockout} ko
  * @param {module:ko/bindings/uibinding} uiBindingHandler
  */
-define(["jquery", "knockout", "./uibinding", "jquery-ui/accordion"], function($, ko, uiBindingHandler) {
+define(["jquery", "knockout", "./uibinding", "jquery-ui/widgets/accordion"], function($, ko, uiBindingHandler) {
   "use strict";
 
   /**
