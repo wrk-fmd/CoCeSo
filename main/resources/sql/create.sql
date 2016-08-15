@@ -137,6 +137,10 @@ CREATE TABLE IF NOT EXISTS incident (
   casusNr VARCHAR(100),
   patient_fk INTEGER REFERENCES patient ON DELETE SET NULL,
   section_fk VARCHAR(30),
+  created TIMESTAMP NOT NULL,
+  arrival TIMESTAMP,
+  stateChange TIMESTAMP,
+  ended TIMESTAMP,
   FOREIGN KEY (concern_fk, section_fk) REFERENCES sections
 );
 

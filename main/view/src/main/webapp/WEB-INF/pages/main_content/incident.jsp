@@ -101,6 +101,7 @@
         <li data-bind="droppable: {drop: assignUnitList, tolerance: 'pointer'}">
           <h3 class="clearfix" data-bind="css: {incident_open: isHighlighted, incident_priority: priority}">
             <span class="incident_type_text" data-bind="text: typeChar, css: {incident_blue: blue}"></span>
+            <span class="incident_timer" data-bind="visible: !isDone(), css: timerCss"><span data-bind="text: timer"></span>'</span>
 
             <span data-bind="text: title"></span>
             <span class="incident_ao clearfix" data-bind="visible: !disableBO() && !disableAAO()">

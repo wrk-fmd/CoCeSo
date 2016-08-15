@@ -110,7 +110,7 @@ class WebMvcConfigurer extends WebMvcConfigurerAdapter {
   @Bean
   public static ObjectMapper objectMapper() {
     ObjectMapper mapper = new ObjectMapper();
-    mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    mapper.disable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS);
     mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
     mapper.registerModule(new JavaTimeModule());
     return mapper;

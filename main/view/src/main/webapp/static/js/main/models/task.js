@@ -167,11 +167,11 @@ define(["knockout", "data/save", "data/store/incidents", "data/store/units",
           return this.localizedTaskState();
         }
         if (i.isTask() || i.isTransport() || i.isRelocation() || i.isToHome()) {
-          return i.typeChar() + ": " + this.localizedTaskState();
+          return i.typeChar() + ": " + this.localizedTaskState() + " (" + i.stateChange.interval() + "')";
         }
 
         if (i.isStandby() || i.isHoldPosition()) {
-          return i.typeChar() + (this.isAssigned() ? ": " + this.localizedTaskState() : "");
+          return i.typeChar() + (this.isAssigned() ? ": " + this.localizedTaskState() : "") + " (" + i.stateChange.interval() + "')";
         }
 
         return "";

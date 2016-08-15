@@ -8,11 +8,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
+import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class Incident implements Serializable, Comparable<Incident>, ConcernBoundEntity {
@@ -82,6 +84,23 @@ public class Incident implements Serializable, Comparable<Incident>, ConcernBoun
   @Column(name = "section_fk")
   private String section;
 
+  @JsonView(JsonViews.Main.class)
+  @NotNull
+  @Column(nullable = false, updatable = false)
+  private OffsetDateTime created;
+
+  @JsonView(JsonViews.Main.class)
+  @Column
+  private OffsetDateTime arrival;
+
+  @JsonView(JsonViews.Main.class)
+  @Column
+  private OffsetDateTime stateChange;
+
+  @JsonView(JsonViews.Main.class)
+  @Column
+  private OffsetDateTime ended;
+
   @Transient
   private Map<Integer, TaskState> addedUnits;
 
@@ -106,6 +125,9 @@ public class Incident implements Serializable, Comparable<Incident>, ConcernBoun
     }
     if (info == null) {
       info = "";
+    }
+    if (created == null) {
+      created = OffsetDateTime.now();
     }
   }
 
@@ -296,6 +318,34 @@ public class Incident implements Serializable, Comparable<Incident>, ConcernBoun
 
   public void setSection(String section) {
     this.section = section;
+  }
+
+  public OffsetDateTime getCreated() {
+    return created;
+  }
+
+  public OffsetDateTime getArrival() {
+    return arrival;
+  }
+
+  public void setArrival() {
+    arrival = OffsetDateTime.now();
+  }
+
+  public OffsetDateTime getStateChange() {
+    return stateChange;
+  }
+
+  public void setStateChange() {
+    stateChange = OffsetDateTime.now();
+  }
+
+  public OffsetDateTime getEnded() {
+    return ended;
+  }
+
+  public void setEnded() {
+    ended = OffsetDateTime.now();
   }
 
   @JsonIgnore

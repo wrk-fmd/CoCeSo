@@ -59,9 +59,11 @@ body {
   }
 
   .ui-dialog-titlebar-close {
-    margin-top: -12px;
-    span.ui-button-text {
-      display: none;
+    margin-top: -11px;
+    span {
+      display: inline-block;
+      margin: -8px 0 0 -8px;
+      text-indent: -99999px;
     }
   }
 
@@ -86,6 +88,19 @@ body {
 
   .ui-accordion-content {
     padding: 0.5em;
+  }
+}
+
+.ui-button-icon-only {
+  box-sizing: border-box;
+  text-indent: -9999px;
+  white-space: nowrap;
+
+  .ui-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -8px 0 0 -8px;
   }
 }
 
@@ -415,6 +430,16 @@ body.main {
   }
 }
 
+.timer-warning {
+  font-weight: bold;
+  color: #aa6708;
+}
+
+.timer-danger {
+  font-weight: bold;
+  color: #cd0a0a;
+}
+
 .ui-accordion-header {
   &.incident_open {
     color: #cd0a0a;
@@ -441,7 +466,7 @@ body.main {
     }
   }
 
-  .incident_type_text {
+  .incident_type_text, .incident_timer {
     display: block;
     text-align: center;
     margin-left: 1em;
@@ -607,7 +632,6 @@ body.main {
     margin-bottom: 0;
   }
 }
-
 
 /**
  * Form dialogs

@@ -27,7 +27,7 @@
  * @returns {Incident}
  */
 define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save", "data/store/patients",
-  "utils/constants", "utils/destroy", "utils/i18n", "ko/extenders/isvalue"],
+  "utils/constants", "utils/destroy", "utils/i18n", "ko/extenders/isvalue", "ko/extenders/timeinterval"],
   function(ko, Point, Task, Unit, navigation, save, patients, constants, destroy, _) {
     "use strict";
 
@@ -55,6 +55,10 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
       this.state = ko.observable(constants.Incident.state.open);
       this.type = ko.observable(constants.Incident.type.task);
       this.section = ko.observable("");
+      this.created = ko.observable(null).extend({timeinterval: true});
+      this.arrival = ko.observable(null);
+      this.stateChange = ko.observable(null).extend({timeinterval: true});
+      this.ended = ko.observable(null);
       this.patientId = ko.observable(null);
 
       /**
@@ -98,6 +102,10 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
         self.state(data.state || constants.Incident.state.open);
         self.type(data.type || constants.Incident.type.task);
         self.section(data.section || "");
+        self.created(data.created);
+        self.arrival(data.arrival || null);
+        self.stateChange(data.stateChange || null);
+        self.ended(data.ended || null);
         self.patientId(data.patient);
       };
 
@@ -193,6 +201,40 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
        * @returns {boolean}
        */
       this.isDone = this.state.extend({isValue: constants.Incident.state.done});
+
+      /**
+       * @function
+       * @type ko.pureComputed
+       * @returns {Integer} Time since the creation/last taskstate change in minutes
+       */
+      this.timer = ko.pureComputed(function() {
+        return this.arrival() ? this.stateChange.interval() : this.created.interval();
+      }, this);
+
+      /**
+       * @function
+       * @type ko.pureComputed
+       * @returns {String} CSS class for the timer based on elapsed time
+       */
+      this.timerCss = ko.pureComputed(function() {
+        var timer = this.timer();
+        if (this.arrival()) {
+          if (timer >= 35) {
+            return "timer-danger";
+          }
+          if (timer >= 25) {
+            return "timer-warning";
+          }
+        } else {
+          if (timer >= 15) {
+            return "timer-danger";
+          }
+          if (timer >= 10) {
+            return "timer-warning";
+          }
+        }
+        return "";
+      }, this);
 
       /**
        * The associated patient

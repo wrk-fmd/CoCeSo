@@ -1,6 +1,7 @@
 package at.wrk.coceso.entity;
 
 import at.wrk.coceso.entity.types.MapUserType;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -42,6 +43,7 @@ public class Medinfo implements Serializable, ConcernBoundEntity {
   @Column(nullable = false, length = 40)
   private String externalId;
 
+  @JsonFormat(shape = JsonFormat.Shape.STRING)
   @Column
   private LocalDate birthday;
 

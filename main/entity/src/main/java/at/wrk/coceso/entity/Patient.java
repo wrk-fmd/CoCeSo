@@ -4,6 +4,7 @@ import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.Naca;
 import at.wrk.coceso.entity.enums.Sex;
 import at.wrk.coceso.entity.helper.JsonViews;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -59,6 +60,7 @@ public class Patient implements Serializable, ConcernBoundEntity {
   private String insurance;
 
   @JsonView(JsonViews.Always.class)
+  @JsonFormat(shape = JsonFormat.Shape.STRING)
   @Column
   private LocalDate birthday;
 
