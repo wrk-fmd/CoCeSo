@@ -13,21 +13,10 @@
 
 /**
  * @module {Object} utils/i18n
- * @param {jquery} $
- * @param {module:utils/conf} conf
+ * @param {module:utils/i18n-load} _
  */
-define(["jquery", "utils/conf", "jquery-i18n"], function($, conf) {
+define(["./i18n-load!"], function(_) {
+  // Convenience wrapper of the asynchronous language loading plugin
   "use strict";
-
-  $.i18n.properties({
-    name: "messages",
-    path: conf.get("langBase"),
-    mode: "map",
-    cache: true,
-    async: false,
-    checkAvailableLanguages: false,
-    language: conf.get("language")
-  });
-
-  return $.i18n.prop;
+  return _;
 });
