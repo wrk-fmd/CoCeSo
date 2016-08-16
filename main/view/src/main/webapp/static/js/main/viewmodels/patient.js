@@ -22,7 +22,7 @@
  * @param {module:utils/i18n} _
  */
 define(["knockout", "./form", "../models/patient", "data/save", "data/store/patients", "utils/destroy", "utils/i18n",
-  "ko/bindings/ertype", "ko/extenders/form", "ko/extenders/changes"],
+  "ko/bindings/date", "ko/bindings/ertype", "ko/extenders/form", "ko/extenders/changes"],
   function(ko, Form, Patient, save, store, destroy, _) {
     "use strict";
 

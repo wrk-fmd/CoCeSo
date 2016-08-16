@@ -20,6 +20,7 @@
   ],
   "dependencies": {
     "bootstrap": "^3.3.6",
+    "bootstrap-datepicker": "^1.6.4",
     "jquery": "^3.1.0",
     "jquery-i18n-properties": "^1.2.2",
     "jquery-ui": "~1.12.0",
@@ -56,6 +57,11 @@
         "bower_components/bootstrap/js/transition.js",
         "bower_components/bootstrap/less/**",
         "bower_components/bootstrap/fonts/**"
+      ],
+      "bootstrap-datepicker": [
+        "bower_components/bootstrap-datepicker/js/bootstrap-datepicker.js",
+        "bower_components/bootstrap-datepicker/js/locales/bootstrap-datepicker.de.js",
+        "bower_components/bootstrap-datepicker/less/datepicker3.less"
       ],
       "jquery": [
         "bower_components/jquery/dist/jquery.min.js"

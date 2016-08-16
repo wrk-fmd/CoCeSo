@@ -67,7 +67,9 @@
 
           <div class="form-group col-md-3" data-bind="css: birthday.formcss">
             <label for="birthday"><spring:message code="patient.birthday"/>:</label>
-            <input id="birthday" type="date" class="form-control" name="birthday" data-bind="value: birthday, valueUpdate: 'input'">
+            <input id="birthday" type="date" class="form-control" name="birthday"
+                   min="1900-01-01" max="<%=java.time.LocalDate.now().toString()%>"
+                   data-bind="date: birthday, valueUpdate: 'input'">
           </div>
         </div>
 

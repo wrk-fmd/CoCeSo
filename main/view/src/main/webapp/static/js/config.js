@@ -15,6 +15,8 @@ define(function() {
   require.config({
     paths: {
       bootstrap: "assets/bootstrap",
+      "bootstrap-datepicker": "assets/bootstrap-datepicker/bootstrap-datepicker",
+      "bootstrap-datepicker.de": "assets/bootstrap-datepicker/bootstrap-datepicker.de",
       jquery: "assets/jquery/jquery.min",
       "jquery-i18n": "assets/jquery-i18n-properties/jquery.i18n.properties.min",
       "jquery-ui": "assets/jquery-ui",
@@ -45,6 +47,7 @@ define(function() {
       "bootstrap/tab": {deps: ["jquery", "bootstrap/transition"]},
       "bootstrap/tooltip": {deps: ["jquery", "bootstrap/transition"]},
       "bootstrap/transition": {deps: ["jquery"]},
+      "bootstrap-datepicker.de": {deps: ["bootstrap-datepicker"]},
       "jquery-i18n": {deps: ["jquery"]},
       "jqueryui-touch-punch": {deps: ["jquery", "jquery-ui/widget", "jquery-ui/mouse"]},
       stomp: {exports: "Stomp"}

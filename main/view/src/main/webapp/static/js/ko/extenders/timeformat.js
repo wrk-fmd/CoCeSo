@@ -16,11 +16,12 @@
 /**
  * @module ko/extenders/timeformat
  * @param {module:knockout} ko
+ * @param {module:utils/conf} conf
  */
-define(["knockout"], function(ko) {
+define(["knockout", "utils/conf"], function(ko, conf) {
   "use strict";
 
-  var localeTimeFormat = new Intl.DateTimeFormat(undefined, {hour: "2-digit", minute: "2-digit", second: "2-digit"});
+  var localeTimeFormat = new Intl.DateTimeFormat(conf.get("language"), {hour: "2-digit", minute: "2-digit", second: "2-digit"});
 
   /**
    * Add formatted time to timestamp
