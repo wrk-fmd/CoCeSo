@@ -29,87 +29,96 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
     "use strict";
 
     //Initialize window management
-    $("#taskbar").winman();
+    var taskbar = $("#taskbar").winman();
 
     /**
      * @exports main/navigation
      */
     var nav = {
       /**
-       * Add a window to the UI
-       *
-       * @param {string} src The source to load the HTML from
-       * @param {Object} viewmodel The viewmodel to bind with
-       * @param {Object} options
-       * @param {string} title The title of the window
-       */
-      openWindow: function(src, viewmodel, options, title) {
-        $("#taskbar").winman("addWindow", src, options, viewmodel, title);
-      },
-      /**
        * Open the incidents overview
        *
        * @param {Object} options
-       * @param {Object} dialog Dialog options
+       * @param {String} position
        */
-      openIncidents: function(options, dialog) {
-        require(["main/viewmodels/incidents"], function(Incidents) {
-          nav.openWindow(conf.get("contentBase") + "incident.html", new Incidents(options || {}), $.extend({position: {at: "left+70% top+30%"}}, dialog));
+      openIncidents: function(options, position) {
+        taskbar.winman("addWindow", {
+          src: conf.get("contentBase") + "incident.html",
+          pos: position || "left+70% top+30%",
+          model: "main/viewmodels/incidents",
+          options: options || {},
+          save: true
         });
       },
       /**
        * Open a specific incident
        *
        * @param {Object} data Additional incident data
-       * @param {Object} dialog Dialog options
+       * @param {String} position
        */
-      openIncident: function(data, dialog) {
-        require(["main/viewmodels/incident"], function(Incident) {
-          nav.openWindow(conf.get("contentBase") + "incident_form.html", new Incident(data || {}), $.extend({position: {at: "left+30% top+10%"}}, dialog));
+      openIncident: function(data, position) {
+        taskbar.winman("addWindow", {
+          src: conf.get("contentBase") + "incident_form.html",
+          pos: position || "left+30% top+10%",
+          model: "main/viewmodels/incident",
+          options: data || {}
         });
       },
       /**
        * Open the units overview
        *
        * @param {Object} options Viewmodel options
-       * @param {Object} dialog Dialog options
+       * @param {String} position
        */
-      openUnits: function(options, dialog) {
-        require(["main/viewmodels/units"], function(Units) {
-          nav.openWindow(conf.get("contentBase") + "unit.html", new Units(options || {}), $.extend({position: {at: "left+20% bottom"}}, dialog));
+      openUnits: function(options, position) {
+        taskbar.winman("addWindow", {
+          src: conf.get("contentBase") + "unit.html",
+          pos: position || "left+20% bottom",
+          model: "main/viewmodels/units",
+          options: options || {},
+          save: true
         });
       },
       /**
        * Open the units overview with hierarchical View
        *
-       * @param {Object} dialog Dialog options
+       * @param {String} position
        */
-      openHierarchyUnits: function(dialog) {
-        require(["main/viewmodels/hierarchy"], function(Hierarchy) {
-          nav.openWindow(conf.get("contentBase") + "unit_hierarchy.html", new Hierarchy(), $.extend({position: {at: "left top"}}, dialog));
+      openHierarchyUnits: function(position) {
+        taskbar.winman("addWindow", {
+          src: conf.get("contentBase") + "unit_hierarchy.html",
+          pos: position || "left top",
+          model: "main/viewmodels/hierarchy",
+          save: true
         });
       },
       /**
        * Open the unit edit Window
        *
        * @param {Object} data Additional unit data
-       * @param {Object} dialog Dialog options
+       * @param {String} position
        */
-      openUnit: function(data, dialog) {
-        require(["main/viewmodels/unit"], function(Unit) {
-          nav.openWindow(conf.get("contentBase") + "unit_form.html", new Unit(data || {}), $.extend({position: {at: "left+10% top+20%"}}, dialog));
+      openUnit: function(data, position) {
+        taskbar.winman("addWindow", {
+          src: conf.get("contentBase") + "unit_form.html",
+          pos: position || "left+10% top+20%",
+          model: "main/viewmodels/unit",
+          options: data || {}
         });
       },
       /**
        * Open the unit edit Window
        *
        * @param {integer} id Unit id
-       * @param {Object} dialog Dialog options
+       * @param {String} position
        */
-      openUnitDetail: function(id, dialog) {
+      openUnitDetail: function(id, position) {
         if (id) {
-          require(["main/viewmodels/unitdetail"], function(UnitDetail) {
-            nav.openWindow(conf.get("contentBase") + "unit_detail.html", new UnitDetail(id), $.extend({position: {at: "left+10% top+20%"}}, dialog));
+          taskbar.winman("addWindow", {
+            src: conf.get("contentBase") + "unit_detail.html",
+            pos: position || "left+10% top+20%",
+            model: "main/viewmodels/unitdetail",
+            options: id
           });
         }
       },
@@ -117,65 +126,86 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
        * Open Add-Log Window
        *
        * @param {Object} data Additional log data
-       * @param {Object} dialog Dialog options
+       * @param {String} position
        */
-      openLogAdd: function(data, dialog) {
-        require(["main/viewmodels/customlog"], function(CustomLogEntry) {
-          nav.openWindow(conf.get("contentBase") + "log_add.html", new CustomLogEntry(data || {}), $.extend({position: {at: "left+20% top+20%"}}, dialog));
+      openLogAdd: function(data, position) {
+        taskbar.winman("addWindow", {
+          src: conf.get("contentBase") + "log_add.html",
+          pos: position || "left+20% top+20%",
+          model: "main/viewmodels/customlog",
+          options: data || {}
         });
       },
       /**
        * Open a list of log entries
        *
        * @param {Object} options Viewmodel options
-       * @param {Object} dialog Dialog options
+       * @param {String} position
        */
-      openLogs: function(options, dialog) {
-        require(["main/viewmodels/logs"], function(Logs) {
-          nav.openWindow(conf.get("contentBase") + "log.html", new Logs(options || {}), $.extend({position: {at: "left+30% top+10%"}}, dialog));
+      openLogs: function(options, position) {
+        taskbar.winman("addWindow", {
+          src: conf.get("contentBase") + "log.html",
+          pos: position || "left+30% top+10%",
+          model: "main/viewmodels/logs",
+          options: options || {},
+          save: true
         });
       },
       /**
        * Open the patient list Window
        *
        * @param {Object} options Additional options
-       * @param {Object} dialog Dialog options
+       * @param {String} position
        */
-      openPatients: function(options, dialog) {
-        require(["main/viewmodels/patients"], function(Patients) {
-          nav.openWindow(conf.get("contentBase") + "patient.html", new Patients(options || {}), $.extend({position: {at: "left+40% top+30%"}}, dialog));
+      openPatients: function(options, position) {
+        taskbar.winman("addWindow", {
+          src: conf.get("contentBase") + "patient.html",
+          pos: position || "left+40% top+30%",
+          model: "main/viewmodels/patients",
+          options: options || {},
+          save: true
         });
       },
       /**
        * Open the patient edit Window
        *
        * @param {Object} data Additional patient data
-       * @param {Object} dialog Dialog options
+       * @param {String} position
        */
-      openPatient: function(data, dialog) {
-        require(["main/viewmodels/patient"], function(Patient) {
-          nav.openWindow(conf.get("contentBase") + "patient_form.html", new Patient(data || {}), $.extend({position: {at: "left+40% top+30%"}}, dialog));
+      openPatient: function(data, position) {
+        taskbar.winman("addWindow", {
+          src: conf.get("contentBase") + "patient_form.html",
+          pos: position || "left+40% top+30%",
+          model: "main/viewmodels/patient",
+          options: data || {}
         });
       },
       /**
        * Open the radio Window
        *
-       * @param {Object} dialog Dialog options
+       * @param {String} position
        */
-      openRadio: function(dialog) {
-        require(["main/viewmodels/radio"], function(Radio) {
-          nav.openWindow(conf.get("contentBase") + "radio.html", new Radio(), $.extend({position: {at: "left+40% top+10%"}}, dialog));
+      openRadio: function(position) {
+        taskbar.winman("addWindow", {
+          src: conf.get("contentBase") + "radio.html",
+          pos: position || "left+40% top+10%",
+          model: "main/viewmodels/radio",
+          save: true
         });
       },
       /**
        * Open the map window
        *
        * @param {Object} options Viewmodel options
-       * @param {Object} dialog Dialog options
+       * @param {String} position
        */
-      openMap: function(options, dialog) {
-        require(["map/viewmodel"], function(Map) {
-          nav.openWindow(conf.get("contentBase") + "map.html", new Map(options || {}), $.extend({position: {at: "left+10% top"}}, dialog));
+      openMap: function(options, position) {
+        taskbar.winman("addWindow", {
+          src: conf.get("contentBase") + "map.html",
+          pos: position || "left+10% top",
+          model: "map/viewmodel",
+          options: options || {},
+          save: true
         });
       },
       /**
@@ -183,20 +213,30 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
        *
        * @param {string} title
        * @param {string} src
-       * @param {Object} dialog Dialog options
+       * @param {String} position
        */
-      openStatic: function(title, src, dialog) {
-        nav.openWindow(conf.get("contentBase") + src, {}, $.extend({position: {at: "left+10% top+20%"}}, dialog), title);
+      openStatic: function(title, src, position) {
+        taskbar.winman("addWindow", {
+          src: conf.get("contentBase") + src,
+          pos: position || "left+10% top+20%",
+          options: {title: title},
+          save: true
+        });
       },
       /**
        * Open external static content
        *
        * @param {string} title
        * @param {string} src Full URL to content
-       * @param {Object} dialog Dialog options
+       * @param {String} position
        */
-      openExternalStatic: function(title, src, dialog) {
-        nav.openWindow(src, {}, $.extend({position: {at: "left+30% top+10%"}}, dialog), title);
+      openExternalStatic: function(title, src, position) {
+        taskbar.winman("addWindow", {
+          src: src,
+          pos: position || "left+30% top+10%",
+          options: {title: title},
+          save: true
+        });
       },
       /**
        * Resize the workspace (scrollable dialog container)
@@ -361,10 +401,6 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
     });
 
     $(".tooltipped").tooltip();
-    $(document).on("click", ".panel-toggle", function() {
-      $(this).parent(".panel").children(".panel-body").slideToggle();
-      $(this).find(".glyphicon").toggleClass("glyphicon-chevron-down glyphicon-chevron-up");
-    });
 
     //Initialize key handler
     if (conf.get("keyboardControl")) {

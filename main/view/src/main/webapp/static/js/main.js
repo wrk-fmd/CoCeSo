@@ -49,9 +49,6 @@ require(["config"], function() {
       //Load Bindings for status confirmation window
       ko.applyBindings(confirm.data, $("#next-state-confirm")[0]);
 
-      navigation.openHierarchyUnits();
-      navigation.openIncidents({filter: ['overview', 'active'], title: _("main.incident.active")}, {position: {at: "left+70% top"}});
-
       getPlugins("main", function(plugin) {
         plugin();
       });

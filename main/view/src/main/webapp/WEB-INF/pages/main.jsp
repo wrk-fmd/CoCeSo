@@ -54,8 +54,7 @@
           <div class="navbar-hide-on-mobile">
             <ul id="nav-notifications" class="nav navbar-nav navbar-right">
 
-              <%-- Notifications
-               !!! this.title doesn't work here, title attribute is deleted by $.tooltip() !!!--%>
+              <%-- Notifications --%>
               <li>
                 <a href="#" title="<spring:message code="main.connection"/>" onclick="return false;"
                    data-toggle="tooltip" data-placement="bottom" class="tooltipped notification-icon">
@@ -80,7 +79,7 @@
               </li>
               <li>
                 <a href="#" title="<spring:message code="main.unit.radio"/>"
-                   data-bind="click: function() {openUnits({filter: ['radio'], title: '<spring:message code="main.unit.radio"/>'}, {position: {at: 'left+30% bottom'}})}"
+                   data-bind="click: function() {openUnits({filter: ['radio'], title: '<spring:message code="main.unit.radio"/>'}, 'left+30% bottom')}"
                    data-toggle="tooltip" data-placement="bottom" class="tooltipped notification-icon">
                   <span class="glyphicon glyphicon-bullhorn"></span>
                   <span class="badge" data-bind="text: radioCounter, css: cssRadio"></span>
@@ -88,7 +87,7 @@
               </li>
               <li>
                 <a href="#" title="<spring:message code="main.unit.free"/>"
-                   data-bind="click: function() {openUnits({filter: ['free'], title: '<spring:message code="main.unit.free"/>'}, {position: {at: 'left bottom'}})}"
+                   data-bind="click: function() {openUnits({filter: ['free'], title: '<spring:message code="main.unit.free"/>'}, 'left bottom')}"
                    data-toggle="tooltip" data-placement="bottom" class="tooltipped notification-icon">
                   <span class="glyphicon glyphicon-exclamation-sign"></span>
                   <span class="badge" data-bind="text: freeCounter, css: cssFree"></span>
@@ -127,19 +126,19 @@
                 </li>
                 <li>
                   <a href="#" title="<spring:message code="main.unit.radio"/>"
-                     data-bind="click: function() {openUnits({filter: ['radio'], title: this.title})}">
+                     data-bind="click: function() {openUnits({filter: ['radio'], title: '<spring:message code="main.unit.radio"/>'})}">
                     <span class="glyphicon glyphicon-tasks"></span> <spring:message code="main.unit.radio"/>
                   </a>
                 </li>
                 <li>
                   <a href="#" title="<spring:message code="main.unit.available"/>"
-                     data-bind="click: function() {openUnits({filter: ['available'], title: this.title}, {position: {at: 'left+40% bottom'}})}">
+                     data-bind="click: function() {openUnits({filter: ['available'], title: '<spring:message code="main.unit.available"/>'}, 'left+40% bottom')}">
                     <span class="glyphicon glyphicon-tasks"></span> <spring:message code="main.unit.available"/>
                   </a>
                 </li>
                 <li>
                   <a href="#" title="<spring:message code="main.unit.free"/>"
-                     data-bind="click: function() {openUnits({filter: ['free'], title: this.title})}">
+                     data-bind="click: function() {openUnits({filter: ['free'], title: '<spring:message code="main.unit.free"/>'})}">
                     <span class="glyphicon glyphicon-tasks"></span> <spring:message code="main.unit.free"/>
                   </a>
                 </li>
@@ -159,17 +158,17 @@
                 <li class="divider"></li>
                 <li>
                   <a href="#" title="<spring:message code="main.incident.overview"/>"
-                     data-bind="click: function() {openIncidents({filter: ['overview'], title: this.title})}">
+                     data-bind="click: function() {openIncidents({filter: ['overview'], title: '<spring:message code="main.incident.overview"/>'})}">
                     <span class="glyphicon glyphicon-list-alt"></span> <spring:message code="main.incident.overview"/></a>
                 </li>
                 <li>
                   <a href="#" title="<spring:message code="main.incident.active"/>"
-                     data-bind="click: function() {openIncidents({filter: ['overview', 'active'], title: this.title})}">
+                     data-bind="click: function() {openIncidents({filter: ['overview', 'active'], title: '<spring:message code="main.incident.active"/>'})}">
                     <span class="glyphicon glyphicon-list-alt"></span> <spring:message code="main.incident.active"/></a>
                 </li>
                 <li>
                   <a href="#" title="<spring:message code="main.incident.complete"/>"
-                     data-bind="click: function() {openIncidents({filter: ['overview', 'completed'], title: this.title})}">
+                     data-bind="click: function() {openIncidents({filter: ['overview', 'completed'], title: '<spring:message code="main.incident.complete"/>'})}">
                     <span class="glyphicon glyphicon-list-alt"></span> <spring:message code="main.incident.complete"/></a>
                 </li>
               </ul>
@@ -183,7 +182,7 @@
               <ul class="dropdown-menu">
                 <li>
                   <a href="#" title="<spring:message code="log.custom"/>"
-                     data-bind="click: function() {openLogs({url: 'log/getCustom.json', autoload: true, title: this.title})}">
+                     data-bind="click: function() {openLogs({url: 'log/getCustom.json', autoload: true, title: '<spring:message code="log.custom"/>'})}">
                     <span class="glyphicon glyphicon-info-sign"></span> <spring:message code="log.custom"/>
                   </a>
                 </li>
@@ -224,12 +223,12 @@
                 <li class="divider"></li>
                 <li>
                   <a href="#" title="<spring:message code="key"/>"
-                     data-bind="click: function() {openStatic(this.title, 'key.html')}">
+                     data-bind="click: function() {openStatic('<spring:message code="key"/>', 'key.html')}">
                     <span class="glyphicon glyphicon-question-sign"></span> <spring:message code="key"/>
                   </a>
                 </li>
                 <li>
-                  <a href="#" title="<spring:message code="log"/>" data-bind="click: function() {openLogs({title: this.title})}">
+                  <a href="#" title="<spring:message code="log"/>" data-bind="click: function() {openLogs({title: '<spring:message code="log"/>'})}">
                     <span class="glyphicon glyphicon-info-sign"></span> <spring:message code="log"/>
                   </a>
                 </li>

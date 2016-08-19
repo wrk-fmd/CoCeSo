@@ -13,10 +13,11 @@
 
 /**
  * @module utils/misc
+ * @param {module:jquery} $
  * @param {module:knockout} ko
  * @param {module:utils/conf} conf
  */
-define(["knockout", "utils/conf"], function(ko, conf) {
+define(["jquery", "knockout", "utils/conf"], function($, ko, conf) {
   "use strict";
 
   /**
@@ -46,6 +47,19 @@ define(["knockout", "utils/conf"], function(ko, conf) {
     });
 
     return !conf.get("debug");
+  };
+
+  // Helper to read object or array from LocalStorage
+  $.fn.getLocalStorage = function(key, defaultValue) {
+    var json = localStorage.getItem(key);
+    if (json) {
+      try {
+        return JSON.parse(json) || defaultValue;
+      } catch (e) {
+        console.log(e);
+      }
+    }
+    return defaultValue;
   };
 
   ko.observable.fn.equalityComparer = ko.dependentObservable.fn.equalityComparer = function(a, b) {
