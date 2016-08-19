@@ -211,9 +211,9 @@ define(["jquery", "knockout", "./leaflet", "./layers", "./legend", "./markerlaye
             });
           }
 
-          addLayers(layers);
+          addLayers(layers());
           getPlugins("layers", function(plugin) {
-            addLayers(plugin);
+            addLayers(plugin());
           });
 
           // Add controls
@@ -224,7 +224,7 @@ define(["jquery", "knockout", "./leaflet", "./layers", "./legend", "./markerlaye
 
           // Listen to resize of UI container
           if (this.ui) {
-            $("#" + this.ui).on("dialogresizestop", function() {
+            $("#" + this.ui).on("dialogresizestop dialogopen", function() {
               map.invalidateSize();
             });
           }
