@@ -90,18 +90,18 @@
 
   <div class="unit_container" data-bind="foreach: subContainer">
     <!-- ko if: totalCounter -->
-    <div class="panel panel-default unit-container">
-      <div class="panel-heading panel-toggle clearfix">
+    <div class="panel panel-default unit-container" data-bind="toggle: {id: id, hide: $root.toggleContainer, isHidden: $root.isHidden}">
+      <div class="toggle-handle panel-heading clearfix">
         <span data-bind="text: name"></span>
         <span class="pull-left">
-          <span class="panel-toggle-indicator glyphicon glyphicon-chevron-up"></span>
+          <span class="toggle-indicator glyphicon glyphicon-chevron-up"></span>
         </span>
         <span class="pull-right">
           <span class="badge notification-ok" data-bind="text: availableCounter"></span>
           <span class="badge" data-bind="text: totalCounter"></span>
         </span>
       </div>
-      <div class="panel-body">
+      <div class="toggle-body panel-body">
         <div data-bind="template: 'container-template'"></div>
       </div>
     </div>

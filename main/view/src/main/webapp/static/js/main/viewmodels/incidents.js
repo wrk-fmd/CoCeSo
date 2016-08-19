@@ -33,16 +33,28 @@ define(["knockout", "./filterable", "data/store/incidents", "utils/constants", "
      * @param {Object} options
      */
     var Incidents = function(options) {
+      options = options || {};
+
       /**
        * The selected filters
        *
        * @type Object
        */
       this.filter = {
-        type: ko.observableArray(),
-        blue: ko.observableArray(),
-        state: ko.observableArray()
+        type: ko.observableArray((options.manualFilters && options.manualFilters.type) || []),
+        blue: ko.observableArray((options.manualFilters && options.manualFilters.blue) || []),
+        state: ko.observableArray((options.manualFilters && options.manualFilters.state) || [])
       };
+
+      this.dialogState = ko.computed(function() {
+        return {
+          manualFilters: {
+            type: this.filter.type(),
+            blue: this.filter.blue(),
+            state: this.filter.state()
+          }
+        };
+      }, this);
 
       //Call parent constructor
       Filterable.call(this, options);

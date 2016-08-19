@@ -23,7 +23,7 @@
       <div class="form-group form-inline">
         <label><spring:message code="radio.port"/></label>:
         <select class="form-control"
-                data-bind="options: ports, optionsText: 'name', optionsCaption: '<spring:message code="radio.all"/>', value: port">
+                data-bind="options: ports, optionsValue: 'path', optionsText: 'name', optionsCaption: '<spring:message code="radio.all"/>', value: portId, valueAllowUnset: true">
         </select>
       </div>
 

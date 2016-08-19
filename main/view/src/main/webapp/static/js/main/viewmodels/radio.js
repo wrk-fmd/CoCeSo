@@ -27,7 +27,7 @@ define(["knockout", "../models/call", "data/load", "data/stomp", "data/store/rad
   function(ko, Call, load, stomp, store, conf, destroy, _) {
     "use strict";
 
-    var options = {
+    var loadOptions = {
       url: "radio/getLast/5.json",
       stomp: "/topic/radio/incoming",
       cbFull: function(data) {
@@ -48,14 +48,14 @@ define(["knockout", "../models/call", "data/load", "data/stomp", "data/store/rad
      *
      * @alias module:main/viewmodels/radio
      * @constructor
+     * @param {Object} options
      */
-    var Radio = function() {
-      var self = this, minutes = 5;
+    var Radio = function(options) {
+      var minutes = 5;
 
-
-      if (store.count <= 0) {
-        store.count++;
-        load(options);
+      store.count++;
+      if (store.count <= 1) {
+        load(loadOptions);
 
         // Load available ports
         (function getPorts() {
@@ -82,7 +82,16 @@ define(["knockout", "../models/call", "data/load", "data/stomp", "data/store/rad
 
       var radio = _("radio");
 
-      this.port = ko.observable();
+      this.ports = store.ports;
+
+      this.portId = ko.observable(options && options.port ? options.port : null);
+      this.port = ko.computed(function() {
+        var p = this.portId();
+        return p && ko.utils.arrayFirst(this.ports(), function(item) {
+          return item.path === p;
+        });
+      }, this);
+
       this.dialogTitle = ko.computed(function() {
         var p = this.port();
         return p ? radio + ": " + p.name : radio;
@@ -91,7 +100,7 @@ define(["knockout", "../models/call", "data/load", "data/stomp", "data/store/rad
       this.calls = ko.computed(function() {
         var data = store.calls().sort(function(a, b) {
           return b.timestamp() - a.timestamp();
-        }), calls = [], last = null, port = self.port();
+        }), calls = [], last = null, port = this.port();
         ko.utils.arrayForEach(data, function(item) {
           if (port && item.port && port.path !== item.port) {
             return;
@@ -109,7 +118,6 @@ define(["knockout", "../models/call", "data/load", "data/stomp", "data/store/rad
         return calls;
       }, this);
 
-      this.ports = store.ports;
 
       this.accordionOptions = {
         active: false,
@@ -119,6 +127,12 @@ define(["knockout", "../models/call", "data/load", "data/stomp", "data/store/rad
           return (!ui.newHeader || !ui.newHeader.hasClass("no-open"));
         }
       };
+
+      this.dialogState = ko.computed(function() {
+        return {
+          port: this.portId() || null
+        };
+      }, this);
     };
     Radio.prototype = Object.create({}, /** @lends Radio.prototype */ {
       /**
@@ -132,7 +146,7 @@ define(["knockout", "../models/call", "data/load", "data/stomp", "data/store/rad
           destroy(this);
           store.count--;
           if (store.count <= 0) {
-            stomp.unsubscribe(options.stomp);
+            stomp.unsubscribe(loadOptions.stomp);
             window.clearInterval(store.interval);
 
             ko.utils.arrayForEach(store.calls(), function(call) {

@@ -73,19 +73,19 @@
                   <input type="checkbox" data-bind="value: constants.state.open, checked: filter.state"/>
                   <spring:message code="incident.state.open"/>
                 </label>
-              </div><br/>
+              </div>
               <div class="checkbox-inline" data-bind="visible: (!disableFilter.state || disableFilter.state.demand !== true)">
                 <label>
                   <input type="checkbox" data-bind="value: constants.state.demand, checked: filter.state"/>
                   <spring:message code="incident.state.demand"/>
                 </label>
-              </div>
+              </div><br/>
               <div class="checkbox-inline" data-bind="visible: (!disableFilter.state || disableFilter.state.inprogress !== true)">
                 <label>
                   <input type="checkbox" data-bind="value: constants.state.inprogress, checked: filter.state"/>
                   <spring:message code="incident.state.inprogress"/>
                 </label>
-              </div><br/>
+              </div>
               <div class="checkbox-inline" data-bind="visible: (!disableFilter.state || disableFilter.state.done !== true)">
                 <label>
                   <input type="checkbox" data-bind="value: constants.state.done, checked: filter.state"/>

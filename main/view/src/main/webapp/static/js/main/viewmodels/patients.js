@@ -34,7 +34,7 @@ define(["knockout", "./filterable", "data/store/patients", "utils/i18n", "ko/ext
       var self = this;
 
       // Filtering
-      this.filtertext = ko.observable();
+      this.filtertext = ko.observable(options && options.filtertext ? options.filtertext : null);
       this.regex = ko.computed(function() {
         var filter = this.filtertext();
         if (!filter) {
@@ -75,6 +75,12 @@ define(["knockout", "./filterable", "data/store/patients", "utils/i18n", "ko/ext
       this.filtered = store.list.extend({list: {filter: this.activeFilters}});
 
       this.dialogTitle = options.title || _("patients");
+
+      this.dialogState = ko.computed(function() {
+        return {
+          filtertext: this.filtertext()
+        };
+      }, this);
     };
     Patients.prototype = Object.create(Filterable.prototype, /** @lends Patients.prototype */ {
       /**
