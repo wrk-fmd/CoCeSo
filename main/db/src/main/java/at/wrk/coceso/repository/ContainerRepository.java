@@ -11,9 +11,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ContainerRepository extends JpaRepository<Container, Integer> {
 
-  public List<Container> findByConcern(Concern concern);
+  List<Container> findByConcern(Concern concern);
 
   @Query("SELECT c FROM Container c WHERE c.concern = :concern AND c.parent IS NULL")
-  public Container findRootByConcern(@Param("concern") Concern concern);
+  Container findRootByConcern(@Param("concern") Concern concern);
 
 }

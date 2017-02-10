@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ConcernRepository extends JpaRepository<Concern, Integer> {
 
-  public Concern findByName(String name);
+  Concern findByName(String name);
 
 }

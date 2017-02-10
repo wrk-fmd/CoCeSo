@@ -20,36 +20,36 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public interface LogRepository extends JpaRepository<LogEntry, Integer> {
 
-  public List<LogEntry> findByConcern(Concern concern, Pageable pageable);
+  List<LogEntry> findByConcern(Concern concern, Pageable pageable);
 
-  public List<LogEntry> findByIncident(Incident incident, Pageable pageable);
+  List<LogEntry> findByIncident(Incident incident, Pageable pageable);
 
-  public List<LogEntry> findByUnit(Unit unit, Pageable pageable);
+  List<LogEntry> findByUnit(Unit unit, Pageable pageable);
 
-  public List<LogEntry> findByConcern(Concern concern, Sort sort);
+  List<LogEntry> findByConcern(Concern concern, Sort sort);
 
-  public List<LogEntry> findByIncident(Incident incident, Sort sort);
+  List<LogEntry> findByIncident(Incident incident, Sort sort);
 
-  public List<LogEntry> findByUnit(Unit unit, Sort sort);
+  List<LogEntry> findByUnit(Unit unit, Sort sort);
 
   @Query("SELECT l FROM LogEntry l WHERE l.patient = :patient OR l.incident IN :incidents")
-  public List<LogEntry> findByPatient(@Param("patient") Patient patient, @Param("incidents") Collection<Incident> incidents, Sort sort);
+  List<LogEntry> findByPatient(@Param("patient") Patient patient, @Param("incidents") Collection<Incident> incidents, Sort sort);
 
   @Query("SELECT l FROM LogEntry l WHERE (l.patient = :patient OR l.incident IN :incidents) "
       + "AND l.type IN ('UNIT_ASSIGN', 'UNIT_DETACH', 'UNIT_AUTO_DETACH', 'TASKSTATE_CHANGED')")
-  public List<LogEntry> findStatesByPatient(@Param("patient") Patient patient, @Param("incidents") Collection<Incident> incidents, Sort sort);
+  List<LogEntry> findStatesByPatient(@Param("patient") Patient patient, @Param("incidents") Collection<Incident> incidents, Sort sort);
 
-  public List<LogEntry> findByIncidentAndUnit(Incident incident, Unit unit, Sort sort);
+  List<LogEntry> findByIncidentAndUnit(Incident incident, Unit unit, Sort sort);
 
   @Query("SELECT l FROM LogEntry l WHERE l.incident = :incident AND l.unit = :unit AND l.type IN :types "
       + "ORDER BY l.timestamp DESC")
-  public List<LogEntry> findLast(Pageable pageable, @Param("incident") Incident incident, @Param("unit") Unit unit, @Param("types") LogEntryType... types);
+  List<LogEntry> findLast(Pageable pageable, @Param("incident") Incident incident, @Param("unit") Unit unit, @Param("types") LogEntryType... types);
 
-  public List<LogEntry> findByConcernAndType(Concern concern, LogEntryType type, Sort sort);
+  List<LogEntry> findByConcernAndType(Concern concern, LogEntryType type, Sort sort);
 
   @Modifying
   @Transactional
   @Query("UPDATE LogEntry SET unit = NULL, text = 'Unit created - REMOVED', type = 'UNIT_CREATE_REMOVED' "
       + "WHERE type = 'UNIT_CREATE' AND unit = :unit")
-  public void updateForRemoval(@Param("unit") Unit unit);
+  void updateForRemoval(@Param("unit") Unit unit);
 }
