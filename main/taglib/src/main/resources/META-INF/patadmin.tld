@@ -15,10 +15,6 @@
     <path>/META-INF/tags/patadmin/incoming.tag</path>
   </tag-file>
   <tag-file>
-    <name>medinfos</name>
-    <path>/META-INF/tags/patadmin/medinfos.tag</path>
-  </tag-file>
-  <tag-file>
     <name>pagination</name>
     <path>/META-INF/tags/patadmin/pagination.tag</path>
   </tag-file>

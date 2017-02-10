@@ -84,10 +84,6 @@ public class Patient implements Serializable, ConcernBoundEntity {
   @Column
   private boolean done;
 
-  @ManyToOne
-  @JoinColumn(name = "medinfo_fk")
-  private Medinfo medinfo;
-
   @JsonIgnore
   @OneToMany(mappedBy = "patient", fetch = FetchType.LAZY)
   private Set<Incident> incidents;
@@ -246,14 +242,6 @@ public class Patient implements Serializable, ConcernBoundEntity {
     this.done = done;
   }
 
-  public Medinfo getMedinfo() {
-    return medinfo;
-  }
-
-  public void setMedinfo(Medinfo medinfo) {
-    this.medinfo = medinfo;
-  }
-
   public Set<Incident> getIncidents() {
     return incidents;
   }
@@ -298,8 +286,8 @@ public class Patient implements Serializable, ConcernBoundEntity {
     }
 
     return incidents.stream()
-        .filter(i -> i.getType() == IncidentType.Transport && !Point.isEmpty(i.getAo()))
-        .map(i -> i.getAo().toString())
+        .filter(i -> i.getType() == IncidentType.Transport && i.hasAo())
+        .map(i -> i.getAo().getInfo())
         .collect(Collectors.toSet());
   }
 

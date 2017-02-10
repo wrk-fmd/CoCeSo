@@ -87,7 +87,7 @@ class PatadminServiceImpl implements PatadminServiceInternal {
 
   @Override
   public List<Unit> getGroups(Concern concern) {
-    List<Unit> groups = unitRepository.findByConcernAndTypeIn(concern, UnitType.treatment);
+    List<Unit> groups = unitRepository.findByConcernAndTypeIn(concern, UnitType.treatmentTypes);
     Collections.sort(groups);
     return groups;
   }
@@ -150,11 +150,6 @@ class PatadminServiceImpl implements PatadminServiceInternal {
         .collect(Collectors.toSet());
 
     return unitRepository.save(save);
-  }
-
-  @Override
-  public int removeMedinfos(Concern concern) {
-    return patientRepository.removeMedinfos(concern);
   }
 
 }

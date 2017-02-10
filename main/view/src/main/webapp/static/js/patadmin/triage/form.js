@@ -13,11 +13,9 @@
 
 /**
  * @module patadmin/triage/form
- * @param {module:jquery} $
  * @param {module:knockout} ko
- * @param {module:utils/conf} conf
  */
-define(["jquery", "knockout", "utils/conf", "bootstrap/modal", "ko/bindings/patient"], function($, ko, conf) {
+define(["knockout", "bootstrap/modal", "ko/bindings/patient"], function(ko) {
   "use strict";
 
   /**
@@ -28,7 +26,6 @@ define(["jquery", "knockout", "utils/conf", "bootstrap/modal", "ko/bindings/pati
     var self = this;
 
     this.patient = ko.observable();
-    this.medinfo = ko.observable();
     this.lastname = ko.observable();
     this.firstname = ko.observable();
     this.externalId = ko.observable();
@@ -38,16 +35,7 @@ define(["jquery", "knockout", "utils/conf", "bootstrap/modal", "ko/bindings/pati
     this.diagnosis = ko.observable();
     this.info = ko.observable();
 
-    var initial = conf.get("initial");
-    this.types = [];
-    if (!initial.patient) {
-      this.types.push("patients");
-    }
-    if (!initial.medinfo) {
-      this.types.push("medinfos");
-    }
-
-    this.callback = function(event, data) {
+    this.callback = function(element, data) {
       if (data.lastname) {
         self.lastname(data.lastname);
       }
@@ -60,49 +48,21 @@ define(["jquery", "knockout", "utils/conf", "bootstrap/modal", "ko/bindings/pati
       if (data.birthday) {
         self.birthday(data.birthday);
       }
-
-      if (typeof data.group !== "undefined") {
-        // Group field exists, so this is a patient
-        if (data.id) {
-          self.patient(data.id);
-        }
-        if (data.group && data.group.length > 0) {
-          self.group(data.group[0].id);
-        }
-        if (data.naca) {
-          self.naca(data.naca);
-        }
-        if (data.diagnosis) {
-          self.diagnosis(data.diagnosis);
-        }
-        if (data.info) {
-          self.info(data.info);
-        }
-        if (data.medinfo && data.medinfo.id) {
-          self.medinfo(data.medinfo.id);
-        }
-      } else {
-        // Group field does not exist, so this is a medinfo
-        if (data.id) {
-          self.medinfo(data.id);
-        }
+      if (data.id) {
+        self.patient(data.id);
       }
-    };
-
-    var loadedMedinfo = null;
-    this.openMedinfo = function() {
-      var medinfo = this.medinfo();
-      if (!medinfo) {
-        return;
+      if (data.group && data.group.length > 0) {
+        self.group(data.group[0].id);
       }
-
-      if (medinfo !== loadedMedinfo) {
-        $("#medinfo-modal-content").empty()
-          .load(conf.get("medinfoUrl") + medinfo + " #medinfo-content", function() {
-            loadedMedinfo = medinfo;
-          });
+      if (data.naca) {
+        self.naca(data.naca);
       }
-      $("#medinfo-modal").modal();
+      if (data.diagnosis) {
+        self.diagnosis(data.diagnosis);
+      }
+      if (data.info) {
+        self.info(data.info);
+      }
     };
   };
 

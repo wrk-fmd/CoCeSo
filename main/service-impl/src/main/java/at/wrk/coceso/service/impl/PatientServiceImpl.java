@@ -1,7 +1,6 @@
 package at.wrk.coceso.service.impl;
 
 import at.wrk.coceso.entity.Concern;
-import at.wrk.coceso.entity.Medinfo;
 import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.Patient;
 import at.wrk.coceso.entity.enums.Errors;
@@ -13,7 +12,6 @@ import at.wrk.coceso.entityevent.EntityEventHandler;
 import at.wrk.coceso.entityevent.EntityEventListener;
 import at.wrk.coceso.entityevent.impl.NotifyList;
 import at.wrk.coceso.exceptions.ErrorsException;
-import at.wrk.coceso.repository.MedinfoRepository;
 import at.wrk.coceso.repository.PatientRepository;
 import at.wrk.coceso.service.LogService;
 import at.wrk.coceso.service.hooks.HookService;
@@ -39,9 +37,6 @@ class PatientServiceImpl implements PatientServiceInternal {
 
   @Autowired
   private PatientRepository patientRepository;
-
-  @Autowired
-  private MedinfoRepository medinfoRepository;
 
   @Autowired
   private LogService logService;
@@ -228,14 +223,6 @@ class PatientServiceImpl implements PatientServiceInternal {
       save.setInfo(patient.getInfo());
     }
 
-    if (patient.getMedinfo() != null) {
-      Medinfo medinfo = medinfoRepository.findOne(patient.getMedinfo().getId());
-      if (medinfo != null && medinfo.getConcern().equals(concern)) {
-        changes.put("medinfo", null, medinfo.toString());
-        save.setMedinfo(medinfo);
-      }
-    }
-
     return save;
   }
 
@@ -299,14 +286,6 @@ class PatientServiceImpl implements PatientServiceInternal {
     if (!Objects.equals(save.getInfo(), patient.getInfo())) {
       changes.put("info", save.getInfo(), patient.getInfo());
       save.setInfo(patient.getInfo());
-    }
-
-    if (patient.getMedinfo() != null) {
-      Medinfo medinfo = medinfoRepository.findOne(patient.getMedinfo().getId());
-      if (medinfo != null && medinfo.getConcern().equals(save.getConcern())) {
-        changes.put("medinfo", save.getMedinfo() == null ? null : save.getMedinfo().toString(), medinfo.toString());
-        save.setMedinfo(medinfo);
-      }
     }
 
     return save;

@@ -2,13 +2,11 @@ package at.wrk.coceso.controller.patadmin;
 
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Incident;
-import at.wrk.coceso.entity.Medinfo;
 import at.wrk.coceso.entity.Patient;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.User;
 import at.wrk.coceso.form.TriageForm;
 import at.wrk.coceso.service.PatientService;
-import at.wrk.coceso.service.patadmin.MedinfoService;
 import at.wrk.coceso.service.patadmin.PatadminService;
 import at.wrk.coceso.service.patadmin.TriageService;
 import at.wrk.coceso.service.patadmin.TriageWriteService;
@@ -45,9 +43,6 @@ public class TriageController {
   @Autowired
   private TriageWriteService triageWriteService;
 
-  @Autowired
-  private MedinfoService medinfoService;
-
   @PreAuthorize("@auth.hasPermission(#concern, 'PatadminTriage')")
   @Transactional
   @RequestMapping(value = "", method = RequestMethod.GET)
@@ -79,7 +74,6 @@ public class TriageController {
   public String showSearch(ModelMap map, @ActiveConcern Concern concern, @RequestParam("q") String query, @AuthenticationPrincipal User user) {
     patadminService.addAccessLevels(map, concern);
     map.addAttribute("patients", Initializer.incidents(patadminService.getPatientsByQuery(concern, query, false, user)));
-    map.addAttribute("medinfos", medinfoService.getAllByQuery(concern, query, user));
     map.addAttribute("search", query);
     return "patadmin/triage/search";
   }
@@ -94,18 +88,6 @@ public class TriageController {
     patient.getIncidents().size();
     map.addAttribute("patient", patient);
     return "patadmin/triage/view";
-  }
-
-  @PreAuthorize("@auth.hasPermission(#id, 'at.wrk.coceso.entity.Medinfo', 'PatadminTriage')")
-  @Transactional
-  @RequestMapping(value = "/medinfo/{id}", method = RequestMethod.GET)
-  public String showMedinfo(ModelMap map, @PathVariable int id, @AuthenticationPrincipal User user) {
-    Medinfo medinfo = medinfoService.getById(id, user);
-
-    patadminService.addAccessLevels(map, medinfo.getConcern());
-    Initializer.incidents(medinfo.getPatients());
-    map.addAttribute("medinfo", medinfo);
-    return "patadmin/triage/medinfo";
   }
 
   @PreAuthorize("@auth.hasPermission(#id, 'at.wrk.coceso.entity.Patient', 'PatadminTriage')")
@@ -138,14 +120,8 @@ public class TriageController {
   @PreAuthorize("@auth.hasPermission(#concern, 'PatadminTriage')")
   @RequestMapping(value = "/add", method = RequestMethod.GET)
   public ModelAndView showAdd(ModelMap map, @RequestParam(value = "group", required = false) Integer group,
-      @RequestParam(value = "medinfo", required = false) Integer medinfoId, @ActiveConcern Concern concern,
-      @AuthenticationPrincipal User user) {
-    Medinfo medinfo = null;
-    if (medinfoId != null) {
-      medinfo = medinfoService.getById(medinfoId, user);
-    }
-
-    TriageForm form = new TriageForm(medinfo);
+      @ActiveConcern Concern concern, @AuthenticationPrincipal User user) {
+    TriageForm form = new TriageForm();
     form.setGroup(group);
 
     patadminService.addAccessLevels(map, concern);

@@ -79,43 +79,6 @@
           <dd class="clearfix"><spring:message code="yes"/></dd>
         </c:if>
       </dl>
-
-      <c:if test="${not empty patient.medinfo}">
-        <c:set value="${patient.medinfo}" var="medinfo" scope="page"/>
-        <h3><spring:message code="medinfo"/>: <em><c:out value="${medinfo.fullName}"/></em></h3>
-        <dl class="dl-horizontal">
-          <dt><spring:message code="patient.id"/></dt>
-          <dd class="clearfix"><a href="<c:url value="/patadmin/triage/medinfo/${medinfo.id}"/>"><c:out value="${medinfo.id}"/></a></dd>
-
-          <dt><spring:message code="patient.lastname"/></dt>
-          <dd class="clearfix"><c:out value="${medinfo.lastname}"/></dd>
-
-          <dt><spring:message code="patient.firstname"/></dt>
-          <dd class="clearfix"><c:out value="${medinfo.firstname}"/></dd>
-
-          <dt><spring:message code="patient.externalId"/></dt>
-          <dd class="clearfix"><c:out value="${medinfo.externalId}"/></dd>
-
-          <dt><spring:message code="patient.birthday"/></dt>
-          <dd><c:out value="${medinfo.birthday}"/></dd>
-
-          <c:forEach items="${medinfo.data}" var="entry">
-            <c:if test="${not empty entry.value}">
-              <dt><spring:message code="medinfo.${entry.key}" text="${entry.key}"/></dt>
-              <dd class="clearfix">
-                <c:choose>
-                  <c:when test="${entry.value['class'] == java.lang.Boolean}">
-                    <spring:message code="${entry.value ? 'yes' : 'no'}"/>
-                  </c:when>
-                  <c:otherwise>
-                    <span class="pre"><c:out value="${entry.value}"/></span>
-                  </c:otherwise>
-                </c:choose>
-              </dd>
-            </c:if>
-          </c:forEach>
-        </dl>
-      </c:if>
     </div>
   </body>
 </html>

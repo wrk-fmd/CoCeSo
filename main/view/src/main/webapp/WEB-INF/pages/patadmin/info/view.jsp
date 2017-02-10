@@ -63,73 +63,39 @@
         </c:if>
       </dl>
 
-      <c:if test="${not empty patient.medinfo}">
-        <c:set value="${patient.medinfo}" var="medinfo" scope="page"/>
-        <h3><spring:message code="medinfo"/>: <em><c:out value="${medinfo.fullName}"/></em></h3>
-        <dl class="dl-horizontal">
-          <dt><spring:message code="patient.id"/></dt>
-          <dd class="clearfix"><a href="<c:url value="/patadmin/info/medinfo/${medinfo.id}"/>"><c:out value="${medinfo.id}"/></a></dd>
-
-          <dt><spring:message code="patient.lastname"/></dt>
-          <dd class="clearfix"><c:out value="${medinfo.lastname}"/></dd>
-
-          <dt><spring:message code="patient.firstname"/></dt>
-          <dd class="clearfix"><c:out value="${medinfo.firstname}"/></dd>
-
-          <dt><spring:message code="patient.externalId"/></dt>
-          <dd class="clearfix"><c:out value="${medinfo.externalId}"/></dd>
-
-          <c:forEach items="${medinfo.data}" var="entry">
-            <c:if test="${not empty entry.value && ['EMERGENCY_CONTACT_1', 'EMERGENCY_CONTACT_2'].contains(entry.key)}">
-              <dt><spring:message code="medinfo.${entry.key}" text="${entry.key}"/></dt>
-              <dd class="clearfix">
-                <c:choose>
-                  <c:when test="${entry.value['class'] == java.lang.Boolean}">
-                    <spring:message code="${entry.value ? 'yes' : 'no'}"/>
-                  </c:when>
-                  <c:otherwise>
-                    <span class="pre"><c:out value="${entry.value}"/></span>
-                  </c:otherwise>
-                </c:choose>
-              </dd>
-            </c:if>
-          </c:forEach>
-        </dl>
-      </c:if>
-
-      <h3><spring:message code="log"/></h3>
-      <table class="table table-striped table-hover">
-        <thead>
-          <tr>
-            <th><spring:message code="log.timestamp"/></th>
-            <th><spring:message code="incident"/></th>
-            <th><spring:message code="unit"/></th>
-            <th><spring:message code="task.state"/></th>
-          </tr>
-        </thead>
-        <tbody>
-          <c:forEach items="${logs}" var="log">
+        <h3><spring:message code="log"/></h3>
+        <table class="table table-striped table-hover">
+          <thead>
             <tr>
-              <td><fmt:formatDate type="both" dateStyle="short" timeStyle="medium" value="${log.timestamp}"/></td>
-              <td>
-                <c:if test="${not empty log.incident}">
-                  <t:inctitle incident="${log.incident}"/>
-                </c:if>
-              </td>
-              <td>
-                <c:if test="${not empty log.unit}">
-                  <c:out value="${log.unit.call}"/>
-                </c:if>
-              </td>
-              <td>
-                <c:if test="${not empty log.state}">
-                  <spring:message code="task.state.${fn:toLowerCase(log.state)}" text="${log.state}"/>
-                </c:if>
-              </td>
+              <th><spring:message code="log.timestamp"/></th>
+              <th><spring:message code="incident"/></th>
+              <th><spring:message code="unit"/></th>
+              <th><spring:message code="task.state"/></th>
             </tr>
-          </c:forEach>
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            <c:forEach items="${logs}" var="log">
+              <tr>
+                <td><fmt:formatDate type="both" dateStyle="short" timeStyle="medium" value="${log.timestamp}"/></td>
+                <td>
+                  <c:if test="${not empty log.incident}">
+                    <t:inctitle incident="${log.incident}"/>
+                  </c:if>
+                </td>
+                <td>
+                  <c:if test="${not empty log.unit}">
+                    <c:out value="${log.unit.call}"/>
+                  </c:if>
+                </td>
+                <td>
+                  <c:if test="${not empty log.state}">
+                    <spring:message code="task.state.${fn:toLowerCase(log.state)}" text="${log.state}"/>
+                  </c:if>
+                </td>
+              </tr>
+            </c:forEach>
+          </tbody>
+        </table>
     </div>
   </body>
 </html>

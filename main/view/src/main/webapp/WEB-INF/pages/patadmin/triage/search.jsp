@@ -33,13 +33,6 @@
           <p:patients patients="${patients}"/>
         </div>
       </c:if>
-
-      <c:if test="${not empty medinfos}">
-        <div>
-          <h3><spring:message code="medinfo"/></h3>
-          <p:medinfos medinfos="${medinfos}"/>
-        </div>
-      </c:if>
     </div>
   </body>
 </html>

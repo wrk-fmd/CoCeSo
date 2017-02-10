@@ -82,34 +82,6 @@
           <p:pagination page="${patients}" url="/patadmin/info/search?q=${search}&"/>
         </c:otherwise>
       </c:choose>
-
-      <c:if test="${not empty medinfos}">
-        <div>
-          <h3><spring:message code="medinfo"/></h3>
-          <c:url var="viewUrl" value="/patadmin/info/medinfo/"/>
-
-          <div class="table-responsive">
-            <table class="table table-striped table-condensed table-full">
-              <tr>
-                <th><spring:message code="patient.externalId"/></th>
-                <th><spring:message code="patient.lastname"/></th>
-                <th><spring:message code="patient.firstname"/></th>
-                <th></th>
-              </tr>
-              <c:forEach items="${medinfos}" var="medinfo">
-                <tr>
-                  <td><c:out value="${medinfo.externalId}"/></td>
-                  <td><c:out value="${medinfo.lastname}"/></td>
-                  <td><c:out value="${medinfo.firstname}"/></td>
-                  <td>
-                    <a href="${viewUrl}${medinfo.id}" class="btn btn-default btn-xs"><spring:message code="medinfo.details"/></a>
-                  </td>
-                </tr>
-              </c:forEach>
-            </table>
-          </div>
-        </div>
-      </c:if>
     </div>
   </body>
 </html>

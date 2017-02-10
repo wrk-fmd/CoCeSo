@@ -1,14 +1,12 @@
 package at.wrk.coceso.controller.patadmin;
 
 import at.wrk.coceso.entity.Concern;
-import at.wrk.coceso.entity.Medinfo;
 import at.wrk.coceso.entity.Patient;
 import at.wrk.coceso.entity.User;
 import at.wrk.coceso.service.LogService;
 import at.wrk.coceso.service.PatientService;
 import at.wrk.coceso.utils.ActiveConcern;
 import at.wrk.coceso.service.patadmin.InfoService;
-import at.wrk.coceso.service.patadmin.MedinfoService;
 import at.wrk.coceso.service.patadmin.PatadminService;
 import at.wrk.coceso.utils.Initializer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,9 +36,6 @@ public class InfoController {
   private PatadminService patadminService;
 
   @Autowired
-  private MedinfoService medinfoService;
-
-  @Autowired
   private LogService logService;
 
   @Autowired
@@ -65,7 +60,6 @@ public class InfoController {
     Page<Patient> patients = infoService.getByQuery(concern, query, pageable, user);
     Initializer.incidents(patients.getContent());
     map.addAttribute("patients", patients);
-    map.addAttribute("medinfos", medinfoService.getAllByQuery(concern, query, user));
     map.addAttribute("search", query);
     patadminService.addAccessLevels(map, concern);
     return "patadmin/info/list";
@@ -81,18 +75,6 @@ public class InfoController {
     map.addAttribute("logs", logService.getStatesByPatient(patient));
     patadminService.addAccessLevels(map, patient.getConcern());
     return "patadmin/info/view";
-  }
-
-  @PreAuthorize("@auth.hasPermission(#id, 'at.wrk.coceso.entity.Medinfo', 'PatadminInfo')")
-  @Transactional
-  @RequestMapping(value = "/medinfo/{id}", method = RequestMethod.GET)
-  public String showMedinfo(ModelMap map, @PathVariable int id, @AuthenticationPrincipal User user) {
-    Medinfo medinfo = medinfoService.getById(id, user);
-
-    patadminService.addAccessLevels(map, medinfo.getConcern());
-    Initializer.incidents(medinfo.getPatients());
-    map.addAttribute("medinfo", medinfo);
-    return "patadmin/info/medinfo";
   }
 
 }

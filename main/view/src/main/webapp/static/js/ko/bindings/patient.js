@@ -13,54 +13,20 @@
 
 /**
  * @module ko/bindings/patient
- * @param {module:jquery} $
- * @param {module:bloodhound} Bloodhound
  * @param {module:knockout} ko
+ * @param {module:ko/bindings/typeahead} typeahead
  * @param {module:utils/conf} conf
- * @param {module:utils/i18n} _
  */
-define(["jquery", "bloodhound", "knockout", "utils/conf", "utils/i18n", "typeahead.js"],
-  function($, Bloodhound, ko, conf, _) {
-    "use strict";
+define(["knockout", "./typeahead", "utils/conf"], function(ko, typeahead, conf) {
+  "use strict";
 
-    function buildDisplayName(obj) {
-      return "<p>" + obj.lastname + " " + obj.firstname + (obj.externalId ? " (" + obj.externalId + ")" : "") + "</p>";
+  ko.bindingHandlers.patient = {
+    init: function(element, valueAccessor) {
+      var options = valueAccessor();
+      typeahead(element, conf.get("jsonBase") + 'patadmin/triage/patients.json?f=' + options.key + '&q=%QUERY', options.key,
+        function(obj) {
+          return "<p>" + obj.lastname + " " + obj.firstname + (obj.externalId ? " (" + obj.externalId + ")" : "") + "</p>";
+        }, options.callback);
     }
-
-    function getSource(type, key) {
-      var bloodhound = new Bloodhound({
-        datumTokenizer: Bloodhound.tokenizers.whitespace,
-        queryTokenizer: Bloodhound.tokenizers.whitespace,
-        remote: {
-          url: conf.get("jsonBase") + 'patadmin/triage/' + type + '.json?f=' + key + '&q=%QUERY',
-          wildcard: "%QUERY"
-        }
-      });
-
-      return {
-        displayKey: key,
-        templates: {
-          suggestion: buildDisplayName,
-          header: "<h4 class='tt-suggestion'>" + _(type) + "</h4>"
-        },
-        limit: 20,
-        source: bloodhound
-      };
-    }
-
-    ko.bindingHandlers.patient = {
-      init: function(element, valueAccessor) {
-        var options = valueAccessor();
-        if (options.types.length > 0) {
-          var $element = $(element),
-            args = $.map(options.types, function(type) {
-              return getSource(type, options.key);
-            });
-          args.unshift({minLength: 2, highlight: true});
-          $element.typeahead.apply($element, args);
-          $element.on("typeahead:selected", options.callback);
-        }
-      }
-    };
-  }
-);
+  };
+});

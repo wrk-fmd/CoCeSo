@@ -1,6 +1,5 @@
 package at.wrk.coceso.form;
 
-import at.wrk.coceso.entity.Medinfo;
 import at.wrk.coceso.entity.Patient;
 import at.wrk.coceso.entity.enums.Naca;
 import java.time.LocalDate;
@@ -9,7 +8,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 public class TriageForm {
 
   private Integer patient;
-  private Integer medinfo;
   private String lastname;
   private String firstname;
   private String externalId;
@@ -26,7 +24,6 @@ public class TriageForm {
 
   public TriageForm(Patient p) {
     patient = p.getId();
-    medinfo = p.getMedinfo() != null ? p.getMedinfo().getId() : null;
     lastname = p.getLastname();
     firstname = p.getFirstname();
     externalId = p.getExternalId();
@@ -37,30 +34,12 @@ public class TriageForm {
     diagnosis = p.getDiagnosis();
   }
 
-  public TriageForm(Medinfo m) {
-    if (m != null) {
-      medinfo = m.getId();
-      lastname = m.getLastname();
-      firstname = m.getFirstname();
-      externalId = m.getExternalId();
-      birthday = m.getBirthday();
-    }
-  }
-
   public Integer getPatient() {
     return patient;
   }
 
   public void setPatient(Integer patient) {
     this.patient = patient;
-  }
-
-  public Integer getMedinfo() {
-    return medinfo;
-  }
-
-  public void setMedinfo(Integer medinfo) {
-    this.medinfo = medinfo;
   }
 
   public String getLastname() {

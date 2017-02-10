@@ -2,13 +2,11 @@ package at.wrk.coceso.auth;
 
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Incident;
-import at.wrk.coceso.entity.Medinfo;
 import at.wrk.coceso.entity.Patient;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.enums.AccessLevel;
 import at.wrk.coceso.exceptions.ErrorsException;
-import at.wrk.coceso.repository.MedinfoRepository;
 import at.wrk.coceso.service.ConcernService;
 import at.wrk.coceso.service.IncidentService;
 import at.wrk.coceso.service.PatientService;
@@ -37,9 +35,6 @@ public class AuthorizationProvider {
 
   @Autowired
   private PatientService patientService;
-
-  @Autowired
-  private MedinfoRepository medinfoRepository;
 
   public boolean hasAccessLevel(AccessLevel level) {
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -70,9 +65,6 @@ public class AuthorizationProvider {
       if (target instanceof Patient) {
         return hasPermission((Patient) target, level);
       }
-      if (target instanceof Medinfo) {
-        return hasPermission((Medinfo) target, level);
-      }
       LOG.warn("Tried to check permission on class {}", target.getClass());
     } catch (IllegalArgumentException e) {
       LOG.warn("Exception on checking permission", e);
@@ -96,9 +88,6 @@ public class AuthorizationProvider {
       }
       if (type.equals(Patient.class.getName())) {
         return hasPermission(patientService.getByIdNoLog(pk), level);
-      }
-      if (type.equals(Medinfo.class.getName())) {
-        return hasPermission(medinfoRepository.findOne(pk), level);
       }
       LOG.warn("Tried to check permission on class {}", type);
     } catch (IllegalArgumentException | ErrorsException e) {
@@ -169,22 +158,6 @@ public class AuthorizationProvider {
     }
 
     return checkConcernAccess(user, patient.getConcern(), level);
-  }
-
-  public boolean hasPermission(Medinfo medinfo, AccessLevel level) {
-    if (level == null) {
-      return false;
-    }
-    if (hasAccessLevel(level)) {
-      return true;
-    }
-
-    User user = getUser();
-    if (user == null || !user.isAllowLogin() || medinfo == null || medinfo.getId() == null || medinfo.getConcern().isClosed()) {
-      return false;
-    }
-
-    return checkConcernAccess(user, medinfo.getConcern(), level);
   }
 
   private boolean checkConcernAccess(User user, Concern concern, AccessLevel level) {

@@ -25,5 +25,4 @@ public interface PatadminService {
 
   Unit getGroup(int id);
 
-  int removeMedinfos(Concern concern);
 }
