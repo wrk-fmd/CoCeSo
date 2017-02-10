@@ -16,13 +16,8 @@
   <dependencies>
     <!-- Coceso modules -->
     <dependency>
-      <groupId>at.wrk.coceso</groupId>
-      <artifactId>coceso-service</artifactId>
-      <version>${project.parent.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>at.wrk.coceso</groupId>
-      <artifactId>coceso-entity</artifactId>
+      <groupId>at.wrk.geocode</groupId>
+      <artifactId>geocode</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>
@@ -42,7 +37,14 @@
     <dependency>
       <groupId>com.google.maps</groupId>
       <artifactId>google-maps-services</artifactId>
-      <version>0.1.11</version>
+      <version>0.1.17</version>
+    </dependency>
+
+    <!-- Commons -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>${commons.lang.version}</version>
     </dependency>
   </dependencies>
 </project>

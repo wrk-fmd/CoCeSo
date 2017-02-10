@@ -2,12 +2,12 @@ package at.wrk.coceso.service.patadmin.impl;
 
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.Patient;
-import at.wrk.coceso.entity.Point;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.enums.Errors;
 import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.enums.IncidentType;
+import at.wrk.coceso.entity.point.UnitPoint;
 import at.wrk.coceso.entityevent.impl.NotifyList;
 import at.wrk.coceso.exceptions.ErrorsException;
 import at.wrk.coceso.form.PostprocessingForm;
@@ -121,7 +121,7 @@ class PostprocessingServiceImpl implements PostprocessingServiceInternal {
 
     Unit group = patient.getGroup().stream().findFirst().orElse(null);
     if (group != null) {
-      incident.setBo(new Point(group.getCall()));
+      incident.setBo(new UnitPoint(group.getId()));
 
       if (group.getSection() != null) {
         incident.setSection(group.getSection());

@@ -1,7 +1,9 @@
 package at.wrk.coceso.entity.types;
 
+import at.wrk.coceso.entity.helper.JsonViews;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.sql.PreparedStatement;
@@ -16,6 +18,7 @@ import org.hibernate.usertype.UserType;
 public abstract class JsonUserType<T> implements UserType, Serializable {
 
   private static final ObjectMapper mapper = new ObjectMapper();
+  private static final ObjectWriter writer = mapper.writerWithView(JsonViews.Database.class);
 
   @Override
   public abstract Class<T> returnedClass();
@@ -69,7 +72,7 @@ public abstract class JsonUserType<T> implements UserType, Serializable {
   }
 
   private String serialize(Object obj) throws JsonProcessingException {
-    return mapper.writeValueAsString(obj);
+    return writer.writeValueAsString(obj);
   }
 
   private T deserialize(String data) throws IOException {

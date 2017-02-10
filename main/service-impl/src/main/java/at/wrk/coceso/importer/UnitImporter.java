@@ -1,15 +1,15 @@
 package at.wrk.coceso.importer;
 
 import at.wrk.coceso.entity.Concern;
-import at.wrk.coceso.entity.Point;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.enums.Errors;
 import at.wrk.coceso.entity.enums.UnitType;
 import at.wrk.coceso.entity.helper.Changes;
+import at.wrk.coceso.entity.point.Point;
 import at.wrk.coceso.exceptions.ErrorsException;
-import at.wrk.coceso.service.PointService;
 import at.wrk.coceso.service.UserService;
+import at.wrk.geocode.poi.PoiSupplier;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -23,6 +23,7 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -37,10 +38,12 @@ public class UnitImporter {
   private static final String COMMANDER = "Kdt";
   private static final String CREW = "Crew";
 
-  private static final char delimiter = ',';
+  private static final char DELIMITER = ',';
 
+  // TODO Using @Qualifier here feels kinda like hardcoding, maybe define that somewhere else
   @Autowired
-  private PointService pointService;
+  @Qualifier("ChainedPoi")
+  private PoiSupplier poiSupplier;
 
   @Autowired
   private UserService userService;
@@ -51,7 +54,7 @@ public class UnitImporter {
 
     CSVParser records;
     try {
-      records = CSVParser.parse(data, CSVFormat.RFC4180.withDelimiter(delimiter).withHeader());
+      records = CSVParser.parse(data, CSVFormat.RFC4180.withDelimiter(DELIMITER).withHeader());
     } catch (IOException e) {
       throw new ErrorsException(Errors.Import, e);
     }
@@ -120,7 +123,7 @@ public class UnitImporter {
 
       if (record.isSet(HOME) && (isNew || Point.isEmpty(unit.getHome()))) {
         csvval = record.get(HOME);
-        Point home = pointService.createIfNotExists(new Point(csvval));
+        Point home = Point.create(csvval, null, poiSupplier, null);
         unit.setHome(home);
         changes.put("home", null, home);
       }

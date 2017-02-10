@@ -88,7 +88,7 @@ define(["jquery", "knockout", "./person", "data/save", "utils/conf", "utils/dest
           portable: self.portable(),
           type: self.type() || null,
           info: self.info(),
-          home: {info: self.home()},
+          home: self.home(),
           section: self.section() === "" ? null : self.section()
         }), "unit/updateFull.json", function() {
           root.error(false);

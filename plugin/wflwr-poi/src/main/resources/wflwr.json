@@ -1,0 +1,819 @@
+[{
+    "text": "WFLWR/km0.0",
+    "coordinates": {
+      "lat": 48.201175,
+      "lng": 16.369402
+    }
+  },
+  {
+    "text": "WFLWR/km1.0",
+    "coordinates": {
+      "lat": 48.197072,
+      "lng": 16.358043
+    }
+  },
+  {
+    "text": "WFLWR/km2.0",
+    "coordinates": {
+      "lat": 48.190118,
+      "lng": 16.351547
+    }
+  },
+  {
+    "text": "WFLWR/km3.0",
+    "coordinates": {
+      "lat": 48.189321,
+      "lng": 16.338695
+    }
+  },
+  {
+    "text": "WFLWR/km3.7 Posten",
+    "coordinates": {
+      "lat": 48.195255,
+      "lng": 16.34
+    }
+  },
+  {
+    "text": "WFLWR/km4.0",
+    "coordinates": {
+      "lat": 48.196515,
+      "lng": 16.343043
+    }
+  },
+  {
+    "text": "WFLWR/km5.0",
+    "coordinates": {
+      "lat": 48.200126,
+      "lng": 16.355192
+    }
+  },
+  {
+    "text": "WFLWR/km6.0",
+    "coordinates": {
+      "lat": 48.205323,
+      "lng": 16.361848
+    }
+  },
+  {
+    "text": "WFLWR/km7.0",
+    "coordinates": {
+      "lat": 48.213559,
+      "lng": 16.361655
+    }
+  },
+  {
+    "text": "WFLWR/km8.0",
+    "coordinates": {
+      "lat": 48.21639,
+      "lng": 16.372473
+    }
+  },
+  {
+    "text": "WFLWR/km8.5 Posten",
+    "coordinates": {
+      "lat": 48.212589,
+      "lng": 16.375945
+    }
+  },
+  {
+    "text": "WFLWR/km9.0",
+    "coordinates": {
+      "lat": 48.211385,
+      "lng": 16.382283
+    }
+  },
+  {
+    "text": "WFLWR/km10.0",
+    "coordinates": {
+      "lat": 48.211531,
+      "lng": 16.393833
+    }
+  },
+  {
+    "text": "WFLWR/km11.0",
+    "coordinates": {
+      "lat": 48.20314,
+      "lng": 16.398032
+    }
+  },
+  {
+    "text": "WFLWR/km12.0",
+    "coordinates": {
+      "lat": 48.198238,
+      "lng": 16.408424
+    }
+  },
+  {
+    "text": "WFLWR/km13.0 Posten",
+    "coordinates": {
+      "lat": 48.201452,
+      "lng": 16.415718
+    }
+  },
+  {
+    "text": "WFLWR/km14.0",
+    "coordinates": {
+      "lat": 48.196505,
+      "lng": 16.426247
+    }
+  },
+  {
+    "text": "WFLWR/km15.0",
+    "coordinates": {
+      "lat": 48.200419,
+      "lng": 16.424013
+    }
+  },
+  {
+    "text": "WFLWR/km16.0",
+    "coordinates": {
+      "lat": 48.205988,
+      "lng": 16.413437
+    }
+  },
+  {
+    "text": "WFLWR/km17.0",
+    "coordinates": {
+      "lat": 48.211543,
+      "lng": 16.402843
+    }
+  },
+  {
+    "text": "WFLWR/km17.5 Posten",
+    "coordinates": {
+      "lat": 48.214325,
+      "lng": 16.397552
+    }
+  },
+  {
+    "text": "WFLWR/km18.0",
+    "coordinates": {
+      "lat": 48.217283,
+      "lng": 16.393285
+    }
+  },
+  {
+    "text": "WFLWR/km19.0",
+    "coordinates": {
+      "lat": 48.223728,
+      "lng": 16.401377
+    }
+  },
+  {
+    "text": "WFLWR/km20.0",
+    "coordinates": {
+      "lat": 48.229372,
+      "lng": 16.411799
+    }
+  },
+  {
+    "text": "WFLWR/km21.0 Posten",
+    "coordinates": {
+      "lat": 48.235095,
+      "lng": 16.422074
+    }
+  },
+  {
+    "text": "WFLWR/km22.0",
+    "coordinates": {
+      "lat": 48.241189,
+      "lng": 16.418544
+    }
+  },
+  {
+    "text": "WFLWR/km23.0",
+    "coordinates": {
+      "lat": 48.246009,
+      "lng": 16.407181
+    }
+  },
+  {
+    "text": "WFLWR/km24.0",
+    "coordinates": {
+      "lat": 48.245799,
+      "lng": 16.394801
+    }
+  },
+  {
+    "text": "WFLWR/km25.0 Posten",
+    "coordinates": {
+      "lat": 48.25332,
+      "lng": 16.387722
+    }
+  },
+  {
+    "text": "WFLWR/km26.0",
+    "coordinates": {
+      "lat": 48.255508,
+      "lng": 16.379808
+    }
+  },
+  {
+    "text": "WFLWR/km27.0",
+    "coordinates": {
+      "lat": 48.263194,
+      "lng": 16.372903
+    }
+  },
+  {
+    "text": "WFLWR/km28.0",
+    "coordinates": {
+      "lat": 48.271343,
+      "lng": 16.36818
+    }
+  },
+  {
+    "text": "WFLWR/km29.0",
+    "coordinates": {
+      "lat": 48.27866,
+      "lng": 16.360825
+    }
+  },
+  {
+    "text": "WFLWR/km30.0",
+    "coordinates": {
+      "lat": 48.286475,
+      "lng": 16.354305
+    }
+  },
+  {
+    "text": "WFLWR/km31.0 Posten",
+    "coordinates": {
+      "lat": 48.294574,
+      "lng": 16.348755
+    }
+  },
+  {
+    "text": "WFLWR/km32.0",
+    "coordinates": {
+      "lat": 48.301722,
+      "lng": 16.346981
+    }
+  },
+  {
+    "text": "WFLWR/km33.0",
+    "coordinates": {
+      "lat": 48.310459,
+      "lng": 16.344508
+    }
+  },
+  {
+    "text": "WFLWR/km34.0",
+    "coordinates": {
+      "lat": 48.318902,
+      "lng": 16.340041
+    }
+  },
+  {
+    "text": "WFLWR/km35.0",
+    "coordinates": {
+      "lat": 48.327021,
+      "lng": 16.3344
+    }
+  },
+  {
+    "text": "WFLWR/km36.0",
+    "coordinates": {
+      "lat": 48.334852,
+      "lng": 16.329052
+    }
+  },
+  {
+    "text": "WFLWR/km37.0",
+    "coordinates": {
+      "lat": 48.34089,
+      "lng": 16.321891
+    }
+  },
+  {
+    "text": "WFLWR/km38.0",
+    "coordinates": {
+      "lat": 48.343154,
+      "lng": 16.313782
+    }
+  },
+  {
+    "text": "WFLWR/km39.0",
+    "coordinates": {
+      "lat": 48.346078,
+      "lng": 16.302555
+    }
+  },
+  {
+    "text": "WFLWR/km40.0",
+    "coordinates": {
+      "lat": 48.350882,
+      "lng": 16.291139
+    }
+  },
+  {
+    "text": "WFLWR/km41.0",
+    "coordinates": {
+      "lat": 48.354106,
+      "lng": 16.27875
+    }
+  },
+  {
+    "text": "WFLWR/km42.0",
+    "coordinates": {
+      "lat": 48.354718,
+      "lng": 16.265281
+    }
+  },
+  {
+    "text": "WFLWR/km43.0",
+    "coordinates": {
+      "lat": 48.355877,
+      "lng": 16.251881
+    }
+  },
+  {
+    "text": "WFLWR/km44.0",
+    "coordinates": {
+      "lat": 48.359,
+      "lng": 16.240875
+    }
+  },
+  {
+    "text": "WFLWR/km45.0",
+    "coordinates": {
+      "lat": 48.351279,
+      "lng": 16.241635
+    }
+  },
+  {
+    "text": "WFLWR/km46.0",
+    "coordinates": {
+      "lat": 48.350266,
+      "lng": 16.228267
+    }
+  },
+  {
+    "text": "WFLWR/km47.0",
+    "coordinates": {
+      "lat": 48.348129,
+      "lng": 16.215284
+    }
+  },
+  {
+    "text": "WFLWR/km48.0",
+    "coordinates": {
+      "lat": 48.34582,
+      "lng": 16.202667
+    }
+  },
+  {
+    "text": "WFLWR/km49.0",
+    "coordinates": {
+      "lat": 48.342903,
+      "lng": 16.189895
+    }
+  },
+  {
+    "text": "WFLWR/km50.0",
+    "coordinates": {
+      "lat": 48.340072,
+      "lng": 16.177532
+    }
+  },
+  {
+    "text": "WFLWR/km51.0",
+    "coordinates": {
+      "lat": 48.3377,
+      "lng": 16.164973
+    }
+  },
+  {
+    "text": "WFLWR/km52.0",
+    "coordinates": {
+      "lat": 48.332653,
+      "lng": 16.154487
+    }
+  },
+  {
+    "text": "WFLWR/km53.0",
+    "coordinates": {
+      "lat": 48.331154,
+      "lng": 16.143091
+    }
+  },
+  {
+    "text": "WFLWR/km54.0",
+    "coordinates": {
+      "lat": 48.332114,
+      "lng": 16.129723
+    }
+  },
+  {
+    "text": "WFLWR/km55.0",
+    "coordinates": {
+      "lat": 48.332662,
+      "lng": 16.116456
+    }
+  },
+  {
+    "text": "WFLWR/km56.0",
+    "coordinates": {
+      "lat": 48.330559,
+      "lng": 16.103586
+    }
+  },
+  {
+    "text": "WFLWR/km57.0",
+    "coordinates": {
+      "lat": 48.328529,
+      "lng": 16.09081
+    }
+  },
+  {
+    "text": "WFLWR/km58.0",
+    "coordinates": {
+      "lat": 48.328986,
+      "lng": 16.077514
+    }
+  },
+  {
+    "text": "WFLWR/km59.0",
+    "coordinates": {
+      "lat": 48.331129,
+      "lng": 16.06484
+    }
+  },
+  {
+    "text": "WFLWR/km60.0",
+    "coordinates": {
+      "lat": 48.32686,
+      "lng": 16.059055
+    }
+  },
+  {
+    "text": "WFLWR/km61.0",
+    "coordinates": {
+      "lat": 48.323309,
+      "lng": 16.071461
+    }
+  },
+  {
+    "text": "WFLWR/km62.0",
+    "coordinates": {
+      "lat": 48.319156,
+      "lng": 16.083418
+    }
+  },
+  {
+    "text": "WFLWR/km63.0",
+    "coordinates": {
+      "lat": 48.315958,
+      "lng": 16.095504
+    }
+  },
+  {
+    "text": "WFLWR/km64.0",
+    "coordinates": {
+      "lat": 48.312662,
+      "lng": 16.108069
+    }
+  },
+  {
+    "text": "WFLWR/km65.0",
+    "coordinates": {
+      "lat": 48.309548,
+      "lng": 16.12073
+    }
+  },
+  {
+    "text": "WFLWR/km66.0",
+    "coordinates": {
+      "lat": 48.305843,
+      "lng": 16.133012
+    }
+  },
+  {
+    "text": "WFLWR/km67.0",
+    "coordinates": {
+      "lat": 48.299763,
+      "lng": 16.141975
+    }
+  },
+  {
+    "text": "WFLWR/km68.0",
+    "coordinates": {
+      "lat": 48.304036,
+      "lng": 16.15354
+    }
+  },
+  {
+    "text": "WFLWR/km69.0",
+    "coordinates": {
+      "lat": 48.309044,
+      "lng": 16.164582
+    }
+  },
+  {
+    "text": "WFLWR/km70.0",
+    "coordinates": {
+      "lat": 48.312451,
+      "lng": 16.176949
+    }
+  },
+  {
+    "text": "WFLWR/km71.0",
+    "coordinates": {
+      "lat": 48.315321,
+      "lng": 16.189617
+    }
+  },
+  {
+    "text": "WFLWR/km72.0",
+    "coordinates": {
+      "lat": 48.319722,
+      "lng": 16.200968
+    }
+  },
+  {
+    "text": "WFLWR/km73.0",
+    "coordinates": {
+      "lat": 48.323878,
+      "lng": 16.211487
+    }
+  },
+  {
+    "text": "WFLWR/km74.0",
+    "coordinates": {
+      "lat": 48.330343,
+      "lng": 16.220713
+    }
+  },
+  {
+    "text": "WFLWR/km75.0",
+    "coordinates": {
+      "lat": 48.336961,
+      "lng": 16.22956
+    }
+  },
+  {
+    "text": "WFLWR/km76.0",
+    "coordinates": {
+      "lat": 48.343521,
+      "lng": 16.238511
+    }
+  },
+  {
+    "text": "WFLWR/km77.0",
+    "coordinates": {
+      "lat": 48.348884,
+      "lng": 16.248844
+    }
+  },
+  {
+    "text": "WFLWR/km78.0",
+    "coordinates": {
+      "lat": 48.350387,
+      "lng": 16.261648
+    }
+  },
+  {
+    "text": "WFLWR/km79.0",
+    "coordinates": {
+      "lat": 48.349857,
+      "lng": 16.274867
+    }
+  },
+  {
+    "text": "WFLWR/km80.0",
+    "coordinates": {
+      "lat": 48.346702,
+      "lng": 16.287355
+    }
+  },
+  {
+    "text": "WFLWR/km81.0",
+    "coordinates": {
+      "lat": 48.339525,
+      "lng": 16.294969
+    }
+  },
+  {
+    "text": "WFLWR/km82.0",
+    "coordinates": {
+      "lat": 48.332834,
+      "lng": 16.302182
+    }
+  },
+  {
+    "text": "WFLWR/km83.0",
+    "coordinates": {
+      "lat": 48.325021,
+      "lng": 16.308848
+    }
+  },
+  {
+    "text": "WFLWR/km84.0",
+    "coordinates": {
+      "lat": 48.317331,
+      "lng": 16.315819
+    }
+  },
+  {
+    "text": "WFLWR/km85.0",
+    "coordinates": {
+      "lat": 48.311618,
+      "lng": 16.325413
+    }
+  },
+  {
+    "text": "WFLWR/km86.0",
+    "coordinates": {
+      "lat": 48.30711,
+      "lng": 16.334155
+    }
+  },
+  {
+    "text": "WFLWR/km87.0",
+    "coordinates": {
+      "lat": 48.300626,
+      "lng": 16.337511
+    }
+  },
+  {
+    "text": "WFLWR/km88.0",
+    "coordinates": {
+      "lat": 48.292726,
+      "lng": 16.343427
+    }
+  },
+  {
+    "text": "WFLWR/km89.0",
+    "coordinates": {
+      "lat": 48.284416,
+      "lng": 16.347186
+    }
+  },
+  {
+    "text": "WFLWR/km90.0",
+    "coordinates": {
+      "lat": 48.277124,
+      "lng": 16.354289
+    }
+  },
+  {
+    "text": "WFLWR/km91.0",
+    "coordinates": {
+      "lat": 48.269752,
+      "lng": 16.361963
+    }
+  },
+  {
+    "text": "WFLWR/km92.0",
+    "coordinates": {
+      "lat": 48.261793,
+      "lng": 16.368028
+    }
+  },
+  {
+    "text": "WFLWR/km93.0",
+    "coordinates": {
+      "lat": 48.254829,
+      "lng": 16.373948
+    }
+  },
+  {
+    "text": "WFLWR/km94.0",
+    "coordinates": {
+      "lat": 48.247566,
+      "lng": 16.381437
+    }
+  },
+  {
+    "text": "WFLWR/km95.0",
+    "coordinates": {
+      "lat": 48.240178,
+      "lng": 16.388976
+    }
+  },
+  {
+    "text": "WFLWR/km96.0",
+    "coordinates": {
+      "lat": 48.233028,
+      "lng": 16.397137
+    }
+  },
+  {
+    "text": "WFLWR/km97.0",
+    "coordinates": {
+      "lat": 48.226174,
+      "lng": 16.405833
+    }
+  },
+  {
+    "text": "WFLWR/km98.0",
+    "coordinates": {
+      "lat": 48.21955,
+      "lng": 16.414623
+    }
+  },
+  {
+    "text": "WFLWR/km99.0",
+    "coordinates": {
+      "lat": 48.213014,
+      "lng": 16.423658
+    }
+  },
+  {
+    "text": "WFLWR/km100.0",
+    "coordinates": {
+      "lat": 48.20641,
+      "lng": 16.43199
+    }
+  },
+  {
+    "text": "WFLWR/Am Rollerdamm 2, 1210 Wien",
+    "coordinates": {
+      "lat": 48.245629,
+      "lng": 16.395465
+    }
+  },
+  {
+    "text": "WFLWR/Floridsdorfer Brücke/A22/Am Rollerdamm",
+    "coordinates": {
+      "lat": 48.249089,
+      "lng": 16.391767
+    }
+  },
+  {
+    "text": "WFLWR/Floridsdorfer Brücke/Donauinsel (über Parkplatz)",
+    "coordinates": {
+      "lat": 48.249383,
+      "lng": 16.386892
+    }
+  },
+  {
+    "text": "WFLWR/Sinawastingasse 2, 1210 Wien (zum Steinitzsteg)",
+    "coordinates": {
+      "lat": 48.256371,
+      "lng": 16.386441
+    }
+  },
+  {
+    "text": "WFLWR/Praunstraße 48, 2103 Langenzersdorf (Barwichgasse, Einlaufbauwerk, über B3)",
+    "coordinates": {
+      "lat": 48.299416,
+      "lng": 16.349113
+    }
+  },
+  {
+    "text": "WFLWR/Tuttendörfl 10, 2100 Langenzersdorf (A22 Korneuburg-Ost)",
+    "coordinates": {
+      "lat": 48.327412,
+      "lng": 16.334472
+    }
+  },
+  {
+    "text": "WFLWR/Kanalstraße 41, 2100 Korneuburg (A22 Korneuburg-Ost)",
+    "coordinates": {
+      "lat": 48.335881,
+      "lng": 16.326951
+    }
+  },
+  {
+    "text": "WFLWR/Am Hafen 1, 2100 Korneuburg (A22 Korneuburg-Ost)",
+    "coordinates": {
+      "lat": 48.340228,
+      "lng": 16.322751
+    }
+  },
+  {
+    "text": "WFLWR/Zum Scheibenstand 41, 2100 Korneuburg (A22 Korneuburg-Ost)",
+    "coordinates": {
+      "lat": 48.344895,
+      "lng": 16.318305
+    }
+  },
+  {
+    "text": "WFLWR/Donaukraftwerkstraße 1, 2000 Stockerau (A22 Stockerau-Ost)",
+    "coordinates": {
+      "lat": 48.359083,
+      "lng": 16.240725
+    }
+  },
+  {
+    "text": "WFLWR/Am Hafen 1, 3422 St. Andrä-Wördern (Höhenbeschränkung: Zufahrt über Feldgasse oder Schredengasse, nicht über Donaustraße/Schneiderweg!",
+    "coordinates": {
+      "lat": 48.347146,
+      "lng": 16.211803
+    }
+  },
+  {
+    "text": "WFLWR/Dammstraße 1, 3424 Zeiselmauer (Zufahrt über Augasse)",
+    "coordinates": {
+      "lat": 48.339018,
+      "lng": 16.172013
+    }
+  },
+  {
+    "text": "WFLWR/Tullner Straße 2, 3424 Muckendorf an der Donau (# Donaustraße)",
+    "coordinates": {
+      "lat": 48.332107,
+      "lng": 16.154672
+    }
+  }]

@@ -1,6 +1,6 @@
 package at.wrk.coceso.entity.helper;
 
-import at.wrk.coceso.entity.Point;
+import at.wrk.coceso.entity.point.Point;
 
 /**
  * Form data for the batch unit creation

@@ -27,17 +27,20 @@ define(["knockout"], function(ko) {
    * @param {Object} data Initial data for the point
    */
   var Point = function(data) {
-    this.id = ko.observable(null);
+    this.isEmpty = ko.observable(true);
     this.info = ko.observable("");
-    this.lat = ko.observable(null);
-    this.lng = ko.observable(null);
+    this.coordinates = ko.observable(null);
 
     this.setData = function(data) {
-      data = data || {};
-      this.id(data.id || null);
-      this.info(data.info || "");
-      this.lat(typeof data.latitude === "undefined" ? null : data.latitude || null);
-      this.lng(typeof data.longitude === "undefined" ? null : data.longitude || null);
+      if (data) {
+        this.isEmpty(!data.info);
+        this.info(data.info || "");
+        this.coordinates(data.coordinates || null);
+      } else {
+        this.isEmpty(true);
+        this.info("");
+        this.coordinates(null);
+      }
     };
 
     /**
@@ -48,11 +51,9 @@ define(["knockout"], function(ko) {
      * @returns {Object}
      */
     this.getStatic = ko.pureComputed(function() {
-      return {
-        id: this.id(),
+      return this.isEmpty() ? null : {
         info: this.info(),
-        lat: this.lat(),
-        lng: this.lng()
+        coordinates: this.coordinates()
       };
     }, this).extend({rateLimit: 5});
 

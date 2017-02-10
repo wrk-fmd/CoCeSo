@@ -131,7 +131,7 @@ define(["knockout", "main/models/point", "./task", "utils/constants", "utils/des
        * @type ko.pureComputed
        * @returns {boolean}
        */
-      this.isHome = this.position.id.extend({isValue: this.home.id});
+      this.isHome = this.position.info.extend({isValue: this.home.info});
 
       /**
        * Unit is "free" (not at home, no Incident assigned)

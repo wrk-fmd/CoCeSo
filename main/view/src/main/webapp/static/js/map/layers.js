@@ -27,6 +27,7 @@ define(["./leaflet", "./ajaxgeojson", "./popup", "./wfs", "utils/i18n"], functio
     var base = {}, overlay = {}, names = {
       basemap: _("map.basemap"),
       ortho: _("map.ortho"),
+      osm: _("map.osm"),
       hospitals: _("map.hospitals"),
       oneway: _("map.oneway"),
       defi: _("map.defi")
@@ -53,6 +54,10 @@ define(["./leaflet", "./ajaxgeojson", "./popup", "./wfs", "utils/i18n"], functio
         bounds: [[46.358770, 8.782379], [49.037872, 17.189532]]
       })
     ]);
+    base[names.osm] = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: _("map.source") + ": © <a href='https://openstreetmap.org'>OpenStreetMap</a> contributors"
+    });
 
     overlay[names.hospitals] = new AjaxGeoJSON(getWfsUrl("https://data.wien.gv.at/daten/geo", "ogdwien:KRANKENHAUSOGD"), {
       pointToLayer: function(feature, latlng) {

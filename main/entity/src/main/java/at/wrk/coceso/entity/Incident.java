@@ -4,6 +4,7 @@ import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entity.helper.JsonViews;
+import at.wrk.coceso.entity.point.Point;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -49,13 +50,11 @@ public class Incident implements Serializable, Comparable<Incident>, ConcernBoun
   private Map<Unit, TaskState> units;
 
   @JsonView(JsonViews.Main.class)
-  @ManyToOne
-  @JoinColumn(name = "bo_point_fk")
+  @Column
   private Point bo;
 
   @JsonView(JsonViews.Main.class)
-  @ManyToOne
-  @JoinColumn(name = "ao_point_fk")
+  @Column
   private Point ao;
 
   @JsonView(JsonViews.Main.class)
@@ -251,6 +250,10 @@ public class Incident implements Serializable, Comparable<Incident>, ConcernBoun
 
   public void setBo(Point bo) {
     this.bo = bo;
+  }
+
+  public boolean hasAo() {
+    return !Point.isEmpty(ao);
   }
 
   public Point getAo() {

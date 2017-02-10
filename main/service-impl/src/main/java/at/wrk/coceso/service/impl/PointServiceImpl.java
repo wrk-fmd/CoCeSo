@@ -1,14 +1,16 @@
 package at.wrk.coceso.service.impl;
 
 import at.wrk.coceso.entity.Concern;
-import at.wrk.coceso.entity.Point;
-import at.wrk.coceso.repository.PointRepository;
+import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.service.PointService;
-import at.wrk.coceso.service.point.MultipleAutocomplete;
-import at.wrk.coceso.service.point.MultipleLocate;
+import at.wrk.coceso.service.patadmin.PatadminService;
+import at.wrk.geocode.autocomplete.AutocompleteSupplier;
 import java.util.Collection;
-import org.apache.commons.lang3.StringUtils;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,53 +18,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 class PointServiceImpl implements PointService {
 
-  @Autowired
-  private MultipleAutocomplete autocomplete;
+  private static final int AUTOC_LEN = 20;
 
   @Autowired
-  private MultipleLocate locate;
+  private PatadminService patadminService;
 
   @Autowired
-  private PointRepository pointRepository;
-
-  @Override
-  public Point createIfNotExists(Point dummy) {
-    return createIfNotExists(dummy, null);
-  }
-
-  @Override
-  public Point createIfNotExists(Point dummy, Concern concern) {
-    if (dummy == null) {
-      return null;
-    }
-
-    if (dummy.getId() != null) {
-      // If the id already exists, return Point from Database
-      Point p = pointRepository.findOne(dummy.getId());
-      if (p != null) {
-        return locate(p, concern);
-      }
-      dummy.setId(null);
-    }
-
-    dummy.setInfo(StringUtils.trimToNull(dummy.getInfo()));
-    if (dummy.getInfo() != null) {
-      Point p = pointRepository.findByInfo(dummy.getInfo());
-      if (p != null) {
-        return locate(p, concern);
-      }
-
-      dummy.setLatitude(null);
-      dummy.setLongitude(null);
-      return locate(pointRepository.save(dummy), concern);
-    }
-
-    if (dummy.getLatitude() != null && dummy.getLongitude() != null) {
-      return pointRepository.save(dummy);
-    }
-
-    return null;
-  }
+  @Qualifier("ChainedAutocomplete")
+  private AutocompleteSupplier<?> autocomplete;
 
   @Override
   public Collection<String> autocomplete(String filter) {
@@ -71,19 +34,31 @@ class PointServiceImpl implements PointService {
 
   @Override
   public Collection<String> autocomplete(String filter, Concern concern) {
-    if (filter == null || filter.length() <= 1) {
+    String filterLower = AutocompleteSupplier.getKey(filter);
+    if (filterLower == null || filterLower.length() <= 1) {
       return null;
     }
-    return autocomplete.getAll(filter.toLowerCase().replaceAll("\n", ", "), 20, concern);
+
+    if (Concern.isClosed(concern)) {
+      Collection<String> filtered = autocomplete.getStartStringCollection(filterLower);
+      filtered.addAll(autocomplete.getContainingStringCollection(filterLower, AUTOC_LEN - filtered.size()));
+      return filtered;
+    }
+
+    List<Unit> groups = patadminService.getGroups(concern);
+    Collection<String> filtered = Stream.concat(
+        groups.stream().map(Unit::getCall).filter(u -> u.toLowerCase().startsWith(filterLower)),
+        autocomplete.getStartString(filterLower)
+    ).collect(Collectors.toList());
+
+    if (filtered.size() < AUTOC_LEN) {
+      filtered.addAll(Stream.concat(
+          groups.stream().map(Unit::getCall).filter(u -> u.toLowerCase().indexOf(filterLower) > 0),
+          autocomplete.getContainingString(filterLower, null)
+      ).limit(AUTOC_LEN - filtered.size()).collect(Collectors.toList()));
+    }
+
+    return filtered;
   }
 
-  private Point locate(Point p, Concern concern) {
-    if (locate == null || StringUtils.isEmpty(p.getInfo()) || (p.getLatitude() != null && p.getLongitude() != null)) {
-      return p;
-    }
-    if (locate.locate(p, concern)) {
-      p = pointRepository.save(p);
-    }
-    return p;
-  }
 }

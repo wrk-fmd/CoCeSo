@@ -408,8 +408,8 @@ define(["knockout", "./form", "../models/incident", "../models/task", "../models
         value: function() {
           var data = {
             id: this.id,
-            ao: {info: this.ao()},
-            bo: {info: this.bo()},
+            ao: this.ao(),
+            bo: this.bo(),
             blue: this.blue(),
             priority: this.priority(),
             caller: this.caller(),

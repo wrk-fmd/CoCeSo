@@ -20,7 +20,8 @@
     <module>gmaps</module>
     <module>niu</module>
     <module>radio</module>
-    <module>vcm</module>
+    <module>vcm-poi</module>
     <module>vienna</module>
+    <module>wflwr-poi</module>
   </modules>
 </project>

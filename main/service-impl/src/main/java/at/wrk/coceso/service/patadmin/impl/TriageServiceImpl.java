@@ -2,13 +2,13 @@ package at.wrk.coceso.service.patadmin.impl;
 
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Incident;
-import at.wrk.coceso.entity.Medinfo;
 import at.wrk.coceso.entity.Patient;
 import at.wrk.coceso.entity.Patient_;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.enums.Errors;
 import at.wrk.coceso.entity.enums.IncidentType;
+import at.wrk.coceso.entity.point.UnitPoint;
 import at.wrk.coceso.entityevent.impl.NotifyList;
 import at.wrk.coceso.exceptions.ErrorsException;
 import at.wrk.coceso.form.TriageForm;
@@ -118,8 +118,7 @@ class TriageServiceImpl implements TriageServiceInternal {
 
     final Incident inc = incident;
     if ((incident.getType() != IncidentType.Task && incident.getType() != IncidentType.Transport)
-        || !incident.getState().isDone() || incident.getAo() == null
-        || !patadminService.getGroups(inc.getConcern()).stream().anyMatch(u -> u.getCall().equals(inc.getAo().getInfo()))) {
+        || incident.getState().isDone() || !(incident.getAo() instanceof UnitPoint)) {
       throw new ErrorsException(Errors.IncidentNotAllowed);
     }
 
@@ -175,9 +174,6 @@ class TriageServiceImpl implements TriageServiceInternal {
     patient.setDiagnosis(form.getDiagnosis());
     patient.setInfo(form.getInfo());
 
-    if (form.getMedinfo() != null) {
-      patient.setMedinfo(new Medinfo(form.getMedinfo()));
-    }
     return patient;
   }
 

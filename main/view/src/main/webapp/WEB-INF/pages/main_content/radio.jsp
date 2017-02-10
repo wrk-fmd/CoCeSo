@@ -39,7 +39,7 @@
         <dl class="dl-horizontal list-narrow">
           <!-- ko if: portable -->
           <dt><span class="glyphicon glyphicon-map-marker"></span></dt>
-          <dd><span class="pre" data-bind="text: position.id() ? position.info() : 'N/A'"></span></dd>
+          <dd><span class="pre" data-bind="text: position.isEmpty() ? 'N/A' : position.info()"></span></dd>
           <!-- /ko -->
           <!-- ko foreach: incidents -->
           <dt data-bind="html: incident() && incident().assignedTitle()"></dt>
@@ -90,7 +90,7 @@
             <dl class="dl-horizontal list-narrow">
               <!-- ko if: portable -->
               <dt><span class="glyphicon glyphicon-map-marker"></span></dt>
-              <dd><span class="pre" data-bind="text: position.id() ? position.info() : 'N/A'"></span></dd>
+              <dd><span class="pre" data-bind="text: position.isEmpty() ? 'N/A' : position.info()"></span></dd>
               <!-- /ko -->
               <!-- ko foreach: incidents -->
               <dt data-bind="html: incident() && incident().assignedTitle()"></dt>

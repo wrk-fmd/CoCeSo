@@ -80,11 +80,10 @@ define(["knockout", "./leaflet", "utils/destroy"], function(ko, L, destroyComput
     var line = new L.Polyline([[0, 0], [0, 0]]);
 
     this._updateLine = ko.computed(function() {
-      var aLat = inc.ao.lat(), aLng = inc.ao.lng(),
-        bLat = inc.bo.lat(), bLng = inc.bo.lng();
+      var aCoord = inc.ao.coordinates(), bCoord = inc.bo.coordinates();
 
-      if (aLat && aLng && bLat && bLng) {
-        line.setLatLngs([[bLat, bLng], [aLat, aLng]]);
+      if (aCoord && bCoord) {
+        line.setLatLngs([[bCoord.lat, bCoord.lng], [aCoord.lat, aCoord.lng]]);
         layer.addLayer(line);
       } else {
         layer.removeLayer(line);

@@ -36,6 +36,11 @@
       <artifactId>coceso-config</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
+    <dependency>
+      <groupId>at.wrk.geocode</groupId>
+      <artifactId>geocode</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
 
     <!-- Spring -->
     <dependency>

@@ -249,7 +249,7 @@ define(["knockout", "data/save", "data/store/incidents", "data/store/units",
             return;
           }
 
-          if (needAO && !incident.ao.id() && (nextState === s.zao || nextState === s.aao)) {
+          if (needAO && !incident.hasAO() && (nextState === s.zao || nextState === s.aao)) {
             console.info("No AO set, opening Incident Window");
             navigation.openIncident({id: incident.id});
             return;

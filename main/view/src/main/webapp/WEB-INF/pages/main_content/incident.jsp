@@ -111,7 +111,7 @@
           </h3>
           <div>
             <dl class="dl-horizontal list-spacing list-narrower">
-              <!-- ko if: bo.id() && !disableBO() -->
+              <!-- ko if: !bo.isEmpty() && !disableBO() -->
               <dt><spring:message code="incident.bo"/></dt>
               <dd><span class="pre" data-bind="text: bo.info"></span></dd>
               <!-- /ko -->

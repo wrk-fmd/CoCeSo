@@ -5,6 +5,7 @@ import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.TaskState;
+import at.wrk.coceso.entity.point.Point;
 import at.wrk.coceso.entityevent.impl.NotifyList;
 import at.wrk.coceso.service.internal.IncidentServiceInternal;
 import org.slf4j.Logger;
@@ -37,7 +38,7 @@ class CreateHoldPosition implements TaskStateHook {
     }
 
     // If Relocation goes to unit.home -> just detach, so unit is marked as 'at Home'
-    if (incident.getAo() != null && !incident.getAo().equals(unit.getHome())) {
+    if (incident.hasAo() && !Point.infoEquals(incident.getAo(), unit.getHome())) {
       LOG.debug("{}: Creating HoldPosition for unit {} on AAO", user, incident, unit);
       incidentService.createHoldPosition(incident.getAo(), unit, TaskState.AAO, user, notify);
     }

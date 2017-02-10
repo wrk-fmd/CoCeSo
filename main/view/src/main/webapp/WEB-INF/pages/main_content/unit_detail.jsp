@@ -32,7 +32,7 @@
         <!-- /ko -->
 
         <dt><span class="glyphicon glyphicon-map-marker"></span></dt>
-        <dd><span class="pre" data-bind="text: position.id() ? position.info() : 'N/A'"></span></dd>
+        <dd><span class="pre" data-bind="text: position.isEmpty() ? 'N/A' : position.info()"></span></dd>
 
         <dt><spring:message code="unit.state"/></dt>
         <dd>

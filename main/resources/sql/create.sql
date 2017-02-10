@@ -25,6 +25,23 @@ CREATE TABLE IF NOT EXISTS selcall (
   direction E_DIRECTION NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS geocode (
+  id SERIAL PRIMARY KEY,
+  street VARCHAR(50),
+  intersection VARCHAR(50),
+  numberFrom INTEGER,
+  numberTo INTEGER,
+  numberLetter VARCHAR(5),
+  numberBlock VARCHAR(20),
+  postCode INTEGER,
+  city VARCHAR(50),
+  lat DOUBLE PRECISION NOT NULL,
+  lng DOUBLE PRECISION NOT NULL
+);
+CREATE UNIQUE INDEX geocode_address ON geocode (
+  LOWER(street), LOWER(intersection), numberFrom, numberTo, LOWER(numberLetter), LOWER(numberBlock), postCode, LOWER(city)
+);
+
 CREATE TABLE IF NOT EXISTS point (
   id SERIAL PRIMARY KEY,
   info TEXT NOT NULL,
@@ -56,8 +73,8 @@ CREATE TABLE IF NOT EXISTS unit (
   transportVehicle BOOLEAN NOT NULL,
   type E_UNITTYPE,
   info TEXT NOT NULL,
-  position_point_fk INTEGER REFERENCES point ON DELETE SET NULL,
-  home_point_fk INTEGER REFERENCES point ON DELETE SET NULL,
+  position JSONB,
+  home JSONB,
   capacity INTEGER,
   imgsrc VARCHAR(30),
   section_fk VARCHAR(30),
@@ -130,8 +147,8 @@ CREATE TABLE IF NOT EXISTS incident (
   type E_INCIDENTTYPE NOT NULL,
   priority BOOLEAN NOT NULL,
   blue BOOLEAN NOT NULL,
-  bo_point_fk INTEGER REFERENCES point ON DELETE SET NULL,
-  ao_point_fk INTEGER REFERENCES point ON DELETE SET NULL,
+  bo JSONB,
+  ao JSONB,
   info TEXT,
   caller VARCHAR(100),
   casusNr VARCHAR(100),

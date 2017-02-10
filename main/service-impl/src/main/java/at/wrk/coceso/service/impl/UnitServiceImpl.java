@@ -4,12 +4,13 @@ import at.wrk.coceso.entity.*;
 import at.wrk.coceso.entity.enums.*;
 import at.wrk.coceso.entity.helper.BatchUnits;
 import at.wrk.coceso.entity.helper.Changes;
+import at.wrk.coceso.entity.point.Point;
+import at.wrk.coceso.entity.point.UnitSupplier;
 import at.wrk.coceso.entityevent.impl.NotifyList;
 import at.wrk.coceso.exceptions.ErrorsException;
 import at.wrk.coceso.importer.UnitImporter;
 import at.wrk.coceso.repository.UnitRepository;
 import at.wrk.coceso.service.LogService;
-import at.wrk.coceso.service.PointService;
 import at.wrk.coceso.service.UserService;
 import at.wrk.coceso.service.internal.IncidentServiceInternal;
 import at.wrk.coceso.service.internal.TaskServiceInternal;
@@ -31,7 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
-class UnitServiceImpl implements UnitServiceInternal {
+class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
 
   private final static Logger LOG = LoggerFactory.getLogger(UnitServiceImpl.class);
 
@@ -48,9 +49,6 @@ class UnitServiceImpl implements UnitServiceInternal {
   private TaskServiceInternal taskService;
 
   @Autowired
-  private PointService pointService;
-
-  @Autowired
   private UserService userService;
 
   @Autowired
@@ -59,6 +57,11 @@ class UnitServiceImpl implements UnitServiceInternal {
   @Override
   public Unit getById(int id) {
     return unitRepository.findOne(id);
+  }
+
+  @Override
+  public Unit getTreatmentByCall(String call, Concern concern) {
+    return (call == null || concern == null) ? null : unitRepository.findFirstByCallAndConcernAndTypeIn(call, concern, UnitType.treatmentTypes);
   }
 
   @Override
@@ -119,10 +122,11 @@ class UnitServiceImpl implements UnitServiceInternal {
       changes.put("info", save.getInfo(), unit.getInfo());
       save.setInfo(unit.getInfo());
     }
-    if (unit.getPosition() != null && !Point.infoEquals(unit.getPosition(), save.getPosition())) {
-      Point p = pointService.createIfNotExists(unit.getPosition(), save.getConcern());
-      changes.put("position", Point.toStringOrNull(save.getPosition()), Point.toStringOrNull(p));
-      save.setPosition(p);
+
+    Point position = Point.create(unit.getPosition(), save.getConcern());
+    if (!Point.infoEquals(position, save.getPosition())) {
+      changes.put("position", Point.toStringOrNull(save.getPosition()), Point.toStringOrNull(position));
+      save.setPosition(position);
     }
 
     unit = unitRepository.save(save);
@@ -167,10 +171,11 @@ class UnitServiceImpl implements UnitServiceInternal {
         save.setInfo(unit.getInfo());
       }
 
-      if (!Point.isEmpty(unit.getHome())) {
-        Point p = pointService.createIfNotExists(unit.getHome());
-        changes.put("home", null, Point.toStringOrNull(p));
-        save.setHome(p);
+      // Using null for the concern prevents a UnitPoint being created. Maybe make that more explicit?
+      Point home = Point.create(unit.getHome(), null);
+      if (!Point.isEmpty(home)) {
+        changes.put("home", null, Point.toStringOrNull(home));
+        save.setHome(home);
       }
 
       if (unit.getType() != null) {
@@ -218,10 +223,10 @@ class UnitServiceImpl implements UnitServiceInternal {
         save.setInfo(unit.getInfo());
       }
 
-      if (!Point.infoEquals(unit.getHome(), save.getHome())) {
-        Point p = pointService.createIfNotExists(unit.getHome());
-        changes.put("home", Point.toStringOrNull(save.getHome()), Point.toStringOrNull(p));
-        save.setHome(p);
+      Point home = Point.create(unit.getHome(), null);
+      if (!Point.infoEquals(home, save.getHome())) {
+        changes.put("home", Point.toStringOrNull(save.getHome()), Point.toStringOrNull(home));
+        save.setHome(home);
       }
 
       if (unit.getType() != save.getType()) {

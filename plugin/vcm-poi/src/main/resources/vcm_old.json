@@ -1,0 +1,373 @@
+[
+  {
+    "text": "VCM/Posten km0\nSchüttaustraße # Wagramerstraße",
+    "coordinates": {
+      "lat": 48.23157,
+      "lng": 16.41616
+    }
+  },
+  {
+    "text": "VCM/Posten km1\nMexikoplatz # Reichsbrücke",
+    "coordinates": {
+      "lat": 48.224685,
+      "lng": 16.40329
+    }
+  },
+  {
+    "text": "VCM/Posten km2\nLassallestraße # Leopold-Moses-Gasse",
+    "coordinates": {
+      "lat": 48.221757,
+      "lng": 16.396957
+    }
+  },
+  {
+    "text": "VCM/km3 km28\nPrater Hauptallee",
+    "coordinates": {
+      "lat": 48.214523,
+      "lng": 16.397167
+    }
+  },
+  {
+    "text": "VCM/km4 km29\nPrater Hauptallee # Kaiserallee",
+    "coordinates": {
+      "lat": 48.208942,
+      "lng": 16.407819
+    }
+  },
+  {
+    "text": "VCM/km5\nStadionallee",
+    "coordinates": {
+      "lat": 48.203147,
+      "lng": 16.415777
+    }
+  },
+  {
+    "text": "VCM/Posten km5,5 km36\nStadionbrücke # Schüttelstraße",
+    "coordinates": {
+      "lat": 48.196968,
+      "lng": 16.411276
+    }
+  },
+  {
+    "text": "VCM/km6\nSchüttelstraße",
+    "coordinates": {
+      "lat": 48.199282,
+      "lng": 16.409631
+    }
+  },
+  {
+    "text": "VCM/km7\nSchüttelstraße # Halmgasse",
+    "coordinates": {
+      "lat": 48.2038,
+      "lng": 16.399429
+    }
+  },
+  {
+    "text": "VCM/km8\nSchüttelstraße # Laufbergergasse",
+    "coordinates": {
+      "lat": 48.212162,
+      "lng": 16.394854
+    }
+  },
+  {
+    "text": "VCM/Posten km9\nAspernbrückengasse # Untere Donaustraße",
+    "coordinates": {
+      "lat": 48.212518,
+      "lng": 16.383155
+    }
+  },
+  {
+    "text": "VCM/km10\nStubenring # Falkestraße",
+    "coordinates": {
+      "lat": 48.212518,
+      "lng": 16.383155
+    }
+  },
+  {
+    "text": "VCM/km11\nKärntner Ring",
+    "coordinates": {
+      "lat": 48.201601,
+      "lng": 16.373069
+    }
+  },
+  {
+    "text": "VCM/km12\nLinke Wienzeile # Girardigasse",
+    "coordinates": {
+      "lat": 48.198542,
+      "lng": 16.362881
+    }
+  },
+  {
+    "text": "VCM/Posten km12,5\nEggerthgasse # Linke Wienzeile",
+    "coordinates": {
+      "lat": 48.196565,
+      "lng": 16.355770
+    }
+  },
+  {
+    "text": "VCM/km13\nLinke Wienzeile # Pilgramgasse",
+    "coordinates": {
+      "lat": 48.192857,
+      "lng": 16.35396
+    }
+  },
+  {
+    "text": "VCM/km14\nLinke Wienzeile # Morizgasse",
+    "coordinates": {
+      "lat": 48.188875,
+      "lng": 16.343966
+    }
+  },
+  {
+    "text": "VCM/km15\nLinke Wienzeile # Storchengasse",
+    "coordinates": {
+      "lat": 48.184364,
+      "lng": 16.332885
+    }
+  },
+  {
+    "text": "VCM/Posten km15,5\nAnschützgasse # Linke Wienzeile",
+    "coordinates": {
+      "lat": 48.185123,
+      "lng": 16.323914
+    }
+  },
+  {
+    "text": "VCM/km16\nLinke Wienzeile # Winckelmannstraße",
+    "coordinates": {
+      "lat": 48.186207,
+      "lng": 16.319972
+    }
+  },
+  {
+    "text": "VCM/km17\nMariahilfer Straße # Winckelmannstraße",
+    "coordinates": {
+      "lat": 48.190176,
+      "lng": 16.318476
+    }
+  },
+  {
+    "text": "VCM/km18\nMariahilfer Straße # Clementinengasse",
+    "coordinates": {
+      "lat": 48.192004,
+      "lng": 16.33271
+    }
+  },
+  {
+    "text": "VCM/Posten km19\nEuropaplatz",
+    "coordinates": {
+      "lat": 48.196012,
+      "lng": 16.339446
+    }
+  },
+  {
+    "text": "VCM/Posten km20\nStiftgasse # Mariahilfer Straße",
+    "coordinates": {
+      "lat": 48.200379,
+      "lng": 16.355941
+    }
+  },
+  {
+    "text": "VCM/Posten km20,5\nBurgring # Babenbergerstraße",
+    "coordinates": {
+      "lat": 48.203850,
+      "lng": 16.363416
+    }
+  },
+  {
+    "text": "VCM/km21\nBurgring # Heldenplatz",
+    "coordinates": {
+      "lat": 48.206012,
+      "lng": 16.361044
+    }
+  },
+  {
+    "text": "VCM/km22\nSchottenring # Schottengasse",
+    "coordinates": {
+      "lat": 48.214083,
+      "lng": 16.362714
+    }
+  },
+  {
+    "text": "VCM/km23\nLiechtensteinstraße # Fürstengasse",
+    "coordinates": {
+      "lat": 48.221479,
+      "lng": 16.359499
+    }
+  },
+  {
+    "text": "VCM/Posten km24\nFriedensbrücke",
+    "coordinates": {
+      "lat": 48.203850,
+      "lng": 16.363416
+    }
+  },
+  {
+    "text": "VCM/km25\nObere Donaustraße # Roßauer Brücke",
+    "coordinates": {
+      "lat": 48.220601,
+      "lng": 16.369626
+    }
+  },
+  {
+    "text": "VCM/km26\nObere Donaustraße # Marienbrücke",
+    "coordinates": {
+      "lat": 48.213355,
+      "lng": 16.376641
+    }
+  },
+  {
+    "text": "VCM/km27\nPraterstraße # Rotensterngasse",
+    "coordinates": {
+      "lat": 48.215797,
+      "lng": 16.386541
+    }
+  },
+  {
+    "text": "VCM/Posten km27,5\nPraterstern",
+    "coordinates": {
+      "lat": 48.203850,
+      "lng": 16.363416
+    }
+  },
+  {
+    "text": "VCM/km30.5\nMeiereistraße Wende",
+    "coordinates": {
+      "lat": 48.209717,
+      "lng": 16.419963
+    }
+  },
+  {
+    "text": "VCM/Posten km30 km31 km35\nStadion",
+    "coordinates": {
+      "lat": 48.204602,
+      "lng": 16.416401
+    }
+  },
+  {
+    "text": "VCM/Posten km32 km33 km34\nLusthaus",
+    "coordinates": {
+      "lat": 48.203850,
+      "lng": 16.363416
+    }
+  },
+  {
+    "text": "VCM/km37\nSchüttelstraße # Lukschgasse",
+    "coordinates": {
+      "lat": 48.201853,
+      "lng": 16.406602
+    }
+  },
+  {
+    "text": "VCM/km38\nSchüttelstraße # Wittelsbachstraße",
+    "coordinates": {
+      "lat": 48.20734,
+      "lng": 16.397896
+    }
+  },
+  {
+    "text": "VCM/km39\nRadetzkystraße # Dampfschiffstraße",
+    "coordinates": {
+      "lat": 48.206157,
+      "lng": 16.418035
+    }
+  },
+  {
+    "text": "VCM/Posten km39,5\nRadetzkystraße # Vordere Zollamtsstraße",
+    "coordinates": {
+      "lat": 48.211249,
+      "lng": 16.385035
+    }
+  },
+  {
+    "text": "VCM/km40\nVordere Zollamtsstraße # Weiskirchnerstraße",
+    "coordinates": {
+      "lat": 48.207314,
+      "lng": 16.383254
+    }
+  },
+  {
+    "text": "VCM/Posten km41\nSchwarzenbergplatz",
+    "coordinates": {
+      "lat": 48.201516,
+      "lng": 16.37443
+    }
+  },
+  {
+    "text": "VCM/km42\nBurgring # Heldenplatz",
+    "coordinates": {
+      "lat": 48.204891,
+      "lng": 16.362539
+    }
+  },
+  {
+    "text": "VCM/Triage",
+    "coordinates": {
+      "lat": 48.206915,
+      "lng": 16.364295
+    }
+  },
+  {
+    "text": "VCM/I/II",
+    "coordinates": {
+      "lat": 48.206915,
+      "lng": 16.364295
+    }
+  },
+  {
+    "text": "VCM/IIIa",
+    "coordinates": {
+      "lat": 48.206915,
+      "lng": 16.364295
+    }
+  },
+  {
+    "text": "VCM/IIIb",
+    "coordinates": {
+      "lat": 48.206915,
+      "lng": 16.364295
+    }
+  },
+  {
+    "text": "VCM/IIIc",
+    "coordinates": {
+      "lat": 48.206915,
+      "lng": 16.364295
+    }
+  },
+  {
+    "text": "VCM/IIId",
+    "coordinates": {
+      "lat": 48.206915,
+      "lng": 16.364295
+    }
+  },
+  {
+    "text": "VCM/SanHiSt",
+    "coordinates": {
+      "lat": 48.207012,
+      "lng": 16.364469
+    }
+  },
+  {
+    "text": "VCM/WaHaPl Minoritenplatz",
+    "coordinates": {
+      "lat": 48.209187,
+      "lng": 16.364278
+    }
+  },
+  {
+    "text": "VCM/Kinderläufe Start 4,2",
+    "coordinates": {
+      "lat": 48.194913,
+      "lng": 16.397192
+    }
+  },
+  {
+    "text": "VCM/Kinderläufe Start 2,0",
+    "coordinates": {
+      "lat": 48.205399,
+      "lng": 16.386437
+    }
+  }
+]

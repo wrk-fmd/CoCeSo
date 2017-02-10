@@ -2,41 +2,49 @@ package at.wrk.coceso.entity.helper;
 
 public interface JsonViews {
 
-  public interface Always {
+  interface Always {
   }
 
-  public interface Home extends Always {
+  interface Web extends Always, PointMinimal {
   }
 
-  public interface Edit extends Always {
+  interface Database extends Always {
   }
 
-  public interface Main extends Always {
+  interface PointMinimal extends Always {
   }
 
-  public interface Client extends Always {
-
+  interface PointFull extends PointMinimal {
   }
 
-  public interface ClientList extends Client {
+  interface Home extends Web {
   }
 
-  public interface ClientDetail extends Client {
+  interface Edit extends Web {
   }
 
-  public interface ClientUnit extends Client {
-
+  interface Main extends Web {
   }
 
-  public interface ClientUnitList extends ClientList, ClientUnit {
-
+  interface Client extends Web {
   }
 
-  public interface ClientUnitDetail extends ClientDetail, ClientUnit {
-
+  interface ClientList extends Client {
   }
 
-  public interface Patadmin extends Always {
+  interface ClientDetail extends Client {
+  }
+
+  interface ClientUnit extends Client {
+  }
+
+  interface ClientUnitList extends ClientList, ClientUnit {
+  }
+
+  interface ClientUnitDetail extends ClientDetail, ClientUnit {
+  }
+
+  interface Patadmin extends Web {
   }
 
 }

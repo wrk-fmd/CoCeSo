@@ -1,13 +1,13 @@
 package at.wrk.coceso.service.hooks;
 
 import at.wrk.coceso.entity.Incident;
-import at.wrk.coceso.entity.Point;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.LogEntryType;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entity.helper.Changes;
+import at.wrk.coceso.entity.point.Point;
 import at.wrk.coceso.entityevent.impl.NotifyList;
 import at.wrk.coceso.repository.UnitRepository;
 import at.wrk.coceso.service.LogService;

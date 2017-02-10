@@ -1,112 +1,156 @@
 [
   {
-    "info": "AKH Ev\nWähringer Gürtel 18-20/6D\n1090 Wien",
-    "latitude": 48.22141,
-    "longitude": 16.34619
+    "text": "AKH Ev\nWähringer Gürtel 18-20/6D\n1090 Wien",
+    "coordinates": {
+      "lat": 48.22141,
+      "lng": 16.34619
+    }
   },
   {
-    "info": "AKH Unf\nWähringer Gürtel 18-20/6C\n1090 Wien",
-    "latitude": 48.22141,
-    "longitude": 16.34619
+    "text": "AKH Unf\nWähringer Gürtel 18-20/6C\n1090 Wien",
+    "coordinates": {
+      "lat": 48.22141,
+      "lng": 16.34619
+    }
   },
   {
-    "info": "AKH Kinder\nWähringer Gürtel 18-20\n1090 Wien",
-    "latitude": 48.21942,
-    "longitude": 16.34427
+    "text": "AKH Kinder\nWähringer Gürtel 18-20\n1090 Wien",
+    "coordinates": {
+      "lat": 48.21942,
+      "lng": 16.34427
+    }
   },
   {
-    "info": "FLO Ev\nHinaysgasse 1/A/EG\n1210 Wien",
-    "latitude": 48.2538,
-    "longitude": 16.40624
+    "text": "FLO Ev\nHinaysgasse 1/A/EG\n1210 Wien",
+    "coordinates": {
+      "lat": 48.2538,
+      "lng": 16.40624
+    }
   },
   {
-    "info": "HAN Ev\nHeinrich-Collin-Straße 30/Pav.3/2\n1140 Wien",
-    "latitude": 48.19951,
-    "longitude": 16.29101
+    "text": "HAN Ev\nHeinrich-Collin-Straße 30/Pav.3/2\n1140 Wien",
+    "coordinates": {
+      "lat": 48.19951,
+      "lng": 16.29101
+    }
   },
   {
-    "info": "HAN Unf\nHeinrich-Collin-Straße 30/Pav.4/1\n1140 Wien",
-    "latitude": 48.19999,
-    "longitude": 16.29095
+    "text": "HAN Unf\nHeinrich-Collin-Straße 30/Pav.4/1\n1140 Wien",
+    "coordinates": {
+      "lat": 48.19999,
+      "lng": 16.29095
+    }
   },
   {
-    "info": "KFJ Ev\nKundratstraße 3/Pav.M\n1100 Wien",
-    "latitude": 48.17452,
-    "longitude": 16.35138
+    "text": "KFJ Ev\nKundratstraße 3/Pav.M\n1100 Wien",
+    "coordinates": {
+      "lat": 48.17452,
+      "lng": 16.35138
+    }
   },
   {
-    "info": "KHH Ev\nWolkersbergenstraße 1/Pav.5a\n1130 Wien",
-    "latitude": 48.1704,
-    "longitude": 16.27527
+    "text": "KHH Ev\nWolkersbergenstraße 1/Pav.5a\n1130 Wien",
+    "coordinates": {
+      "lat": 48.1704,
+      "lng": 16.27527
+    }
   },
   {
-    "info": "KHH Chir\nWolkersbergenstraße 1/Pav.16\n1130 Wien",
-    "latitude": 48.17307,
-    "longitude": 16.27185
+    "text": "KHH Chir\nWolkersbergenstraße 1/Pav.16\n1130 Wien",
+    "coordinates": {
+      "lat": 48.17307,
+      "lng": 16.27185
+    }
   },
   {
-    "info": "LBK EU\nDonaueschingenstraße 13\n1200 Wien",
-    "latitude": 48.2373,
-    "longitude": 16.3838
+    "text": "LBK EU\nDonaueschingenstraße 13\n1200 Wien",
+    "coordinates": {
+      "lat": 48.2373,
+      "lng": 16.3838
+    }
   },
   {
-    "info": "NZR\nRiedelgasse 5\n1130 Wien",
-    "latitude": 48.16229,
-    "longitude": 16.28104
+    "text": "NZR\nRiedelgasse 5\n1130 Wien",
+    "coordinates": {
+      "lat": 48.16229,
+      "lng": 16.28104
+    }
   },
   {
-    "info": "OWS Ev\nSanatoriumstraße 2/Pav. Wienerwald\n1140 Wien",
-    "latitude": 48.20724,
-    "longitude": 16.2739
+    "text": "OWS Ev\nSanatoriumstraße 2/Pav. Wienerwald\n1140 Wien",
+    "coordinates": {
+      "lat": 48.20724,
+      "lng": 16.2739
+    }
   },
   {
-    "info": "RUD Ev\nJuchgasse 25\n1030 Wien",
-    "latitude": 48.19632,
-    "longitude": 16.39
+    "text": "RUD Ev\nJuchgasse 25\n1030 Wien",
+    "coordinates": {
+      "lat": 48.19632,
+      "lng": 16.39
+    }
   },
   {
-    "info": "RUD Kinder\nBoerhaavegasse 13\n1030 Wien",
-    "latitude": 48.19603,
-    "longitude": 16.3923
+    "text": "RUD Kinder\nBoerhaavegasse 13\n1030 Wien",
+    "coordinates": {
+      "lat": 48.19603,
+      "lng": 16.3923
+    }
   },
   {
-    "info": "SMZO Ev\nLangobardenstraße 122\n1220 Wien",
-    "latitude": 48.21923,
-    "longitude": 16.46314
+    "text": "SMZO Ev\nLangobardenstraße 122\n1220 Wien",
+    "coordinates": {
+      "lat": 48.21923,
+      "lng": 16.46314
+    }
   },
   {
-    "info": "SMZO Unf\nLangobardenstraße 122\n1220 Wien",
-    "latitude": 48.2191,
-    "longitude": 16.46347
+    "text": "SMZO Unf\nLangobardenstraße 122\n1220 Wien",
+    "coordinates": {
+      "lat": 48.2191,
+      "lng": 16.46347
+    }
   },
   {
-    "info": "SMZO Kinder\nLangobardenstraße 122\n1220 Wien",
-    "latitude": 48.21901,
-    "longitude": 16.46396
+    "text": "SMZO Kinder\nLangobardenstraße 122\n1220 Wien",
+    "coordinates": {
+      "lat": 48.21901,
+      "lng": 16.46396
+    }
   },
   {
-    "info": "STA Ev\nKinderspitalgasse 6\n1090 Wien",
-    "latitude": 48.21588,
-    "longitude": 16.34432
+    "text": "STA Ev\nKinderspitalgasse 6\n1090 Wien",
+    "coordinates": {
+      "lat": 48.21588,
+      "lng": 16.34432
+    }
   },
   {
-    "info": "UKH EU\nKundratstraße 37\n1120 Wien",
-    "latitude": 48.17311,
-    "longitude": 16.34406
+    "text": "UKH EU\nKundratstraße 37\n1120 Wien",
+    "coordinates": {
+      "lat": 48.17311,
+      "lng": 16.34406
+    }
   },
   {
-    "info": "WIL Ev\nMontleartstraße 37/Pav.80\n1160 Wien",
-    "latitude": 48.21138,
-    "longitude": 16.30196
+    "text": "WIL Ev\nMontleartstraße 37/Pav.80\n1160 Wien",
+    "coordinates": {
+      "lat": 48.21138,
+      "lng": 16.30196
+    }
   },
   {
-    "info": "WIL Unf\nMontleartstraße 37/Pav.30\n1160 Wien",
-    "latitude": 48.21084,
-    "longitude": 16.30011
+    "text": "WIL Unf\nMontleartstraße 37/Pav.30\n1160 Wien",
+    "coordinates": {
+      "lat": 48.21084,
+      "lng": 16.30011
+    }
   },
   {
-    "info": "WIL Kinder\nMontleartstraße 37/Pav.40\n1160 Wien",
-    "latitude": 48.20849,
-    "longitude": 16.29987
+    "text": "WIL Kinder\nMontleartstraße 37/Pav.40\n1160 Wien",
+    "coordinates": {
+      "lat": 48.20849,
+      "lng": 16.29987
+    }
   }
 ]

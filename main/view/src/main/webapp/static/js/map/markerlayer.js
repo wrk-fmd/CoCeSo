@@ -111,39 +111,41 @@ define(["jquery", "knockout", "./leaflet", "./marker", "./point"], function($, k
      * @returns {module:map/point}
      */
     _getMapPoint: function(point) {
-      if (!point || !point.id) {
+      if (!point) {
         return null;
       }
 
+      var id = point.info + "_" + (point.coordinates === null ? "unknown" : point.coordinates.lat + "_" + point.coordinates.lng);
+
       var mapPoint = null;
-      if (this._points[point.id]) {
-        if (!this._points[point.id].checkLatLng(point)) {
+      if (this._points[id]) {
+        if (!this._points[id].checkLatLng(point)) {
           // Point exists, but has been moved
-          mapPoint = this._points[point.id];
+          mapPoint = this._points[id];
           mapPoint.setData(point);
         } else {
-          this._points[point.id].info(point.info);
+          this._points[id].info(point.info);
         }
       } else {
         // Point does not yet exist
-        mapPoint = this._points[point.id] = new Point(point);
+        mapPoint = this._points[id] = new Point(point, id);
       }
 
       if (mapPoint) {
         // Point is either new or has been moved
-        if (point.lat === null || point.lng === null) {
+        if (point.coordinates === null) {
           // Coordinates not set, move to noCoordControl
           mapPoint.moveToMarker(this._noCoordsControl);
         } else {
           // Find near points
-          var x = Math.round(point.lat * 5000) / 5000,
-            y = Math.round(point.lng * 2500) / 2500,
-            x1 = x < point.lat ? x + 0.0002 : x - 0.0002,
-            y1 = x < point.lng ? x + 0.0004 : x - 0.0004;
+          var x = Math.round(point.coordinates.lat * 5000) / 5000,
+            y = Math.round(point.coordinates.lng * 2500) / 2500,
+            x1 = x < point.coordinates.lat ? x + 0.0002 : x - 0.0002,
+            y1 = x < point.coordinates.lng ? x + 0.0004 : x - 0.0004;
 
           var gridMarkers = $.merge($.merge(this._getGrid(x, y), this._getGrid(x, y1)), $.merge(this._getGrid(x1, y), this._getGrid(x1, y1)));
           var near = $.map(gridMarkers, function(marker) {
-            var distance = marker.getLatLng().distanceTo(point);
+            var distance = marker.getLatLng().distanceTo(point.coordinates);
             return distance < 10 ? {m: marker, d: distance} : null;
           });
 
@@ -155,7 +157,7 @@ define(["jquery", "knockout", "./leaflet", "./marker", "./point"], function($, k
             mapPoint.moveToMarker(near[0].m);
           } else {
             // Create a new marker
-            var marker = new Marker(point, this, {noCoordsControl: this._noCoordsControl});
+            var marker = new Marker(point.coordinates, this, {noCoordsControl: this._noCoordsControl});
             if (this._grid[x]) {
               if (this._grid[x][y]) {
                 this._grid[x][y].push(marker);
@@ -170,7 +172,7 @@ define(["jquery", "knockout", "./leaflet", "./marker", "./point"], function($, k
           }
         }
       }
-      return this._points[point.id];
+      return this._points[id];
     },
     _getGrid: function(x, y) {
       return (this._grid[x] && this._grid[x][y]) ? $.merge([], this._grid[x][y]) : [];

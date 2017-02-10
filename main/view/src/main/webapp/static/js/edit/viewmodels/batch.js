@@ -52,7 +52,7 @@ define(["knockout", "data/save", "utils/errorhandling", "ko/bindings/point", "ko
           withDoc: this.doc(),
           transportVehicle: this.vehicle(),
           portable: this.portable(),
-          home: {info: this.home()}
+          home: this.home()
         }), "unit/createBatch.json", function() {
           self.call("");
           self.from(null);

@@ -162,7 +162,7 @@ define(["knockout", "./point", "./task", "../navigation", "data/save", "utils/co
        * @returns {boolean}
        */
       this.hasHome = ko.pureComputed(function() {
-        return !!this.home.id();
+        return !this.home.isEmpty();
       }, this);
 
       /**
@@ -172,7 +172,7 @@ define(["knockout", "./point", "./task", "../navigation", "data/save", "utils/co
        * @type ko.pureComputed
        * @returns {boolean}
        */
-      this.isHome = this.position.id.extend({isValue: this.home.id});
+      this.isHome = this.position.info.extend({isValue: this.home.info});
 
       /**
        * Unit has state "AD"
@@ -294,7 +294,7 @@ define(["knockout", "./point", "./task", "../navigation", "data/save", "utils/co
        * @returns {boolean}
        */
       this.disableHoldPosition = ko.pureComputed(function() {
-        if (this.isHome() || !this.position.id() || (this.incidentCount() > 1)) {
+        if (this.isHome() || this.position.isEmpty() || (this.incidentCount() > 1)) {
           return true;
         }
         if (this.incidentCount() <= 0) {
@@ -342,7 +342,7 @@ define(["knockout", "./point", "./task", "../navigation", "data/save", "utils/co
           content += "<dt><span class='glyphicon glyphicon-home'></span></dt><dd><span class='pre'>" + this.home.info().escapeHTML() + "</span></dd>";
         }
         content += "<dt><span class='glyphicon glyphicon-map-marker'></span></dt><dd><span class='pre'>" +
-          (this.position.id() ? this.position.info().escapeHTML() : "N/A") + "</span></dd>";
+          (this.position.isEmpty() ? "N/A" : this.position.info().escapeHTML()) + "</span></dd>";
 
         content += "</dl><hr/><dl class='dl-horizontal'>";
 

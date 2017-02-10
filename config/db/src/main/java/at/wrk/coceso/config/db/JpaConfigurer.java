@@ -17,14 +17,14 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories("at.wrk.coceso")
+@EnableJpaRepositories({"at.wrk.coceso", "at.wrk.geocode"})
 class JpaConfigurer {
 
   @Bean
   public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {
     LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
     em.setDataSource(dataSource);
-    em.setPackagesToScan("at.wrk.coceso");
+    em.setPackagesToScan("at.wrk.coceso", "at.wrk.geocode");
 
     em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
     em.setPersistenceUnitName("at.wrk.coceso");

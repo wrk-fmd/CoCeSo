@@ -27,13 +27,13 @@ define(["knockout", "utils/constants", "utils/destroy"], function(ko, constants,
    * @constructor
    * @param {Object} point Unwrapped Point
    */
-  var Point = function(point) {
-    this.id = point.id;
+  var Point = function(point, id) {
+    this.id = id;
     this.bo = ko.observableArray([]);
     this.ao = ko.observableArray([]);
     this.units = ko.observableArray([]);
     this.info = ko.observable(point.info);
-    this._latlng = {lat: point.lat, lng: point.lng};
+    this._latlng = point.coordinates;
     this._marker = null;
 
     /**
@@ -213,7 +213,9 @@ define(["knockout", "utils/constants", "utils/destroy"], function(ko, constants,
      */
     checkLatLng: {
       value: function(latlng) {
-        return this._latlng.lat === latlng.lat && this._latlng.lng === latlng.lng;
+        return this._latlng === null || latlng === null
+          ? this._latlng === null && latlng === null
+          : this._latlng.lat === latlng.lat && this._latlng.lng === latlng.lng;
       }
     },
     /**
@@ -224,7 +226,7 @@ define(["knockout", "utils/constants", "utils/destroy"], function(ko, constants,
      */
     setData: {
       value: function(point) {
-        this._latlng = {lat: point.lat, lng: point.lng};
+        this._latlng = point.coordinates;
         this.info(point.info);
       }
     },

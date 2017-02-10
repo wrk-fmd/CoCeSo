@@ -5,6 +5,7 @@ import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.LogEntryType;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entity.helper.Changes;
+import at.wrk.coceso.entity.point.Point;
 import at.wrk.coceso.service.PdfService;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;

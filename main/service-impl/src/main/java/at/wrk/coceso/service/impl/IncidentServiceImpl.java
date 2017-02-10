@@ -3,7 +3,6 @@ package at.wrk.coceso.service.impl;
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.Patient;
-import at.wrk.coceso.entity.Point;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.enums.Errors;
@@ -12,11 +11,12 @@ import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.LogEntryType;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entity.helper.Changes;
+import at.wrk.coceso.entity.point.Point;
+import at.wrk.coceso.entity.point.UnitPoint;
 import at.wrk.coceso.entityevent.impl.NotifyList;
 import at.wrk.coceso.exceptions.ErrorsException;
 import at.wrk.coceso.repository.IncidentRepository;
 import at.wrk.coceso.service.LogService;
-import at.wrk.coceso.service.PointService;
 import at.wrk.coceso.service.UnitService;
 import at.wrk.coceso.service.hooks.HookService;
 import at.wrk.coceso.service.internal.IncidentServiceInternal;
@@ -41,16 +41,13 @@ class IncidentServiceImpl implements IncidentServiceInternal {
 
   private final static Logger LOG = LoggerFactory.getLogger(IncidentServiceImpl.class);
 
-  private final static Sort sort = new Sort(Sort.Direction.ASC, "id");
+  private final static Sort SORT = new Sort(Sort.Direction.ASC, "id");
 
   @Autowired
   private IncidentRepository incidentRepository;
 
   @Autowired
   private TaskServiceInternal taskService;
-
-  @Autowired
-  private PointService pointService;
 
   @Autowired
   private HookService hookService;
@@ -76,7 +73,7 @@ class IncidentServiceImpl implements IncidentServiceInternal {
 
   @Override
   public List<Incident> getAllSorted(Concern concern) {
-    return incidentRepository.findByConcern(concern, sort);
+    return incidentRepository.findByConcern(concern, SORT);
   }
 
   @Override
@@ -86,22 +83,22 @@ class IncidentServiceImpl implements IncidentServiceInternal {
 
   @Override
   public List<Incident> getAllForReport(Concern concern) {
-    return incidentRepository.findNonSingleUnit(concern, sort);
+    return incidentRepository.findNonSingleUnit(concern, SORT);
   }
 
   @Override
   public List<Incident> getAllForDump(Concern concern) {
-    return incidentRepository.findActiveNonSingleUnit(concern, sort);
+    return incidentRepository.findActiveNonSingleUnit(concern, SORT);
   }
 
   @Override
   public List<Incident> getAllTransports(Concern concern) {
-    return incidentRepository.findTransports(concern, sort);
+    return incidentRepository.findTransports(concern, SORT);
   }
 
   @Override
   public List<Incident> getAllActive(Concern concern) {
-    return incidentRepository.findActive(concern, sort);
+    return incidentRepository.findActive(concern, SORT);
   }
 
   @Override
@@ -187,7 +184,7 @@ class IncidentServiceImpl implements IncidentServiceInternal {
     incident.setState(IncidentState.InProgress);
 
     changes.put("ao", null, group.getCall());
-    incident.setAo(pointService.createIfNotExists(new Point(group.getCall()), group.getConcern()));
+    incident.setAo(new UnitPoint(group.getId()));
 
     changes.put("type", null, IncidentType.Treatment);
     incident.setType(IncidentType.Treatment);
@@ -252,23 +249,25 @@ class IncidentServiceImpl implements IncidentServiceInternal {
     }
 
     if (incident.isPriority()) {
-      changes.put("priority", null, incident.isPriority());
+      changes.put("priority", null, true);
       save.setPriority(true);
     }
 
     if (incident.isBlue()) {
-      changes.put("blue", null, incident.isBlue());
+      changes.put("blue", null, true);
       save.setBlue(true);
     }
 
-    if (!Point.isEmpty(incident.getBo())) {
-      changes.put("bo", null, incident.getBo().toString());
-      save.setBo(pointService.createIfNotExists(incident.getBo(), concern));
+    Point bo = Point.create(incident.getBo(), concern);
+    if (!Point.isEmpty(bo)) {
+      changes.put("bo", null, bo.toString());
+      save.setBo(bo);
     }
 
-    if (!Point.isEmpty(incident.getAo())) {
-      changes.put("ao", null, incident.getAo().toString());
-      save.setAo(pointService.createIfNotExists(incident.getAo(), concern));
+    Point ao = Point.create(incident.getAo(), concern);
+    if (!Point.isEmpty(ao)) {
+      changes.put("ao", null, ao.toString());
+      save.setAo(ao);
     }
 
     if (StringUtils.isNotBlank(incident.getCasusNr())) {
@@ -329,14 +328,16 @@ class IncidentServiceImpl implements IncidentServiceInternal {
       save.setBlue(incident.isBlue());
     }
 
-    if (!Point.infoEquals(incident.getBo(), save.getBo())) {
-      changes.put("bo", Point.toStringOrNull(save.getBo()), Point.toStringOrNull(incident.getBo()));
-      save.setBo(pointService.createIfNotExists(incident.getBo(), save.getConcern()));
+    Point bo = Point.create(incident.getBo(), save.getConcern());
+    if (!Point.infoEquals(bo, save.getBo())) {
+      changes.put("bo", Point.toStringOrNull(save.getBo()), Point.toStringOrNull(bo));
+      save.setBo(bo);
     }
 
-    if (!Point.infoEquals(incident.getAo(), save.getAo())) {
-      changes.put("ao", Point.toStringOrNull(save.getAo()), Point.toStringOrNull(incident.getAo()));
-      save.setAo(pointService.createIfNotExists(incident.getAo(), save.getConcern()));
+    Point ao = Point.create(incident.getAo(), save.getConcern());
+    if (!Point.infoEquals(ao, save.getAo())) {
+      changes.put("ao", Point.toStringOrNull(save.getAo()), Point.toStringOrNull(ao));
+      save.setAo(ao);
     }
 
     if (!Objects.equals(save.getCasusNr(), incident.getCasusNr())) {

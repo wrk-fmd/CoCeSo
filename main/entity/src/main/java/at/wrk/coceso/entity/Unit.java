@@ -5,6 +5,7 @@ import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entity.enums.UnitState;
 import at.wrk.coceso.entity.enums.UnitType;
 import at.wrk.coceso.entity.helper.JsonViews;
+import at.wrk.coceso.entity.point.Point;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -83,13 +84,11 @@ public class Unit implements Serializable, Comparable<Unit>, ConcernBoundEntity 
   private String info;
 
   @JsonView(JsonViews.Main.class)
-  @ManyToOne
-  @JoinColumn(name = "position_point_fk")
+  @Column
   private Point position;
 
   @JsonView({JsonViews.Edit.class, JsonViews.Main.class})
-  @ManyToOne
-  @JoinColumn(name = "home_point_fk")
+  @Column
   private Point home;
 
   // TODO: FK relation!

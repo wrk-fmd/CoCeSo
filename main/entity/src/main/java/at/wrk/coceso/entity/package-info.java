@@ -1,5 +1,6 @@
 @TypeDefs({
   @TypeDef(typeClass = ChangesUserType.class, defaultForType = Changes.class),
+  @TypeDef(typeClass = PointUserType.class, defaultForType = Point.class),
   @TypeDef(typeClass = EnumUserType.class, parameters = @Parameter(name = "enumClass", value = "at.wrk.coceso.entity.enums.Authority"), defaultForType = Authority.class),
   @TypeDef(typeClass = EnumUserType.class, parameters = @Parameter(name = "enumClass", value = "at.wrk.coceso.entity.enums.IncidentState"), defaultForType = IncidentState.class),
   @TypeDef(typeClass = EnumUserType.class, parameters = @Parameter(name = "enumClass", value = "at.wrk.coceso.entity.enums.IncidentType"), defaultForType = IncidentType.class),
@@ -14,8 +15,10 @@ package at.wrk.coceso.entity;
 
 import at.wrk.coceso.entity.enums.*;
 import at.wrk.coceso.entity.helper.Changes;
+import at.wrk.coceso.entity.point.Point;
 import at.wrk.coceso.entity.types.ChangesUserType;
 import at.wrk.coceso.entity.types.EnumUserType;
+import at.wrk.coceso.entity.types.PointUserType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;

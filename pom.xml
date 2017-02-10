@@ -22,13 +22,13 @@
     <jsp.version>2.0</jsp.version>
     <jstl.version>1.2</jstl.version>
     <servlet.version>3.1.0</servlet.version>
-    <spring.version>4.2.5.RELEASE</spring.version>
-    <spring.data.version>1.11.4.RELEASE</spring.data.version>
-    <spring.data.jpa.version>1.9.4.RELEASE</spring.data.jpa.version>
+    <spring.version>4.3.5.RELEASE</spring.version>
+    <spring.data.version>1.12.2.RELEASE</spring.data.version>
+    <spring.data.jpa.version>1.10.2.RELEASE</spring.data.jpa.version>
     <spring.security.version>4.0.4.RELEASE</spring.security.version>
-    <spring.shell.version>1.1.0.RELEASE</spring.shell.version>
     <tomcat.version>8.0.32</tomcat.version>
     <validation.version>1.1.0.Final</validation.version>
+    <aspectj.version>1.8.10</aspectj.version>
 
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
@@ -37,9 +37,9 @@
 
   <modules>
     <module>config</module>
+    <module>geocode</module>
     <module>main</module>
     <module>plugin</module>
-    <module>shell</module>
   </modules>
 
   <dependencies>

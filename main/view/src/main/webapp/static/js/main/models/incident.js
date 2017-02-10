@@ -267,7 +267,7 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
        * @returns {boolean}
        */
       this.hasAO = ko.computed(function() {
-        return !!this.ao.id();
+        return !this.ao.isEmpty();
       }, this);
 
       /**
@@ -345,9 +345,9 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
        */
       this.title = ko.pureComputed(function() {
         if (!this.disableBO()) {
-          return (this.bo.id()) ? this.bo.info() : _("incident.nobo");
+          return (this.bo.isEmpty()) ? _("incident.nobo") : this.bo.info();
         }
-        return (this.ao.id()) ? this.ao.info() : _("incident.noao");
+        return (this.ao.isEmpty()) ? _("incident.noao") : this.ao.info();
       }, this);
 
       /**

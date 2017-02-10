@@ -187,7 +187,7 @@ define(["knockout", "./form", "../models/task", "../models/unit",
         value: function() {
           var data = {
             id: this.id,
-            position: {info: this.position()},
+            position: this.position(),
             info: this.info(),
             state: this.state(),
             incidents: {}
