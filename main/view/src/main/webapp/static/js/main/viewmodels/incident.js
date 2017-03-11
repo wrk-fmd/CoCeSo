@@ -317,7 +317,7 @@ define(["knockout", "./form", "../models/incident", "../models/task", "../models
        * @param {Object} ui jQuery UI properties
        */
       this.assignUnitForm = function(event, ui) {
-        var viewmodel = ko.dataFor(ui.draggable.context);
+        var viewmodel = ko.dataFor(ui.draggable[0]);
         if (!(viewmodel instanceof Unit)) {
           return;
         }

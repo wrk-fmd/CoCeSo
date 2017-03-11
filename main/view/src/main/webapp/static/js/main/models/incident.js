@@ -467,7 +467,7 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
        * @returns {void}
        */
       this.assignUnitList = function(event, ui) {
-        var unit = ko.dataFor(ui.draggable.context);
+        var unit = ko.dataFor(ui.draggable[0]);
 
         if ((unit instanceof Unit) && self.id && unit.id) {
           save({incident_id: self.id, unit_id: unit.id}, "assignUnit.json");
