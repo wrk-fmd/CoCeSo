@@ -75,7 +75,7 @@ define(["knockout", "../models/call", "data/load", "data/stomp", "data/store/rad
         // Remove all entries older than x minutes
         store.interval = window.setInterval(function() {
           store.calls.remove(function(call) {
-            return call.timestamp.interval() > minutes * 60000;
+            return call.timestamp.interval() > minutes * 60;
           });
         }, 60000);
       }

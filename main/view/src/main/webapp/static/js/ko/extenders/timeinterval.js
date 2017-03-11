@@ -27,38 +27,35 @@ define(["knockout", "utils/clock"], function(ko, clock) {
    * @returns {ko.pureComputed}
    */
   ko.extenders.timeinterval = function(target, minutes) {
-    var intervalDiv = minutes ? 60000 : 1,
-      fmtDiv = minutes ? 1 : 1000;
-
+    var intervalDiv = minutes ? 60000 : 1000;
 
     target.interval = ko.pureComputed(function() {
-      return Math.floor((clock.timestamp() - target()) / intervalDiv);
+      return Math.floor(Math.max(clock.timestamp() - target(), 0) / intervalDiv);
     });
 
     target.fmtInterval = ko.pureComputed(function() {
-      var interval = Math.floor(target.interval() / fmtDiv);
-      if (interval <= 0) {
-        return "0:00";
-      }
-
-      var string = "", val;
+      var interval = target.interval(), string = "", val;
 
       if (!minutes) {
+        // Add seconds to string
         val = interval % 60;
         interval = Math.floor(interval / 60);
         string = ":" + (val < 10 ? "0" : "") + val + string;
       }
 
+      // Add minutes to string
       if (interval === 0) {
         return "0" + string;
       }
       val = interval % 60;
       interval = Math.floor(interval / 60);
+      string = val + string;
 
+      // Add hours to string
       if (interval === 0) {
-        return val + string;
+        return string;
       }
-      return interval + ":" + (val < 10 ? "0" : "") + val + string;
+      return interval + ":" + (val < 10 ? "0" : "") + string;
     });
 
     return target;
