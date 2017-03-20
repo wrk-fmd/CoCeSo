@@ -11,22 +11,26 @@ $$ LANGUAGE plpgsql;
 
 ALTER TABLE unit
   DROP CONSTRAINT unit_position_point_fk_fkey,
-  ALTER COLUMN position_point_fk TYPE JSONB USING transformpoint(position_point_fk),
+  ALTER COLUMN position_point_fk TYPE JSONB USING transformpoint(position_point_fk);
+ALTER TABLE unit
   RENAME COLUMN position_point_fk TO position;
 
 ALTER TABLE unit
   DROP CONSTRAINT unit_home_point_fk_fkey,
-  ALTER COLUMN home_point_fk TYPE JSONB USING transformpoint(home_point_fk),
+  ALTER COLUMN home_point_fk TYPE JSONB USING transformpoint(home_point_fk);
+ALTER TABLE unit
   RENAME COLUMN home_point_fk TO home;
 
 ALTER TABLE incident
   DROP CONSTRAINT incident_bo_point_fk_fkey,
-  ALTER COLUMN bo_point_fk TYPE JSONB USING transformpoint(bo_point_fk),
+  ALTER COLUMN bo_point_fk TYPE JSONB USING transformpoint(bo_point_fk);
+ALTER TABLE incident
   RENAME COLUMN bo_point_fk TO bo;
 
 ALTER TABLE incident
   DROP CONSTRAINT incident_ao_point_fk_fkey,
-  ALTER COLUMN ao_point_fk TYPE JSONB USING transformpoint(ao_point_fk),
+  ALTER COLUMN ao_point_fk TYPE JSONB USING transformpoint(ao_point_fk);
+ALTER TABLE incident
   RENAME COLUMN ao_point_fk TO ao;
 
 DROP FUNCTION transformpoint(INTEGER);
