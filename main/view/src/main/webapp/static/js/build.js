@@ -27,6 +27,10 @@
     {name: "home",
       excludeShallow: ["bloodhound", "jquery", "jquery-i18n", "leaflet", "knockout", "knockout-sortable", "typeahead.js", "stomp"]},
     {name: "main",
+      include: [
+        "main/viewmodels/incidents", "main/viewmodels/incident", "main/viewmodels/units", "main/viewmodels/hierarchy",
+        "main/viewmodels/unit", "main/viewmodels/unitdetail", "main/viewmodels/customlog", "main/viewmodels/logs",
+        "main/viewmodels/patients", "main/viewmodels/patient", "main/viewmodels/radio", "map/viewmodel"],
       excludeShallow: ["bloodhound", "jquery", "jquery-i18n", "leaflet", "knockout", "knockout-sortable", "typeahead.js", "stomp"]},
     {name: "map",
       excludeShallow: ["bloodhound", "jquery", "jquery-i18n", "leaflet", "knockout", "knockout-sortable", "typeahead.js", "stomp"]},
