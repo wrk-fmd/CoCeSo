@@ -26,7 +26,7 @@ public class Incident implements Serializable, Comparable<Incident>, ConcernBoun
   private Integer id;
 
   @JsonIgnore
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "concern_fk", updatable = false, nullable = false)
   private Concern concern;
 
@@ -42,7 +42,7 @@ public class Incident implements Serializable, Comparable<Incident>, ConcernBoun
   @Column
   private boolean blue;
 
-  @ElementCollection(fetch = FetchType.EAGER)
+  @ElementCollection
   @CollectionTable(name = "task", joinColumns = {
     @JoinColumn(name = "incident_fk")})
   @MapKeyJoinColumn(name = "unit_fk")
@@ -74,7 +74,7 @@ public class Incident implements Serializable, Comparable<Incident>, ConcernBoun
   private IncidentType type;
 
   @JsonView(JsonViews.Main.class)
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "patient_fk")
   private Patient patient;
 

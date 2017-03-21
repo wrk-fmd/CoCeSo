@@ -63,7 +63,7 @@ class ConcernServiceImpl implements ConcernService {
 
     validator.validate(this);
 
-    save = concernRepository.save(save);
+    save = concernRepository.saveAndFlush(save);
 
     // TODO json
     logService.logAuto(user, concern.getId() == null ? LogEntryType.CONCERN_CREATE : LogEntryType.CONCERN_UPDATE, save, null);
@@ -85,7 +85,7 @@ class ConcernServiceImpl implements ConcernService {
     }
 
     concern.setClosed(close);
-    concernRepository.save(concern);
+    concernRepository.saveAndFlush(concern);
 
     if (close) {
       LOG.info("{}: Closed concern {}", user, concern);
@@ -110,7 +110,7 @@ class ConcernServiceImpl implements ConcernService {
       throw new ErrorsException(Errors.SectionExists);
     }
     concern.addSection(section);
-    concernRepository.save(concern);
+    concernRepository.saveAndFlush(concern);
   }
 
   @Override
@@ -122,7 +122,7 @@ class ConcernServiceImpl implements ConcernService {
       throw new ErrorsException(Errors.ConcernMissingOrClosed);
     }
     concern.removeSection(section);
-    concernRepository.save(concern);
+    concernRepository.saveAndFlush(concern);
   }
 
   @Override

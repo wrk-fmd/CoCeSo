@@ -54,7 +54,7 @@ class UnitAutoPosition implements TaskStateHook {
     changes.put("position", Point.toStringOrNull(unit.getPosition()), Point.toStringOrNull(position));
     unit.setPosition(position);
 
-    unitRepository.save(unit);
+    unitRepository.saveAndFlush(unit);
     logService.logAuto(user, LogEntryType.UNIT_AUTOSET_POSITION, unit.getConcern(), unit, incident, state, changes);
     notify.add(unit);
 

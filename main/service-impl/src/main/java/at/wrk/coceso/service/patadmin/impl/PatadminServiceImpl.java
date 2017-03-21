@@ -149,7 +149,9 @@ class PatadminServiceImpl implements PatadminServiceInternal {
         .filter(Objects::nonNull)
         .collect(Collectors.toSet());
 
-    return unitRepository.save(save);
+    List<Unit> saved = unitRepository.save(save);
+    unitRepository.flush();
+    return saved;
   }
 
 }

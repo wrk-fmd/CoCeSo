@@ -3,6 +3,7 @@ package at.wrk.coceso.controller.view;
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.User;
 import at.wrk.coceso.service.UserService;
+import at.wrk.coceso.utils.Initializer;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
@@ -17,6 +18,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -50,9 +52,10 @@ public class WelcomeController {
   }
 
   @PreAuthorize("isAuthenticated()")
+  @Transactional
   @RequestMapping(value = "/home", method = RequestMethod.GET)
   public String showHome(ModelMap map, @AuthenticationPrincipal User user, HttpServletResponse response,
-          @RequestParam(value = "error", required = false) Integer error) {
+      @RequestParam(value = "error", required = false) Integer error) {
     map.addAttribute("error", error != null && allowedErrors.contains(error) ? error : 0);
 
     user = userService.getById(user.getId());
@@ -71,7 +74,7 @@ public class WelcomeController {
     }
 
     // Add Userdetails to Model
-    map.addAttribute("user", user);
+    map.addAttribute("user", Initializer.init(user, User::getInternalAuthorities));
 
     LOG.debug("{}: Started Home Screen", user);
 

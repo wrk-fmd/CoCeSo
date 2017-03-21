@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import org.hibernate.Hibernate;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -33,7 +34,7 @@ public class Concern implements Serializable {
   private boolean closed;
 
   @JsonView({JsonViews.Main.class, JsonViews.Edit.class})
-  @ElementCollection(fetch = FetchType.EAGER)
+  @ElementCollection
   @CollectionTable(name = "sections", joinColumns = {
     @JoinColumn(name = "concern_fk")})
   @Column(name = "name", length = 30)
@@ -57,13 +58,13 @@ public class Concern implements Serializable {
 
   @Override
   public boolean equals(Object obj) {
-    if (obj == null || getClass() != obj.getClass()) {
+    if (obj == null || getClass() != Hibernate.getClass(obj)) {
       return false;
     }
     if (obj == this) {
       return true;
     }
-    return (this.id != null && this.id.equals(((Concern) obj).id));
+    return (this.id != null && this.id.equals(((Concern) obj).getId()));
   }
 
   @Override

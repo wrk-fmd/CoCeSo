@@ -13,6 +13,7 @@ import at.wrk.coceso.entityevent.EntityEventHandler;
 import at.wrk.coceso.service.UnitService;
 import at.wrk.coceso.service.UnitWriteService;
 import at.wrk.coceso.utils.ActiveConcern;
+import at.wrk.coceso.utils.Initializer;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +45,8 @@ public class UnitController {
   @Transactional
   @RequestMapping(value = "main", produces = "application/json", method = RequestMethod.GET)
   public SequencedResponse<List<Unit>> getForMain(@ActiveConcern Concern concern) {
-    return new SequencedResponse<>(entityEventHandler.getHver(), entityEventHandler.getSeq(concern.getId()), unitService.getAll(concern));
+    return new SequencedResponse<>(entityEventHandler.getHver(), entityEventHandler.getSeq(concern.getId()),
+        Initializer.init(unitService.getAll(concern), Unit::getIncidents));
   }
 
   @PreAuthorize("@auth.hasAccessLevel('Edit')")
@@ -52,13 +54,14 @@ public class UnitController {
   @Transactional
   @RequestMapping(value = "edit", produces = "application/json", method = RequestMethod.GET)
   public SequencedResponse<List<Unit>> getForEdit(@ActiveConcern Concern concern) {
-    return new SequencedResponse<>(entityEventHandler.getHver(), entityEventHandler.getSeq(concern.getId()), unitService.getAll(concern));
+    return new SequencedResponse<>(entityEventHandler.getHver(), entityEventHandler.getSeq(concern.getId()),
+        Initializer.init(unitService.getAll(concern), Unit::isLocked));
   }
 
   @PreAuthorize("@auth.hasAccessLevel('Edit')")
   @RequestMapping(value = "createBatch", produces = "application/json", method = RequestMethod.POST)
   public RestResponse createBatch(@RequestBody BatchUnits batch, BindingResult result,
-          @ActiveConcern Concern concern, @AuthenticationPrincipal User user) {
+      @ActiveConcern Concern concern, @AuthenticationPrincipal User user) {
     return new RestResponse(true, new RestProperty("ids", unitWriteService.batchCreate(batch, concern, user)));
   }
 
@@ -76,7 +79,7 @@ public class UnitController {
   @PreAuthorize("@auth.hasAccessLevel('Edit')")
   @RequestMapping(value = "updateFull", produces = "application/json", method = RequestMethod.POST)
   public RestResponse updateEdit(@RequestBody Unit unit, BindingResult result,
-          @ActiveConcern Concern concern, @AuthenticationPrincipal User user) {
+      @ActiveConcern Concern concern, @AuthenticationPrincipal User user) {
     if (result.hasErrors()) {
       return new RestResponse(result);
     }

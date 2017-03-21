@@ -44,7 +44,7 @@ public class PostprocessingController {
   @Transactional
   @RequestMapping(value = "", method = RequestMethod.GET)
   public String showHome(ModelMap map, @ActiveConcern Concern concern, @AuthenticationPrincipal User user) {
-    map.addAttribute("patients", Initializer.incidents(patadminService.getAllInTreatment(concern, user)));
+    map.addAttribute("patients", Initializer.init(patadminService.getAllInTreatment(concern, user), Patient::getIncidents));
     patadminService.addAccessLevels(map, concern);
     return "patadmin/postprocessing/list";
   }
@@ -53,7 +53,7 @@ public class PostprocessingController {
   @Transactional
   @RequestMapping(value = "/search", method = RequestMethod.GET)
   public String showSearch(ModelMap map, @ActiveConcern Concern concern, @RequestParam("q") String query, @AuthenticationPrincipal User user) {
-    map.addAttribute("patients", Initializer.incidents(patadminService.getPatientsByQuery(concern, query, true, user)));
+    map.addAttribute("patients", Initializer.init(patadminService.getPatientsByQuery(concern, query, true, user), Patient::getIncidents));
     map.addAttribute("search", query);
     patadminService.addAccessLevels(map, concern);
     return "patadmin/postprocessing/list";
@@ -63,8 +63,7 @@ public class PostprocessingController {
   @Transactional
   @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
   public String showPatient(ModelMap map, @PathVariable int id, @AuthenticationPrincipal User user) {
-    Patient patient = patientService.getById(id, user);
-    patient.getIncidents().size();
+    Patient patient = Initializer.init(patientService.getById(id, user), Patient::getIncidents);
     map.addAttribute("patient", patient);
     patadminService.addAccessLevels(map, patient.getConcern());
     return "patadmin/postprocessing/view";

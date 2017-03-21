@@ -1,6 +1,6 @@
 package at.wrk.coceso.plugins.gmaps;
 
-import at.wrk.coceso.config.CocesoConfig;
+import at.wrk.geocode.GeocodeConfig;
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.model.GeocodingResult;
@@ -14,7 +14,7 @@ public class GmapsWrapper {
   private final GeoApiContext context;
 
   @Autowired
-  public GmapsWrapper(CocesoConfig config) {
+  public GmapsWrapper(GeocodeConfig config) {
     context = config.getGmapsApiKey() == null ? null : new GeoApiContext().setApiKey(config.getGmapsApiKey());
   }
 

@@ -26,37 +26,37 @@ class LogServiceImpl implements LogService {
 
   @Override
   public void logAuto(User user, LogEntryType type, Concern concern, Changes changes) {
-    logRepository.save(new LogEntry(user, type, type.name(), concern, null, null, null, null, changes));
+    logRepository.saveAndFlush(new LogEntry(user, type, type.name(), concern, null, null, null, null, changes));
   }
 
   @Override
   public void logAuto(User user, LogEntryType type, Concern concern, Unit unit, Incident incident, Changes changes) {
-    logRepository.save(new LogEntry(user, type, type.name(), concern, unit, incident, null, null, changes));
+    logRepository.saveAndFlush(new LogEntry(user, type, type.name(), concern, unit, incident, null, null, changes));
   }
 
   @Override
   public void logAuto(User user, LogEntryType type, Concern concern, Unit unit, Incident incident, TaskState state) {
-    logRepository.save(new LogEntry(user, type, type.name(), concern, unit, incident, null, state, null));
+    logRepository.saveAndFlush(new LogEntry(user, type, type.name(), concern, unit, incident, null, state, null));
   }
 
   @Override
   public void logAuto(User user, LogEntryType type, Concern concern, Unit unit, Incident incident, TaskState state, Changes changes) {
-    logRepository.save(new LogEntry(user, type, type.name(), concern, unit, incident, null, state, changes));
+    logRepository.saveAndFlush(new LogEntry(user, type, type.name(), concern, unit, incident, null, state, changes));
   }
 
   @Override
   public void logAuto(User user, LogEntryType type, Concern concern, Patient patient, Changes changes) {
-    logRepository.save(new LogEntry(user, type, type.name(), concern, null, null, patient, null, changes));
+    logRepository.saveAndFlush(new LogEntry(user, type, type.name(), concern, null, null, patient, null, changes));
   }
 
   @Override
   public void logAuto(User user, LogEntryType type, Concern concern, Incident incident, Patient patient) {
-    logRepository.save(new LogEntry(user, type, type.name(), concern, null, incident, patient, null, null));
+    logRepository.saveAndFlush(new LogEntry(user, type, type.name(), concern, null, incident, patient, null, null));
   }
 
   @Override
   public void logCustom(User user, String text, Concern concern, Unit unit, Incident incident) {
-    logRepository.save(new LogEntry(user, LogEntryType.CUSTOM, text, concern, unit, incident, null, null, null));
+    logRepository.saveAndFlush(new LogEntry(user, LogEntryType.CUSTOM, text, concern, unit, incident, null, null, null));
   }
 
   @Override

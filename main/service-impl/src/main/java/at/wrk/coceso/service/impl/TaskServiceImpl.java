@@ -87,7 +87,7 @@ class TaskServiceImpl implements TaskServiceInternal {
     }
 
     if (u != null) {
-      u = unitRepository.save(u);
+      u = unitRepository.saveAndFlush(u);
 
       notify.add(i);
       notify.add(u);
@@ -101,7 +101,7 @@ class TaskServiceImpl implements TaskServiceInternal {
     } else {
       u.addIncident(i, state);
     }
-    u = unitRepository.save(u);
+    u = unitRepository.saveAndFlush(u);
     notify.add(i);
     notify.add(u);
   }

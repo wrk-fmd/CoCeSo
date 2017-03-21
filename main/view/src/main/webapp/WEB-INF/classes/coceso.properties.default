@@ -18,5 +18,11 @@ locale.default=en
 # JS plugins
 js.plugins={}
 
+# Geocode DB config
+geocode.db.driver=org.postgresql.Driver
+geocode.db.url=jdbc:postgresql://localhost:5432/geocode
+geocode.db.username=coceso
+geocode.db.password=password
+
 # Google Maps ApiKey
-gmaps.apikey=
+geocode.gmaps.apikey=

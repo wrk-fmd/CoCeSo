@@ -30,7 +30,7 @@ public class Unit implements Serializable, Comparable<Unit>, ConcernBoundEntity 
   private Integer id;
 
   @JsonView(JsonViews.Client.class)
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "concern_fk", updatable = false, nullable = false)
   private Concern concern;
 
@@ -97,7 +97,7 @@ public class Unit implements Serializable, Comparable<Unit>, ConcernBoundEntity 
   private String section;
 
   @JsonView({JsonViews.Main.class, JsonViews.ClientDetail.class})
-  @ElementCollection(fetch = FetchType.EAGER)
+  @ElementCollection
   @CollectionTable(name = "task", joinColumns = {
     @JoinColumn(name = "unit_fk")})
   @MapKeyJoinColumn(name = "incident_fk")

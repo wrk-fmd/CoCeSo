@@ -85,6 +85,12 @@
       <version>${project.parent.version}</version>
       <scope>runtime</scope>
     </dependency>
+    <dependency>
+      <groupId>at.wrk.coceso-plugins</groupId>
+      <artifactId>coceso-vcm-poi</artifactId>
+      <version>${project.parent.version}</version>
+      <scope>runtime</scope>
+    </dependency>
 
     <!-- Spring -->
     <dependency>

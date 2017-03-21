@@ -20,7 +20,7 @@ public class Container implements Serializable, ConcernBoundEntity {
   private Integer id;
 
   @JsonIgnore
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "concern_fk", updatable = false, nullable = false)
   private Concern concern;
 

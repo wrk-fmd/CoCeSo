@@ -56,7 +56,7 @@ class IncidentAutoDone implements TaskStateHook {
     changes.put("state", incident.getState(), IncidentState.Done);
     incident.setState(IncidentState.Done);
 
-    incidentRepository.save(incident);
+    incidentRepository.saveAndFlush(incident);
     logService.logAuto(user, LogEntryType.INCIDENT_AUTO_STATE, incident.getConcern(), unit, incident, taskState, changes);
 
     if (incident.getUnits() != null) {

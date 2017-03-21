@@ -36,7 +36,7 @@ class IncidentRemoveUnits implements IncidentDoneHook {
             notify.add(u);
           });
 
-      incidentRepository.save(incident);
+      incidentRepository.saveAndFlush(incident);
       notify.add(incident);
     }
   }

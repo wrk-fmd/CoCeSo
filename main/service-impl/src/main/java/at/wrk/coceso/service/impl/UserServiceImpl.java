@@ -13,6 +13,7 @@ import at.wrk.coceso.importer.ImportException;
 import at.wrk.coceso.importer.UserImporter;
 import at.wrk.coceso.repository.UserRepository;
 import at.wrk.coceso.service.UserService;
+import at.wrk.coceso.utils.Initializer;
 import java.util.Collection;
 import java.util.List;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -51,7 +52,7 @@ class UserServiceImpl implements UserService {
 
   @Override
   public User getByUsername(String username) {
-    return userRepository.findByUsername(username);
+    return Initializer.init(userRepository.findByUsername(username), User::getInternalAuthorities);
   }
 
   @Override
@@ -123,7 +124,7 @@ class UserServiceImpl implements UserService {
       editedUser.setActiveConcern(null);
     }
 
-    return userRepository.save(editedUser);
+    return userRepository.saveAndFlush(editedUser);
   }
 
   @Override
@@ -143,7 +144,7 @@ class UserServiceImpl implements UserService {
 
     LOG.info("{}: Changed password of user {}", user, dbUser);
     dbUser.setPassword(password);
-    userRepository.save(dbUser);
+    userRepository.saveAndFlush(dbUser);
     return true;
   }
 
@@ -161,7 +162,7 @@ class UserServiceImpl implements UserService {
       return false;
     }
     dbUser.setActiveConcern(concern);
-    userRepository.save(dbUser);
+    userRepository.saveAndFlush(dbUser);
     return true;
   }
 
@@ -176,6 +177,7 @@ class UserServiceImpl implements UserService {
     try {
       Collection<User> updated = userImporter.updateUsers(data, getAll());
       userRepository.save(updated);
+      userRepository.flush();
       return updated.size();
     } catch (ImportException ex) {
       return -2;

@@ -54,11 +54,11 @@ public class User implements UserDetails, Serializable {
   private String info;
 
   @JsonIgnore
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "concern_fk")
   private Concern activeConcern;
 
-  @JsonView(JsonViews.Always.class)
+  @JsonView(JsonViews.UserFull.class)
   @Column
   private boolean allowLogin;
 
@@ -71,8 +71,8 @@ public class User implements UserDetails, Serializable {
   @Column
   private String hashedPW;
 
-  @JsonView(JsonViews.Always.class)
-  @ElementCollection(fetch = FetchType.EAGER)
+  @JsonView(JsonViews.UserFull.class)
+  @ElementCollection
   @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_fk"))
   @Column(name = "urole", nullable = false)
   private Set<Authority> internalAuthorities;

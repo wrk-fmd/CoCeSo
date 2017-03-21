@@ -15,15 +15,12 @@ public class CocesoConfig {
 
   private final String jsPlugins;
 
-  private final String gmapsApiKey;
-
   @Autowired
   public CocesoConfig(@Value("${debug:false}") boolean debug, @Value("${locale.default:en}") String defaultLocale,
-      @Value("${js.plugins:}") String jsPlugins, @Value("${gmaps.apikey:}") String gmapsApiKey) {
+      @Value("${js.plugins:}") String jsPlugins) {
     this.debug = debug;
     this.defaultLocale = Locale.forLanguageTag(defaultLocale);
     this.jsPlugins = StringUtils.isBlank(jsPlugins) ? "{}" : jsPlugins;
-    this.gmapsApiKey = StringUtils.trimToNull(gmapsApiKey);
   }
 
   public boolean isDebug() {
@@ -36,10 +33,6 @@ public class CocesoConfig {
 
   public String getJsPlugins() {
     return jsPlugins;
-  }
-
-  public String getGmapsApiKey() {
-    return gmapsApiKey;
   }
 
 }

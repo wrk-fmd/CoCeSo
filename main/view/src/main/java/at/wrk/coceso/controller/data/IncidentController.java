@@ -12,11 +12,13 @@ import at.wrk.coceso.service.IncidentService;
 import at.wrk.coceso.service.IncidentWriteService;
 import at.wrk.coceso.service.TaskWriteService;
 import at.wrk.coceso.utils.ActiveConcern;
+import at.wrk.coceso.utils.Initializer;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,9 +44,11 @@ public class IncidentController {
   private TaskWriteService taskWriteService;
 
   @JsonView(JsonViews.Main.class)
+  @Transactional
   @RequestMapping(value = "main", produces = "application/json", method = RequestMethod.GET)
   public SequencedResponse<List<Incident>> getForMain(@ActiveConcern Concern concern) {
-    return new SequencedResponse<>(entityEventHandler.getHver(), entityEventHandler.getSeq(concern.getId()), incidentService.getAllRelevant(concern));
+    return new SequencedResponse<>(entityEventHandler.getHver(), entityEventHandler.getSeq(concern.getId()),
+        Initializer.init(incidentService.getAllRelevant(concern), Incident::getUnits, Incident::getPatient));
   }
 
   @RequestMapping(value = "update", produces = "application/json", method = RequestMethod.POST)

@@ -7,6 +7,7 @@ import at.wrk.coceso.entity.helper.RestProperty;
 import at.wrk.coceso.entity.helper.RestResponse;
 import at.wrk.coceso.service.ConcernService;
 import at.wrk.coceso.utils.ActiveConcern;
+import at.wrk.coceso.utils.Initializer;
 import at.wrk.coceso.validator.ConcernValidator;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.util.List;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
@@ -46,16 +48,17 @@ public class ConcernController {
   }
 
   @PreAuthorize("@auth.hasAccessLevel('Edit')")
+  @Transactional
   @JsonView(JsonViews.Edit.class)
   @RequestMapping(value = "get/{id}", produces = "application/json", method = RequestMethod.GET)
   public Concern get(@PathVariable("id") int concern_id) {
-    return concernService.getById(concern_id);
+    return Initializer.init(concernService.getById(concern_id), Concern::getSections);
   }
 
   @PreAuthorize("@auth.hasAccessLevel('Edit')")
   @JsonView(JsonViews.Edit.class)
   @RequestMapping(value = "get", produces = "application/json", method = RequestMethod.GET)
-  public Concern getByCookie(@ActiveConcern Concern concern) {
+  public Concern getByCookie(@ActiveConcern(sections = true) Concern concern) {
     return concern;
   }
 

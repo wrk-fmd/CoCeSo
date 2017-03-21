@@ -16,6 +16,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Geocoder implementation for addresses using first/best result from all other address geocoder implementations
@@ -48,6 +49,7 @@ public class ChainedGeocoder implements Geocoder<Address> {
     this.geocoders = Arrays.asList(geocoders);
   }
 
+  @Transactional(transactionManager = "geocodeTransactionManager")
   @Override
   public LatLng geocode(Address address) {
     // First look in cache
@@ -65,6 +67,7 @@ public class ChainedGeocoder implements Geocoder<Address> {
     return coordinates;
   }
 
+  @Transactional(transactionManager = "geocodeTransactionManager")
   @Override
   public ReverseResult<Address> reverse(LatLng coordinates) {
     boolean cache = false;

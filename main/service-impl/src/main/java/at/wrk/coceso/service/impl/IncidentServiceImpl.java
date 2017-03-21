@@ -113,13 +113,13 @@ class IncidentServiceImpl implements IncidentServiceInternal {
 
     Changes changes = new Changes("incident");
     if (incident.getId() == null) {
-      incident = incidentRepository.save(prepareForCreate(incident, concern, changes, user));
+      incident = incidentRepository.saveAndFlush(prepareForCreate(incident, concern, changes, user));
       logService.logAuto(user, LogEntryType.INCIDENT_CREATE, incident.getConcern(), null, incident, changes);
       notify.add(incident);
     } else {
       incident = prepareForUpdate(incident, changes, user);
       if (!changes.isEmpty()) {
-        incident = incidentRepository.save(incident);
+        incident = incidentRepository.saveAndFlush(incident);
         logService.logAuto(user, LogEntryType.INCIDENT_UPDATE, incident.getConcern(), null, incident, changes);
         notify.add(incident);
       }
@@ -154,11 +154,11 @@ class IncidentServiceImpl implements IncidentServiceInternal {
       patient.getIncidents().stream()
           .filter(i -> i.getType() == IncidentType.Treatment && !i.getState().isDone())
           .forEach(i -> {
-            Changes changes = new Changes("incident");
-            changes.put("state", i.getState(), IncidentState.Done);
-            i.setState(IncidentState.Done);
+        Changes changes = new Changes("incident");
+        changes.put("state", i.getState(), IncidentState.Done);
+        i.setState(IncidentState.Done);
 
-            i = incidentRepository.save(i);
+        i = incidentRepository.saveAndFlush(i);
             logService.logAuto(user, LogEntryType.INCIDENT_AUTO_DONE, i.getConcern(), null, i, changes);
             notify.add(i);
 
@@ -193,7 +193,7 @@ class IncidentServiceImpl implements IncidentServiceInternal {
       incident.setSection(group.getSection());
     }
 
-    incident = incidentRepository.save(incident);
+    incident = incidentRepository.saveAndFlush(incident);
     logService.logAuto(user, LogEntryType.INCIDENT_CREATE, incident.getConcern(), null, incident, changes);
     notify.add(incident);
 
@@ -225,7 +225,7 @@ class IncidentServiceImpl implements IncidentServiceInternal {
     }
 
     incident.setPatient(patient);
-    incident = incidentRepository.save(incident);
+    incident = incidentRepository.saveAndFlush(incident);
     logService.logAuto(user, LogEntryType.PATIENT_ASSIGN, incident.getConcern(), incident, patient);
     notify.add(incident);
   }

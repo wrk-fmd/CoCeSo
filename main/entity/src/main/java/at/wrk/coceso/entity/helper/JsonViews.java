@@ -23,6 +23,9 @@ public interface JsonViews {
   interface Edit extends Web {
   }
 
+  interface UserFull extends Edit {
+  }
+
   interface Main extends Web {
   }
 

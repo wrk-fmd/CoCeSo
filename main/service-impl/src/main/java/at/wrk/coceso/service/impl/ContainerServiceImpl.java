@@ -9,6 +9,7 @@ import at.wrk.coceso.repository.ContainerRepository;
 import at.wrk.coceso.repository.UnitRepository;
 import at.wrk.coceso.service.ConcernService;
 import at.wrk.coceso.service.ContainerService;
+import at.wrk.coceso.utils.Initializer;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -58,7 +59,8 @@ class ContainerServiceImpl implements ContainerService {
 
   @Override
   public synchronized Container doUpdate(Container container, Concern concern) {
-    return containerRepository.save(container.getId() == null ? prepareCreate(container, concern) : prepareUpdate(container));
+    return Initializer.init(containerRepository.saveAndFlush(container.getId() == null ? prepareCreate(container, concern) : prepareUpdate(container)),
+        Container::getConcern);
   }
 
   @Override
@@ -72,7 +74,7 @@ class ContainerServiceImpl implements ContainerService {
     }
 
     containerRepository.delete(container);
-    return container;
+    return Initializer.init(container, Container::getConcern);
   }
 
   @Override
@@ -98,11 +100,11 @@ class ContainerServiceImpl implements ContainerService {
     } else if (!previous.getId().equals(container.getId())) {
       unit.setContainer(null);
       previous.removeUnit(unit);
-      ret.previous = containerRepository.save(previous);
+      ret.previous = containerRepository.saveAndFlush(previous);
     }
 
     container.addUnit(unit, ordering);
-    ret.newcont = containerRepository.save(container);
+    ret.newcont = Initializer.init(containerRepository.saveAndFlush(container), Container::getConcern);
 
     return ret;
   }
@@ -122,8 +124,8 @@ class ContainerServiceImpl implements ContainerService {
     }
 
     unit.getContainer().removeUnit(unit);
-    containerRepository.save(unit.getContainer());
-    return unit.getContainer();
+    containerRepository.saveAndFlush(unit.getContainer());
+    return Initializer.init(unit.getContainer(), Container::getConcern);
   }
 
   private Container prepareCreate(Container container, Concern concern) {

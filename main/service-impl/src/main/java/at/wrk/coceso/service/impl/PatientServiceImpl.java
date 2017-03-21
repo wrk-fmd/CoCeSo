@@ -98,13 +98,13 @@ class PatientServiceImpl implements PatientServiceInternal {
 
     if (patient.getId() == null) {
       patient = prepareForCreate(patient, concern, changes, user);
-      patient = patientRepository.save(patient);
+      patient = patientRepository.saveAndFlush(patient);
       logService.logAuto(user, LogEntryType.PATIENT_CREATE, patient.getConcern(), patient, changes);
       notify.add(patient);
     } else {
       patient = prepareForUpdate(patient, changes, user);
       if (!changes.isEmpty()) {
-        patient = patientRepository.save(patient);
+        patient = patientRepository.saveAndFlush(patient);
         logService.logAuto(user, LogEntryType.PATIENT_UPDATE, patient.getConcern(), patient, changes);
         notify.add(patient);
       }
@@ -129,7 +129,7 @@ class PatientServiceImpl implements PatientServiceInternal {
     }
 
     if (!changes.isEmpty()) {
-      patient = patientRepository.save(patient);
+      patient = patientRepository.saveAndFlush(patient);
       logService.logAuto(user, LogEntryType.PATIENT_UPDATE, patient.getConcern(), patient, changes);
       notify.add(patient);
     }
@@ -151,7 +151,7 @@ class PatientServiceImpl implements PatientServiceInternal {
       patient.setDone(true);
 
       // Save and notify
-      patient = patientRepository.save(patient);
+      patient = patientRepository.saveAndFlush(patient);
       logService.logAuto(user, LogEntryType.PATIENT_UPDATE, patient.getConcern(), patient, changes);
       notify.add(patient);
     }

@@ -15,6 +15,7 @@ import at.wrk.coceso.service.UserService;
 import at.wrk.coceso.service.internal.IncidentServiceInternal;
 import at.wrk.coceso.service.internal.TaskServiceInternal;
 import at.wrk.coceso.service.internal.UnitServiceInternal;
+import at.wrk.coceso.utils.Initializer;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -129,7 +130,7 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
       save.setPosition(position);
     }
 
-    unit = unitRepository.save(save);
+    unit = unitRepository.saveAndFlush(save);
     logService.logAuto(user, LogEntryType.UNIT_UPDATE, unit.getConcern(), unit, null, changes);
     notify.add(unit);
 
@@ -256,7 +257,7 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
       save.setSection(unit.getSection());
     }
 
-    unit = unitRepository.save(save);
+    unit = unitRepository.saveAndFlush(save);
     logService.logAuto(user, LogEntryType.UNIT_CREATE, unit.getConcern(), unit, null, changes);
 
     notify.add(unit);
@@ -286,7 +287,7 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
 
   @Override
   public Unit doRemove(int unitId, User user) {
-    Unit unit = getById(unitId);
+    Unit unit = Initializer.init(getById(unitId), Unit::getConcern);
     if (unit == null) {
       LOG.info("{}: Tried to remove non-existing Unit #{}", user, unitId);
       throw new ErrorsException(Errors.EntityMissing);
@@ -380,7 +381,7 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
     }
 
     unit.removeCrew(user);
-    unitRepository.save(unit);
+    unitRepository.saveAndFlush(unit);
     notify.add(unit);
   }
 
@@ -396,7 +397,7 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
     }
 
     unit.addCrew(user);
-    unitRepository.save(unit);
+    unitRepository.saveAndFlush(unit);
     notify.add(unit);
   }
 
@@ -406,7 +407,7 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
 
     Map<Unit, Changes> units = unitImporter.importUnits(data, concern, getAll(concern));
     units.forEach((u, c) -> {
-      u = unitRepository.save(u);
+      u = unitRepository.saveAndFlush(u);
       logService.logAuto(user, LogEntryType.UNIT_CREATE, u.getConcern(), u, null, c);
       notify.add(u);
     });

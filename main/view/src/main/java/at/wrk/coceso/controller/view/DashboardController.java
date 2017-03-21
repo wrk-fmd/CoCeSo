@@ -109,13 +109,13 @@ public class DashboardController {
   private void unitList(ModelMap map, Concern concern) {
     map.addAttribute("template", "unit_list");
     map.addAttribute("unit_menu", "active");
-    map.addAttribute("units", unitService.getAllSorted(concern));
+    map.addAttribute("units", Initializer.init(unitService.getAllSorted(concern), Unit::getIncidents));
   }
 
   private void patientList(ModelMap map, Concern concern, User user) {
     map.addAttribute("template", "patient_list");
     map.addAttribute("patient_menu", "active");
-    map.addAttribute("patients", Initializer.incidents(patientService.getAllSorted(concern, user)));
+    map.addAttribute("patients", Initializer.init(patientService.getAllSorted(concern, user), Patient::getIncidents));
   }
 
   private void crossDetail(ModelMap map, int incident_id, int unit_id) throws NotFoundException {
@@ -166,7 +166,7 @@ public class DashboardController {
       throw new NotFoundException();
     }
 
-    patient.getIncidents().size();
+    Initializer.init(patient, Patient::getIncidents);
 
     map.addAttribute("template", "patient_detail");
     map.addAttribute("patient_menu", "active");

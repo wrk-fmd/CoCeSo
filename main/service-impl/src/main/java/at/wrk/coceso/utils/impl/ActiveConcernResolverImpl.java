@@ -5,11 +5,13 @@ import at.wrk.coceso.service.ConcernService;
 import at.wrk.coceso.exceptions.ConcernException;
 import at.wrk.coceso.utils.ActiveConcern;
 import at.wrk.coceso.utils.ActiveConcernResolver;
+import at.wrk.coceso.utils.Initializer;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.ModelAndViewContainer;
@@ -30,6 +32,7 @@ class ActiveConcernResolverImpl implements ActiveConcernResolver {
   }
 
   @Override
+  @Transactional
   public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
       NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws ConcernException {
     boolean required = parameter.getParameterAnnotation(ActiveConcern.class).required();
@@ -69,6 +72,9 @@ class ActiveConcernResolverImpl implements ActiveConcernResolver {
     }
 
     if (parameter.getParameterType() == Concern.class) {
+      if (parameter.getParameterAnnotation(ActiveConcern.class).sections()) {
+        Initializer.init(concern, Concern::getSections);
+      }
       return concern;
     }
     return concern.getId();

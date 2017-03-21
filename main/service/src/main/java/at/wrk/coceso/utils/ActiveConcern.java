@@ -11,4 +11,6 @@ import java.lang.annotation.Target;
 @Documented
 public @interface ActiveConcern {
   public boolean required() default true;
+
+  public boolean sections() default false;
 }

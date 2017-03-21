@@ -49,11 +49,12 @@ public class TriageController {
   public String showHome(ModelMap map, @ActiveConcern Concern concern, @AuthenticationPrincipal User user) {
     patadminService.addAccessLevels(map, concern);
     map.addAttribute("incoming", triageService.getIncoming(concern));
-    map.addAttribute("treatment", Initializer.incidents(patadminService.getAllInTreatment(concern, user)));
+    map.addAttribute("treatment", Initializer.init(patadminService.getAllInTreatment(concern, user), Patient::getIncidents));
     return "patadmin/triage/home";
   }
 
   @PreAuthorize("@auth.hasPermission(#id, 'at.wrk.coceso.entity.Unit', 'PatadminTriage')")
+  @Transactional
   @RequestMapping(value = "/group/{id}", method = RequestMethod.GET)
   public String showGroup(ModelMap map, @PathVariable int id) {
     Unit group = patadminService.getGroup(id);
@@ -73,7 +74,7 @@ public class TriageController {
   @RequestMapping(value = "/search", method = RequestMethod.GET)
   public String showSearch(ModelMap map, @ActiveConcern Concern concern, @RequestParam("q") String query, @AuthenticationPrincipal User user) {
     patadminService.addAccessLevels(map, concern);
-    map.addAttribute("patients", Initializer.incidents(patadminService.getPatientsByQuery(concern, query, false, user)));
+    map.addAttribute("patients", Initializer.init(patadminService.getPatientsByQuery(concern, query, false, user), Patient::getIncidents));
     map.addAttribute("search", query);
     return "patadmin/triage/search";
   }
@@ -82,10 +83,9 @@ public class TriageController {
   @Transactional
   @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
   public String showPatient(ModelMap map, @PathVariable int id, @AuthenticationPrincipal User user) {
-    Patient patient = patientService.getById(id, user);
+    Patient patient = Initializer.init(patientService.getById(id, user), Patient::getIncidents);
 
     patadminService.addAccessLevels(map, patient.getConcern());
-    patient.getIncidents().size();
     map.addAttribute("patient", patient);
     return "patadmin/triage/view";
   }

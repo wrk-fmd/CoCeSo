@@ -5,6 +5,7 @@ import at.wrk.coceso.entity.Patient;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entityevent.EntityEventFactory;
 import at.wrk.coceso.entityevent.EntityEventHandler;
+import at.wrk.coceso.utils.Initializer;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -27,27 +28,33 @@ public class NotifyList {
   }
 
   public void add(Incident incident) {
+    Initializer.init(incident, Incident::getConcern, Incident::getUnits, Incident::getPatient);
     incidents.add(incident);
   }
 
   public void add(Patient patient) {
+    Initializer.init(patient, Patient::getConcern, Patient::getIncidents);
     patients.add(patient);
   }
 
   public void add(Unit unit) {
+    Initializer.init(unit, Unit::getConcern, Unit::getIncidents);
     units.add(unit);
   }
 
-  public void addAllIncidents(Collection<Incident> incident) {
-    incidents.addAll(incident);
+  public void addAllIncidents(Collection<Incident> incidents) {
+    Initializer.init(incidents, Incident::getConcern, Incident::getUnits, Incident::getPatient);
+    incidents.addAll(incidents);
   }
 
-  public void addAllPatients(Collection<Patient> patient) {
-    patients.addAll(patient);
+  public void addAllPatients(Collection<Patient> patients) {
+    Initializer.init(patients, Patient::getConcern, Patient::getIncidents);
+    patients.addAll(patients);
   }
 
-  public void addAllUnits(Collection<Unit> unit) {
-    units.addAll(unit);
+  public void addAllUnits(Collection<Unit> units) {
+    Initializer.init(units, Unit::getConcern, Unit::getIncidents);
+    units.addAll(units);
   }
 
   public synchronized void sendNotifications() {

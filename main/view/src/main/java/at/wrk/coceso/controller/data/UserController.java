@@ -1,18 +1,22 @@
 package at.wrk.coceso.controller.data;
 
 import at.wrk.coceso.entity.User;
+import at.wrk.coceso.entity.helper.JsonViews;
 import at.wrk.coceso.entity.helper.RestProperty;
 import at.wrk.coceso.entity.helper.RestResponse;
 import at.wrk.coceso.entity.helper.PasswordForm;
 import at.wrk.coceso.service.UserService;
+import at.wrk.coceso.utils.Initializer;
 import at.wrk.coceso.validator.PasswordValidator;
 import at.wrk.coceso.validator.UserValidator;
+import com.fasterxml.jackson.annotation.JsonView;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -31,22 +35,27 @@ public class UserController {
   @Autowired
   private PasswordValidator passwordValidator;
 
+  @JsonView(JsonViews.Edit.class)
   @RequestMapping(value = "getAll", produces = "application/json", method = RequestMethod.GET)
   public List<User> getAll(@AuthenticationPrincipal User user) {
     // TODO Access level
     return userService.getAll();
   }
 
+  @Transactional
+  @JsonView(JsonViews.UserFull.class)
   @RequestMapping(value = "getFiltered", produces = "application/json", method = RequestMethod.GET)
   public Page<User> getAll(Pageable pageable, @RequestParam(value = "filter", required = false) String filter) {
     // TODO Access level
-    return userService.getAll(pageable, filter);
+    return Initializer.init(userService.getAll(pageable, filter), User::getInternalAuthorities);
   }
 
+  @Transactional
+  @JsonView(JsonViews.UserFull.class)
   @RequestMapping(value = "get/{id}", produces = "application/json", method = RequestMethod.GET)
   public User getById(@PathVariable("id") int id, @AuthenticationPrincipal User user) {
     // TODO Access level
-    return userService.getById(id);
+    return Initializer.init(userService.getById(id), User::getInternalAuthorities);
   }
 
   @RequestMapping(value = "update", produces = "application/json", method = RequestMethod.POST)

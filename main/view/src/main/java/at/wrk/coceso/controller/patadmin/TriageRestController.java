@@ -45,14 +45,16 @@ public class TriageRestController {
   @JsonView(JsonViews.Patadmin.class)
   @RequestMapping(value = "patients", produces = "application/json", method = RequestMethod.GET)
   public List<Patient> getPatients(@RequestParam("f") String f, @RequestParam("q") String q, @ActiveConcern Concern concern, @AuthenticationPrincipal User user) {
-    return Initializer.incidents(triageService.getForAutocomplete(concern, q, f, user));
+    return Initializer.init(triageService.getForAutocomplete(concern, q, f, user), Patient::getIncidents);
   }
 
   @PreAuthorize("@auth.hasPermission(#concern, 'PatadminTriage')")
+  @Transactional
   @JsonView(JsonViews.Patadmin.class)
   @RequestMapping(value = "groups", produces = "application/json", method = RequestMethod.GET)
   public SequencedResponse<List<Unit>> getGroups(@ActiveConcern Concern concern) {
-    return new SequencedResponse<>(entityEventHandler.getHver(), entityEventHandler.getSeq(concern.getId()), patadminService.getGroups(concern));
+    return new SequencedResponse<>(entityEventHandler.getHver(), entityEventHandler.getSeq(concern.getId()),
+        Initializer.init(patadminService.getGroups(concern), Unit::getIncidents));
   }
 
 }

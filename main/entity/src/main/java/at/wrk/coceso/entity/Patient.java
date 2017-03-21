@@ -35,7 +35,7 @@ public class Patient implements Serializable, ConcernBoundEntity {
   private Integer id;
 
   @JsonIgnore
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "concern_fk", updatable = false, nullable = false)
   private Concern concern;
 
@@ -85,7 +85,7 @@ public class Patient implements Serializable, ConcernBoundEntity {
   private boolean done;
 
   @JsonIgnore
-  @OneToMany(mappedBy = "patient", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "patient")
   private Set<Incident> incidents;
 
   public Patient() {

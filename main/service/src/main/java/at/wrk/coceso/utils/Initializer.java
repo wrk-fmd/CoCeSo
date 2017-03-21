@@ -1,20 +1,23 @@
 package at.wrk.coceso.utils;
 
-import at.wrk.coceso.entity.Patient;
-import java.util.Collection;
+import java.util.function.Function;
+import org.hibernate.Hibernate;
 
-public abstract class Initializer {
+public class Initializer {
 
-  public static <T extends Patient> T incidents(T patient) {
-    if (patient.getIncidents() != null) {
-      patient.getIncidents().size();
+  public static <T> T init(T entity, Function<T, Object>... accessors) {
+    if (entity == null) {
+      return null;
     }
-    return patient;
+    for (Function<T, Object> accessor : accessors) {
+      Hibernate.initialize(accessor.apply(entity));
+    }
+    return entity;
   }
 
-  public static <T extends Collection<Patient>> T incidents(T patients) {
-    patients.forEach(p -> incidents(p));
-    return patients;
+  public static <I extends Iterable<T>, T> I init(I iterable, Function<T, Object>... accessors) {
+    iterable.forEach(e -> init(e, accessors));
+    return iterable;
   }
 
 }
