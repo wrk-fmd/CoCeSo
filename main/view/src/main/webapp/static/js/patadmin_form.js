@@ -12,13 +12,13 @@
  */
 
 require(["config"], function() {
-  require(["jquery", "knockout", "data/load", "data/store/units", "patadmin/triage/form", "patadmin/triage/group",
+  require(["jquery", "knockout", "data/load", "data/store/units", "patadmin/registration/form", "patadmin/registration/group",
     "bootstrap/collapse", "bootstrap/dropdown", "ko/bindings/valueinit"],
     function($, ko, load, store, Form, Group) {
       "use strict";
 
       load({
-        url: "patadmin/triage/groups.json",
+        url: "patadmin/registration/groups.json",
         stomp: "/topic/patadmin/groups/{c}",
         model: Group,
         store: store.models

@@ -1,6 +1,6 @@
 /**
  * CoCeSo
- * Client JS - patadmin/triage/group
+ * Client JS - patadmin/registration/group
  * Copyright (c) WRK\Coceso-Team
  *
  * Licensed under the GNU General Public License, version 3 (GPL-3.0)
@@ -12,7 +12,7 @@
  */
 
 /**
- * @module patadmin/triage/group
+ * @module patadmin/registration/group
  * @param {module:knockout} ko
  * @param {module:utils/conf} conf
  * @param {module:utils/constants} constants
@@ -25,7 +25,7 @@ define(["knockout", "utils/conf", "utils/constants", "ko/extenders/isvalue"],
      * Single group
      *
      * @constructor
-     * @alias module:patadmin/triage/group
+     * @alias module:patadmin/registration/group
      * @param {Object} data Initial data for the group
      */
     var Group = function(data) {

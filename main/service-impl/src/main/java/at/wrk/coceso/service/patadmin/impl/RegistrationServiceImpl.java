@@ -11,13 +11,13 @@ import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.point.UnitPoint;
 import at.wrk.coceso.entityevent.impl.NotifyList;
 import at.wrk.coceso.exceptions.ErrorsException;
-import at.wrk.coceso.form.TriageForm;
+import at.wrk.coceso.form.RegistrationForm;
 import at.wrk.coceso.repository.IncidentRepository;
 import at.wrk.coceso.repository.PatientRepository;
 import at.wrk.coceso.service.internal.IncidentServiceInternal;
 import at.wrk.coceso.service.internal.PatientServiceInternal;
 import at.wrk.coceso.service.patadmin.PatadminService;
-import at.wrk.coceso.service.patadmin.internal.TriageServiceInternal;
+import at.wrk.coceso.service.patadmin.internal.RegistrationServiceInternal;
 import at.wrk.coceso.specification.PatientSearchSpecification;
 import at.wrk.coceso.utils.DataAccessLogger;
 import java.util.List;
@@ -30,7 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
-class TriageServiceImpl implements TriageServiceInternal {
+class RegistrationServiceImpl implements RegistrationServiceInternal {
 
   @Autowired
   private PatientRepository patientRepository;
@@ -138,7 +138,7 @@ class TriageServiceImpl implements TriageServiceInternal {
   }
 
   @Override
-  public Patient update(TriageForm form, Concern concern, User user, NotifyList notify) {
+  public Patient update(RegistrationForm form, Concern concern, User user, NotifyList notify) {
     Patient old = form.getPatient() == null ? null : getActivePatient(form.getPatient(), user);
 
     Patient patient = prepare(form, old);
@@ -156,7 +156,7 @@ class TriageServiceImpl implements TriageServiceInternal {
     return patient;
   }
 
-  private Patient prepare(TriageForm form, Patient old) {
+  private Patient prepare(RegistrationForm form, Patient old) {
     Patient patient = new Patient();
 
     if (old != null) {

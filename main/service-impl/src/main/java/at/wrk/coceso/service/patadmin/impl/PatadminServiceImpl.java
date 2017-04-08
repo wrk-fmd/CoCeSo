@@ -55,7 +55,7 @@ class PatadminServiceImpl implements PatadminServiceInternal {
   public boolean[] getAccessLevels(Concern concern) {
     return new boolean[]{
       auth.hasPermission(concern, AccessLevel.PatadminSettings),
-      auth.hasPermission(concern, AccessLevel.PatadminTriage),
+      auth.hasPermission(concern, AccessLevel.PatadminRegistration),
       auth.hasPermission(concern, AccessLevel.PatadminPostprocessing),
       auth.hasPermission(concern, AccessLevel.PatadminInfo)
     };

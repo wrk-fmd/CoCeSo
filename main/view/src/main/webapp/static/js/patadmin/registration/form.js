@@ -1,6 +1,6 @@
 /**
  * CoCeSo
- * Client JS - patadmin/triage/form
+ * Client JS - patadmin/registration/form
  * Copyright (c) WRK\Coceso-Team
  *
  * Licensed under the GNU General Public License, version 3 (GPL-3.0)
@@ -12,14 +12,14 @@
  */
 
 /**
- * @module patadmin/triage/form
+ * @module patadmin/registration/form
  * @param {module:knockout} ko
  */
 define(["knockout", "bootstrap/modal", "ko/bindings/patient"], function(ko) {
   "use strict";
 
   /**
-   * @alias module:patadmin/triage/form
+   * @alias module:patadmin/registration/form
    * @constructor
    */
   var Form = function() {

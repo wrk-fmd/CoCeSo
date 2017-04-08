@@ -6,7 +6,7 @@
 <%--
 /**
  * CoCeSo
- * Patadmin HTML triage search result
+ * Patadmin HTML registration search result
  * Copyright (c) WRK\Coceso-Team
  *
  * Licensed under the GNU General Public License, version 3 (GPL-3.0)

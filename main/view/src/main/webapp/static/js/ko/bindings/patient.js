@@ -23,7 +23,7 @@ define(["knockout", "./typeahead", "utils/conf"], function(ko, typeahead, conf) 
   ko.bindingHandlers.patient = {
     init: function(element, valueAccessor) {
       var options = valueAccessor();
-      typeahead(element, conf.get("jsonBase") + 'patadmin/triage/patients.json?f=' + options.key + '&q=%QUERY', options.key,
+      typeahead(element, conf.get("jsonBase") + 'patadmin/registration/patients.json?f=' + options.key + '&q=%QUERY', options.key,
         function(obj) {
           return "<p>" + obj.lastname + " " + obj.firstname + (obj.externalId ? " (" + obj.externalId + ")" : "") + "</p>";
         }, options.callback);

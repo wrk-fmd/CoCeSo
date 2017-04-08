@@ -6,7 +6,7 @@
 <%--
 /**
  * CoCeSo
- * Patadmin HTML triage patients list tag
+ * Patadmin HTML registration patients list tag
  * Copyright (c) WRK\Coceso-Team
  *
  * Licensed under the GNU General Public License, version 3 (GPL-3.0)
@@ -18,9 +18,9 @@
  */
 --%>
 
-<c:url var="groupUrl" value="/patadmin/triage/group/"/>
-<c:url var="editUrl" value="/patadmin/triage/edit/"/>
-<c:url var="viewUrl" value="/patadmin/triage/view/"/>
+<c:url var="groupUrl" value="/patadmin/registration/group/"/>
+<c:url var="editUrl" value="/patadmin/registration/edit/"/>
+<c:url var="viewUrl" value="/patadmin/registration/view/"/>
 
 <div class="table-responsive">
   <table class="table table-striped table-condensed table-full">

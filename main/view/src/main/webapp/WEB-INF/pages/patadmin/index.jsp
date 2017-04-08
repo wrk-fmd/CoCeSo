@@ -31,7 +31,7 @@
           <a class="btn btn-success" href="<c:url value="/patadmin/settings"/>"><spring:message code="patadmin.settings"/></a>
         </c:if>
         <c:if test="${accessLevels[1]}">
-          <a class="btn btn-success" href="<c:url value="/patadmin/triage"/>"><spring:message code="patadmin.triage"/></a>
+          <a class="btn btn-success" href="<c:url value="/patadmin/registration"/>"><spring:message code="patadmin.registration"/></a>
         </c:if>
         <c:if test="${accessLevels[2]}">
           <a class="btn btn-success" href="<c:url value="/patadmin/postprocessing"/>"><spring:message code="patadmin.postprocessing"/></a>

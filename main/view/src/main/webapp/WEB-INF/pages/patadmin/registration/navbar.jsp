@@ -25,16 +25,16 @@
     <a class="navbar-brand" href="<c:url value="/patadmin"/>"><spring:message code="patadmin"/></a>
   </div>
   <div class="navbar-collapse collapse">
-    <form action="<c:url value="/patadmin/triage/search"/>" class="navbar-form navbar-right" method="get">
+    <form action="<c:url value="/patadmin/registration/search"/>" class="navbar-form navbar-right" method="get">
       <div class="form-group">
         <input type="text" name="q" class="form-control" placeholder="<spring:message code="patadmin.search"/>"
                accesskey="s" id="search" value="<c:out value="${search}"/>"/>
       </div>
     </form>
     <ul class="nav navbar-nav">
-      <li class="${nav_triage}"><a href="<c:url value="/patadmin/triage"/>"><spring:message code="patadmin.triage"/></a></li>
-      <li><a class="${autofocus_add}" href="<c:url value="/patadmin/triage/add"/>" accesskey="a"><spring:message code="patient.add"/></a></li>
-        <c:if test="${accessLevels[0]}">
+      <li class="${nav_registration}"><a href="<c:url value="/patadmin/registration"/>"><spring:message code="patadmin.registration"/></a></li>
+      <li><a class="${autofocus_add}" href="<c:url value="/patadmin/registration/add"/>" accesskey="a"><spring:message code="patient.add"/></a></li>
+      <c:if test="${accessLevels[0]}">
         <li><a href="<c:url value="/patadmin/settings"/>"><spring:message code="patadmin.settings"/></a></li>
         </c:if>
         <c:if test="${accessLevels[2]}">

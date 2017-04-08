@@ -9,7 +9,7 @@ import at.wrk.coceso.entity.helper.SequencedResponse;
 import at.wrk.coceso.entityevent.EntityEventFactory;
 import at.wrk.coceso.entityevent.EntityEventHandler;
 import at.wrk.coceso.service.patadmin.PatadminService;
-import at.wrk.coceso.service.patadmin.TriageService;
+import at.wrk.coceso.service.patadmin.RegistrationService;
 import at.wrk.coceso.utils.ActiveConcern;
 import at.wrk.coceso.utils.Initializer;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -24,31 +24,31 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/data/patadmin/triage", method = RequestMethod.GET)
-public class TriageRestController {
+@RequestMapping(value = "/data/patadmin/registration", method = RequestMethod.GET)
+public class RegistrationRestController {
 
   @Autowired
   private PatadminService patadminService;
 
   @Autowired
-  private TriageService triageService;
+  private RegistrationService registrationService;
 
   private final EntityEventHandler<Unit> entityEventHandler;
 
   @Autowired
-  public TriageRestController(EntityEventFactory eehf) {
+  public RegistrationRestController(EntityEventFactory eehf) {
     this.entityEventHandler = eehf.getEntityEventHandler(Unit.class);
   }
 
-  @PreAuthorize("@auth.hasPermission(#concern, 'PatadminTriage')")
+  @PreAuthorize("@auth.hasPermission(#concern, 'PatadminRegistration')")
   @Transactional
   @JsonView(JsonViews.Patadmin.class)
   @RequestMapping(value = "patients", produces = "application/json", method = RequestMethod.GET)
   public List<Patient> getPatients(@RequestParam("f") String f, @RequestParam("q") String q, @ActiveConcern Concern concern, @AuthenticationPrincipal User user) {
-    return Initializer.initGroups(triageService.getForAutocomplete(concern, q, f, user));
+    return Initializer.initGroups(registrationService.getForAutocomplete(concern, q, f, user));
   }
 
-  @PreAuthorize("@auth.hasPermission(#concern, 'PatadminTriage')")
+  @PreAuthorize("@auth.hasPermission(#concern, 'PatadminRegistration')")
   @Transactional
   @JsonView(JsonViews.Patadmin.class)
   @RequestMapping(value = "groups", produces = "application/json", method = RequestMethod.GET)

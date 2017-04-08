@@ -6,7 +6,7 @@
 <%--
 /**
  * CoCeSo
- * Patadmin HTML triage home
+ * Patadmin HTML registration home
  * Copyright (c) WRK\Coceso-Team
  *
  * Licensed under the GNU General Public License, version 3 (GPL-3.0)
@@ -23,20 +23,20 @@
       var CocesoConf = {
         jsonBase: "<c:url value="/data/"/>",
         imageBase: "<c:url value="/static/imgs/"/>",
-        groupUrl: "<c:url value="/patadmin/triage/group/"/>",
+        groupUrl: "<c:url value="/patadmin/registration/group/"/>",
         langBase: "<c:url value="/static/i18n/"/>",
         language: "<spring:message code="this.languageCode"/>"
       };
     </script>
-    <t:head maintitle="patadmin" title="patadmin.triage" entry="patadmin_triage"/>
+    <t:head maintitle="patadmin" title="patadmin.registration" entry="patadmin_registration"/>
   </head>
   <body>
     <div class="container">
       <%@include file="navbar.jsp"%>
 
-      <h2><spring:message code="patadmin.triage"/></h2>
+      <h2><spring:message code="patadmin.registration"/></h2>
       <p>
-        <a href="<c:url value="/patadmin/triage/add"/>" class="btn btn-default autofocus">
+        <a href="<c:url value="/patadmin/registration/add"/>" class="btn btn-default autofocus">
           <spring:message code="patient.add"/>
         </a>
       </p>

@@ -8,7 +8,7 @@
 <%--
 /**
  * CoCeSo
- * Patadmin HTML triage form
+ * Patadmin HTML postprocessing form
  * Copyright (c) WRK\Coceso-Team
  *
  * Licensed under the GNU General Public License, version 3 (GPL-3.0)

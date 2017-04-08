@@ -7,7 +7,7 @@
 <%--
 /**
  * CoCeSo
- * Patadmin HTML triage incoming patients list tag
+ * Patadmin HTML registration incoming patients list tag
  * Copyright (c) WRK\Coceso-Team
  *
  * Licensed under the GNU General Public License, version 3 (GPL-3.0)
@@ -19,7 +19,7 @@
  */
 --%>
 
-<c:url var="editUrl" value="/patadmin/triage/takeover/"/>
+<c:url var="editUrl" value="/patadmin/registration/takeover/"/>
 
 <div class="table-responsive">
   <table class="table table-striped table-condensed">

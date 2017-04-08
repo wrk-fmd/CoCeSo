@@ -5,11 +5,11 @@ import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.Patient;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.User;
-import at.wrk.coceso.form.TriageForm;
+import at.wrk.coceso.form.RegistrationForm;
 import at.wrk.coceso.service.PatientService;
 import at.wrk.coceso.service.patadmin.PatadminService;
-import at.wrk.coceso.service.patadmin.TriageService;
-import at.wrk.coceso.service.patadmin.TriageWriteService;
+import at.wrk.coceso.service.patadmin.RegistrationService;
+import at.wrk.coceso.service.patadmin.RegistrationWriteService;
 import at.wrk.coceso.utils.ActiveConcern;
 import at.wrk.coceso.utils.Initializer;
 import java.util.List;
@@ -29,8 +29,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-@RequestMapping(value = "/patadmin/triage", method = RequestMethod.GET)
-public class TriageController {
+@RequestMapping(value = "/patadmin/registration", method = RequestMethod.GET)
+public class RegistrationController {
 
   @Autowired
   private PatientService patientService;
@@ -39,27 +39,27 @@ public class TriageController {
   private PatadminService patadminService;
 
   @Autowired
-  private TriageService triageService;
+  private RegistrationService registrationService;
 
   @Autowired
-  private TriageWriteService triageWriteService;
+  private RegistrationWriteService registrationWriteService;
 
-  @PreAuthorize("@auth.hasPermission(#concern, 'PatadminTriage')")
+  @PreAuthorize("@auth.hasPermission(#concern, 'PatadminRegistration')")
   @Transactional
   @RequestMapping(value = "", method = RequestMethod.GET)
   public String showHome(ModelMap map, @ActiveConcern Concern concern, @AuthenticationPrincipal User user) {
     patadminService.addAccessLevels(map, concern);
 
-    List<Incident> incoming = triageService.getIncoming(concern);
+    List<Incident> incoming = registrationService.getIncoming(concern);
     Initializer.init(incoming, Incident::getUnits);
     Initializer.init(incoming, Incident::getPatient);
 
     map.addAttribute("incoming", incoming);
     map.addAttribute("treatment", Initializer.initGroups(patadminService.getAllInTreatment(concern, user)));
-    return "patadmin/triage/home";
+    return "patadmin/registration/home";
   }
 
-  @PreAuthorize("@auth.hasPermission(#id, 'at.wrk.coceso.entity.Unit', 'PatadminTriage')")
+  @PreAuthorize("@auth.hasPermission(#id, 'at.wrk.coceso.entity.Unit', 'PatadminRegistration')")
   @Transactional
   @RequestMapping(value = "/group/{id}", method = RequestMethod.GET)
   public String showGroup(ModelMap map, @PathVariable int id) {
@@ -68,7 +68,7 @@ public class TriageController {
     patadminService.addAccessLevels(map, group.getConcern());
     map.addAttribute("group", group);
 
-    List<Incident> incoming = triageService.getIncoming(group);
+    List<Incident> incoming = registrationService.getIncoming(group);
     Initializer.init(incoming, Incident::getUnits);
     Initializer.init(incoming, Incident::getPatient);
 
@@ -77,20 +77,20 @@ public class TriageController {
         .map(Incident::getPatient)
         .filter(Objects::nonNull)
         .collect(Collectors.toList()), Patient::getId));
-    return "patadmin/triage/group";
+    return "patadmin/registration/group";
   }
 
-  @PreAuthorize("@auth.hasPermission(#concern, 'PatadminTriage')")
+  @PreAuthorize("@auth.hasPermission(#concern, 'PatadminRegistration')")
   @Transactional
   @RequestMapping(value = "/search", method = RequestMethod.GET)
   public String showSearch(ModelMap map, @ActiveConcern Concern concern, @RequestParam("q") String query, @AuthenticationPrincipal User user) {
     patadminService.addAccessLevels(map, concern);
     map.addAttribute("patients", Initializer.initGroups(patadminService.getPatientsByQuery(concern, query, false, user)));
     map.addAttribute("search", query);
-    return "patadmin/triage/search";
+    return "patadmin/registration/search";
   }
 
-  @PreAuthorize("@auth.hasPermission(#id, 'at.wrk.coceso.entity.Patient', 'PatadminTriage')")
+  @PreAuthorize("@auth.hasPermission(#id, 'at.wrk.coceso.entity.Patient', 'PatadminRegistration')")
   @Transactional
   @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
   public String showPatient(ModelMap map, @PathVariable int id, @AuthenticationPrincipal User user) {
@@ -98,46 +98,46 @@ public class TriageController {
 
     patadminService.addAccessLevels(map, patient.getConcern());
     map.addAttribute("patient", patient);
-    return "patadmin/triage/view";
+    return "patadmin/registration/view";
   }
 
-  @PreAuthorize("@auth.hasPermission(#id, 'at.wrk.coceso.entity.Patient', 'PatadminTriage')")
+  @PreAuthorize("@auth.hasPermission(#id, 'at.wrk.coceso.entity.Patient', 'PatadminRegistration')")
   @Transactional
   @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
   public ModelAndView showEdit(ModelMap map, @PathVariable int id, @AuthenticationPrincipal User user) {
-    Patient patient = triageService.getActivePatient(id, user);
+    Patient patient = registrationService.getActivePatient(id, user);
 
     patadminService.addAccessLevels(map, patient.getConcern());
     map.addAttribute("groups", patadminService.getGroups(patient.getConcern()));
-    return new ModelAndView("patadmin/triage/form", "command", new TriageForm(patient));
+    return new ModelAndView("patadmin/registration/form", "command", new RegistrationForm(patient));
   }
 
-  @PreAuthorize("@auth.hasPermission(#id, 'at.wrk.coceso.entity.Incident', 'PatadminTriage')")
+  @PreAuthorize("@auth.hasPermission(#id, 'at.wrk.coceso.entity.Incident', 'PatadminRegistration')")
   @RequestMapping(value = "/takeover/{id}", method = RequestMethod.GET)
   public String showTakeover(@PathVariable int id, @AuthenticationPrincipal User user) {
-    Patient patient = triageWriteService.takeover(id, user);
-    return String.format("redirect:/patadmin/triage/edit/%d", patient.getId());
+    Patient patient = registrationWriteService.takeover(id, user);
+    return String.format("redirect:/patadmin/registration/edit/%d", patient.getId());
   }
 
-  @PreAuthorize("@auth.hasPermission(#concern, 'PatadminTriage')")
+  @PreAuthorize("@auth.hasPermission(#concern, 'PatadminRegistration')")
   @Transactional
   @RequestMapping(value = "/save", method = RequestMethod.POST)
-  public String save(@ModelAttribute TriageForm form, @ActiveConcern Concern concern,
+  public String save(@ModelAttribute RegistrationForm form, @ActiveConcern Concern concern,
       @AuthenticationPrincipal User user) {
-    Patient patient = triageWriteService.update(form, concern, user);
-    return String.format("redirect:/patadmin/triage/view/%d", patient.getId());
+    Patient patient = registrationWriteService.update(form, concern, user);
+    return String.format("redirect:/patadmin/registration/view/%d", patient.getId());
   }
 
-  @PreAuthorize("@auth.hasPermission(#concern, 'PatadminTriage')")
+  @PreAuthorize("@auth.hasPermission(#concern, 'PatadminRegistration')")
   @RequestMapping(value = "/add", method = RequestMethod.GET)
   public ModelAndView showAdd(ModelMap map, @RequestParam(value = "group", required = false) Integer group,
       @ActiveConcern Concern concern, @AuthenticationPrincipal User user) {
-    TriageForm form = new TriageForm();
+    RegistrationForm form = new RegistrationForm();
     form.setGroup(group);
 
     patadminService.addAccessLevels(map, concern);
     map.addAttribute("groups", patadminService.getGroups(concern));
-    return new ModelAndView("patadmin/triage/form", "command", form);
+    return new ModelAndView("patadmin/registration/form", "command", form);
   }
 
 }

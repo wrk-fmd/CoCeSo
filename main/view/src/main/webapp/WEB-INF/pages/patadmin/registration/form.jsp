@@ -7,7 +7,7 @@
 <%--
 /**
  * CoCeSo
- * Patadmin HTML triage form
+ * Patadmin HTML registration form
  * Copyright (c) WRK\Coceso-Team
  *
  * Licensed under the GNU General Public License, version 3 (GPL-3.0)
@@ -24,7 +24,7 @@
       var CocesoConf = {
         jsonBase: "<c:url value="/data/"/>",
         imageBase: "<c:url value="/static/imgs/"/>",
-        groupUrl: "<c:url value="/patadmin/triage/group/"/>",
+        groupUrl: "<c:url value="/patadmin/registration/group/"/>",
         langBase: "<c:url value="/static/i18n/"/>",
         language: "<spring:message code="this.languageCode"/>"
       };
@@ -37,23 +37,24 @@
 
       <div class="clearfix">
         <div class="col-md-7">
-          <form:form method="post" servletRelativeAction="/patadmin/triage/save" acceptCharset="utf-8">
+          <form:form method="post" servletRelativeAction="/patadmin/registration/save" acceptCharset="utf-8">
             <form:hidden path="patient" data-bind="valueInit: patient"/>
             <h3 class="page-header"><spring:message code="patient.personal"/>
               <c:if test="${not empty command.patient}"><span class="text-danger">#<c:out value="${command.patient}"/></span></c:if>
             </h3>
             <div class="clearfix">
-              <div class="form-group col-md-6">
-                <form:label path="lastname"><spring:message code="patient.lastname"/></form:label>
+              <div class="form-group col-md-6 hidden">
+              <form:label path="lastname"><spring:message code="patient.lastname"/></form:label>
                 <form:input path="lastname" cssClass="form-control nosubmit" data-bind="valueInit: lastname, ${empty command.patient ? 'patient: {key: \\\'lastname\\\', callback: callback}' : ''}"/>
               </div>
-              <div class="form-group col-md-6">
-                <form:label path="firstname"><spring:message code="patient.firstname"/></form:label>
+                <div class="form-group col-md-6 hidden">
+                  <form:label path="firstname"><spring:message code="patient.firstname"/></form:label>
                 <form:input path="firstname" cssClass="form-control nosubmit" data-bind="valueInit: firstname, ${empty command.patient ? 'patient: {key: \\\'firstname\\\', callback: callback}' : ''}"/>
               </div>
               <div class="form-group col-md-6">
                 <form:label path="externalId"><spring:message code="patient.externalId"/></form:label>
-                <form:input path="externalId" cssClass="form-control autofocus nosubmit" data-bind="valueInit: externalId, ${empty command.patient ? 'patient: {key: \\\'externalId\\\', callback: callback}' : ''}"/>
+                <form:input path="externalId" cssClass="form-control autofocus" required="true"
+                            data-bind="valueInit: externalId, ${empty command.patient ? 'patient: {key: \\\'externalId\\\', callback: callback}' : ''}"/>
               </div>
               <div class="form-group col-md-6 hidden">
                 <form:label path="birthday"><spring:message code="patient.birthday"/></form:label>
@@ -63,8 +64,8 @@
 
             <h3 class="page-header"><spring:message code="patient.treatment"/></h3>
             <div class="clearfix">--%>
-              <div class="form-group col-md-6 required">
-                <form:label path="group"><spring:message code="patadmin.group"/></form:label>
+                <div class="form-group col-md-6 required hidden">
+                  <form:label path="group"><spring:message code="patadmin.group"/></form:label>
                 <form:select path="group" cssClass="form-control" data-bind="valueInit: group">
                   <c:forEach items="${groups}" var="group">
                     <form:option value="${group.id}">${group.call}</form:option>
@@ -92,7 +93,7 @@
           </form:form>
         </div>
 
-        <div class="col-md-5 clearfix">
+        <div class="col-md-5 clearfix hidden">
           <div class="pull-right"><p:groups/></div>
         </div>
       </div>

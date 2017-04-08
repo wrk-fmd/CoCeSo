@@ -37,7 +37,7 @@
         <li class="${nav_settings}"><a href="<c:url value="/patadmin/settings"/>"><spring:message code="patadmin.settings"/></a></li>
         </c:if>
         <c:if test="${accessLevels[1]}">
-        <li><a href="<c:url value="/patadmin/triage"/>"><spring:message code="patadmin.triage"/></a></li>
+        <li><a href="<c:url value="/patadmin/registration"/>"><spring:message code="patadmin.registration"/></a></li>
         </c:if>
         <c:if test="${accessLevels[3]}">
         <li><a href="<c:url value="/patadmin/info"/>"><spring:message code="patadmin.info"/></a></li>

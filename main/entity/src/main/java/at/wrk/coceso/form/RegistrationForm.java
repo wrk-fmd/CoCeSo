@@ -5,7 +5,7 @@ import at.wrk.coceso.entity.enums.Naca;
 import java.time.LocalDate;
 import org.springframework.format.annotation.DateTimeFormat;
 
-public class TriageForm {
+public class RegistrationForm {
 
   private Integer patient;
   private String lastname;
@@ -19,10 +19,10 @@ public class TriageForm {
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
   private LocalDate birthday;
 
-  public TriageForm() {
+  public RegistrationForm() {
   }
 
-  public TriageForm(Patient p) {
+  public RegistrationForm(Patient p) {
     patient = p.getId();
     lastname = p.getLastname();
     firstname = p.getFirstname();

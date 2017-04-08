@@ -41,7 +41,7 @@ public class PatadminController {
 
     if (!accessLevels[0]) {
       if (accessLevels[1] && !accessLevels[2] && !accessLevels[3]) {
-        return "redirect:/patadmin/triage";
+        return "redirect:/patadmin/registration";
       }
       if (!accessLevels[1] && accessLevels[2] && !accessLevels[3]) {
         return "redirect:/patadmin/postprocessing";

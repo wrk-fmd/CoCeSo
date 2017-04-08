@@ -5,7 +5,7 @@
 <%--
 /**
  * CoCeSo
- * Patadmin HTML triage patient details
+ * Patadmin HTML registration patient details
  * Copyright (c) WRK\Coceso-Team
  *
  * Licensed under the GNU General Public License, version 3 (GPL-3.0)
@@ -28,7 +28,7 @@
       <h2><spring:message code="patient"/> <span class="text-danger">#<c:out value="${patient.id}"/></span>: <em><c:out value="${patient.fullName}"/></em></h2>
 
       <c:if test="${not patient.done}">
-        <p><a href="<c:url value="/patadmin/triage/edit/${patient.id}"/>" class="btn btn-default"><spring:message code="patient.edit"/></a></p>
+        <p><a href="<c:url value="/patadmin/registration/edit/${patient.id}"/>" class="btn btn-default"><spring:message code="patient.edit"/></a></p>
         </c:if>
 
       <dl class="dl-horizontal">

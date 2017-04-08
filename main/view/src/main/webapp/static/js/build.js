@@ -40,7 +40,7 @@
       excludeShallow: ["bloodhound", "jquery", "jquery-i18n", "leaflet", "knockout", "knockout-sortable", "typeahead.js", "stomp"]},
     {name: "patadmin_transport",
       excludeShallow: ["bloodhound", "jquery", "jquery-i18n", "leaflet", "knockout", "knockout-sortable", "typeahead.js", "stomp"]},
-    {name: "patadmin_triage",
+    {name: "patadmin_registration",
       excludeShallow: ["bloodhound", "jquery", "jquery-i18n", "leaflet", "knockout", "knockout-sortable", "typeahead.js", "stomp"]}
   ]
 })

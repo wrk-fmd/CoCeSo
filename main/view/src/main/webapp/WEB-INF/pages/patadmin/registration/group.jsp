@@ -6,7 +6,7 @@
 <%--
 /**
  * CoCeSo
- * Patadmin HTML triage group details
+ * Patadmin HTML registration group details
  * Copyright (c) WRK\Coceso-Team
  *
  * Licensed under the GNU General Public License, version 3 (GPL-3.0)
@@ -55,7 +55,7 @@
       </dl>
 
       <p>
-        <a class="btn btn-default autofocus" href="<c:url value="/patadmin/triage/add?group=${group.id}"/>">
+        <a class="btn btn-default autofocus" href="<c:url value="/patadmin/registration/add?group=${group.id}"/>">
           <spring:message code="patient.add"/>
         </a>
       </p>
