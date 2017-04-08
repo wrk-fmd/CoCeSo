@@ -39,7 +39,9 @@
         <div class="col-md-7">
           <form:form method="post" servletRelativeAction="/patadmin/triage/save" acceptCharset="utf-8">
             <form:hidden path="patient" data-bind="valueInit: patient"/>
-            <h3 class="page-header"><spring:message code="patient.personal"/></h3>
+            <h3 class="page-header"><spring:message code="patient.personal"/>
+              <c:if test="${not empty command.patient}"><span class="text-danger">#<c:out value="${command.patient}"/></span></c:if>
+            </h3>
             <div class="clearfix">
               <div class="form-group col-md-6">
                 <form:label path="lastname"><spring:message code="patient.lastname"/></form:label>
@@ -81,8 +83,8 @@
                 <form:label path="diagnosis"><spring:message code="patient.diagnosis"/></form:label>
                 <form:textarea path="diagnosis" cssClass="form-control" data-bind="valueInit: diagnosis"/>
               </div>
-              <div class="form-group col-md-6">
-                <form:label path="info"><spring:message code="patient.info"/></form:label>
+                <div class="form-group col-md-6 hidden">
+                  <form:label path="info"><spring:message code="patient.info"/></form:label>
                 <form:textarea path="info" cssClass="form-control" data-bind="valueInit: info"/>
               </div>
             </div>

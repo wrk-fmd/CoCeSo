@@ -75,12 +75,13 @@ public class UnitPoint implements Point {
 
   @Override
   public boolean isEmpty() {
-    return id != 0;
+    return id <= 0;
   }
 
   @Override
   public String toString() {
-    return getInfo();
+    String info = getInfo();
+    return info == null ? "" : info;
   }
 
   @Override

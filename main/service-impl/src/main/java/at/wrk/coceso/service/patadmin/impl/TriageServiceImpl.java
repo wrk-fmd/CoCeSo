@@ -54,7 +54,7 @@ class TriageServiceImpl implements TriageServiceInternal {
 
   @Override
   public List<Incident> getIncoming(Unit unit) {
-    return incidentRepository.findIncoming(unit.getConcern(), unit.getCall());
+    return incidentRepository.findIncoming(unit.getConcern(), unit.getId());
   }
 
   @Override

@@ -121,7 +121,7 @@ class PostprocessingServiceImpl implements PostprocessingServiceInternal {
 
     Unit group = patient.getGroup().stream().findFirst().orElse(null);
     if (group != null) {
-      incident.setBo(new UnitPoint(group.getId()));
+      incident.setBo(new UnitPoint(group, null));
 
       if (group.getSection() != null) {
         incident.setSection(group.getSection());

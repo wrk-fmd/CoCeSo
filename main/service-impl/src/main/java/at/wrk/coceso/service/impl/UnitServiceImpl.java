@@ -62,7 +62,7 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
 
   @Override
   public Unit getTreatmentByCall(String call, Concern concern) {
-    return (call == null || concern == null) ? null : unitRepository.findFirstByCallAndConcernAndTypeIn(call, concern, UnitType.treatmentTypes);
+    return (call == null || concern == null) ? null : unitRepository.findFirstByCallIgnoreCaseAndConcernAndTypeIn(call, concern, UnitType.treatmentTypes);
   }
 
   @Override

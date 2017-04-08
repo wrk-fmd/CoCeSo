@@ -45,7 +45,7 @@ public class InfoController {
   @Transactional
   @RequestMapping(value = "", method = RequestMethod.GET)
   public String showHome(ModelMap map, @PageableDefault(sort = "id", size = 20) Pageable pageable, @ActiveConcern Concern concern, @AuthenticationPrincipal User user) {
-    Page<Patient> patients = Initializer.init(infoService.getAll(concern, pageable, user), Patient::getIncidents);
+    Page<Patient> patients = Initializer.initGroups(infoService.getAll(concern, pageable, user));
     map.addAttribute("patients", patients);
     patadminService.addAccessLevels(map, concern);
     return "patadmin/info/list";
@@ -56,7 +56,7 @@ public class InfoController {
   @RequestMapping(value = "/search", method = RequestMethod.GET)
   public String showSearch(ModelMap map, @PageableDefault(sort = "id", size = 20) Pageable pageable, @ActiveConcern Concern concern, @RequestParam("q") String query,
       @AuthenticationPrincipal User user) {
-    Page<Patient> patients = Initializer.init(infoService.getByQuery(concern, query, pageable, user), Patient::getIncidents);
+    Page<Patient> patients = Initializer.initGroups(infoService.getByQuery(concern, query, pageable, user));
     map.addAttribute("patients", patients);
     map.addAttribute("search", query);
     patadminService.addAccessLevels(map, concern);
@@ -67,7 +67,7 @@ public class InfoController {
   @Transactional
   @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
   public String showPatient(ModelMap map, @PathVariable int id, @AuthenticationPrincipal User user) {
-    Patient patient = Initializer.init(patientService.getById(id, user), Patient::getIncidents);
+    Patient patient = Initializer.initGroups(patientService.getById(id, user));
     map.addAttribute("patient", patient);
     map.addAttribute("logs", logService.getStatesByPatient(patient));
     patadminService.addAccessLevels(map, patient.getConcern());

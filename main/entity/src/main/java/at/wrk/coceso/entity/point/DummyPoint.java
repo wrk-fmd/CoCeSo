@@ -59,7 +59,7 @@ public class DummyPoint implements Point {
 
   @Override
   public String toString() {
-    return getInfo();
+    return info == null ? "" : info;
   }
 
   @Override

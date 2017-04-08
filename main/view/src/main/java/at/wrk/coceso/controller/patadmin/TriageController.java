@@ -12,6 +12,7 @@ import at.wrk.coceso.service.patadmin.TriageService;
 import at.wrk.coceso.service.patadmin.TriageWriteService;
 import at.wrk.coceso.utils.ActiveConcern;
 import at.wrk.coceso.utils.Initializer;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,8 +49,13 @@ public class TriageController {
   @RequestMapping(value = "", method = RequestMethod.GET)
   public String showHome(ModelMap map, @ActiveConcern Concern concern, @AuthenticationPrincipal User user) {
     patadminService.addAccessLevels(map, concern);
-    map.addAttribute("incoming", triageService.getIncoming(concern));
-    map.addAttribute("treatment", Initializer.init(patadminService.getAllInTreatment(concern, user), Patient::getIncidents));
+
+    List<Incident> incoming = triageService.getIncoming(concern);
+    Initializer.init(incoming, Incident::getUnits);
+    Initializer.init(incoming, Incident::getPatient);
+
+    map.addAttribute("incoming", incoming);
+    map.addAttribute("treatment", Initializer.initGroups(patadminService.getAllInTreatment(concern, user)));
     return "patadmin/triage/home";
   }
 
@@ -61,11 +67,16 @@ public class TriageController {
 
     patadminService.addAccessLevels(map, group.getConcern());
     map.addAttribute("group", group);
-    map.addAttribute("incoming", triageService.getIncoming(group));
-    map.addAttribute("treatment", group.getIncidents().keySet().stream()
+
+    List<Incident> incoming = triageService.getIncoming(group);
+    Initializer.init(incoming, Incident::getUnits);
+    Initializer.init(incoming, Incident::getPatient);
+
+    map.addAttribute("incoming", incoming);
+    map.addAttribute("treatment", Initializer.init(group.getIncidents().keySet().stream()
         .map(Incident::getPatient)
         .filter(Objects::nonNull)
-        .collect(Collectors.toList()));
+        .collect(Collectors.toList()), Patient::getId));
     return "patadmin/triage/group";
   }
 
@@ -74,7 +85,7 @@ public class TriageController {
   @RequestMapping(value = "/search", method = RequestMethod.GET)
   public String showSearch(ModelMap map, @ActiveConcern Concern concern, @RequestParam("q") String query, @AuthenticationPrincipal User user) {
     patadminService.addAccessLevels(map, concern);
-    map.addAttribute("patients", Initializer.init(patadminService.getPatientsByQuery(concern, query, false, user), Patient::getIncidents));
+    map.addAttribute("patients", Initializer.initGroups(patadminService.getPatientsByQuery(concern, query, false, user)));
     map.addAttribute("search", query);
     return "patadmin/triage/search";
   }
@@ -83,7 +94,7 @@ public class TriageController {
   @Transactional
   @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
   public String showPatient(ModelMap map, @PathVariable int id, @AuthenticationPrincipal User user) {
-    Patient patient = Initializer.init(patientService.getById(id, user), Patient::getIncidents);
+    Patient patient = Initializer.initGroups(patientService.getById(id, user));
 
     patadminService.addAccessLevels(map, patient.getConcern());
     map.addAttribute("patient", patient);

@@ -20,7 +20,7 @@
 --%>
 <html>
   <head>
-    <t:head title="patadmin.info" entry="navbar"/>
+    <t:head maintitle="patadmin" title="patadmin.info" entry="navbar"/>
   </head>
   <body>
     <div class="container">

@@ -37,11 +37,11 @@ public interface IncidentRepository extends JpaRepository<Incident, Integer> {
   @Query("SELECT l.incident.id FROM LogEntry l WHERE l.unit = :unit AND l.incident IS NOT NULL GROUP BY l.incident")
   List<Integer> findRelated(@Param("unit") Unit unit);
 
-  @Query("SELECT i FROM Incident i WHERE "
-      + "i.ao.info IN (SELECT u.call FROM Unit u WHERE u.type IN ('Triage', 'Treatment') AND u.concern = :concern) "
-      + "AND i.type IN ('Task', 'Transport') AND i.concern = :concern")
+  @Query(nativeQuery = true,
+      value = "SELECT * FROM Incident i WHERE i.ao->>'@type' = 'unit' AND i.type IN ('Task', 'Transport') AND i.concern_fk = :concern")
   List<Incident> findIncoming(@Param("concern") Concern concern);
 
-  @Query("SELECT i FROM Incident i WHERE i.ao.info = :call AND i.type IN ('Task', 'Transport') AND i.concern = :concern")
-  List<Incident> findIncoming(@Param("concern") Concern concern, @Param("call") String call);
+  @Query(nativeQuery = true,
+      value = "SELECT * FROM Incident i WHERE i.ao->>'@type' = 'unit' AND i.ao->>'id' = CAST(:unit AS TEXT) AND i.type IN ('Task', 'Transport') AND i.concern_fk = :concern")
+  List<Incident> findIncoming(@Param("concern") Concern concern, @Param("unit") int unit);
 }

@@ -45,7 +45,7 @@ public class TriageRestController {
   @JsonView(JsonViews.Patadmin.class)
   @RequestMapping(value = "patients", produces = "application/json", method = RequestMethod.GET)
   public List<Patient> getPatients(@RequestParam("f") String f, @RequestParam("q") String q, @ActiveConcern Concern concern, @AuthenticationPrincipal User user) {
-    return Initializer.init(triageService.getForAutocomplete(concern, q, f, user), Patient::getIncidents);
+    return Initializer.initGroups(triageService.getForAutocomplete(concern, q, f, user));
   }
 
   @PreAuthorize("@auth.hasPermission(#concern, 'PatadminTriage')")

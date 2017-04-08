@@ -22,7 +22,7 @@ public interface UnitRepository extends JpaRepository<Unit, Integer> {
 
   List<Unit> findByConcern(Concern concern, Sort sort);
 
-  Unit findFirstByCallAndConcernAndTypeIn(String call, Concern concern, Collection<UnitType> type);
+  Unit findFirstByCallIgnoreCaseAndConcernAndTypeIn(String call, Concern concern, Collection<UnitType> type);
 
   List<Unit> findByConcernAndTypeIn(Concern concern, Collection<UnitType> type);
 

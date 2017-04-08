@@ -107,7 +107,7 @@ public interface Point extends Serializable {
     }
 
     if (unitSupplier != null && concern != null) {
-      String call = parts[0].toLowerCase();
+      String call = parts[0];
       Unit group = unitSupplier.getTreatmentByCall(call, concern);
       if (group != null) {
         return new UnitPoint(group, parts.length >= 2 ? StringUtils.trimToNull(parts[1]) : null);
