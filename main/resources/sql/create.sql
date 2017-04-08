@@ -25,13 +25,6 @@ CREATE TABLE IF NOT EXISTS selcall (
   direction E_DIRECTION NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS point (
-  id SERIAL PRIMARY KEY,
-  info TEXT NOT NULL,
-  longitude DOUBLE PRECISION,
-  latitude DOUBLE PRECISION
-);
-
 CREATE TABLE IF NOT EXISTS concern (
   id SERIAL PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
@@ -89,27 +82,9 @@ CREATE TABLE IF NOT EXISTS crew (
   PRIMARY KEY (unit_fk, user_fk)
 );
 
-CREATE TABLE IF NOT EXISTS medinfo (
-  id SERIAL PRIMARY KEY,
-  concern_fk INTEGER NOT NULL REFERENCES concern ON DELETE CASCADE,
-  externalId VARCHAR(40) NOT NULL DEFAULT '',
-  lastname VARCHAR(64) NOT NULL DEFAULT '',
-  firstname VARCHAR(64) NOT NULL DEFAULT '',
-  birthday DATE,
-  data JSONB
-);
-
-CREATE INDEX ON medinfo (lastname, firstname, externalId);
-CREATE INDEX ON medinfo (firstname, externalId);
-CREATE INDEX ON medinfo (externalId);
-CREATE INDEX ON medinfo (LOWER(lastname), LOWER(firstname), LOWER(externalId));
-CREATE INDEX ON medinfo (LOWER(firstname), LOWER(externalId));
-CREATE INDEX ON medinfo (LOWER(externalId));
-
 CREATE TABLE IF NOT EXISTS patient (
   id SERIAL PRIMARY KEY,
   concern_fk INTEGER NOT NULL REFERENCES concern ON DELETE CASCADE,
-  medinfo_fk INTEGER REFERENCES medinfo ON DELETE SET NULL,
   lastname VARCHAR (64) NOT NULL DEFAULT '',
   firstname VARCHAR (64) NOT NULL DEFAULT '',
   externalId VARCHAR (40) NOT NULL DEFAULT '',
