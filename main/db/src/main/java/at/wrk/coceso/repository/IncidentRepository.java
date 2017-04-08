@@ -44,4 +44,14 @@ public interface IncidentRepository extends JpaRepository<Incident, Integer> {
   @Query(nativeQuery = true,
       value = "SELECT * FROM Incident i WHERE i.ao->>'@type' = 'unit' AND i.ao->>'id' = CAST(:unit AS TEXT) AND i.type IN ('Task', 'Transport') AND i.concern_fk = :concern")
   List<Incident> findIncoming(@Param("concern") Concern concern, @Param("unit") int unit);
+
+  @Query("SELECT COUNT(DISTINCT patient) FROM Incident i "
+      + " WHERE type = 'Treatment' AND patient IS NOT NULL AND concern = :concern")
+  long countTreatments(@Param("concern") Concern concern);
+
+  @Query(nativeQuery = true,
+      value = "SELECT COUNT(DISTINCT patient_fk) FROM Incident i "
+      + " WHERE type = 'Transport' AND bo->>'@type' = 'unit' AND patient_fk IS NOT NULL AND concern_fk = :concern")
+  long countTransports(@Param("concern") Concern concern);
+
 }

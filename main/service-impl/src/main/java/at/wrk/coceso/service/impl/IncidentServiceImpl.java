@@ -154,11 +154,11 @@ class IncidentServiceImpl implements IncidentServiceInternal {
       patient.getIncidents().stream()
           .filter(i -> i.getType() == IncidentType.Treatment && !i.getState().isDone())
           .forEach(i -> {
-        Changes changes = new Changes("incident");
-        changes.put("state", i.getState(), IncidentState.Done);
-        i.setState(IncidentState.Done);
+            Changes changes = new Changes("incident");
+            changes.put("state", i.getState(), IncidentState.Done);
+            i.setState(IncidentState.Done);
 
-        i = incidentRepository.saveAndFlush(i);
+            i = incidentRepository.saveAndFlush(i);
             logService.logAuto(user, LogEntryType.INCIDENT_AUTO_DONE, i.getConcern(), null, i, changes);
             notify.add(i);
 

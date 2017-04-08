@@ -56,6 +56,10 @@ public class RegistrationController {
 
     map.addAttribute("incoming", incoming);
     map.addAttribute("treatment", Initializer.initGroups(patadminService.getAllInTreatment(concern, user)));
+    
+    map.addAttribute("treatmentCount", registrationService.getTreatmentCount(concern));
+    map.addAttribute("transportCount", registrationService.getTransportCount(concern));
+    
     return "patadmin/registration/home";
   }
 

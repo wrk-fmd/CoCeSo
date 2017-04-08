@@ -56,6 +56,16 @@ class RegistrationServiceImpl implements RegistrationServiceInternal {
   public List<Incident> getIncoming(Unit unit) {
     return incidentRepository.findIncoming(unit.getConcern(), unit.getId());
   }
+  
+  @Override
+  public long getTreatmentCount(Concern concern) {
+    return incidentRepository.countTreatments(concern);
+  }
+
+  @Override
+  public long getTransportCount(Concern concern) {
+    return incidentRepository.countTransports(concern);
+  }
 
   @Override
   public Patient getActivePatient(int patientId, User user) {

@@ -35,12 +35,12 @@
       <%@include file="navbar.jsp"%>
 
       <h2><spring:message code="patadmin.registration"/></h2>
+      <p><spring:message code="patadmin.counts" arguments="${treatmentCount},${transportCount}"/></p>
       <p>
         <a href="<c:url value="/patadmin/registration/add"/>" class="btn btn-default autofocus">
           <spring:message code="patient.add"/>
         </a>
       </p>
-
 
       <h3><spring:message code="patadmin.groups"/></h3>
       <p:groups/>

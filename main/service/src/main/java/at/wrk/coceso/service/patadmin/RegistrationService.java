@@ -17,6 +17,10 @@ public interface RegistrationService {
 
   List<Incident> getIncoming(Unit unit);
 
+  long getTreatmentCount(Concern concern);
+  
+  long getTransportCount(Concern concern);
+  
   Patient getActivePatient(int patientId, User user);
 
   List<Patient> getForAutocomplete(Concern concern, String query, String field, User user);
