@@ -5,6 +5,7 @@ import at.wrk.coceso.entity.helper.JsonViews;
 import at.wrk.geocode.LatLng;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -67,7 +68,7 @@ public class UnitPoint implements Point {
         call = unit.getCall();
 
         // The position of the referred unit should never be another UnitPoint, as this might lead to endless recursion
-        Point position = unit.getPosition();
+        Point position = unit.getHome();
         coordinates = (position == null || position instanceof UnitPoint) ? null : position.getCoordinates();
       }
     }
