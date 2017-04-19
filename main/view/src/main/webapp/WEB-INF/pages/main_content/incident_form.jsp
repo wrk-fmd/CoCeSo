@@ -87,6 +87,7 @@
           </div>
         </div>
 
+        <!-- ko if: idObs -->
         <div class="clearfix">
           <!-- ko if: patient -->
           <div class="col-md-7">
@@ -106,6 +107,7 @@
           </div>
           <!-- /ko -->
         </div>
+        <!-- /ko -->
 
         <div class="clearfix">
           <div class="form-group col-md-6" data-bind="css: casusNr.formcss">
