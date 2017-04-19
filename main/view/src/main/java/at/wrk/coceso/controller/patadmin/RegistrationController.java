@@ -56,10 +56,10 @@ public class RegistrationController {
 
     map.addAttribute("incoming", incoming);
     map.addAttribute("treatment", Initializer.initGroups(patadminService.getAllInTreatment(concern, user)));
-    
+
     map.addAttribute("treatmentCount", registrationService.getTreatmentCount(concern));
     map.addAttribute("transportCount", registrationService.getTransportCount(concern));
-    
+
     return "patadmin/registration/home";
   }
 
@@ -129,7 +129,8 @@ public class RegistrationController {
   public String save(@ModelAttribute RegistrationForm form, @ActiveConcern Concern concern,
       @AuthenticationPrincipal User user) {
     Patient patient = registrationWriteService.update(form, concern, user);
-    return String.format("redirect:/patadmin/registration/view/%d", patient.getId());
+    return "redirect:/patadmin/registration/add";
+    //return String.format("redirect:/patadmin/registration/view/%d", patient.getId());
   }
 
   @PreAuthorize("@auth.hasPermission(#concern, 'PatadminRegistration')")
