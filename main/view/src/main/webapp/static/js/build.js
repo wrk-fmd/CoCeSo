@@ -21,26 +21,26 @@
   modules: [
     {name: "assets/requirejs/require"},
     {name: "edit_concern",
-      excludeShallow: ["bloodhound", "jquery", "jquery-i18n", "leaflet", "knockout", "knockout-sortable", "typeahead.js", "stomp"]},
+      excludeShallow: ["bloodhound", "jquery", "jquery-i18n", "leaflet", "knockout", "knockout-sortable", "typeahead", "stomp"]},
     {name: "edit_user",
-      excludeShallow: ["bloodhound", "jquery", "jquery-i18n", "leaflet", "knockout", "knockout-sortable", "typeahead.js", "stomp"]},
+      excludeShallow: ["bloodhound", "jquery", "jquery-i18n", "leaflet", "knockout", "knockout-sortable", "typeahead", "stomp"]},
     {name: "home",
-      excludeShallow: ["bloodhound", "jquery", "jquery-i18n", "leaflet", "knockout", "knockout-sortable", "typeahead.js", "stomp"]},
+      excludeShallow: ["bloodhound", "jquery", "jquery-i18n", "leaflet", "knockout", "knockout-sortable", "typeahead", "stomp"]},
     {name: "main",
       include: [
         "main/viewmodels/incidents", "main/viewmodels/incident", "main/viewmodels/units", "main/viewmodels/hierarchy",
         "main/viewmodels/unit", "main/viewmodels/unitdetail", "main/viewmodels/customlog", "main/viewmodels/logs",
         "main/viewmodels/patients", "main/viewmodels/patient", "main/viewmodels/radio", "map/viewmodel"],
-      excludeShallow: ["bloodhound", "jquery", "jquery-i18n", "leaflet", "knockout", "knockout-sortable", "typeahead.js", "stomp"]},
+      excludeShallow: ["bloodhound", "jquery", "jquery-i18n", "leaflet", "knockout", "knockout-sortable", "typeahead", "stomp"]},
     {name: "map",
-      excludeShallow: ["bloodhound", "jquery", "jquery-i18n", "leaflet", "knockout", "knockout-sortable", "typeahead.js", "stomp"]},
+      excludeShallow: ["bloodhound", "jquery", "jquery-i18n", "leaflet", "knockout", "knockout-sortable", "typeahead", "stomp"]},
     {name: "navbar",
-      excludeShallow: ["bloodhound", "jquery", "jquery-i18n", "leaflet", "knockout", "knockout-sortable", "typeahead.js", "stomp"]},
+      excludeShallow: ["bloodhound", "jquery", "jquery-i18n", "leaflet", "knockout", "knockout-sortable", "typeahead", "stomp"]},
     {name: "patadmin_form",
-      excludeShallow: ["bloodhound", "jquery", "jquery-i18n", "leaflet", "knockout", "knockout-sortable", "typeahead.js", "stomp"]},
+      excludeShallow: ["bloodhound", "jquery", "jquery-i18n", "leaflet", "knockout", "knockout-sortable", "typeahead", "stomp"]},
     {name: "patadmin_transport",
-      excludeShallow: ["bloodhound", "jquery", "jquery-i18n", "leaflet", "knockout", "knockout-sortable", "typeahead.js", "stomp"]},
+      excludeShallow: ["bloodhound", "jquery", "jquery-i18n", "leaflet", "knockout", "knockout-sortable", "typeahead", "stomp"]},
     {name: "patadmin_registration",
-      excludeShallow: ["bloodhound", "jquery", "jquery-i18n", "leaflet", "knockout", "knockout-sortable", "typeahead.js", "stomp"]}
+      excludeShallow: ["bloodhound", "jquery", "jquery-i18n", "leaflet", "knockout", "knockout-sortable", "typeahead", "stomp"]}
   ]
 })

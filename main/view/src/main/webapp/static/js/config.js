@@ -26,10 +26,8 @@ define(function() {
       "knockout-sortable": "assets/knockout-sortable/knockout-sortable.min",
       leaflet: "assets/leaflet/leaflet",
       stomp: "assets/stomp-websocket/stomp.min",
-      "typeahead-bundle": "assets/typeahead.js/typeahead.bundle.min"
-    },
-    bundles: {
-      "typeahead-bundle": ["bloodhound", "typeahead.js"]
+      bloodhound: "assets/corejs-typeahead/bloodhound.min",
+      typeahead: "assets/corejs-typeahead/typeahead.jquery.min"
     },
     map: {
       "knockout-sortable": {

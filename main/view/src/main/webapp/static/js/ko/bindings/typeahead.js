@@ -18,7 +18,7 @@
  * @param {module:jquery} $
  * @param {module:bloodhound} Bloodhound
  */
-define(["jquery", "bloodhound", "typeahead.js"], function($, Bloodhound) {
+define(["jquery", "bloodhound", "typeahead"], function($, Bloodhound) {
   "use strict";
 
   var typeahead = function(element, url, displayKey, buildDisplayName, callback) {

@@ -22,7 +22,7 @@
     "bootstrap": "^3.3.6",
     "bootstrap-datepicker": "^1.6.4",
     "jquery": "^3.1.0",
-    "jquery-i18n-properties": "^1.2.2",
+    "jquery-i18n-properties": "1.2.2",
     "jquery-ui": "~1.12.0",
     "jquery-ui-bootstrap": "jquery-ui-bootstrap/jquery-ui-bootstrap#masterbs3",
     "jqueryui-touch-punch": "*",
@@ -34,7 +34,7 @@
     "requirejs": "^2.1.22",
     "r.js": "^2.1.22",
     "stomp-websocket": "^2.3.4",
-    "typeahead.js": "^0.11.1",
+    "corejs-typeahead": "^1.1.1",
     "typeahead.js-bootstrap3": "bassjobsen/typeahead.js-bootstrap-css#^1.2.1"
   },
   "install": {
@@ -101,8 +101,9 @@
         "bower_components/leaflet/dist/images/marker-icon.png",
         "bower_components/leaflet/dist/images/marker-shadow.png"
       ],
-      "typeahead.js": [
-        "bower_components/typeahead.js/dist/typeahead.bundle.min.js"
+      "corejs-typeahead": [
+        "bower_components/corejs-typeahead/dist/bloodhound.min.js",
+        "bower_components/corejs-typeahead/dist/typeahead.jquery.min.js"
       ],
       "typeahead.js-bootstrap3": [
         "bower_components/typeahead.js-bootstrap3/typeaheadjs.less"

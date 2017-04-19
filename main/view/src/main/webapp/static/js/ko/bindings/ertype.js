@@ -17,7 +17,7 @@
  * @param {module:bloodhound} Bloodhound
  * @param {module:knockout} ko
  */
-define(["jquery", "bloodhound", "knockout", "typeahead.js"],
+define(["jquery", "bloodhound", "knockout", "typeahead"],
   function($, Bloodhound, ko) {
     "use strict";
 
