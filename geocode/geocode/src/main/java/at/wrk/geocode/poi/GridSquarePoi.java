@@ -29,7 +29,7 @@ public abstract class GridSquarePoi extends PreloadedAutocomplete<Poi> implement
    * @param yMax Maximum square in y direction (highest number)
    */
   public GridSquarePoi(String name, GridSquare start, LatLng xStep, LatLng yStep, char xMax, int yMax) {
-    this.name = name.toLowerCase();
+    this.name = name;
     this.start = start;
     this.xStep = xStep;
     this.yStep = yStep;
@@ -51,7 +51,7 @@ public abstract class GridSquarePoi extends PreloadedAutocomplete<Poi> implement
 
   @Override
   public Poi getPoi(String text) {
-    if (text.length() < name.length() + 2 || !text.startsWith(name)) {
+    if (text.length() < name.length() + 2 || !text.startsWith(name.toLowerCase())) {
       return null;
     }
 

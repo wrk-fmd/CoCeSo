@@ -439,7 +439,7 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
           titleVal = titleVal.substring(0, 30) + "...";
         }
         return "<span class='incident_type_text" + (this.blue() ? " incident_blue" : "")
-          + "'>" + this.typeChar() + "</span>" + titleVal.split("\n")[0].escapeHTML();
+          + "'>" + this.typeChar() + "</span>: " + titleVal.split("\n")[0].escapeHTML();
       }, this);
 
       /**
