@@ -14,7 +14,7 @@ public class WflwrJsonPoi extends JsonPoi {
 
   @Autowired
   public WflwrJsonPoi(ObjectMapper mapper) throws IOException {
-    super(mapper, new ClassPathResource("wflwr.json"));
+    super(mapper, new ClassPathResource("wflwr17.json"));
   }
 
 }

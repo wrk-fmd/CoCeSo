@@ -87,7 +87,7 @@
     </dependency>
     <dependency>
       <groupId>at.wrk.coceso-plugins</groupId>
-      <artifactId>coceso-vcm-poi</artifactId>
+      <artifactId>coceso-wflwr-poi</artifactId>
       <version>${project.parent.version}</version>
       <scope>runtime</scope>
     </dependency>
