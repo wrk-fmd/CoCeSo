@@ -58,6 +58,13 @@ public interface Point extends Serializable {
   boolean isEmpty();
 
   /**
+   * Create a copy of the point
+   *
+   * @return
+   */
+  Point deepCopy();
+
+  /**
    * Resolve the information stored in the instance to the appropriate subclass
    *
    * @param concern The concern, for which the resolving should take place

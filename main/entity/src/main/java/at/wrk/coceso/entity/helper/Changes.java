@@ -15,7 +15,12 @@ public class Changes implements Iterable<Changes.Change> {
   private final Collection<Change> data;
 
   public Changes() {
-    this(null);
+    this((String) null);
+  }
+
+  private Changes(Changes c) {
+    type = c.type;
+    data = new LinkedList<>(c.data);
   }
 
   public Changes(String type) {
@@ -34,6 +39,10 @@ public class Changes implements Iterable<Changes.Change> {
   @JsonIgnore
   public boolean isEmpty() {
     return data.isEmpty();
+  }
+
+  public Changes deepCopy() {
+    return new Changes(this);
   }
 
   @Override

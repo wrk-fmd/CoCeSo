@@ -29,18 +29,6 @@ public abstract class JsonUserType<T> implements UserType, Serializable {
   }
 
   @Override
-  public Object deepCopy(Object value) throws HibernateException {
-    if (value == null) {
-      return null;
-    }
-    try {
-      return deserialize(serialize(value));
-    } catch (IOException e) {
-      throw new HibernateException("unable to deep copy object", e);
-    }
-  }
-
-  @Override
   public Serializable disassemble(Object value) throws HibernateException {
     try {
       return serialize(value);

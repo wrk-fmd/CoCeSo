@@ -27,12 +27,20 @@ class PoiPoint implements Poi, Point {
   @Qualifier("ChainedPoi")
   private Geocoder<Poi> poiGeocoder;
 
+  private boolean filled = false;
+
   private final String text, additional;
   private LatLng coordinates;
 
   private PoiPoint() {
     this.text = null;
     this.additional = null;
+  }
+
+  private PoiPoint(PoiPoint p) {
+    text = p.text;
+    additional = p.additional;
+    coordinates = p.coordinates;
   }
 
   PoiPoint(String text, String additional) {
@@ -78,7 +86,8 @@ class PoiPoint implements Poi, Point {
   }
 
   private void fill() {
-    if (coordinates == null && !isEmpty()) {
+    if (!filled && coordinates == null && !isEmpty()) {
+      filled = true;
       coordinates = poiGeocoder.geocode(this);
       if (coordinates == null) {
         // No coordinates in POI entry, use normal address
@@ -90,6 +99,11 @@ class PoiPoint implements Poi, Point {
   @Override
   public boolean isEmpty() {
     return StringUtils.isEmpty(text);
+  }
+
+  @Override
+  public PoiPoint deepCopy() {
+    return new PoiPoint(this);
   }
 
   @Override

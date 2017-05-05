@@ -28,11 +28,18 @@ public class CoordinatePoint implements Point {
   @Qualifier("ChainedPoi")
   private Geocoder<Poi> poiGeocoder;
 
+  private boolean filled = false;
+
   private String info;
   private final LatLng coordinates;
 
   private CoordinatePoint() {
     this.coordinates = null;
+  }
+
+  private CoordinatePoint(CoordinatePoint p) {
+    info = p.info;
+    coordinates = p.coordinates;
   }
 
   public CoordinatePoint(LatLng coordinates) {
@@ -53,7 +60,8 @@ public class CoordinatePoint implements Point {
   }
 
   private void fill() {
-    if (StringUtils.isEmpty(info) && !isEmpty()) {
+    if (!filled && StringUtils.isEmpty(info) && !isEmpty()) {
+      filled = true;
       ReverseResult<Poi> poi = poiGeocoder.reverse(coordinates);
       if (poi != null && poi.dist <= 20) {
         info = poi.result.getText();
@@ -72,6 +80,11 @@ public class CoordinatePoint implements Point {
   @Override
   public boolean isEmpty() {
     return coordinates == null;
+  }
+
+  @Override
+  public CoordinatePoint deepCopy() {
+    return new CoordinatePoint(this);
   }
 
   @Override

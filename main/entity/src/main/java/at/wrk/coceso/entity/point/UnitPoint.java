@@ -5,7 +5,6 @@ import at.wrk.coceso.entity.helper.JsonViews;
 import at.wrk.geocode.LatLng;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -25,6 +24,13 @@ public class UnitPoint implements Point {
   private UnitPoint() {
     this.id = 0;
     this.additional = null;
+  }
+
+  private UnitPoint(UnitPoint p) {
+    id = p.id;
+    additional = p.additional;
+    call = p.call;
+    coordinates = p.coordinates;
   }
 
   public UnitPoint(int unitId) {
@@ -77,6 +83,11 @@ public class UnitPoint implements Point {
   @Override
   public boolean isEmpty() {
     return id <= 0;
+  }
+
+  @Override
+  public UnitPoint deepCopy() {
+    return new UnitPoint(this);
   }
 
   @Override

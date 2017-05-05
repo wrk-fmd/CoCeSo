@@ -31,6 +31,10 @@ public class DummyPoint implements Point {
     this.info = null;
   }
 
+  private DummyPoint(DummyPoint p) {
+    info = p.info;
+  }
+
   public DummyPoint(String info) {
     this.info = info;
   }
@@ -50,6 +54,11 @@ public class DummyPoint implements Point {
   @Override
   public boolean isEmpty() {
     return StringUtils.isBlank(info);
+  }
+
+  @Override
+  public DummyPoint deepCopy() {
+    return new DummyPoint(this);
   }
 
   @Override

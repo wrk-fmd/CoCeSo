@@ -31,6 +31,8 @@ class AddressPoint implements Point, Address {
       + "( ([1-9]\\d*(\\-([1-9]\\d*)|[a-zA-Z])?)?(/.*)?)?( # (\\w[\\w\\s\\-\\.]*))?$", Pattern.UNICODE_CHARACTER_CLASS);
   private static final Pattern isCity = Pattern.compile("^(([1-9]\\d{3,4}) )?(\\w[\\w\\s\\-\\.]*)$", Pattern.UNICODE_CHARACTER_CLASS);
 
+  private boolean filled = false;
+
   private final String title, street, intersection, city, additional;
   private final Integer postCode;
   private LatLng coordinates;
@@ -46,6 +48,19 @@ class AddressPoint implements Point, Address {
     postCode = null;
     city = null;
     additional = null;
+  }
+
+  private AddressPoint(AddressPoint p) {
+    // Create a "deep" copy of p - since all properties are effectively immutable they don't actually have to be copied
+    filled = p.filled;
+    title = p.title;
+    street = p.street;
+    intersection = p.intersection;
+    number = p.number;
+    postCode = p.postCode;
+    city = p.city;
+    additional = p.additional;
+    coordinates = p.coordinates;
   }
 
   /**
@@ -231,7 +246,8 @@ class AddressPoint implements Point, Address {
   }
 
   private void fill() {
-    if (coordinates == null && !isEmpty()) {
+    if (!filled && coordinates == null && !isEmpty()) {
+      filled = true;
       coordinates = addressGeocoder.geocode(this);
     }
   }
@@ -239,6 +255,11 @@ class AddressPoint implements Point, Address {
   @Override
   public boolean isEmpty() {
     return StringUtils.isEmpty(this.title) && StringUtils.isEmpty(this.street);
+  }
+
+  @Override
+  public AddressPoint deepCopy() {
+    return new AddressPoint(this);
   }
 
   @Override

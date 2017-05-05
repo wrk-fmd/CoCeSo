@@ -5,7 +5,6 @@ import at.wrk.geocode.address.AddressNumber;
 import at.wrk.geocode.Geocoder;
 import at.wrk.geocode.LatLng;
 import at.wrk.geocode.ReverseResult;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.maps.model.AddressComponent;
 import com.google.maps.model.AddressComponentType;
 import com.google.maps.model.GeocodingResult;
