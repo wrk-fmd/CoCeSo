@@ -23,6 +23,11 @@ require(["config"], function() {
       //Lock concern changing
       lock.lock();
 
+      /// ***********************************
+      /// TEMPORARY FIX FOR DEADLOCK PROBLEM:
+      /// Don't load data at the same time
+      /// ***********************************
+
       //Preload incidents, patients and units
       load({
         url: "incident/main.json",
@@ -30,18 +35,22 @@ require(["config"], function() {
         model: Incident,
         store: incidentsStore.models
       });
-      load({
-        url: "patient/main.json",
-        stomp: "/topic/patient/main/{c}",
-        model: Patient,
-        store: patientsStore.models
-      });
-      load({
-        url: "unit/main.json",
-        stomp: "/topic/unit/main/{c}",
-        model: Unit,
-        store: unitsStore.models
-      });
+      window.setTimeout(function() {
+        load({
+          url: "patient/main.json",
+          stomp: "/topic/patient/main/{c}",
+          model: Patient,
+          store: patientsStore.models
+        });
+      }, 2000);
+      window.setTimeout(function() {
+        load({
+          url: "unit/main.json",
+          stomp: "/topic/unit/main/{c}",
+          model: Unit,
+          store: unitsStore.models
+        });
+      }, 1000);
 
       //Load Bindings for Notifications
       ko.applyBindings(navigation, $("#navbar")[0]);
