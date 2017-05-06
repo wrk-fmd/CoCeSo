@@ -33,6 +33,7 @@ define(["jquery", "knockout"], function($, ko) {
         $el.find(".toggle-body").slideToggle();
         $el.find(".toggle-indicator").toggleClass("glyphicon-chevron-down glyphicon-chevron-up");
         options.hide(id, $el.find(".toggle-indicator").hasClass("glyphicon-chevron-down"));
+        return false;
       });
     }
   };
