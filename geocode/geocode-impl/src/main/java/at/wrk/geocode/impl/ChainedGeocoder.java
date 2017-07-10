@@ -53,10 +53,10 @@ public class ChainedGeocoder implements Geocoder<Address> {
   @Override
   public LatLng geocode(Address address) {
     // First look in cache
-    CacheEntry entry = cacheRepository.findOne(Example.of(new CacheEntry(address), addressMatcher));
-    if (entry != null) {
+    List<CacheEntry> entries = cacheRepository.findAll(Example.of(new CacheEntry(address), addressMatcher));
+    if (!entries.isEmpty()) {
       LOG.debug("Found coordinates for address '{}' in cache", address);
-      return entry.getCoordinates();
+      return entries.get(0).getCoordinates();
     }
 
     // Now try all the geocoders in order
