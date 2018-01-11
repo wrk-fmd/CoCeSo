@@ -1,0 +1,4 @@
+#!/bin/sh
+BASE=$(dirname $(dirname $(readlink -en $0)))
+
+docker run -it --rm -v "$BASE:/usr/src/mymaven" -v "$BASE/.m2:/root/.m2" -w /usr/src/mymaven maven:alpine mvn package

@@ -1,0 +1,4 @@
+#!/bin/sh
+BASE=$(dirname $(dirname $(readlink -en $0)))
+
+docker build -t coceso-app "$BASE/main/view/target/"
