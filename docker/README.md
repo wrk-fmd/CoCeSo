@@ -15,19 +15,25 @@ let's use docker compose.
 
 ## Build the project using a maven container
 
+NOTE: The result differs from the pristine build in two ways.
+
+* It uses hard-coded database credentials - INSECURE.
+* It does not compile the radio pugin because of missing dependencies.
+
 These steps build the deployable .war-file and two docker images.
 
-* `./build` OR `./build_cached`, the later keeps the cache after building for faster re-builds.
-* `./build_image` builds `coceso-app`.
+* `./build_war` builds the deployable; optional parameters are
+	* `./build_war_cached` (alternative command) keeps the cache after building for faster re-builds.
+	* `-Drequirejs.optimize.skip=true` skips lengthy uglify.
+	* `clean` removes artefacts before compiling and packaging.
+* `./build_app` builds `coceso-app`.
 * `./build_db` builds `coceso-db`.
 
 ## Deployment
 
-Work in progress ...
+Run the following commands. Coceso is then available at http://localhost:8080.
 
-* Create a Postgres user, that the webapplication will use
-* Run the `create.sql` and `create_geocode.sql` script in `main/resources/sql/` to create the database tables (two separate tables)
-* Create a first Administrator with the `create_user.sql` script
-* Deploy the war file
-* Adapt the `coceso.properties` file in the deployed webapp
+	docker network create coceso
+	docker run -d --network coceso --name coceso-db coceso-db
+	docker run -it --rm --network coceso -p 8080:8080 --name coceso-app coceso-app
 
