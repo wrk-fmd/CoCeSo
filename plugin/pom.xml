@@ -19,9 +19,20 @@
   <modules>
     <module>gmaps</module>
     <module>niu</module>
-    <module>radio</module>
     <module>vcm-poi</module>
     <module>vienna</module>
     <module>wflwr-poi</module>
   </modules>
+
+  <profiles>
+    <profile>
+      <id>radio</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+        <module>radio</module>
+      </modules>
+    </profile>
+  </profiles>
 </project>
