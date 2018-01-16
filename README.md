@@ -25,8 +25,8 @@ The interface language is German or English (with your contribution any other la
 * Install Tomcat8
 * Install Postgresql Database
 * Create a Postgres user, that the webapplication will use
-* Run the `create.sql` and `create_geocode.sql` script in `main/resources/sql/` to create the database tables (two separate tables)
-* Create a first Administrator with the `create_user.sql` script
+* Run the `create00.sql` and `create01_geocode.sql` script in `main/resources/sql/` to create the database tables (two separate databases `coceso` and `geocode` respectively)
+* Create a first Administrator with the `create99_user.sql` script
 * Deploy the war file
 * Adapt the `coceso.properties` file in the deployed webapp
 
