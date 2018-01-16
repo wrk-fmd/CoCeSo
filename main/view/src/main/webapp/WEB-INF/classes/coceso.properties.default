@@ -5,7 +5,7 @@ db.username=coceso
 db.password=password
 
 # Authentication config
-auth.authUrl=
+auth.authUrl=http://example.com
 auth.useAuthUrl=false
 auth.firstUse=false
 
