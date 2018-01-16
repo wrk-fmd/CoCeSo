@@ -22,6 +22,7 @@ NOTE: The result differs from the pristine build in two ways.
 
 These steps build the deployable .war-file and two docker images.
 
+* Copy `main/view/src/main/webapp/WEB-INF/classes/coceso.properties.docker` to `coceso.properties` in that directory.
 * `./build_war` builds the deployable; optional parameters are
 	* `./build_war_cached` (alternative command) keeps the cache after building for faster re-builds.
 	* `-Drequirejs.optimize.skip=true` skips lengthy uglify.
