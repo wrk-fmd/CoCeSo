@@ -36,5 +36,6 @@ Run the following commands. Coceso is then available at http://localhost:8080.
 
 	docker network create coceso
 	docker run -d --network coceso --name coceso-db coceso-db
-	docker run -it --rm --network coceso -p 8080:8080 --name coceso-app coceso-app
+	docker run -d --rm --network coceso -p 8080:8080 --name coceso-app coceso-app
 
+Note that you likely want to keep the container `coceso-db`, but not necessarily `coceso-app`.
