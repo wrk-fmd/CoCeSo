@@ -22,7 +22,7 @@ The interface language is German or English (with your contribution any other la
 
 ## Deployment
 
-For the docker version see [docker/Readme.md](docker/Readme.md).
+For the docker version see [docker/README.md](docker/README.md).
 
 * Install Tomcat8
 * Install Postgresql Database

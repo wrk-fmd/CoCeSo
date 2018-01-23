@@ -18,7 +18,7 @@ let's use docker compose.
 NOTE: The result differs from the pristine build in two ways.
 
 * It uses hard-coded database credentials - INSECURE.
-* It does not compile the radio pugin because of missing dependencies.
+* It does not compile the radio plugin because of missing dependencies.
 
 These steps build the deployable .war-file and two docker images.
 
