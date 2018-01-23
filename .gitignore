@@ -29,6 +29,9 @@ ports.properties
 # ignore compilation output
 target
 
+# ignore private maven cache
+.m2
+
 # ignore bower cache
 bower_components
 

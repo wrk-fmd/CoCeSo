@@ -22,11 +22,13 @@ The interface language is German or English (with your contribution any other la
 
 ## Deployment
 
+For the docker version see [docker/Readme.md](docker/Readme.md).
+
 * Install Tomcat8
 * Install Postgresql Database
 * Create a Postgres user, that the webapplication will use
 * Run the `create00.sql` and `create01_geocode.sql` script in `main/resources/sql/` to create the database tables (two separate databases `coceso` and `geocode` respectively)
-* Create a first Administrator with the `create99_user.sql` script
+* Create a first Administrator with the `create99_user.sql` script. The hashed default password is `v.nachname`; optionally remove it and use `auth.firstUse` instead.
 * Deploy the war file
 * Adapt the `coceso.properties` file in the deployed webapp
 
