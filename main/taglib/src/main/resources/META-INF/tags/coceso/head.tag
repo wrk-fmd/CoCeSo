@@ -15,7 +15,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright Copyright (c) 2014 WRK\Coceso-Team
- * @link https://sourceforge.net/projects/coceso/
+ * @link https://github.com/wrk-fmd/CoCeSo
  * @license GPL-3.0 ( http://opensource.org/licenses/GPL-3.0 )
  */
 --%>
