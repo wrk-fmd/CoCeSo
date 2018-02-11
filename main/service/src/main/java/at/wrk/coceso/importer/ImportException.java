@@ -1,6 +1,6 @@
 package at.wrk.coceso.importer;
 
-public class ImportException extends Exception {
+public class ImportException extends RuntimeException {
 
   public ImportException() {
     super();
