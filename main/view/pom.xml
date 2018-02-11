@@ -30,6 +30,16 @@
         </dependency>
       </dependencies>
     </profile>
+
+    <profile>
+      <id>geobroker</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <dependencies>
+
+      </dependencies>
+    </profile>
   </profiles>
 
   <dependencies>
