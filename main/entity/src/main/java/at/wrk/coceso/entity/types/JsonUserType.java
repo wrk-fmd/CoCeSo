@@ -4,6 +4,10 @@ import at.wrk.coceso.entity.helper.JsonViews;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import org.hibernate.HibernateException;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.hibernate.usertype.UserType;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.sql.PreparedStatement;
@@ -11,9 +15,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Objects;
-import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SessionImplementor;
-import org.hibernate.usertype.UserType;
 
 public abstract class JsonUserType<T> implements UserType, Serializable {
 
@@ -38,7 +39,7 @@ public abstract class JsonUserType<T> implements UserType, Serializable {
   }
 
   @Override
-  public T nullSafeGet(ResultSet rs, String[] names, SessionImplementor session, Object owner) throws HibernateException, SQLException {
+  public T nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
     try {
       return deserialize(rs.getString(names[0]));
     } catch (IOException e) {
@@ -47,7 +48,7 @@ public abstract class JsonUserType<T> implements UserType, Serializable {
   }
 
   @Override
-  public void nullSafeSet(PreparedStatement st, Object value, int index, SessionImplementor session) throws HibernateException, SQLException {
+  public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
     if (value == null) {
       st.setNull(index, Types.OTHER);
     } else {
