@@ -1,4 +1,4 @@
-package at.wrk.fmd.coceso.plugin.geobroker.token;
+package at.wrk.coceso.plugin.geobroker.token;
 
 import org.junit.Before;
 import org.junit.Test;

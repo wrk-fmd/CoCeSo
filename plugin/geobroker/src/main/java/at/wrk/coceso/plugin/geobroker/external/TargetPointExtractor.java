@@ -1,4 +1,4 @@
-package at.wrk.fmd.coceso.plugin.geobroker.external;
+package at.wrk.coceso.plugin.geobroker.external;
 
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.enums.TaskState;

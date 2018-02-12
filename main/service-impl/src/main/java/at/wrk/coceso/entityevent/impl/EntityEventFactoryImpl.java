@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -19,14 +20,18 @@ class EntityEventFactoryImpl implements EntityEventFactory {
     private final static Set<EntityEventHandler<?>> instances = new HashSet<>();
 
     private final SocketMessagingTemplate template;
-    private final Collection<EntityEventListener<?>> serviceEntityEventListeners;
+    private Collection<EntityEventListener<?>> serviceEntityEventListeners;
 
     @Autowired
     public EntityEventFactoryImpl(
-            final SocketMessagingTemplate template,
-            final Collection<EntityEventListener<?>> serviceEntityEventListeners) {
+            final SocketMessagingTemplate template) {
         this.template = template;
-        this.serviceEntityEventListeners = serviceEntityEventListeners;
+        this.serviceEntityEventListeners = Collections.emptyList();
+    }
+
+    @Autowired(required = false)
+    public void setServiceEntityEventListeners(final Collection<EntityEventListener<?>> listeners) {
+        this.serviceEntityEventListeners = listeners == null ? Collections.emptyList() : listeners;
     }
 
     @Override

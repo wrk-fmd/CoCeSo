@@ -1,6 +1,6 @@
-package at.wrk.fmd.coceso.plugin.geobroker.rest;
+package at.wrk.coceso.plugin.geobroker.rest;
 
-import at.wrk.fmd.coceso.plugin.geobroker.contract.GeoBrokerUnit;
+import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerUnit;
 
 public interface GeoBrokerUnitListener {
     void unitUpdated(GeoBrokerUnit updatedUnit);

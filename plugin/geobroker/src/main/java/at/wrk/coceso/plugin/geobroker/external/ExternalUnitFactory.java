@@ -1,10 +1,10 @@
-package at.wrk.fmd.coceso.plugin.geobroker.external;
+package at.wrk.coceso.plugin.geobroker.external;
 
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.point.Point;
-import at.wrk.fmd.coceso.plugin.geobroker.contract.GeoBrokerPoint;
-import at.wrk.fmd.coceso.plugin.geobroker.contract.GeoBrokerUnit;
+import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerPoint;
+import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerUnit;
 import at.wrk.geocode.LatLng;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -59,7 +59,7 @@ public class ExternalUnitFactory implements GeoBrokerUnitFactory {
 
         return new GeoBrokerUnit(
                 externalId,
-                unit.getCall(),
+                Optional.ofNullable(unit.getCall()).orElse(""),
                 token,
                 ImmutableList.of(),
                 externalIncidentIds,
@@ -80,8 +80,14 @@ public class ExternalUnitFactory implements GeoBrokerUnitFactory {
         return targetPoints.size() == 1 ? targetPoints.get(0) : null;
     }
 
-    private GeoBrokerPoint mapPoint(final Point position) {
-        LatLng coordinates = position.getCoordinates();
-        return new GeoBrokerPoint(coordinates.getLat(), coordinates.getLng());
+    private GeoBrokerPoint mapPoint(@Nullable final Point position) {
+        GeoBrokerPoint point = null;
+
+        if (position != null) {
+            LatLng coordinates = position.getCoordinates();
+            point = new GeoBrokerPoint(coordinates.getLat(), coordinates.getLng());
+        }
+
+        return point;
     }
 }

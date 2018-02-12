@@ -1,6 +1,6 @@
-package at.wrk.fmd.coceso.plugin.geobroker.external;
+package at.wrk.coceso.plugin.geobroker.external;
 
-import at.wrk.fmd.coceso.plugin.geobroker.token.TokenGenerator;
+import at.wrk.coceso.plugin.geobroker.token.TokenGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;

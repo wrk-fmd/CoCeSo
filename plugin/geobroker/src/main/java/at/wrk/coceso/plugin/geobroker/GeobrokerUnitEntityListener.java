@@ -1,11 +1,11 @@
-package at.wrk.fmd.coceso.plugin.geobroker;
+package at.wrk.coceso.plugin.geobroker;
 
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entityevent.EntityEventListener;
-import at.wrk.fmd.coceso.plugin.geobroker.contract.GeoBrokerUnit;
-import at.wrk.fmd.coceso.plugin.geobroker.external.ExternalUnitIdGenerator;
-import at.wrk.fmd.coceso.plugin.geobroker.external.GeoBrokerUnitFactory;
-import at.wrk.fmd.coceso.plugin.geobroker.rest.GeoBrokerUnitListener;
+import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerUnit;
+import at.wrk.coceso.plugin.geobroker.external.ExternalUnitIdGenerator;
+import at.wrk.coceso.plugin.geobroker.external.GeoBrokerUnitFactory;
+import at.wrk.coceso.plugin.geobroker.rest.GeoBrokerUnitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
