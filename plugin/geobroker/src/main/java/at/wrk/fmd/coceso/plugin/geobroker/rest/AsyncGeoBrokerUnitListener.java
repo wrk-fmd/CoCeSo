@@ -38,26 +38,41 @@ public class AsyncGeoBrokerUnitListener implements GeoBrokerUnitListener {
 
     @Override
     public void unitUpdated(final GeoBrokerUnit updatedUnit) {
-        String url = privateApiUrl + "/units/" + updatedUnit.getId();
+        String url = getUrlForUnit(updatedUnit.getId());
 
-        String unitJson = gson.toJson(updatedUnit);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        HttpEntity<String> httpEntity = new HttpEntity<>(unitJson, headers);
-        ListenableFuture<ResponseEntity<String>> responseFuture = restTemplate.exchange(url, HttpMethod.PUT, httpEntity, String.class);
-        responseFuture.addCallback(
-                success -> {
-                    LOG.debug("Successfully written updated unit to geobroker: {}", updatedUnit);
-                },
-                failure -> {
-                    LOG.warn("Failed to update unit at geobroker. url: '{}'. updated unit: {}", url, updatedUnit);
-                });
+        HttpEntity<String> httpEntity = serializeUnit(updatedUnit);
+        putHttpEntityToUrl(url, httpEntity);
     }
 
     @Override
     public void unitDeleted(final String externalUnitId) {
+        String url = getUrlForUnit(externalUnitId);
+        ListenableFuture<?> future = restTemplate.delete(url);
+        future.addCallback(
+                success -> LOG.debug("Successfully deleted unit at geobroker url: '{}'", url),
+                failure -> LOG.warn("Failed to delete unit at geobroker url: '{}'.", url));
+    }
 
+    private HttpEntity<String> serializeUnit(final GeoBrokerUnit updatedUnit) {
+        String unitJson = gson.toJson(updatedUnit);
+        return createHttpEntityForJsonString(unitJson);
+    }
+
+    private String getUrlForUnit(final String externalUnitId) {
+        return privateApiUrl + "/units/" + externalUnitId;
+    }
+
+    private void putHttpEntityToUrl(final String url, final HttpEntity<String> httpEntity) {
+        ListenableFuture<ResponseEntity<String>> responseFuture = restTemplate.exchange(url, HttpMethod.PUT, httpEntity, String.class);
+        responseFuture.addCallback(
+                success -> LOG.debug("Successfully written updated unit to geobroker url: '{}'", url),
+                failure -> LOG.warn("Failed to update unit at geobroker url: '{}'.", url));
+    }
+
+    private HttpEntity<String> createHttpEntityForJsonString(final String unitJson) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        return new HttpEntity<>(unitJson, headers);
     }
 }
