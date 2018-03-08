@@ -5,7 +5,7 @@ import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerUnit;
 import at.wrk.coceso.plugin.geobroker.external.ExternalUnitFactory;
 import at.wrk.coceso.plugin.geobroker.external.ExternalUnitIdGenerator;
 import at.wrk.coceso.plugin.geobroker.external.GeoBrokerUnitFactory;
-import at.wrk.coceso.plugin.geobroker.rest.GeoBrokerUnitListener;
+import at.wrk.coceso.plugin.geobroker.manager.GeoBrokerManager;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.Before;
@@ -22,15 +22,15 @@ import static org.mockito.Mockito.when;
 public class GeobrokerUnitEntityListenerTest {
     private GeobrokerUnitEntityListener sut;
     private GeoBrokerUnitFactory unitFactory;
-    private GeoBrokerUnitListener unitListener;
+    private GeoBrokerManager brokerManager;
     private ExternalUnitIdGenerator unitIdGenerator;
 
     @Before
     public void init() {
         unitFactory = mock(ExternalUnitFactory.class);
-        unitListener = mock(GeoBrokerUnitListener.class);
+        brokerManager = mock(GeoBrokerManager.class);
         unitIdGenerator = mock(ExternalUnitIdGenerator.class);
-        sut = new GeobrokerUnitEntityListener(unitListener, unitIdGenerator, unitFactory);
+        sut = new GeobrokerUnitEntityListener(brokerManager, unitIdGenerator, unitFactory);
     }
 
     @Test
@@ -55,7 +55,7 @@ public class GeobrokerUnitEntityListenerTest {
 
         sut.entityChanged(unit, 0, 0, 0);
 
-        verify(unitListener).unitUpdated(geoBrokerUnit);
+        verify(brokerManager).unitUpdated(geoBrokerUnit);
     }
 
     @Test
@@ -67,6 +67,6 @@ public class GeobrokerUnitEntityListenerTest {
 
         sut.entityDeleted(unitId, concernId, 0, 0);
 
-        verify(unitListener).unitDeleted(externalUnitId);
+        verify(brokerManager).unitDeleted(externalUnitId);
     }
 }

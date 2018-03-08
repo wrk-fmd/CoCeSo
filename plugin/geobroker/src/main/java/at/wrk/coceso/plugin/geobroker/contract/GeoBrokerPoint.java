@@ -6,6 +6,7 @@
 
 package at.wrk.coceso.plugin.geobroker.contract;
 
+import at.wrk.coceso.plugin.geobroker.GeoBrokerToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;
@@ -53,7 +54,7 @@ public class GeoBrokerPoint implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
+        return new ToStringBuilder(this, GeoBrokerToStringStyle.STYLE)
                 .append("latitude", latitude)
                 .append("longitude", longitude)
                 .toString();

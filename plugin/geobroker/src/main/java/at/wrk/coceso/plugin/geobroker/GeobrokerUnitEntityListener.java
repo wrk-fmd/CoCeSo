@@ -5,41 +5,56 @@ import at.wrk.coceso.entityevent.EntityEventListener;
 import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerUnit;
 import at.wrk.coceso.plugin.geobroker.external.ExternalUnitIdGenerator;
 import at.wrk.coceso.plugin.geobroker.external.GeoBrokerUnitFactory;
-import at.wrk.coceso.plugin.geobroker.rest.GeoBrokerUnitListener;
+import at.wrk.coceso.plugin.geobroker.manager.GeoBrokerManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class GeobrokerUnitEntityListener implements EntityEventListener<Unit> {
+    private static final Logger LOG = LoggerFactory.getLogger(GeobrokerUnitEntityListener.class);
 
-    private final GeoBrokerUnitListener unitListener;
+    private final GeoBrokerManager brokerManager;
     private final ExternalUnitIdGenerator unitIdGenerator;
     private final GeoBrokerUnitFactory unitFactory;
 
     @Autowired
     public GeobrokerUnitEntityListener(
-            final GeoBrokerUnitListener unitListener,
+            final GeoBrokerManager brokerManager,
             final ExternalUnitIdGenerator unitIdGenerator,
             final GeoBrokerUnitFactory unitFactory) {
-        this.unitListener = unitListener;
+        this.brokerManager = brokerManager;
         this.unitIdGenerator = unitIdGenerator;
         this.unitFactory = unitFactory;
     }
 
     @Override
     public void entityChanged(final Unit entity, final int concern, final int hver, final int seq) {
-        GeoBrokerUnit externalUnit = unitFactory.createExternalUnit(entity);
-        unitListener.unitUpdated(externalUnit);
+        executeSafely(() -> {
+            GeoBrokerUnit externalUnit = unitFactory.createExternalUnit(entity);
+            brokerManager.unitUpdated(externalUnit);
+        });
     }
 
     @Override
     public void entityDeleted(final int id, final int concern, final int hver, final int seq) {
-        String externalUnitId = unitIdGenerator.generateExternalUnitId(id, concern);
-        unitListener.unitDeleted(externalUnitId);
+        executeSafely(() -> {
+            String externalUnitId = unitIdGenerator.generateExternalUnitId(id, concern);
+            brokerManager.unitDeleted(externalUnitId);
+        });
     }
 
     @Override
     public boolean isSupported(final Class<?> supportedClass) {
         return Unit.class.isAssignableFrom(supportedClass);
+    }
+
+    private void executeSafely(final Runnable execution) {
+        try {
+            execution.run();
+        } catch (Throwable t) {
+            LOG.error("Uncaught exception in GeoBroker plugin.", t);
+        }
     }
 }

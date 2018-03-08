@@ -1,7 +1,6 @@
 package at.wrk.coceso.plugin.geobroker.external;
 
 import at.wrk.coceso.entity.Concern;
-import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerUnit;
@@ -20,19 +19,16 @@ public class ExternalUnitFactoryTest {
     private ExternalUnitIdGenerator unitIdGenerator;
     private ExternalUnitTokenGenerator tokenGenerator;
     private ExternalIncidentIdGenerator incidentIdGenerator;
-    private TargetPointExtractor targetPointExtractor;
 
     @Before
     public void init() {
         unitIdGenerator = mock(ExternalUnitIdGenerator.class);
         tokenGenerator = mock(ExternalUnitTokenGenerator.class);
         incidentIdGenerator = mock(ExternalIncidentIdGenerator.class);
-        targetPointExtractor = mock(TargetPointExtractor.class);
         sut = new ExternalUnitFactory(
                 unitIdGenerator,
                 tokenGenerator,
-                incidentIdGenerator,
-                targetPointExtractor);
+                incidentIdGenerator);
     }
 
     @Test
@@ -60,8 +56,8 @@ public class ExternalUnitFactoryTest {
         unit.setConcern(new Concern(concernId));
         unit.setIncidentsSlim(ImmutableMap.of(3, TaskState.ZAO, 4, TaskState.ZAO));
 
-        when(incidentIdGenerator.generateExternalIncidentId(new Incident(3))).thenReturn("extId-3");
-        when(incidentIdGenerator.generateExternalIncidentId(new Incident(4))).thenReturn("extId-4");
+        when(incidentIdGenerator.generateExternalIncidentId(3, concernId)).thenReturn("extId-3");
+        when(incidentIdGenerator.generateExternalIncidentId(4, concernId)).thenReturn("extId-4");
 
         tokenGeneratorReturns(unit);
 

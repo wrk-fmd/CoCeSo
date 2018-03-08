@@ -1,8 +1,8 @@
 package at.wrk.coceso.plugin.geobroker.external;
 
-import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.enums.TaskState;
-import at.wrk.coceso.entity.point.Point;
+import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerIncident;
+import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerPoint;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -10,16 +10,16 @@ import javax.annotation.Nullable;
 @Component
 public class TargetPointExtractor {
     @Nullable
-    public Point getTargetPoint(final Incident incident, final TaskState taskState) {
-        Point targetPoint = null;
+    public GeoBrokerPoint getTargetPoint(final GeoBrokerIncident incident, final TaskState taskState) {
+        GeoBrokerPoint targetPoint = null;
 
         switch (taskState) {
             case Assigned:
             case ZBO:
-                targetPoint = incident.getBo();
+                targetPoint = incident.getLocation();
                 break;
             case ZAO:
-                targetPoint = incident.getAo();
+                targetPoint = incident.getDestination();
                 break;
             default:
                 targetPoint = null;

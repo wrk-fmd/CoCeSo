@@ -2,61 +2,56 @@ package at.wrk.coceso.plugin.geobroker.external;
 
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.Unit;
+import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entity.point.Point;
 import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerPoint;
 import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerUnit;
 import at.wrk.geocode.LatLng;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 @Component
 public class ExternalUnitFactory implements GeoBrokerUnitFactory {
+    private static final Logger LOG = LoggerFactory.getLogger(ExternalUnitFactory.class);
+
     private final ExternalUnitIdGenerator unitIdGenerator;
     private final ExternalUnitTokenGenerator tokenGenerator;
     private final ExternalIncidentIdGenerator incidentIdGenerator;
-    private final TargetPointExtractor targetPointExtractor;
 
     @Autowired
     public ExternalUnitFactory(
             final ExternalUnitIdGenerator unitIdGenerator,
             final ExternalUnitTokenGenerator tokenGenerator,
-            final ExternalIncidentIdGenerator incidentIdGenerator,
-            final TargetPointExtractor targetPointExtractor) {
+            final ExternalIncidentIdGenerator incidentIdGenerator) {
         this.unitIdGenerator = unitIdGenerator;
         this.tokenGenerator = tokenGenerator;
         this.incidentIdGenerator = incidentIdGenerator;
-        this.targetPointExtractor = targetPointExtractor;
     }
 
     @Override
     public GeoBrokerUnit createExternalUnit(final Unit unit) {
-        String externalId = unitIdGenerator.generateExternalUnitId(unit.getId(), unit.getConcern().getId());
+        Integer concernId = unit.getConcern().getId();
+        LOG.trace(
+                "Creating GeoBrokerUnit for Unit: unitId={}, concernId={}, assignedIncidents={}",
+                unit.getId(),
+                concernId,
+                unit.getIncidentsSlim());
+        String externalId = getExternalUnitId(unit);
         String token = tokenGenerator.generateToken(unit);
 
-        Set<Incident> assignedIncidents = Optional.ofNullable(unit.getIncidents())
-                .map(Map::keySet)
-                .orElse(ImmutableSet.of());
+        Map<String, TaskState> externalIncidentIds = mapToExternalIncidentIds(concernId, unit.getIncidents());
 
-        GeoBrokerPoint targetPoint = getTargetPointIfOneTargetIsPresent(unit, assignedIncidents);
-
-        List<String> externalIncidentIds = assignedIncidents
-                .stream()
-                .map(incidentIdGenerator::generateExternalIncidentId)
-                .distinct()
-                .collect(Collectors.toList());
-
+        // Target Point and referenced Units are caluculated in GeoBrokerManager.
         return new GeoBrokerUnit(
                 externalId,
                 Optional.ofNullable(unit.getCall()).orElse(""),
@@ -64,20 +59,24 @@ public class ExternalUnitFactory implements GeoBrokerUnitFactory {
                 ImmutableList.of(),
                 externalIncidentIds,
                 mapPoint(unit.getPosition()),
-                targetPoint);
+                null);
     }
 
-    @Nullable
-    private GeoBrokerPoint getTargetPointIfOneTargetIsPresent(final Unit unit, final Set<Incident> assignedIncidents) {
-        List<GeoBrokerPoint> targetPoints = assignedIncidents
-                .stream()
-                .map(incident -> targetPointExtractor.getTargetPoint(incident, unit.getIncidents().get(incident)))
-                .filter(Objects::nonNull)
-                .map(this::mapPoint)
-                .distinct()
-                .collect(toList());
+    private String getExternalUnitId(final Unit unit) {
+        return unitIdGenerator.generateExternalUnitId(unit.getId(), unit.getConcern().getId());
+    }
 
-        return targetPoints.size() == 1 ? targetPoints.get(0) : null;
+    private Map<String, TaskState> mapToExternalIncidentIds(final int concernId, final Map<Incident, TaskState> assignedIncidents) {
+        return Optional.ofNullable(assignedIncidents)
+                .orElseGet(this::emptyMapWithWarning)
+                .entrySet()
+                .stream()
+                .collect(toMap(x -> incidentIdGenerator.generateExternalIncidentId(x.getKey().getId(), concernId), Map.Entry::getValue));
+    }
+
+    private Map<Incident, TaskState> emptyMapWithWarning() {
+        LOG.warn("Assigned incidents for unit are null.");
+        return ImmutableMap.of();
     }
 
     private GeoBrokerPoint mapPoint(@Nullable final Point position) {

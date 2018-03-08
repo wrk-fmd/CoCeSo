@@ -1,14 +1,10 @@
 package at.wrk.coceso.plugin.geobroker.external;
 
-import at.wrk.coceso.entity.Concern;
-import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.plugin.geobroker.token.TokenGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
 
 @Component
 @PropertySource(value = "classpath:geobroker.properties", ignoreResourceNotFound = true)
@@ -30,18 +26,14 @@ public class ExternalIncidentIdGenerator {
         this.salt = salt;
     }
 
-    public String generateExternalIncidentId(final Incident incident) {
-        String unitIdString = Integer.toString(incident.getId());
-        String concernPrefix = getConcernPrefixForUnit(incident);
+    public String generateExternalIncidentId(final int incidentId, final int concernId) {
+        String unitIdString = Integer.toString(incidentId);
+        String concernPrefix = getConcernPrefixForUnit(concernId);
 
         return concernPrefix + generator.calculateToken(unitIdString, SALT_PREFIX + salt);
     }
 
-    private String getConcernPrefixForUnit(final Incident incident) {
-        return Optional.ofNullable(incident.getConcern())
-                    .map(Concern::getId)
-                    .map(Object::toString)
-                    .map(idString -> idString + "-")
-                    .orElse("");
+    private String getConcernPrefixForUnit(final int concernId) {
+        return Integer.toString(concernId) + "-";
     }
 }

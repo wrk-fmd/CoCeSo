@@ -10,25 +10,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.client.AsyncRestTemplate;
 
+import static at.wrk.coceso.plugin.geobroker.rest.HttpEntities.createHttpEntityForJsonString;
+
 @Component
 @PropertySource(value = "classpath:geobroker.properties", ignoreResourceNotFound = true)
-public class AsyncGeoBrokerUnitListener implements GeoBrokerUnitListener {
-    private static final Logger LOG = LoggerFactory.getLogger(AsyncGeoBrokerUnitListener.class);
+public class AsyncGeoBrokerUnitPublisher implements GeoBrokerUnitPublisher {
+    private static final Logger LOG = LoggerFactory.getLogger(AsyncGeoBrokerUnitPublisher.class);
 
     private final AsyncRestTemplate restTemplate;
     private final String privateApiUrl;
     private final Gson gson;
 
     @Autowired
-    public AsyncGeoBrokerUnitListener(
+    public AsyncGeoBrokerUnitPublisher(
             final AsyncRestTemplate restTemplate,
             final @Value("${geobroker.private.api.url}") String privateApiUrl) {
         this.restTemplate = restTemplate;
@@ -67,12 +67,5 @@ public class AsyncGeoBrokerUnitListener implements GeoBrokerUnitListener {
         responseFuture.addCallback(
                 success -> LOG.debug("Successfully written updated unit to geobroker url: '{}'", url),
                 failure -> LOG.warn("Failed to update unit at geobroker url: '{}'.", url));
-    }
-
-    private HttpEntity<String> createHttpEntityForJsonString(final String unitJson) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        return new HttpEntity<>(unitJson, headers);
     }
 }
