@@ -37,7 +37,7 @@ public class ConcurrentGeoBrokerManagerTest {
 
         sut.unitUpdated(updatedUnit);
 
-        verify(unitPublisher).unitUpdated(updatedUnit);
+        verify(unitPublisher).unitUpdated(any(GeoBrokerUnit.class));
     }
 
     @Test

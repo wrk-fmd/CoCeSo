@@ -55,11 +55,13 @@ public class ConcurrentGeoBrokerManager implements GeoBrokerManager {
 
     @Override
     public void unitUpdated(final GeoBrokerUnit unit) {
+        GeoBrokerUnit updatedUnit;
         synchronized (updateLock) {
-            unitCache.put(unit.getId(), unit);
+            updatedUnit = updateCachedUnit(unit);
+            unitCache.put(updatedUnit.getId(), updatedUnit);
         }
 
-        unitPublisher.unitUpdated(unit);
+        unitPublisher.unitUpdated(updatedUnit);
     }
 
     @Override
