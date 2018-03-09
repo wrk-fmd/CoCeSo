@@ -4,6 +4,7 @@ import at.wrk.coceso.plugin.geobroker.GeoBrokerToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class GeoBrokerIncident implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -52,6 +53,28 @@ public class GeoBrokerIncident implements Serializable {
 
     public GeoBrokerPoint getLocation() {
         return location;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        GeoBrokerIncident that = (GeoBrokerIncident) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(type, that.type) &&
+                Objects.equals(priority, that.priority) &&
+                Objects.equals(blue, that.blue) &&
+                Objects.equals(info, that.info) &&
+                Objects.equals(location, that.location);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, type, priority, blue, info, location);
     }
 
     @Override

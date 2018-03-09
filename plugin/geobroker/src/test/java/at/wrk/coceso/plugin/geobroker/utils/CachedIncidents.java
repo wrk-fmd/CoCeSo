@@ -18,13 +18,7 @@ public final class CachedIncidents {
     }
 
     public static CachedIncident random(final List<String> assignedExternalUnitIds) {
-        GeoBrokerIncident geoBrokerIncident = new GeoBrokerIncident(
-                randomString(),
-                randomString(),
-                true,
-                true,
-                randomString(),
-                randomPoint());
+        GeoBrokerIncident geoBrokerIncident = GeoBrokerIncidents.random();
         return new CachedIncident(
                 geoBrokerIncident,
                 assignedExternalUnitIds,

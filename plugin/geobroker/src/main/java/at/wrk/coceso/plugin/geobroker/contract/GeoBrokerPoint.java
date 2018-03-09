@@ -48,7 +48,6 @@ public class GeoBrokerPoint implements Serializable {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(latitude, longitude);
     }
 

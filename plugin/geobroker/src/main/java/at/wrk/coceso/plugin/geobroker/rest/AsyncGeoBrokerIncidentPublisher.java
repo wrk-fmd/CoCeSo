@@ -15,6 +15,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.client.AsyncRestTemplate;
 
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+
 import static at.wrk.coceso.plugin.geobroker.rest.HttpEntities.createHttpEntityForJsonString;
 
 @Component
@@ -25,6 +29,8 @@ public class AsyncGeoBrokerIncidentPublisher implements GeoBrokerIncidentPublish
     private final String privateApiUrl;
     private final Gson gson;
 
+    private final Map<String, GeoBrokerIncident> incidentCache;
+
     @Autowired
     public AsyncGeoBrokerIncidentPublisher(
             final AsyncRestTemplate restTemplate,
@@ -32,23 +38,42 @@ public class AsyncGeoBrokerIncidentPublisher implements GeoBrokerIncidentPublish
         this.restTemplate = restTemplate;
         this.privateApiUrl = privateApiUrl;
         this.gson = Converters.registerAll(new GsonBuilder()).create();
+
+        this.incidentCache = new ConcurrentHashMap<>();
     }
 
     @Override
     public void incidentUpdated(final GeoBrokerIncident updatedIncident) {
-        String url = getUrlForIncident(updatedIncident.getId());
-
-        HttpEntity<String> jsonString = serializeIncident(updatedIncident);
-        putHttpEntityToUrl(url, jsonString);
+        GeoBrokerIncident previousValue = incidentCache.put(updatedIncident.getId(), updatedIncident);
+        if (!Objects.equals(previousValue, updatedIncident)) {
+            publishIncidentUpdate(updatedIncident);
+        } else {
+            LOG.debug("Incident was not changed since last update. Publishing is skipped. incidentId={}", updatedIncident.getId());
+        }
     }
 
     @Override
     public void incidentDeleted(final String externalIncidentId) {
+        GeoBrokerIncident removedIncident = incidentCache.remove(externalIncidentId);
+        if (removedIncident != null) {
+            publishIncidentDeletion(externalIncidentId);
+        } else {
+            LOG.debug("Incident was not published to GeoBroker before. Deletion is skipped. incidentId={}", externalIncidentId);
+        }
+    }
+
+    private void publishIncidentDeletion(final String externalIncidentId) {
         String url = getUrlForIncident(externalIncidentId);
         ListenableFuture<?> future = restTemplate.delete(url);
         future.addCallback(
                 success -> LOG.debug("Successfully deleted incident at geobroker url: '{}'", url),
                 failure -> LOG.warn("Failed to delete incident at geobroker url: '{}'.", url));
+    }
+
+    private void publishIncidentUpdate(final GeoBrokerIncident updatedIncident) {
+        String url = getUrlForIncident(updatedIncident.getId());
+        HttpEntity<String> jsonString = serializeIncident(updatedIncident);
+        putHttpEntityToUrl(url, jsonString);
     }
 
     private HttpEntity<String> serializeIncident(final GeoBrokerIncident updatedIncident) {

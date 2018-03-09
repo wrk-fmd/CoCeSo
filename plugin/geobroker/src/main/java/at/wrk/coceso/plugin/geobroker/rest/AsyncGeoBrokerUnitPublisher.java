@@ -16,6 +16,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.client.AsyncRestTemplate;
 
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+
 import static at.wrk.coceso.plugin.geobroker.rest.HttpEntities.createHttpEntityForJsonString;
 
 @Component
@@ -27,6 +31,8 @@ public class AsyncGeoBrokerUnitPublisher implements GeoBrokerUnitPublisher {
     private final String privateApiUrl;
     private final Gson gson;
 
+    private final Map<String, GeoBrokerUnit> unitCache;
+
     @Autowired
     public AsyncGeoBrokerUnitPublisher(
             final AsyncRestTemplate restTemplate,
@@ -34,23 +40,42 @@ public class AsyncGeoBrokerUnitPublisher implements GeoBrokerUnitPublisher {
         this.restTemplate = restTemplate;
         this.privateApiUrl = privateApiUrl;
         this.gson = Converters.registerAll(new GsonBuilder()).create();
+
+        this.unitCache = new ConcurrentHashMap<>();
     }
 
     @Override
     public void unitUpdated(final GeoBrokerUnit updatedUnit) {
-        String url = getUrlForUnit(updatedUnit.getId());
-
-        HttpEntity<String> httpEntity = serializeUnit(updatedUnit);
-        putHttpEntityToUrl(url, httpEntity);
+        GeoBrokerUnit previousValue = unitCache.put(updatedUnit.getId(), updatedUnit);
+        if (!Objects.equals(previousValue, updatedUnit)) {
+            publishUnitUpdate(updatedUnit);
+        } else {
+            LOG.debug("Unit was not changed since last update. Publishing is skipped. unitId={}", updatedUnit.getId());
+        }
     }
 
     @Override
     public void unitDeleted(final String externalUnitId) {
+        GeoBrokerUnit removedUnit = unitCache.remove(externalUnitId);
+        if (removedUnit != null) {
+            publishUnitDeletion(externalUnitId);
+        } else {
+            LOG.debug("Unit was not published to GeoBroker before. Deletion is skipped. unitId={}", externalUnitId);
+        }
+    }
+
+    private void publishUnitDeletion(final String externalUnitId) {
         String url = getUrlForUnit(externalUnitId);
         ListenableFuture<?> future = restTemplate.delete(url);
         future.addCallback(
                 success -> LOG.debug("Successfully deleted unit at geobroker url: '{}'", url),
                 failure -> LOG.warn("Failed to delete unit at geobroker url: '{}'.", url));
+    }
+
+    private void publishUnitUpdate(final GeoBrokerUnit updatedUnit) {
+        String url = getUrlForUnit(updatedUnit.getId());
+        HttpEntity<String> httpEntity = serializeUnit(updatedUnit);
+        putHttpEntityToUrl(url, httpEntity);
     }
 
     private HttpEntity<String> serializeUnit(final GeoBrokerUnit updatedUnit) {

@@ -85,6 +85,29 @@ public class GeoBrokerUnit implements Serializable {
     }
 
     @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        GeoBrokerUnit that = (GeoBrokerUnit) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(token, that.token) &&
+                Objects.equals(units, that.units) &&
+                Objects.equals(incidents, that.incidents) &&
+                Objects.equals(lastPoint, that.lastPoint) &&
+                Objects.equals(targetPoint, that.targetPoint);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, token, units, incidents, lastPoint, targetPoint);
+    }
+
+    @Override
     public String toString() {
         return new ToStringBuilder(this, GeoBrokerToStringStyle.STYLE)
                 .append("id", id)
