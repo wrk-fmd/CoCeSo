@@ -1,7 +1,7 @@
 package at.wrk.coceso.plugin.geobroker.manager;
 
-import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerIncident;
-import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerUnit;
+import at.wrk.coceso.plugin.geobroker.data.CachedIncident;
+import at.wrk.coceso.plugin.geobroker.data.CachedUnit;
 
 /**
  * Collects updates of units and incidents, and triggers updates where the effected entity itself was not changed.
@@ -13,11 +13,11 @@ import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerUnit;
  */
 public interface GeoBrokerManager {
 
-    void unitUpdated(GeoBrokerUnit unit);
+    void unitUpdated(CachedUnit unit);
 
     void unitDeleted(String externalUnitId);
 
-    void incidentUpdated(GeoBrokerIncident incident);
+    void incidentUpdated(CachedIncident incident);
 
     void incidentDeleted(String externalIncidentId);
 }

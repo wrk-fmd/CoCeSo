@@ -2,7 +2,7 @@ package at.wrk.coceso.plugin.geobroker;
 
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entityevent.EntityEventListener;
-import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerIncident;
+import at.wrk.coceso.plugin.geobroker.data.CachedIncident;
 import at.wrk.coceso.plugin.geobroker.external.ExternalIncidentIdGenerator;
 import at.wrk.coceso.plugin.geobroker.external.GeoBrokerIncidentFactory;
 import at.wrk.coceso.plugin.geobroker.manager.GeoBrokerManager;
@@ -32,7 +32,7 @@ public class GeobrokerIncidentEntityListener implements EntityEventListener<Inci
     @Override
     public void entityChanged(final Incident entity, final int concern, final int hver, final int seq) {
         executeSafely(() -> {
-            GeoBrokerIncident incident = incidentFactory.createExternalIncident(entity);
+            CachedIncident incident = incidentFactory.createExternalIncident(entity);
             brokerManager.incidentUpdated(incident);
         });
     }

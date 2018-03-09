@@ -1,14 +1,17 @@
 package at.wrk.coceso.plugin.geobroker.manager;
 
-import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerIncident;
+import at.wrk.coceso.entity.enums.UnitType;
 import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerUnit;
+import at.wrk.coceso.plugin.geobroker.data.CachedIncident;
+import at.wrk.coceso.plugin.geobroker.data.CachedUnit;
 import at.wrk.coceso.plugin.geobroker.external.TargetPointExtractor;
 import at.wrk.coceso.plugin.geobroker.rest.GeoBrokerIncidentPublisher;
 import at.wrk.coceso.plugin.geobroker.rest.GeoBrokerUnitPublisher;
-import at.wrk.coceso.plugin.geobroker.utils.GeoBrokerIncidents;
+import at.wrk.coceso.plugin.geobroker.utils.CachedIncidents;
 import at.wrk.coceso.plugin.geobroker.utils.GeoBrokerUnits;
 import at.wrk.coceso.plugin.geobroker.utils.Strings;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,14 +31,14 @@ public class ConcurrentGeoBrokerManagerTest {
     public void init() {
         unitPublisher = mock(GeoBrokerUnitPublisher.class);
         incidentPublisher = mock(GeoBrokerIncidentPublisher.class);
-        sut = new ConcurrentGeoBrokerManager(unitPublisher, incidentPublisher, mock(TargetPointExtractor.class));
+        sut = new ConcurrentGeoBrokerManager(unitPublisher, incidentPublisher, mock(TargetPointExtractor.class), true);
     }
 
     @Test
     public void updateUnit_publishUpdate() {
         GeoBrokerUnit updatedUnit = GeoBrokerUnits.random();
 
-        sut.unitUpdated(updatedUnit);
+        sut.unitUpdated(new CachedUnit(updatedUnit, ImmutableMap.of(), UnitType.Portable, 1));
 
         verify(unitPublisher).unitUpdated(any(GeoBrokerUnit.class));
     }
@@ -51,11 +54,11 @@ public class ConcurrentGeoBrokerManagerTest {
 
     @Test
     public void updateIncident_publishUpdate() {
-        GeoBrokerIncident incident = GeoBrokerIncidents.random();
+        CachedIncident incident = CachedIncidents.random();
 
         sut.incidentUpdated(incident);
 
-        verify(incidentPublisher).incidentUpdated(incident);
+        verify(incidentPublisher).incidentUpdated(incident.getIncident());
     }
 
     @Test
@@ -72,10 +75,10 @@ public class ConcurrentGeoBrokerManagerTest {
         String externalUnitId = randomString();
         GeoBrokerUnit unit = GeoBrokerUnits.random(externalUnitId);
 
-        sut.unitUpdated(unit);
+        sut.unitUpdated(new CachedUnit(unit, ImmutableMap.of(), UnitType.Portable, 1));
         reset(unitPublisher);
 
-        sut.incidentUpdated(GeoBrokerIncidents.random(ImmutableList.of(externalUnitId)));
+        sut.incidentUpdated(CachedIncidents.random(ImmutableList.of(externalUnitId)));
 
         verify(unitPublisher).unitUpdated(any());
     }

@@ -1,9 +1,7 @@
 package at.wrk.coceso.plugin.geobroker.utils;
 
-import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerUnit;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 import static at.wrk.coceso.plugin.geobroker.utils.GeoBrokerPoints.randomPoint;
 import static at.wrk.coceso.plugin.geobroker.utils.Strings.randomString;
@@ -22,7 +20,7 @@ public final class GeoBrokerUnits {
                 randomString(),
                 randomString(),
                 ImmutableList.of(randomString()),
-                ImmutableMap.of(randomString(), TaskState.ABO),
+                ImmutableList.of(randomString()),
                 randomPoint(),
                 randomPoint()
         );

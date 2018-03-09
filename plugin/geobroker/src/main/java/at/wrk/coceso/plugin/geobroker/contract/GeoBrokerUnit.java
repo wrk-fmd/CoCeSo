@@ -6,16 +6,13 @@
 
 package at.wrk.coceso.plugin.geobroker.contract;
 
-import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.plugin.geobroker.GeoBrokerToStringStyle;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -29,24 +26,30 @@ public class GeoBrokerUnit implements Serializable {
     private final String token;
     private final List<String> units;
     private final List<String> incidents;
-    private transient final Map<String, TaskState> incidentsWithState;
     private final GeoBrokerPoint lastPoint;
     private final GeoBrokerPoint targetPoint;
+
+    public GeoBrokerUnit(
+        final String id,
+        final String name,
+        final String token,
+        final GeoBrokerPoint lastPoint) {
+        this(id, name, token, null, null, lastPoint, null);
+    }
 
     public GeoBrokerUnit(
             final String id,
             final String name,
             final String token,
             final List<String> units,
-            final Map<String, TaskState> incidents,
+            final List<String> incidents,
             final GeoBrokerPoint lastPoint,
             final GeoBrokerPoint targetPoint) {
         this.id = Objects.requireNonNull(id, "Unit identifier must not be null.");
         this.name = Objects.requireNonNull(name, "Display name of unit must not be null.");
         this.token = Objects.requireNonNull(token, "Token of unit must not be null.");
         this.units = units == null ? ImmutableList.of() : ImmutableList.copyOf(units);
-        this.incidents = incidents == null ? ImmutableList.of() : ImmutableList.copyOf(incidents.keySet());
-        this.incidentsWithState = incidents == null ? ImmutableMap.of() : ImmutableMap.copyOf(incidents);
+        this.incidents = incidents == null ? ImmutableList.of() : ImmutableList.copyOf(incidents);
         this.lastPoint = lastPoint;
         this.targetPoint = targetPoint;
     }
@@ -71,10 +74,6 @@ public class GeoBrokerUnit implements Serializable {
         return incidents;
     }
 
-    public Map<String, TaskState> getIncidentsWithState() {
-        return incidentsWithState;
-    }
-
     @Nullable
     public GeoBrokerPoint getLastPoint() {
         return lastPoint;
@@ -92,7 +91,7 @@ public class GeoBrokerUnit implements Serializable {
                 .append("name", name)
                 .append("token", token)
                 .append("units", units)
-                .append("incidentsWithState", incidentsWithState)
+                .append("incidents", incidents)
                 .append("lastPoint", lastPoint)
                 .append("targetPoint", targetPoint)
                 .toString();

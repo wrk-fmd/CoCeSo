@@ -22,7 +22,7 @@ public class ExternalUnitTokenGenerator {
     @Autowired
     public ExternalUnitTokenGenerator(
             final TokenGenerator generator,
-            @Value("${geobroker.salt}") final String salt) {
+            @Value("${geobroker.salt:default}") final String salt) {
         this.generator = generator;
         this.salt = salt;
     }

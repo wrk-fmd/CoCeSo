@@ -4,6 +4,7 @@ import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerUnit;
+import at.wrk.coceso.plugin.geobroker.data.CachedUnit;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
@@ -36,7 +37,7 @@ public class ExternalUnitFactory implements GeoBrokerUnitFactory {
     }
 
     @Override
-    public GeoBrokerUnit createExternalUnit(final Unit unit) {
+    public CachedUnit createExternalUnit(final Unit unit) {
         Integer concernId = unit.getConcern().getId();
         LOG.trace(
                 "Creating GeoBrokerUnit for Unit: unitId={}, concernId={}, assignedIncidents={}",
@@ -49,14 +50,13 @@ public class ExternalUnitFactory implements GeoBrokerUnitFactory {
         Map<String, TaskState> externalIncidentIds = mapToExternalIncidentIds(concernId, unit.getIncidents());
 
         // Target Point and referenced Units are caluculated in GeoBrokerManager.
-        return new GeoBrokerUnit(
+        GeoBrokerUnit geoBrokerUnit = new GeoBrokerUnit(
                 externalId,
                 Optional.ofNullable(unit.getCall()).orElse(""),
                 token,
-                ImmutableList.of(),
-                externalIncidentIds,
-                mapPoint(unit.getPosition()),
-                null);
+                mapPoint(unit.getPosition()));
+
+        return new CachedUnit(geoBrokerUnit, externalIncidentIds, unit.getType(), unit.getConcern().getId());
     }
 
     private String getExternalUnitId(final Unit unit) {

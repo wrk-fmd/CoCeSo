@@ -3,14 +3,15 @@ package at.wrk.coceso.plugin.geobroker.external;
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.enums.TaskState;
-import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerUnit;
+import at.wrk.coceso.plugin.geobroker.data.CachedUnit;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasEntry;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -40,10 +41,10 @@ public class ExternalUnitFactoryTest {
 
         String externalToken = tokenGeneratorReturns(unit);
 
-        GeoBrokerUnit externalUnit = sut.createExternalUnit(unit);
+        CachedUnit externalUnit = sut.createExternalUnit(unit);
 
-        assertThat(externalUnit.getId(), equalTo(externalUnitId));
-        assertThat(externalUnit.getToken(), equalTo(externalToken));
+        assertThat(externalUnit.getUnit().getId(), equalTo(externalUnitId));
+        assertThat(externalUnit.getUnit().getToken(), equalTo(externalToken));
     }
 
     @Test
@@ -54,16 +55,19 @@ public class ExternalUnitFactoryTest {
 
         Unit unit = new Unit(unitId);
         unit.setConcern(new Concern(concernId));
-        unit.setIncidentsSlim(ImmutableMap.of(3, TaskState.ZAO, 4, TaskState.ZAO));
+        unit.setIncidentsSlim(ImmutableMap.of(3, TaskState.ZAO, 4, TaskState.ZBO));
 
         when(incidentIdGenerator.generateExternalIncidentId(3, concernId)).thenReturn("extId-3");
         when(incidentIdGenerator.generateExternalIncidentId(4, concernId)).thenReturn("extId-4");
 
         tokenGeneratorReturns(unit);
 
-        GeoBrokerUnit externalUnit = sut.createExternalUnit(unit);
+        CachedUnit externalUnit = sut.createExternalUnit(unit);
 
-        assertThat(externalUnit.getIncidents(), contains("extId-3", "extId-4"));
+        assertThat(externalUnit.getIncidentsWithState(), allOf(
+                hasEntry("extId-3", TaskState.ZAO),
+                hasEntry("extId-4", TaskState.ZBO)
+        ));
     }
 
     private String unitIdGeneratorReturns(final int unitId, final int concernId) {

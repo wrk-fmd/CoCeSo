@@ -2,6 +2,7 @@ package at.wrk.coceso.plugin.geobroker;
 
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerUnit;
+import at.wrk.coceso.plugin.geobroker.data.CachedUnit;
 import at.wrk.coceso.plugin.geobroker.external.ExternalUnitFactory;
 import at.wrk.coceso.plugin.geobroker.external.ExternalUnitIdGenerator;
 import at.wrk.coceso.plugin.geobroker.external.GeoBrokerUnitFactory;
@@ -50,7 +51,7 @@ public class GeobrokerUnitEntityListenerTest {
     @Test
     public void unitUpdated() {
         Unit unit = mock(Unit.class);
-        GeoBrokerUnit geoBrokerUnit = mock(GeoBrokerUnit.class);
+        CachedUnit geoBrokerUnit = mock(CachedUnit.class);
         when(unitFactory.createExternalUnit(unit)).thenReturn(geoBrokerUnit);
 
         sut.entityChanged(unit, 0, 0, 0);

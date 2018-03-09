@@ -6,11 +6,11 @@ import at.wrk.geocode.LatLng;
 
 import javax.annotation.Nullable;
 
-public final class GeoBrokerPoints {
+final class GeoBrokerPoints {
     private GeoBrokerPoints() {
     }
 
-    public static GeoBrokerPoint mapPoint(@Nullable final Point position) {
+    static GeoBrokerPoint mapPoint(@Nullable final Point position) {
         GeoBrokerPoint point = null;
 
         if (position != null) {

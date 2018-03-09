@@ -4,7 +4,6 @@ import at.wrk.coceso.plugin.geobroker.GeoBrokerToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;
-import java.util.List;
 
 public class GeoBrokerIncident implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -15,8 +14,6 @@ public class GeoBrokerIncident implements Serializable {
     private final Boolean blue;
     private final String info;
     private final GeoBrokerPoint location;
-    private final transient List<String> assignedExternalUnitIds;
-    private final transient GeoBrokerPoint destination;
 
     public GeoBrokerIncident(
             final String id,
@@ -24,17 +21,13 @@ public class GeoBrokerIncident implements Serializable {
             final Boolean priority,
             final Boolean blue,
             final String info,
-            final GeoBrokerPoint location,
-            final List<String> assignedExternalUnitIds,
-            final GeoBrokerPoint destination) {
+            final GeoBrokerPoint location) {
         this.id = id;
         this.type = type;
         this.priority = priority;
         this.blue = blue;
         this.info = info;
         this.location = location;
-        this.assignedExternalUnitIds = assignedExternalUnitIds;
-        this.destination = destination;
     }
 
     public String getId() {
@@ -61,14 +54,6 @@ public class GeoBrokerIncident implements Serializable {
         return location;
     }
 
-    public List<String> getAssignedExternalUnitIds() {
-        return assignedExternalUnitIds;
-    }
-
-    public GeoBrokerPoint getDestination() {
-        return destination;
-    }
-
     @Override
     public String toString() {
         return new ToStringBuilder(this, GeoBrokerToStringStyle.STYLE)
@@ -78,7 +63,6 @@ public class GeoBrokerIncident implements Serializable {
                 .append("blue", blue)
                 .append("info", info)
                 .append("location", location)
-                .append("assignedExternalUnitIds", assignedExternalUnitIds)
                 .toString();
     }
 }
