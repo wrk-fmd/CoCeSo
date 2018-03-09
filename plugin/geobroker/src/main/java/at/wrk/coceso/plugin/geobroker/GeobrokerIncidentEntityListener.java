@@ -1,19 +1,27 @@
 package at.wrk.coceso.plugin.geobroker;
 
 import at.wrk.coceso.entity.Incident;
+import at.wrk.coceso.entity.enums.IncidentState;
+import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entityevent.EntityEventListener;
 import at.wrk.coceso.plugin.geobroker.data.CachedIncident;
 import at.wrk.coceso.plugin.geobroker.external.ExternalIncidentIdGenerator;
 import at.wrk.coceso.plugin.geobroker.external.GeoBrokerIncidentFactory;
 import at.wrk.coceso.plugin.geobroker.manager.GeoBrokerManager;
+import com.google.common.collect.ImmutableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.Objects;
+
 @Component
 public class GeobrokerIncidentEntityListener implements EntityEventListener<Incident> {
     private static final Logger LOG = LoggerFactory.getLogger(GeobrokerIncidentEntityListener.class);
+
+    private static final List<IncidentType> SUPPORTED_INCIDENT_TYPES = ImmutableList.of(IncidentType.Task, IncidentType.Transport);
 
     private final GeoBrokerManager brokerManager;
     private final ExternalIncidentIdGenerator incidentIdGenerator;
@@ -32,8 +40,12 @@ public class GeobrokerIncidentEntityListener implements EntityEventListener<Inci
     @Override
     public void entityChanged(final Incident entity, final int concern, final int hver, final int seq) {
         executeSafely(() -> {
-            CachedIncident incident = incidentFactory.createExternalIncident(entity);
-            brokerManager.incidentUpdated(incident);
+            if (isIncidentSupported(entity)) {
+                CachedIncident incident = incidentFactory.createExternalIncident(entity);
+                brokerManager.incidentUpdated(incident);
+            } else {
+                entityDeleted(entity.getId(), concern, hver, seq);
+            }
         });
     }
 
@@ -48,6 +60,11 @@ public class GeobrokerIncidentEntityListener implements EntityEventListener<Inci
     @Override
     public boolean isSupported(final Class<?> supportedClass) {
         return Incident.class.isAssignableFrom(supportedClass);
+    }
+
+    private boolean isIncidentSupported(final Incident entity) {
+        return SUPPORTED_INCIDENT_TYPES.contains(entity.getType())
+                && !Objects.equals(entity.getState(), IncidentState.Done);
     }
 
     private void executeSafely(final Runnable execution) {
