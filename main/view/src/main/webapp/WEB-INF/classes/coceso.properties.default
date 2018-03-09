@@ -1,0 +1,28 @@
+# DB config
+db.driver=org.postgresql.Driver
+db.url=jdbc:postgresql://localhost:5432/coceso
+db.username=coceso
+db.password=password
+
+# Authentication config
+auth.authUrl=http://example.com
+auth.useAuthUrl=false
+auth.firstUse=false
+
+# Enable debug js and css files
+debug=false
+
+# Default language
+locale.default=en
+
+# JS plugins
+js.plugins={}
+
+# Geocode DB config
+geocode.db.driver=org.postgresql.Driver
+geocode.db.url=jdbc:postgresql://localhost:5432/geocode
+geocode.db.username=coceso
+geocode.db.password=password
+
+# Google Maps ApiKey
+geocode.gmaps.apikey=

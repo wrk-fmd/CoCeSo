@@ -9,14 +9,19 @@
 # IDE files to ignore (Netbeans, Eclipse)
 nbproject
 nb-configuration.xml
+nbactions.xml
+.netbeans.xml
 context.xml
 .classpath
 .project
 .settings
 build.xml
+*.iml
+.idea
 
 # ignore database configuration
 coceso.properties
+ports.properties
 
 # ignore generated .class files
 *.class
@@ -24,11 +29,14 @@ coceso.properties
 # ignore compilation output
 target
 
+# ignore private maven cache
+.m2
+
+# ignore bower cache
+bower_components
+
 # ignore tiles and layers
-/coceso/src/main/webapp/WEB-INF/classes/streetnames.csv
-/coceso/src/main/webapp/static/imgs/layer/
-/coceso/src/main/webapp/static/js/layers.js
-/coceso/src/main/webapp/static/js/layers.min.js
+/resources/
 
 # except this file
 !.gitignore

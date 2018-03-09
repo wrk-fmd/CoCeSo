@@ -1,0 +1,114 @@
+{
+  "name": "coceso",
+  "description": "",
+  "main": "",
+  "moduleType": [
+    "amd"
+  ],
+  "authors": [
+    "WRK\\Coceso-Team"
+  ],
+  "license": "GPL-3.0",
+  "homepage": "https://github.com/wrk-fmd/CoCeSo",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.6",
+    "bootstrap-datepicker": "^1.6.4",
+    "jquery": "^3.1.0",
+    "jquery-i18n-properties": "1.2.2",
+    "jquery-ui": "~1.12.0",
+    "jquery-ui-bootstrap": "jquery-ui-bootstrap/jquery-ui-bootstrap#masterbs3",
+    "jqueryui-touch-punch": "*",
+    "js-cookie": "^2.1.0",
+    "knockout": "^3.4.0",
+    "knockout-sortable": "^0.15.0",
+    "leaflet": "^0.7.7",
+    "less": "^2.6.0",
+    "requirejs": "^2.1.22",
+    "r.js": "^2.1.22",
+    "stomp-websocket": "^2.3.4",
+    "corejs-typeahead": "^1.1.1",
+    "typeahead.js-bootstrap3": "bassjobsen/typeahead.js-bootstrap-css#^1.2.1"
+  },
+  "install": {
+    "path": {
+      "js": "js/assets",
+      "css": "less/assets",
+      "less": "less/assets",
+      "png": "imgs/assets",
+      "/(eot|svg|ttf|woff|woff2)$/": "fonts/assets"
+    },
+    "sources": {
+      "bootstrap": [
+        "bower_components/bootstrap/js/alert.js",
+        "bower_components/bootstrap/js/collapse.js",
+        "bower_components/bootstrap/js/dropdown.js",
+        "bower_components/bootstrap/js/modal.js",
+        "bower_components/bootstrap/js/popover.js",
+        "bower_components/bootstrap/js/tab.js",
+        "bower_components/bootstrap/js/tooltip.js",
+        "bower_components/bootstrap/js/transition.js",
+        "bower_components/bootstrap/less/**",
+        "bower_components/bootstrap/fonts/**"
+      ],
+      "bootstrap-datepicker": [
+        "bower_components/bootstrap-datepicker/js/bootstrap-datepicker.js",
+        "bower_components/bootstrap-datepicker/js/locales/bootstrap-datepicker.de.js",
+        "bower_components/bootstrap-datepicker/less/datepicker3.less"
+      ],
+      "jquery": [
+        "bower_components/jquery/dist/jquery.min.js"
+      ],
+      "jquery-i18n-properties": [
+        "bower_components/jquery-i18n-properties/jquery.i18n.properties.min.js"
+      ],
+      "jquery-ui": [
+        {"bower_components/jquery-ui/ui/widgets/accordion.js": "widgets/accordion.js"},
+        {"bower_components/jquery-ui/ui/widgets/dialog.js": "widgets/dialog.js"},
+        {"bower_components/jquery-ui/ui/widgets/draggable.js": "widgets/draggable.js"},
+        {"bower_components/jquery-ui/ui/widgets/droppable.js": "widgets/droppable.js"},
+        {"bower_components/jquery-ui/ui/widgets/sortable.js": "widgets/sortable.js"},
+        {"bower_components/jquery-ui/ui/widgets/button.js": "widgets/button.js"},
+        {"bower_components/jquery-ui/ui/widgets/mouse.js": "widgets/mouse.js"},
+        {"bower_components/jquery-ui/ui/widgets/resizable.js": "widgets/resizable.js"},
+        {"bower_components/jquery-ui/ui/widgets/checkboxradio.js": "widgets/checkboxradio.js"},
+        {"bower_components/jquery-ui/ui/widgets/controlgroup.js": "widgets/controlgroup.js"},
+        "bower_components/jquery-ui/ui/*.js"
+      ],
+      "jquery-ui-bootstrap": [
+        "bower_components/jquery-ui-bootstrap/less/jq-ui-bootstrap/**",
+        "bower_components/jquery-ui-bootstrap/css/custom-theme/images/ui-bg_flat_0_999999_40x100.png",
+        "bower_components/jquery-ui-bootstrap/css/custom-theme/images/ui-bg_glass_75_ffffff_1x400.png",
+        "bower_components/jquery-ui-bootstrap/css/custom-theme/images/ui-icons_222222_256x240.png",
+        "bower_components/jquery-ui-bootstrap/css/custom-theme/images/ui-icons_428bca_256x240.png",
+        "bower_components/jquery-ui-bootstrap/css/custom-theme/images/ui-icons_555555_256x240.png",
+        "bower_components/jquery-ui-bootstrap/css/custom-theme/images/ui-icons_999999_256x240.png",
+        "bower_components/jquery-ui-bootstrap/css/custom-theme/images/ui-icons_f0ad4e_256x240.png"
+      ],
+      "leaflet": [
+        "bower_components/leaflet/dist/leaflet.css",
+        "bower_components/leaflet/dist/leaflet.js",
+        "bower_components/leaflet/dist/images/layers-2x.png",
+        "bower_components/leaflet/dist/images/layers.png",
+        "bower_components/leaflet/dist/images/marker-icon-2x.png",
+        "bower_components/leaflet/dist/images/marker-icon.png",
+        "bower_components/leaflet/dist/images/marker-shadow.png"
+      ],
+      "corejs-typeahead": [
+        "bower_components/corejs-typeahead/dist/bloodhound.min.js",
+        "bower_components/corejs-typeahead/dist/typeahead.jquery.min.js"
+      ],
+      "typeahead.js-bootstrap3": [
+        "bower_components/typeahead.js-bootstrap3/typeaheadjs.less"
+      ],
+      "r.js": "bower_components/r.js/dist/r.js"
+    }
+  }
+}

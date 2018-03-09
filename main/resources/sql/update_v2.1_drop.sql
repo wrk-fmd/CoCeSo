@@ -1,0 +1,7 @@
+START TRANSACTION;
+
+ALTER TABLE patient DROP COLUMN medinfo_fk;
+DROP TABLE medinfo;
+DROP TABLE point;
+
+COMMIT;
