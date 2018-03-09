@@ -25,7 +25,7 @@ public class ExternalIncidentFactory implements GeoBrokerIncidentFactory {
     public ExternalIncidentFactory(
             final ExternalIncidentIdGenerator incidentIdGenerator,
             final ExternalUnitIdGenerator unitIdGenerator,
-            @Value("${geobroker.expose.info.field:false") final boolean exposeInfoField) {
+            @Value("${geobroker.expose.info.field:false}") final boolean exposeInfoField) {
         this.incidentIdGenerator = incidentIdGenerator;
         this.unitIdGenerator = unitIdGenerator;
         this.exposeInfoField = exposeInfoField;
