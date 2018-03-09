@@ -19,10 +19,12 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -61,13 +63,19 @@ public class ConcurrentGeoBrokerManager implements GeoBrokerManager {
 
     @Override
     public void unitUpdated(final CachedUnit unit) {
+        final boolean wasAdded;
+
         CachedUnit updatedUnit;
         synchronized (updateLock) {
             updatedUnit = updateCachedUnit(unit);
-            unitCache.put(updatedUnit.getId(), updatedUnit);
+            CachedUnit previousValue = unitCache.put(updatedUnit.getId(), updatedUnit);
+            wasAdded = previousValue == null;
         }
 
         unitPublisher.unitUpdated(updatedUnit.getUnit());
+        if (wasAdded) {
+            updateAllOfficerUnits(unit.getConcernId());
+        }
     }
 
     @Override
@@ -85,17 +93,38 @@ public class ConcurrentGeoBrokerManager implements GeoBrokerManager {
             unitCache.putAll(updatedUnits);
         }
 
-        updatedUnits.values()
-                .stream()
-                .map(CachedUnit::getUnit)
-                .forEach(unitPublisher::unitUpdated);
+
+        publishUpdatedUnits(updatedUnits.values());
         incidentPublisher.incidentUpdated(incident.getIncident());
+        updateAllOfficerUnits(incident.getConcernId());
     }
 
     @Override
     public void incidentDeleted(final String externalIncidentId) {
         this.incidentCache.remove(externalIncidentId);
         incidentPublisher.incidentDeleted(externalIncidentId);
+    }
+
+    private void updateAllOfficerUnits(final int concernId) {
+        Set<CachedUnit> updatedOfficerUnits;
+        updatedOfficerUnits = getAllUpdatedOfficerUnits(concernId);
+        publishUpdatedUnits(updatedOfficerUnits);
+    }
+
+    private void publishUpdatedUnits(final Collection<CachedUnit> cachedUnits) {
+        cachedUnits
+                .stream()
+                .map(CachedUnit::getUnit)
+                .forEach(unitPublisher::unitUpdated);
+    }
+
+    private Set<CachedUnit> getAllUpdatedOfficerUnits(final int concernId) {
+        return unitCache.values()
+                .stream()
+                .filter(cachedUnit -> Objects.equals(cachedUnit.getUnitType(), UnitType.Officer))
+                .filter(cachedUnit -> cachedUnit.getConcernId() == concernId)
+                .map(this::updateCachedUnit)
+                .collect(Collectors.toSet());
     }
 
     private Map<String, CachedUnit> getUpdatedUnitEntitiesForAllReferencedUnits(final CachedIncident incident) {
