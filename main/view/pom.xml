@@ -30,6 +30,20 @@
         </dependency>
       </dependencies>
     </profile>
+
+    <profile>
+      <id>geobroker</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>at.wrk.coceso-plugins</groupId>
+          <artifactId>coceso-geobroker</artifactId>
+          <version>${project.parent.version}</version>
+        </dependency>
+      </dependencies>
+    </profile>
   </profiles>
 
   <dependencies>

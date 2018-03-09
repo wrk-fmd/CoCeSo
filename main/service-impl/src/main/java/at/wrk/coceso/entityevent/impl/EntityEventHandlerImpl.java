@@ -6,6 +6,7 @@ import at.wrk.coceso.entityevent.EntityEventListener;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 class EntityEventHandlerImpl<T> implements EntityEventHandler<T> {
@@ -15,9 +16,9 @@ class EntityEventHandlerImpl<T> implements EntityEventHandler<T> {
   private final int hver;
   private final Map<Integer, Integer> seq;
 
-  EntityEventHandlerImpl(Class<T> type) {
+  EntityEventHandlerImpl(Class<T> type, final List<EntityEventListener<T>> supportedServiceListeners) {
     this.type = type;
-    this.listeners = new HashSet<>();
+    this.listeners = new HashSet<>(supportedServiceListeners);
 
     // Use time since 2016-01-01 as handler version
     this.hver = (int) (System.currentTimeMillis() / 1000 - 1451602800);

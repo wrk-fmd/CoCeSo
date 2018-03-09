@@ -16,12 +16,12 @@ public enum IncidentType {
   private final Collection<TaskState> possibleStates;
   private final boolean singleUnit;
 
-  private IncidentType() {
+  IncidentType() {
     this.possibleStates = EnumSet.allOf(TaskState.class);
     this.singleUnit = false;
   }
 
-  private IncidentType(boolean singleUnit, EnumSet<TaskState> possibleStates) {
+  IncidentType(boolean singleUnit, EnumSet<TaskState> possibleStates) {
     this.possibleStates = possibleStates;
     this.singleUnit = singleUnit;
   }

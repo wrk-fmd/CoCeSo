@@ -67,7 +67,8 @@ public class NiuExternalUserParser implements ExternalUserParser {
         if (externalUserId != null) {
             Set<String> telephoneNumbers = TELEPHONE_FIELDS
                     .stream()
-                    .map(record::get)
+                    .map(fieldName -> getOrNull(record, fieldName))
+                    .filter(Objects::nonNull)
                     .map(String::trim)
                     .filter(StringUtils::isNotBlank)
                     .collect(Collectors.toSet());
@@ -76,6 +77,18 @@ public class NiuExternalUserParser implements ExternalUserParser {
         }
 
         return externalUser;
+    }
+
+    @Nullable
+    private static String getOrNull(final CSVRecord record, final String fieldName) {
+        String value = null;
+        try {
+            value = record.get(fieldName);
+        } catch (IllegalArgumentException e) {
+            LOG.warn("Invalid column name: {}. Was the file uploaded with the correct encoding? (UTF-8)");
+        }
+
+        return value;
     }
 
     @Nullable

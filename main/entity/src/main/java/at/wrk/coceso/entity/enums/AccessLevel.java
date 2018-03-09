@@ -1,12 +1,13 @@
 package at.wrk.coceso.entity.enums;
 
+import org.springframework.security.core.GrantedAuthority;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import org.springframework.security.core.GrantedAuthority;
 
 public enum AccessLevel {
 
@@ -77,12 +78,12 @@ public enum AccessLevel {
   }
 
   public boolean isGrantedFor(Collection<? extends GrantedAuthority> authorities) {
-    return roles.stream().anyMatch(authority -> authorities.contains(authority));
+    return roles.stream().anyMatch(authorities::contains);
   }
 
   public boolean isGrantedFor(UnitType type, boolean local) {
     Boolean grantedFor = types.get(type);
-    return grantedFor == null ? false : (grantedFor || local);
+    return grantedFor != null && (grantedFor || local);
   }
 
   public boolean allowConcernWide() {
