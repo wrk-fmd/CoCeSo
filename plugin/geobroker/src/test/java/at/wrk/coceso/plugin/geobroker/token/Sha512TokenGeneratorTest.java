@@ -6,6 +6,7 @@ import org.junit.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
 public class Sha512TokenGeneratorTest {
@@ -56,5 +57,12 @@ public class Sha512TokenGeneratorTest {
 
         assertThat(token1, not(containsString(unitId)));
         assertThat(token1, not(containsString(salt)));
+    }
+
+    @Test
+    public void idAndToken_resultTruncatedTo20Characters() {
+        String token = sut.calculateToken("unitId", "a token");
+
+        assertThat(token.length(), is(20));
     }
 }
