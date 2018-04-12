@@ -8,9 +8,11 @@ import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerUnit;
 import at.wrk.coceso.plugin.geobroker.data.CachedIncident;
 import at.wrk.coceso.plugin.geobroker.data.CachedUnit;
 import at.wrk.coceso.plugin.geobroker.external.TargetPointExtractor;
+import at.wrk.coceso.plugin.geobroker.filter.IncidentFilter;
 import at.wrk.coceso.plugin.geobroker.rest.GeoBrokerIncidentPublisher;
 import at.wrk.coceso.plugin.geobroker.rest.GeoBrokerUnitPublisher;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +39,6 @@ import java.util.stream.Stream;
 public class ConcurrentGeoBrokerManager implements GeoBrokerManager {
     private static final Logger LOG = LoggerFactory.getLogger(ConcurrentGeoBrokerManager.class);
 
-    private static final List<IncidentType> SUPPORTED_INCIDENT_TYPES = ImmutableList.of(IncidentType.Task, IncidentType.Transport);
-
     private final Object updateLock;
     private final Map<String, CachedUnit> unitCache;
     private final Map<String, CachedIncident> incidentCache;
@@ -47,17 +47,20 @@ public class ConcurrentGeoBrokerManager implements GeoBrokerManager {
     private final GeoBrokerIncidentPublisher incidentPublisher;
     private final TargetPointExtractor targetPointExtractor;
     private final boolean showAllUnitsForOfficers;
+    private IncidentFilter incidentFilter;
 
     @Autowired
     public ConcurrentGeoBrokerManager(
             final GeoBrokerUnitPublisher unitPublisher,
             final GeoBrokerIncidentPublisher incidentPublisher,
             final TargetPointExtractor targetPointExtractor,
-            @Value("${geobroker.all.units.for.officers:false}") final boolean showAllUnitsForOfficers) {
+            @Value("${geobroker.all.units.for.officers:false}") final boolean showAllUnitsForOfficers,
+            final IncidentFilter incidentFilter) {
         this.unitPublisher = unitPublisher;
         this.incidentPublisher = incidentPublisher;
         this.targetPointExtractor = targetPointExtractor;
         this.showAllUnitsForOfficers = showAllUnitsForOfficers;
+        this.incidentFilter = incidentFilter;
 
         this.updateLock = new Object();
         this.unitCache = new ConcurrentHashMap<>();
@@ -103,7 +106,7 @@ public class ConcurrentGeoBrokerManager implements GeoBrokerManager {
     }
 
     private void publishIncident(final CachedIncident incident) {
-        if (SUPPORTED_INCIDENT_TYPES.contains(incident.getIncidentType())) {
+        if (incidentFilter.isIncidentRelevantForGeoBroker(incident)) {
             incidentPublisher.incidentUpdated(incident.getIncident());
         } else {
             LOG.debug("Incident is not supported for publishing: {} of type {}", incident.getId(), incident.getIncidentType());
@@ -141,6 +144,7 @@ public class ConcurrentGeoBrokerManager implements GeoBrokerManager {
 
     private Map<String, CachedUnit> getUpdatedUnitEntitiesForAllReferencedUnits(final CachedIncident incident) {
         return incident.getAssignedExternalUnitIds()
+                .keySet()
                 .stream()
                 .distinct()
                 .map(unitCache::get)
@@ -218,7 +222,8 @@ public class ConcurrentGeoBrokerManager implements GeoBrokerManager {
     private Stream<String> getAllAssignedUnitsOfIncident(final String incidentId) {
         return Optional.ofNullable(incidentCache.get(incidentId))
                 .map(CachedIncident::getAssignedExternalUnitIds)
-                .orElse(ImmutableList.of())
+                .map(Map::keySet)
+                .orElse(ImmutableSet.of())
                 .stream();
     }
 

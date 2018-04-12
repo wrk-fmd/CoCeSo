@@ -38,12 +38,8 @@ public class GeobrokerIncidentEntityListener implements EntityEventListener<Inci
     @Override
     public void entityChanged(final Incident entity, final int concern, final int hver, final int seq) {
         executeSafely(() -> {
-            if (isIncidentSupported(entity)) {
-                CachedIncident incident = incidentFactory.createExternalIncident(entity);
-                brokerManager.incidentUpdated(incident);
-            } else {
-                entityDeleted(entity.getId(), concern, hver, seq);
-            }
+            CachedIncident incident = incidentFactory.createExternalIncident(entity);
+            brokerManager.incidentUpdated(incident);
         });
     }
 
@@ -58,10 +54,6 @@ public class GeobrokerIncidentEntityListener implements EntityEventListener<Inci
     @Override
     public boolean isSupported(final Class<?> supportedClass) {
         return Incident.class.isAssignableFrom(supportedClass);
-    }
-
-    private boolean isIncidentSupported(final Incident entity) {
-        return !Objects.equals(entity.getState(), IncidentState.Done);
     }
 
     private void executeSafely(final Runnable execution) {

@@ -50,6 +50,22 @@ public class CachedUnit implements Serializable {
     }
 
     @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CachedUnit that = (CachedUnit) o;
+        return concernId == that.concernId &&
+                Objects.equals(unit, that.unit) &&
+                Objects.equals(incidentsWithState, that.incidentsWithState) &&
+                unitType == that.unitType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(unit, incidentsWithState, unitType, concernId);
+    }
+
+    @Override
     public String toString() {
         return new ToStringBuilder(this, GeoBrokerToStringStyle.STYLE)
                 .append("unit", unit)

@@ -1,6 +1,7 @@
 package at.wrk.coceso.plugin.geobroker.external;
 
 import at.wrk.coceso.entity.Incident;
+import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerIncident;
 import at.wrk.coceso.plugin.geobroker.data.CachedIncident;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +10,11 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static at.wrk.coceso.plugin.geobroker.external.GeoBrokerPoints.mapPoint;
+import static java.util.stream.Collectors.toMap;
 
 @Component
 @PropertySource(value = "classpath:geobroker.properties", ignoreResourceNotFound = true)
@@ -36,11 +39,10 @@ public class ExternalIncidentFactory implements GeoBrokerIncidentFactory {
         Integer concernId = incident.getConcern().getId();
         String externalIncidentId = incidentIdGenerator.generateExternalIncidentId(incident.getId(), concernId);
 
-        List<String> assignedUnitIds = incident.getUnitsSlim()
-                .keySet()
+        Map<String, TaskState> assignedUnitIds = incident.getUnitsSlim()
+                .entrySet()
                 .stream()
-                .map(unitId -> unitIdGenerator.generateExternalUnitId(unitId, concernId))
-                .collect(Collectors.toList());
+                .collect(toMap(entry -> unitIdGenerator.generateExternalUnitId(entry.getKey(), concernId), Map.Entry::getValue));
 
         GeoBrokerIncident geoBrokerIncident = new GeoBrokerIncident(
                 externalIncidentId,
