@@ -32,11 +32,11 @@ public class GeobrokerIncidentEntityListenerTest {
         sut = new GeobrokerIncidentEntityListener(geoBrokerManager, incidentIdGenerator, incidentFactory);
     }
 
-    @Parameters({"Task", "Transport"})
+    @Parameters({"Open", "Demand", "InProgress"})
     @Test
-    public void incidentUpdated_supportedIncident_callUpdate(final IncidentType incidentType) {
+    public void incidentUpdated_supportedIncident_callUpdate(final IncidentState incidentState) {
         Incident incident = new Incident(42);
-        incident.setType(incidentType);
+        incident.setState(incidentState);
         CachedIncident cachedIncident = mock(CachedIncident.class);
         when(incidentFactory.createExternalIncident(incident)).thenReturn(cachedIncident);
 
@@ -45,26 +45,10 @@ public class GeobrokerIncidentEntityListenerTest {
         verify(geoBrokerManager).incidentUpdated(cachedIncident);
     }
 
-    @Parameters({"Task", "Transport"})
     @Test
-    public void incidentUpdated_supportedIncidentIsDone_callDelete(final IncidentType incidentType) {
+    public void incidentUpdated_incidentIsDone_callDelete() {
         Incident incident = new Incident(42);
-        incident.setType(incidentType);
         incident.setState(IncidentState.Done);
-
-        String externalIncidentId = "extId-5";
-        when(incidentIdGenerator.generateExternalIncidentId(incident.getId(), 5)).thenReturn(externalIncidentId);
-
-        sut.entityChanged(incident, 5, 0, 0);
-
-        verify(geoBrokerManager).incidentDeleted(externalIncidentId);
-    }
-
-    @Parameters({"HoldPosition", "ToHome", "Standby", "Relocation", "Treatment"})
-    @Test
-    public void incidentUpdated_notSupportedIncident_callDelete(final IncidentType incidentType) {
-        Incident incident = new Incident(42);
-        incident.setType(incidentType);
 
         String externalIncidentId = "extId-5";
         when(incidentIdGenerator.generateExternalIncidentId(incident.getId(), 5)).thenReturn(externalIncidentId);
