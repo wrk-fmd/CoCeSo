@@ -1,5 +1,6 @@
 package at.wrk.coceso.plugin.geobroker.manager;
 
+import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entity.enums.UnitType;
 import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerPoint;
@@ -35,6 +36,8 @@ import java.util.stream.Stream;
 @Scope(value = "singleton")
 public class ConcurrentGeoBrokerManager implements GeoBrokerManager {
     private static final Logger LOG = LoggerFactory.getLogger(ConcurrentGeoBrokerManager.class);
+
+    private static final List<IncidentType> SUPPORTED_INCIDENT_TYPES = ImmutableList.of(IncidentType.Task, IncidentType.Transport);
 
     private final Object updateLock;
     private final Map<String, CachedUnit> unitCache;
@@ -95,8 +98,17 @@ public class ConcurrentGeoBrokerManager implements GeoBrokerManager {
 
 
         publishUpdatedUnits(updatedUnits.values());
-        incidentPublisher.incidentUpdated(incident.getIncident());
+        publishIncident(incident);
         updateAllOfficerUnits(incident.getConcernId());
+    }
+
+    private void publishIncident(final CachedIncident incident) {
+        if (SUPPORTED_INCIDENT_TYPES.contains(incident.getIncidentType())) {
+            incidentPublisher.incidentUpdated(incident.getIncident());
+        } else {
+            LOG.debug("Incident is not supported for publishing: {} of type {}", incident.getId(), incident.getIncidentType());
+            incidentPublisher.incidentDeleted(incident.getId());
+        }
     }
 
     @Override

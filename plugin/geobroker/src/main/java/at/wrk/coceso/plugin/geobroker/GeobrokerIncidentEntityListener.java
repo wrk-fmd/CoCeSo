@@ -21,8 +21,6 @@ import java.util.Objects;
 public class GeobrokerIncidentEntityListener implements EntityEventListener<Incident> {
     private static final Logger LOG = LoggerFactory.getLogger(GeobrokerIncidentEntityListener.class);
 
-    private static final List<IncidentType> SUPPORTED_INCIDENT_TYPES = ImmutableList.of(IncidentType.Task, IncidentType.Transport);
-
     private final GeoBrokerManager brokerManager;
     private final ExternalIncidentIdGenerator incidentIdGenerator;
     private final GeoBrokerIncidentFactory incidentFactory;
@@ -63,8 +61,7 @@ public class GeobrokerIncidentEntityListener implements EntityEventListener<Inci
     }
 
     private boolean isIncidentSupported(final Incident entity) {
-        return SUPPORTED_INCIDENT_TYPES.contains(entity.getType())
-                && !Objects.equals(entity.getState(), IncidentState.Done);
+        return !Objects.equals(entity.getState(), IncidentState.Done);
     }
 
     private void executeSafely(final Runnable execution) {

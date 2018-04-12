@@ -1,5 +1,7 @@
 package at.wrk.coceso.plugin.geobroker.utils;
 
+import at.wrk.coceso.entity.enums.IncidentState;
+import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerIncident;
 import at.wrk.coceso.plugin.geobroker.data.CachedIncident;
 import com.google.common.collect.ImmutableList;
@@ -23,6 +25,8 @@ public final class CachedIncidents {
                 geoBrokerIncident,
                 assignedExternalUnitIds,
                 randomPoint(),
-                1);
+                1,
+                IncidentType.Task,
+                IncidentState.InProgress);
     }
 }
