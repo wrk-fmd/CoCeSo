@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static at.wrk.coceso.plugin.geobroker.external.GeoBrokerPoints.mapPoint;
 import static java.util.stream.Collectors.toMap;
@@ -49,13 +48,19 @@ public class ExternalIncidentFactory implements GeoBrokerIncidentFactory {
                 .stream()
                 .collect(toMap(entry -> unitIdGenerator.generateExternalUnitId(entry.getKey(), concernId), Map.Entry::getValue));
 
+        Map<String, String> externalAssignedUnitsMap = assignedUnitIds
+                .entrySet()
+                .stream()
+                .collect(toMap(Map.Entry::getKey, entry -> entry.getValue().name()));
+
         GeoBrokerIncident geoBrokerIncident = new GeoBrokerIncident(
                 externalIncidentId,
                 incident.getType().name(),
                 incident.isPriority(),
                 incident.isBlue(),
                 createGeoBrokerInfo(incident),
-                mapPoint(incident.getBo()));
+                mapPoint(incident.getBo()),
+                externalAssignedUnitsMap);
         return new CachedIncident(geoBrokerIncident, assignedUnitIds, mapPoint(incident.getAo()), concernId, incident.getType(), incident.getState());
     }
 

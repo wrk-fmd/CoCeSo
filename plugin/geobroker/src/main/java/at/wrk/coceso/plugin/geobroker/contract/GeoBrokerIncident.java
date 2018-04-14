@@ -1,9 +1,11 @@
 package at.wrk.coceso.plugin.geobroker.contract;
 
 import at.wrk.coceso.plugin.geobroker.GeoBrokerToStringStyle;
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Objects;
 
 public class GeoBrokerIncident implements Serializable {
@@ -15,6 +17,7 @@ public class GeoBrokerIncident implements Serializable {
     private final Boolean blue;
     private final String info;
     private final GeoBrokerPoint location;
+    private final Map<String, String> assignedUnits;
 
     public GeoBrokerIncident(
             final String id,
@@ -22,13 +25,14 @@ public class GeoBrokerIncident implements Serializable {
             final Boolean priority,
             final Boolean blue,
             final String info,
-            final GeoBrokerPoint location) {
+            final GeoBrokerPoint location, final Map<String, String> assignedUnits) {
         this.id = id;
         this.type = type;
         this.priority = priority;
         this.blue = blue;
         this.info = info;
         this.location = location;
+        this.assignedUnits = assignedUnits == null ? ImmutableMap.of() : ImmutableMap.copyOf(assignedUnits);
     }
 
     public String getId() {
@@ -55,6 +59,10 @@ public class GeoBrokerIncident implements Serializable {
         return location;
     }
 
+    public Map<String, String> getAssignedUnits() {
+        return assignedUnits;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -69,12 +77,13 @@ public class GeoBrokerIncident implements Serializable {
                 Objects.equals(priority, that.priority) &&
                 Objects.equals(blue, that.blue) &&
                 Objects.equals(info, that.info) &&
-                Objects.equals(location, that.location);
+                Objects.equals(location, that.location) &&
+                Objects.equals(assignedUnits, that.assignedUnits);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, type, priority, blue, info, location);
+        return Objects.hash(id, type, priority, blue, info, location, assignedUnits);
     }
 
     @Override
@@ -86,6 +95,7 @@ public class GeoBrokerIncident implements Serializable {
                 .append("blue", blue)
                 .append("info", info)
                 .append("location", location)
+                .append("assignedUnits", assignedUnits)
                 .toString();
     }
 }
