@@ -85,7 +85,7 @@ public class NiuExternalUserParser implements ExternalUserParser {
         try {
             value = record.get(fieldName);
         } catch (IllegalArgumentException e) {
-            LOG.warn("Invalid column name: {}. Was the file uploaded with the correct encoding? (UTF-8)");
+            LOG.warn("Invalid column name: {}. Was the file uploaded with the correct encoding? (UTF-8)", fieldName);
         }
 
         return value;
