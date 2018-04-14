@@ -21,8 +21,6 @@ import java.util.Objects;
 public class GeobrokerIncidentEntityListener implements EntityEventListener<Incident> {
     private static final Logger LOG = LoggerFactory.getLogger(GeobrokerIncidentEntityListener.class);
 
-    private static final List<IncidentType> SUPPORTED_INCIDENT_TYPES = ImmutableList.of(IncidentType.Task, IncidentType.Transport);
-
     private final GeoBrokerManager brokerManager;
     private final ExternalIncidentIdGenerator incidentIdGenerator;
     private final GeoBrokerIncidentFactory incidentFactory;
@@ -40,12 +38,8 @@ public class GeobrokerIncidentEntityListener implements EntityEventListener<Inci
     @Override
     public void entityChanged(final Incident entity, final int concern, final int hver, final int seq) {
         executeSafely(() -> {
-            if (isIncidentSupported(entity)) {
-                CachedIncident incident = incidentFactory.createExternalIncident(entity);
-                brokerManager.incidentUpdated(incident);
-            } else {
-                entityDeleted(entity.getId(), concern, hver, seq);
-            }
+            CachedIncident incident = incidentFactory.createExternalIncident(entity);
+            brokerManager.incidentUpdated(incident);
         });
     }
 
@@ -60,11 +54,6 @@ public class GeobrokerIncidentEntityListener implements EntityEventListener<Inci
     @Override
     public boolean isSupported(final Class<?> supportedClass) {
         return Incident.class.isAssignableFrom(supportedClass);
-    }
-
-    private boolean isIncidentSupported(final Incident entity) {
-        return SUPPORTED_INCIDENT_TYPES.contains(entity.getType())
-                && !Objects.equals(entity.getState(), IncidentState.Done);
     }
 
     private void executeSafely(final Runnable execution) {
