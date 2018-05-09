@@ -3,11 +3,13 @@ package at.wrk.coceso.entityevent.impl;
 import at.wrk.coceso.entity.helper.SequencedDeleted;
 import at.wrk.coceso.entity.helper.SequencedResponse;
 import at.wrk.coceso.entityevent.EntityEventListener;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.function.Function;
 
 class WebSocketWriter<T> implements EntityEventListener<T> {
+    private static final Logger LOG = LoggerFactory.getLogger(WebSocketWriter.class);
 
     private final SocketMessagingTemplate messagingTemplate;
     private final String url;
@@ -23,7 +25,8 @@ class WebSocketWriter<T> implements EntityEventListener<T> {
 
     @Override
     public void entityChanged(T entity, int concern, int hver, int seq) {
-        LoggerFactory.getLogger(WebSocketWriter.class).debug("{}: {}", url, entity);
+        LOG.trace("Got changed entity: {}", entity);
+
         if (delete != null) {
             Integer deleteId = delete.apply(entity);
             if (deleteId != null) {
@@ -32,11 +35,13 @@ class WebSocketWriter<T> implements EntityEventListener<T> {
             }
         }
 
+        LOG.debug("Publishing changed entity on WebSocket. URL={}, Entity={}", url, entity);
         messagingTemplate.send(String.format(url, concern), new SequencedResponse<>(hver, seq, entity), jsonView);
     }
 
     @Override
     public void entityDeleted(int id, int concern, int hver, int seq) {
+        LOG.debug("Publishing deleted entity on WebSocket. URL={}, id={}", url, id);
         messagingTemplate.send(String.format(url, concern), new SequencedDeleted(hver, seq, id), null);
     }
 
