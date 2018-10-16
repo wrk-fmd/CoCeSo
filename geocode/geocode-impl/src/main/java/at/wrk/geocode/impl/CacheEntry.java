@@ -1,21 +1,23 @@
 package at.wrk.geocode.impl;
 
-import at.wrk.geocode.address.Address;
 import at.wrk.geocode.LatLng;
-import java.io.Serializable;
+import at.wrk.geocode.address.Address;
+import at.wrk.geocode.address.IAddressNumber;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serializable;
 
 /**
  * Represents a database entry for caching a geocoding result (adress and corresponding coordinates)
  */
 @Entity
 @Table(name = "geocode")
-class CacheEntry implements Serializable, Address, Address.Number {
+class CacheEntry implements Serializable, Address, IAddressNumber {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -62,7 +64,7 @@ class CacheEntry implements Serializable, Address, Address.Number {
     this.street = address.getStreet();
     this.intersection = address.getIntersection();
 
-    Address.Number number = address.getNumber();
+    IAddressNumber number = address.getNumber();
     if (number != null) {
       this.numberFrom = number.getFrom();
       this.numberTo = number.getTo();
@@ -90,7 +92,7 @@ class CacheEntry implements Serializable, Address, Address.Number {
   }
 
   @Override
-  public Address.Number getNumber() {
+  public IAddressNumber getNumber() {
     return this;
   }
 

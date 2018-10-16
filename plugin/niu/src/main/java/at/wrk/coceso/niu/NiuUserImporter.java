@@ -6,6 +6,8 @@ import at.wrk.coceso.importer.UserImporter;
 import at.wrk.coceso.niu.data.ExternalUser;
 import at.wrk.coceso.niu.data.ExternalUserId;
 import at.wrk.coceso.niu.parser.ExternalUserParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
 
 @Component
 public class NiuUserImporter implements UserImporter {
+    private static final Logger LOG = LoggerFactory.getLogger(NiuUserImporter.class);
 
     private final ExternalUserParser parser;
 
@@ -45,7 +48,12 @@ public class NiuUserImporter implements UserImporter {
         User updatedUser = existingUsers.get(externalUserId);
 
         if (updatedUser == null) {
-            updatedUser = new User(externalUserId.getPersonellId(), externalUserId.getLastname(), externalUserId.getFirstname());
+            String firstname = externalUserId.getFirstname();
+            String lastname = externalUserId.getLastname();
+            int personellId = externalUserId.getPersonellId();
+
+            LOG.debug("User '{} {} ({})' does not exist. New user is created.", firstname, lastname, personellId);
+            updatedUser = new User(personellId, lastname, firstname);
         }
 
         updatedUser.setContact(getContactString(externalUser));

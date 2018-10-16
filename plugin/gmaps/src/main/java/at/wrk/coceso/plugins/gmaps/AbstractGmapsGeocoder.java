@@ -5,6 +5,7 @@ import at.wrk.geocode.address.AddressNumber;
 import at.wrk.geocode.Geocoder;
 import at.wrk.geocode.LatLng;
 import at.wrk.geocode.ReverseResult;
+import at.wrk.geocode.address.IAddressNumber;
 import com.google.maps.model.AddressComponent;
 import com.google.maps.model.AddressComponentType;
 import com.google.maps.model.GeocodingResult;
@@ -73,7 +74,7 @@ public abstract class AbstractGmapsGeocoder implements Geocoder<Address> {
     private static class GmapsAddress implements Address {
 
         private String street, city;
-        private Address.Number number;
+        private IAddressNumber number;
         private Integer postCode;
 
         public GmapsAddress(AddressComponent[] components) {
@@ -120,7 +121,7 @@ public abstract class AbstractGmapsGeocoder implements Geocoder<Address> {
         }
 
         @Override
-        public Address.Number getNumber() {
+        public IAddressNumber getNumber() {
             return number;
         }
 

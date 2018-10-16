@@ -1,20 +1,23 @@
 package at.wrk.coceso.entity.point;
 
 import at.wrk.coceso.entity.helper.JsonViews;
-import at.wrk.geocode.address.Address;
-import at.wrk.geocode.address.AddressNumber;
 import at.wrk.geocode.Geocoder;
 import at.wrk.geocode.LatLng;
+import at.wrk.geocode.address.Address;
+import at.wrk.geocode.address.AddressNumber;
+import at.wrk.geocode.address.IAddressNumber;
+import at.wrk.geocode.util.IntegerUtils;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A Point representing an address
@@ -38,7 +41,7 @@ class AddressPoint implements Point, Address {
   private LatLng coordinates;
 
   @JsonDeserialize(as = AddressNumber.class)
-  private final Number number;
+  private final IAddressNumber number;
 
   private AddressPoint() {
     title = null;
@@ -158,7 +161,7 @@ class AddressPoint implements Point, Address {
       street = StringUtils.trimToNull(parsedData[0]);
       number = new AddressNumber(parsedData[1]);
       intersection = StringUtils.trimToNull(parsedData[2]);
-      postCode = Address.parseInt(parsedData[3]);
+      postCode = IntegerUtils.parseInt(parsedData[3]).orElse(null);
       city = StringUtils.trimToNull(parsedData[4]);
     }
 
@@ -194,7 +197,7 @@ class AddressPoint implements Point, Address {
 
   @JsonView({JsonViews.Database.class, JsonViews.PointFull.class})
   @Override
-  public Number getNumber() {
+  public IAddressNumber getNumber() {
     return number;
   }
 

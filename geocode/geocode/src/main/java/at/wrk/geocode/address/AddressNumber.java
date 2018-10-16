@@ -1,13 +1,15 @@
 package at.wrk.geocode.address;
 
+import at.wrk.geocode.util.IntegerUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Default implementation for the house number information of an address
  */
-public class AddressNumber implements Address.Number {
+public class AddressNumber implements IAddressNumber {
 
   private static final Pattern PARTS = Pattern.compile("([1-9]\\d*)(\\-([1-9]\\d*)|[a-zA-Z])?");
 
@@ -38,9 +40,9 @@ public class AddressNumber implements Address.Number {
         case 1:
           Matcher matcher = PARTS.matcher(components[0]);
           if (matcher.find()) {
-            parsedFrom = Address.parseInt(matcher.group(1));
+            parsedFrom = IntegerUtils.parseInt(matcher.group(1)).orElse(null);
             if (parsedFrom != null) {
-              parsedTo = Address.parseInt(matcher.group(3));
+              parsedTo = IntegerUtils.parseInt(matcher.group(3)).orElse(null);
               if (parsedTo == null) {
                 parsedLetter = StringUtils.upperCase(matcher.group(2));
               } else if (parsedTo <= parsedFrom || parsedTo % 2 != parsedFrom % 2) {
@@ -90,7 +92,7 @@ public class AddressNumber implements Address.Number {
 
   @Override
   public String getText() {
-    String str = Address.Number.super.getText();
+    String str = IAddressNumber.super.getText();
 
     if (str != null && details != null) {
       if (getBlock() == null) {

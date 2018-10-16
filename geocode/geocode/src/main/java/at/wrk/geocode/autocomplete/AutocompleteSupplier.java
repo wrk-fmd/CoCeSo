@@ -1,9 +1,10 @@
 package at.wrk.geocode.autocomplete;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Collection;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Interface for all classes that can supply autocomplete data
@@ -65,7 +66,7 @@ public interface AutocompleteSupplier<T> {
    * @return A (possibly empty) Stream of items converted to String using #getString
    */
   default Stream<String> getStartString(String filter) {
-    return getStart(filter).map(v -> getString(v));
+    return getStart(filter).map(this::getString);
   }
 
   /**
@@ -76,7 +77,7 @@ public interface AutocompleteSupplier<T> {
    * @return A (possibly empty) Stream of items converted to String using #getString
    */
   default Stream<String> getContainingString(String filter, Integer max) {
-    return getContaining(filter, max).map(v -> getString(v));
+    return getContaining(filter, max).map(this::getString);
   }
 
   /**
@@ -110,5 +111,4 @@ public interface AutocompleteSupplier<T> {
     value = StringUtils.trimToNull(value);
     return value == null ? null : value.toLowerCase().replaceAll("\n", ", ");
   }
-
 }

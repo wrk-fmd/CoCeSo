@@ -5,12 +5,21 @@ import at.wrk.geocode.LatLng;
 import at.wrk.geocode.ReverseResult;
 import at.wrk.geocode.address.Address;
 import at.wrk.geocode.address.AddressNumber;
+import at.wrk.geocode.address.IAddressNumber;
+import at.wrk.geocode.util.AddressMatcher;
+import at.wrk.geocode.util.AddressNumberMatcher;
+import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.web.client.RestTemplate;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class ViennaGeocoderTest {
 
@@ -18,7 +27,13 @@ public class ViennaGeocoderTest {
 
     @Before
     public void init() {
-        sut = new ViennaGeocoder();
+        // TODO create correct unit test with mocked dependencies
+        AddressMatcher addressMatcher = new AddressMatcher(LevenshteinDistance.getDefaultInstance(), new AddressNumberMatcher());
+
+        ViennaGeocoderConfiguration viennaGeocoderConfiguration = new ViennaGeocoderConfiguration();
+        RestTemplate restTemplate = viennaGeocoderConfiguration.createRestTemplate(viennaGeocoderConfiguration.createFactory());
+
+        sut = new ViennaGeocoder(addressMatcher, restTemplate);
     }
 
     @Test
@@ -107,31 +122,31 @@ public class ViennaGeocoderTest {
 
     private Address createMockedAddress(final String street, final String number, final Integer postCode, final String city) {
         return new Address() {
-                @Override
-                public String getStreet() {
-                    return street;
-                }
+            @Override
+            public String getStreet() {
+                return street;
+            }
 
-                @Override
-                public String getIntersection() {
-                    return null;
-                }
+            @Override
+            public String getIntersection() {
+                return null;
+            }
 
-                @Override
-                public Number getNumber() {
-                    return new AddressNumber(number);
-                }
+            @Override
+            public IAddressNumber getNumber() {
+                return new AddressNumber(number);
+            }
 
-                @Override
-                public Integer getPostCode() {
-                    return postCode;
-                }
+            @Override
+            public Integer getPostCode() {
+                return postCode;
+            }
 
-                @Override
-                public String getCity() {
-                    return city;
-                }
-            };
+            @Override
+            public String getCity() {
+                return city;
+            }
+        };
     }
 
     private void assertThatResultIsInBounds(final Bounds expected, final LatLng result) {

@@ -1,13 +1,16 @@
 package at.wrk.coceso.plugins.vienna;
 
+import at.wrk.geocode.LatLng;
 import at.wrk.geocode.address.Address;
 import at.wrk.geocode.address.AddressNumber;
-import at.wrk.geocode.LatLng;
+import at.wrk.geocode.address.IAddressNumber;
+import at.wrk.geocode.util.IntegerUtils;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.Objects;
 
 class AddressInfoEntry implements Comparable<AddressInfoEntry> {
 
@@ -69,7 +72,7 @@ class AddressInfoEntry implements Comparable<AddressInfoEntry> {
 
     private final String street, city;
     private final Integer postCode;
-    private final Address.Number number;
+    private final IAddressNumber number;
     private final double ranking;
 
     ViennaAddress(@JsonProperty("StreetName") String street, @JsonProperty("StreetNumber") String number,
@@ -77,7 +80,7 @@ class AddressInfoEntry implements Comparable<AddressInfoEntry> {
       this.street = StringUtils.trimToNull(street);
       this.city = StringUtils.trimToNull(city);
       this.number = new AddressNumber(number);
-      this.postCode = Address.parseInt(postCode);
+      this.postCode = IntegerUtils.parseInt(postCode).orElse(null);
       this.ranking = ranking;
     }
 
@@ -92,7 +95,7 @@ class AddressInfoEntry implements Comparable<AddressInfoEntry> {
     }
 
     @Override
-    public Number getNumber() {
+    public IAddressNumber getNumber() {
       return number;
     }
 
