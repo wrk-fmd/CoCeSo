@@ -1,21 +1,15 @@
 package at.wrk.coceso.plugin.geobroker;
 
 import at.wrk.coceso.entity.Incident;
-import at.wrk.coceso.entity.enums.IncidentState;
-import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entityevent.EntityEventListener;
 import at.wrk.coceso.plugin.geobroker.data.CachedIncident;
 import at.wrk.coceso.plugin.geobroker.external.ExternalIncidentIdGenerator;
 import at.wrk.coceso.plugin.geobroker.external.GeoBrokerIncidentFactory;
 import at.wrk.coceso.plugin.geobroker.manager.GeoBrokerManager;
-import com.google.common.collect.ImmutableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
-import java.util.Objects;
 
 @Component
 public class GeobrokerIncidentEntityListener implements EntityEventListener<Incident> {

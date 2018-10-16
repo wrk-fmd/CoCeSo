@@ -14,12 +14,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.concurrent.NotThreadSafe;
-
 import static org.hamcrest.Matchers.equalTo;
 
-// See https://github.com/Pragmatists/JUnitParams/issues/34
-@NotThreadSafe
 @RunWith(JUnitParamsRunner.class)
 public class RuleBasedIncidentFilterTest {
     private IncidentFilter sut;

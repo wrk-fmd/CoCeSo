@@ -1,6 +1,5 @@
 package at.wrk.coceso.plugin.geobroker.manager;
 
-import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entity.enums.UnitType;
 import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerPoint;

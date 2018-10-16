@@ -1,7 +1,6 @@
 package at.wrk.coceso.plugin.geobroker;
 
 import at.wrk.coceso.entity.Unit;
-import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerUnit;
 import at.wrk.coceso.plugin.geobroker.data.CachedUnit;
 import at.wrk.coceso.plugin.geobroker.external.ExternalUnitFactory;
 import at.wrk.coceso.plugin.geobroker.external.ExternalUnitIdGenerator;

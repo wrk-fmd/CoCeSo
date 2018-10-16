@@ -2,8 +2,9 @@ package at.wrk.geocode.address;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.Objects;
 
 public interface Address {
 

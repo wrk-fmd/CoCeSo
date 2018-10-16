@@ -30,10 +30,10 @@ public class GeoBrokerUnit implements Serializable {
     private final GeoBrokerPoint targetPoint;
 
     public GeoBrokerUnit(
-        final String id,
-        final String name,
-        final String token,
-        final GeoBrokerPoint lastPoint) {
+            final String id,
+            final String name,
+            final String token,
+            final GeoBrokerPoint lastPoint) {
         this(id, name, token, null, null, lastPoint, null);
     }
 
