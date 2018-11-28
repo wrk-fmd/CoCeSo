@@ -1,16 +1,17 @@
 package at.wrk.coceso.entity.point;
 
 import at.wrk.coceso.entity.helper.JsonViews;
-import at.wrk.geocode.address.Address;
 import at.wrk.geocode.Geocoder;
 import at.wrk.geocode.LatLng;
+import at.wrk.geocode.address.ImmutableAddress;
 import at.wrk.geocode.poi.Poi;
 import com.fasterxml.jackson.annotation.JsonView;
-import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.util.Objects;
 
 /**
  * A Point representing a POI
@@ -21,7 +22,7 @@ class PoiPoint implements Poi, Point {
   // TODO Using @Qualifier here feels kinda like hardcoding, maybe define that somewhere else
   @Autowired
   @Qualifier("ChainedGeocoder")
-  private Geocoder<Address> addressGeocoder;
+  private Geocoder<ImmutableAddress> addressGeocoder;
 
   @Autowired
   @Qualifier("ChainedPoi")
@@ -91,7 +92,8 @@ class PoiPoint implements Poi, Point {
       coordinates = poiGeocoder.geocode(this);
       if (coordinates == null) {
         // No coordinates in POI entry, use normal address
-        coordinates = addressGeocoder.geocode(new AddressPoint(getInfo()));
+        ImmutableAddress immutableAddress = ImmutableAddress.createFromAddress(new AddressPoint(getInfo()));
+        coordinates = addressGeocoder.geocode(immutableAddress);
       }
     }
   }

@@ -3,9 +3,9 @@ package at.wrk.coceso.plugins.vienna;
 import at.wrk.geocode.Bounds;
 import at.wrk.geocode.LatLng;
 import at.wrk.geocode.ReverseResult;
-import at.wrk.geocode.address.Address;
 import at.wrk.geocode.address.AddressNumber;
-import at.wrk.geocode.address.IAddressNumber;
+import at.wrk.geocode.address.ImmutableAddress;
+import at.wrk.geocode.address.ImmutableAddressNumber;
 import at.wrk.geocode.util.AddressMatcher;
 import at.wrk.geocode.util.AddressNumberMatcher;
 import org.apache.commons.text.similarity.LevenshteinDistance;
@@ -38,7 +38,7 @@ public class ViennaGeocoderTest {
 
     @Test
     public void addressWithoutCity() {
-        Address address = createMockedAddress("Neubaugasse", "7/3", 1070, null);
+        ImmutableAddress address = createAddress("Neubaugasse", "7/3", 1070, null);
 
         LatLng result = sut.geocode(address);
 
@@ -48,7 +48,7 @@ public class ViennaGeocoderTest {
 
     @Test
     public void addressWithCity() {
-        Address address = createMockedAddress("Neubaugasse", "7/3", 1070, "Wien");
+        ImmutableAddress address = createAddress("Neubaugasse", "7/3", 1070, "Wien");
 
         LatLng result = sut.geocode(address);
 
@@ -58,7 +58,7 @@ public class ViennaGeocoderTest {
 
     @Test
     public void addressWithoutPostalCode() {
-        Address address = createMockedAddress("Neubaugasse", "7/3", null, null);
+        ImmutableAddress address = createAddress("Neubaugasse", "7/3", null, null);
 
         LatLng result = sut.geocode(address);
 
@@ -68,7 +68,7 @@ public class ViennaGeocoderTest {
 
     @Test
     public void addressWithPostalCodeOutsideOfVienna_noResult() {
-        Address address = createMockedAddress("Mozartstraße", "1", 4020, null);
+        ImmutableAddress address = createAddress("Mozartstraße", "1", 4020, null);
 
         LatLng result = sut.geocode(address);
 
@@ -77,7 +77,7 @@ public class ViennaGeocoderTest {
 
     @Test
     public void addressWithCityOutsideOfVienna_noResult() {
-        Address address = createMockedAddress("Mozartstraße", "1", null, "Linz");
+        ImmutableAddress address = createAddress("Mozartstraße", "1", null, "Linz");
 
         LatLng result = sut.geocode(address);
 
@@ -86,7 +86,7 @@ public class ViennaGeocoderTest {
 
     @Test
     public void invalidAddressInVienna_noResult() {
-        Address address = createMockedAddress("Invalid", "1", 1130, null);
+        ImmutableAddress address = createAddress("Invalid", "1", 1130, null);
 
         LatLng result = sut.geocode(address);
 
@@ -98,7 +98,7 @@ public class ViennaGeocoderTest {
      */
     @Test
     public void testReverse() {
-        ReverseResult<Address> result;
+        ReverseResult<ImmutableAddress> result;
 
         result = sut.reverse(new LatLng(48.202813, 16.342256));
         assertNotNull("Expected a result at Kandlgasse, 1070", result);
@@ -120,33 +120,13 @@ public class ViennaGeocoderTest {
         assertNull("Expected no result for request at Pressbaum", result);
     }
 
-    private Address createMockedAddress(final String street, final String number, final Integer postCode, final String city) {
-        return new Address() {
-            @Override
-            public String getStreet() {
-                return street;
-            }
-
-            @Override
-            public String getIntersection() {
-                return null;
-            }
-
-            @Override
-            public IAddressNumber getNumber() {
-                return new AddressNumber(number);
-            }
-
-            @Override
-            public Integer getPostCode() {
-                return postCode;
-            }
-
-            @Override
-            public String getCity() {
-                return city;
-            }
-        };
+    private ImmutableAddress createAddress(final String street, final String number, final Integer postCode, final String city) {
+        return new ImmutableAddress(
+                street,
+                null,
+                ImmutableAddressNumber.createFromAddressNumber(new AddressNumber(number)),
+                postCode,
+                city);
     }
 
     private void assertThatResultIsInBounds(final Bounds expected, final LatLng result) {

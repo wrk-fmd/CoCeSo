@@ -1,7 +1,7 @@
 package at.wrk.coceso.plugins.gmaps;
 
-import at.wrk.geocode.address.Address;
 import at.wrk.geocode.address.IAddressNumber;
+import at.wrk.geocode.address.ImmutableAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
@@ -13,7 +13,7 @@ public class GmapsGeocoder extends AbstractGmapsGeocoder {
     private static final Logger LOG = LoggerFactory.getLogger(GmapsGeocoder.class);
 
     @Override
-    protected String buildQueryString(Address address) {
+    protected String buildQueryString(ImmutableAddress address) {
         if (address.getStreet() == null) {
             LOG.trace("Address '{}' does not have an address set. Cannot build query for geocode.", address);
             return null;

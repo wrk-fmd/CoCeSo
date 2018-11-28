@@ -5,6 +5,7 @@ import at.wrk.geocode.Geocoder;
 import at.wrk.geocode.LatLng;
 import at.wrk.geocode.ReverseResult;
 import at.wrk.geocode.address.Address;
+import at.wrk.geocode.address.ImmutableAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ import java.util.Objects;
  * Geocoder implementation for addresses using first/best result from all other address geocoder implementations
  */
 @Component("ChainedGeocoder")
-public class ChainedGeocoder implements Geocoder<Address> {
+public class ChainedGeocoder implements Geocoder<ImmutableAddress> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ChainedGeocoder.class);
 
@@ -35,31 +36,31 @@ public class ChainedGeocoder implements Geocoder<Address> {
     @Autowired
     private CacheRepository cacheRepository;
 
-    private final List<Geocoder<Address>> geocoders;
+    private final List<Geocoder<ImmutableAddress>> geocoders;
 
     public ChainedGeocoder() {
         geocoders = Collections.emptyList();
     }
 
     @Autowired(required = false)
-    public ChainedGeocoder(List<Geocoder<Address>> geocoder) {
+    public ChainedGeocoder(List<Geocoder<ImmutableAddress>> geocoder) {
         this.geocoders = geocoder;
     }
 
-    public ChainedGeocoder(Geocoder<Address>... geocoders) {
+    public ChainedGeocoder(Geocoder<ImmutableAddress>... geocoders) {
         this.geocoders = Arrays.asList(geocoders);
     }
 
     @Transactional(transactionManager = "geocodeTransactionManager")
     @Override
-    public LatLng geocode(Address address) {
+    public LatLng geocode(final ImmutableAddress address) {
         // First look in cache
         LatLng coordinates = getCoordinatesFromCache(address);
 
         if (coordinates == null) {
             // Now try all the geocoders in order
             LOG.trace("Lookup from cache did not return any geocode result. Fetch information from other geocoders for address: {}", address);
-            coordinates = geocoders.stream()
+            coordinates = geocoders.parallelStream()
                     .map(g -> g.geocode(address))
                     .filter(Objects::nonNull)
                     .findFirst()
@@ -76,18 +77,18 @@ public class ChainedGeocoder implements Geocoder<Address> {
 
     @Transactional(transactionManager = "geocodeTransactionManager")
     @Override
-    public ReverseResult<Address> reverse(LatLng coordinates) {
+    public ReverseResult<ImmutableAddress> reverse(LatLng coordinates) {
         boolean cache = false;
 
         // First look in cache
-        ReverseResult<Address> nearest = findNearestFromCache(coordinates, 50);
+        ReverseResult<ImmutableAddress> nearest = findNearestFromCache(coordinates, 50);
         if (nearest != null && nearest.dist < 50) {
             LOG.debug("Found address {} meters from ({}) in cache", nearest.dist, coordinates);
             return nearest;
         }
 
-        for (Geocoder<Address> geocoder : geocoders) {
-            ReverseResult<Address> result = geocoder.reverse(coordinates);
+        for (Geocoder<ImmutableAddress> geocoder : geocoders) {
+            ReverseResult<ImmutableAddress> result = geocoder.reverse(coordinates);
             if (result != null) {
                 if (nearest == null || result.dist < nearest.dist) {
                     nearest = result;
@@ -120,7 +121,7 @@ public class ChainedGeocoder implements Geocoder<Address> {
         return coordinates;
     }
 
-    private ReverseResult<Address> findNearestFromCache(LatLng coordinates, int distance) {
+    private ReverseResult<ImmutableAddress> findNearestFromCache(LatLng coordinates, int distance) {
         Bounds bounds = coordinates.boundsForDistance(distance);
         List<CacheEntry> entries = cacheRepository.findNearest(coordinates.getLat(), coordinates.getLng(),
                 bounds.sw.getLat(), bounds.ne.getLat(), bounds.sw.getLng(), bounds.ne.getLng(), new PageRequest(0, 1));
@@ -129,7 +130,7 @@ public class ChainedGeocoder implements Geocoder<Address> {
         }
 
         CacheEntry entry = entries.get(0);
-        return new ReverseResult<>(coordinates.distance(entry.getCoordinates()), entry, entry.getCoordinates());
+        return new ReverseResult<>(coordinates.distance(entry.getCoordinates()), ImmutableAddress.createFromAddress(entry), entry.getCoordinates());
     }
 
 }

@@ -5,8 +5,9 @@ import at.wrk.geocode.Geocoder;
 import at.wrk.geocode.LatLng;
 import at.wrk.geocode.ReverseResult;
 import at.wrk.geocode.address.Address;
-import at.wrk.geocode.util.AddressMatcher;
 import at.wrk.geocode.address.IAddressNumber;
+import at.wrk.geocode.address.ImmutableAddress;
+import at.wrk.geocode.util.AddressMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 @Order(40)
-public class ViennaGeocoder implements Geocoder<Address> {
+public class ViennaGeocoder implements Geocoder<ImmutableAddress> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ViennaGeocoder.class);
     private static final String GEOCODE_URL = "https://data.wien.gv.at/daten/OGDAddressService.svc/GetAddressInfo?CRS=EPSG:4326&Address={query}";
@@ -34,7 +35,7 @@ public class ViennaGeocoder implements Geocoder<Address> {
     }
 
     @Override
-    public LatLng geocode(Address address) {
+    public LatLng geocode(final ImmutableAddress address) {
         if (address.getStreet() == null) {
             LOG.trace("Vienna Geocoder is not applicable if no street is set. Address: {}", address);
             return null;
@@ -90,7 +91,7 @@ public class ViennaGeocoder implements Geocoder<Address> {
     }
 
     @Override
-    public ReverseResult<Address> reverse(LatLng coordinates) {
+    public ReverseResult<ImmutableAddress> reverse(LatLng coordinates) {
         if (!BOUNDS.contains(coordinates)) {
             return null;
         }
@@ -104,7 +105,7 @@ public class ViennaGeocoder implements Geocoder<Address> {
             AddressInfoEntry entry = infos.getEntries()[0];
             int dist = coordinates.distance(entry.getCoordinates());
             LOG.debug("Found address '{}' {} meters away with data.wien.gv.at", entry.getAddress(), dist);
-            return new ReverseResult<>(dist, entry.getAddress(), entry.getCoordinates());
+            return new ReverseResult<>(dist, ImmutableAddress.createFromAddress(entry.getAddress()), entry.getCoordinates());
         } catch (RestClientException ex) {
             LOG.info("Error getting address for '{}'", coordinates, ex);
         }
