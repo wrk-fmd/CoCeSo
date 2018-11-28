@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class AbstractGmapsGeocoder implements Geocoder<Address> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractGmapsGeocoder.class);
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private GmapsWrapper gmapsWrapper;
@@ -23,24 +23,24 @@ public abstract class AbstractGmapsGeocoder implements Geocoder<Address> {
     @Override
     public LatLng geocode(Address address) {
         if (!gmapsWrapper.isActive()) {
-            LOG.trace("Google Maps wrapper is not active");
+            logger.trace("Google Maps wrapper is not active");
             return null;
         }
 
         String query = buildQueryString(address);
         if (query == null) {
-            LOG.trace("Cannot query null-query. Address input was: '{}'", address);
+            logger.trace("Cannot query null-query. Address input was: '{}'.", address);
             return null;
         }
 
-        LOG.debug("Querying Google Maps for '{}'", query);
+        logger.debug("Querying Google Maps for '{}'", query);
         try {
             GeocodingResult[] results = gmapsWrapper.geocode(query);
             if (results.length > 0) {
                 return new LatLng(results[0].geometry.location.lat, results[0].geometry.location.lng);
             }
         } catch (Exception ex) {
-            LOG.info("Error getting coordinates for '{}'", query, ex);
+            logger.info("Error getting coordinates for address query: " + query, ex);
         }
 
         return null;
@@ -52,18 +52,18 @@ public abstract class AbstractGmapsGeocoder implements Geocoder<Address> {
             return null;
         }
 
-        LOG.debug("Reverse geocoding with Google Maps for ({})", coordinates);
+        logger.debug("Reverse geocoding with Google Maps for ({})", coordinates);
         try {
             GeocodingResult[] results = gmapsWrapper.reverseGeocode(coordinates.getLat(), coordinates.getLng());
             if (results.length > 0) {
                 LatLng actualCoordinates = new LatLng(results[0].geometry.location.lat, results[0].geometry.location.lng);
                 int dist = coordinates.distance(actualCoordinates);
                 GmapsAddress address = new GmapsAddress(results[0].addressComponents);
-                LOG.debug("Found address '{}' {} meters away with Google Maps", address.getInfo(", "), dist);
+                logger.debug("Found address '{}' {} meters away with Google Maps", address.getInfo(", "), dist);
                 return new ReverseResult<>(dist, address, actualCoordinates);
             }
         } catch (Exception ex) {
-            LOG.info("Error getting address for '{}'", coordinates, ex);
+            logger.info("Error getting address for '{}'", coordinates, ex);
         }
 
         return null;

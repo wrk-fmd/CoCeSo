@@ -58,12 +58,15 @@ public class ChainedGeocoder implements Geocoder<Address> {
 
         if (coordinates == null) {
             // Now try all the geocoders in order
+            LOG.trace("Lookup from cache did not return any geocode result. Fetch information from other geocoders for address: {}", address);
             coordinates = geocoders.stream()
                     .map(g -> g.geocode(address))
                     .filter(Objects::nonNull)
                     .findFirst()
                     .orElse(null);
+
             if (coordinates != null) {
+                LOG.trace("Found a geocoder result to store in the Geocode Cache: {} {}", address, coordinates);
                 cacheRepository.save(new CacheEntry(address, coordinates));
             }
         }

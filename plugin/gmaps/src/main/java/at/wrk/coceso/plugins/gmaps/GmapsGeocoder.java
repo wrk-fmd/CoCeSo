@@ -2,16 +2,20 @@ package at.wrk.coceso.plugins.gmaps;
 
 import at.wrk.geocode.address.Address;
 import at.wrk.geocode.address.IAddressNumber;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 @Component
 @Order(50)
 public class GmapsGeocoder extends AbstractGmapsGeocoder {
+    private static final Logger LOG = LoggerFactory.getLogger(GmapsGeocoder.class);
 
     @Override
     protected String buildQueryString(Address address) {
         if (address.getStreet() == null) {
+            LOG.trace("Address '{}' does not have an address set. Cannot build query for geocode.", address);
             return null;
         }
 

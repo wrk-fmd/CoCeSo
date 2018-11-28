@@ -36,29 +36,33 @@ public class ViennaGeocoder implements Geocoder<Address> {
     @Override
     public LatLng geocode(Address address) {
         if (address.getStreet() == null) {
-            // Geocoding only possible if at least a street name is specified
+            LOG.trace("Vienna Geocoder is not applicable if no street is set. Address: {}", address);
             return null;
         }
 
         if (address.getPostCode() != null && (address.getPostCode() < 1000 || address.getPostCode() > 1300)) {
-            // Postcode is not in Vienna
+            LOG.trace("Vienna Geocoder is not applicable if the postal code is outside of Vienna. Address: {}", address);
             return null;
         }
 
         if (address.getCity() != null && !address.getCity().toLowerCase().startsWith("wien")) {
-            // City is not Vienna
+            LOG.trace("Vienna Geocoder is not applicable if the city is not Vienna (=\"Wien\"). Address: {}", address);
             return null;
         }
 
         String query = buildQueryString(address);
         AddressInfoList infos;
         try {
+            LOG.trace("Vienna Geocoder requests coordinates of address from Vienna OGDAddressService.");
             infos = restTemplate.getForObject(GEOCODE_URL, AddressInfoList.class, query);
         } catch (RestClientException e) {
+            LOG.info("Failed to get geocode data from OGDAddressService for address: {}. Error: {}", address, e.getMessage());
+            LOG.debug("Underlying exception:", e);
             return null;
         }
 
         if (infos == null || infos.count() <= 0) {
+            LOG.trace("Got no usable information in the Vienna Geocoder response.");
             return null;
         }
 
@@ -66,6 +70,7 @@ public class ViennaGeocoder implements Geocoder<Address> {
             for (AddressInfoEntry entry : infos.getEntries()) {
                 // First run: Look for exact match
                 if (addressMatcher.isFoundAddressMatching(entry.getAddress(), address, true)) {
+                    LOG.debug("Found an exactly matching address in the result set: {}.", entry);
                     return entry.getCoordinates();
                 }
             }
@@ -73,12 +78,14 @@ public class ViennaGeocoder implements Geocoder<Address> {
             for (AddressInfoEntry entry : infos.getEntries()) {
                 // Second run: Look for bigger addresses containing the requested
                 if (addressMatcher.isFoundAddressMatching(entry.getAddress(), address, false)) {
+                    LOG.debug("Found a matching address in the result set, with a different number: {}.", entry);
                     return entry.getCoordinates();
                 }
             }
         }
 
         // Only one entry or no match found, use lowest ranking
+        LOG.trace("Check if single entry in returned information is matching by levenshtein distance.");
         return addressMatcher.isStreetMatchingByLevenshtein(infos.getEntries()[0].getAddress(), address) ? infos.getEntries()[0].getCoordinates() : null;
     }
 
@@ -89,6 +96,7 @@ public class ViennaGeocoder implements Geocoder<Address> {
         }
 
         try {
+            LOG.trace("Perform reverser lookup for address on data.wien.gv.at for coordinates: {}", coordinates);
             AddressInfoList infos = restTemplate.getForObject(REVERSE_URL, AddressInfoList.class, coordinates.getLng(), coordinates.getLat());
             if (infos == null || infos.count() <= 0) {
                 return null;
