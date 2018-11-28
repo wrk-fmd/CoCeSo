@@ -60,7 +60,7 @@ public class ChainedGeocoder implements Geocoder<ImmutableAddress> {
         if (coordinates == null) {
             // Now try all the geocoders in order
             LOG.trace("Lookup from cache did not return any geocode result. Fetch information from other geocoders for address: {}", address);
-            coordinates = geocoders.parallelStream()
+            coordinates = geocoders.stream()
                     .map(g -> g.geocode(address))
                     .filter(Objects::nonNull)
                     .findFirst()
