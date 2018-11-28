@@ -70,6 +70,20 @@ public class ExternalIncidentFactoryTest {
         assertThat(externalIncident.getIncident().getInfo(), equalTo(""));
     }
 
+    @Test
+    public void incidentWithoutAnyFieldsSet_returnExternalIncident() {
+        int concernId = 42;
+        int incidentId = 5;
+        Incident incident = new Incident(incidentId);
+        incident.setConcern(new Concern(concernId));
+
+        String externalId = incidentIdGeneratorReturns(concernId, incidentId);
+
+        CachedIncident externalIncident = sut.createExternalIncident(incident);
+
+        assertThat(externalIncident.getIncident().getId(), equalTo(externalId));
+    }
+
     private Point createBoPointWithInformation() {
         return new Point() {
             @Override
