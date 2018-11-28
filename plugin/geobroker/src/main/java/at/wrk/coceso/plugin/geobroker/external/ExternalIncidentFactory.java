@@ -67,11 +67,11 @@ public class ExternalIncidentFactory implements GeoBrokerIncidentFactory {
     private String createGeoBrokerInfo(final Incident incident) {
         List<String> informations = new ArrayList<>();
 
-        if (exposeBoField) {
+        if (exposeBoField && incident.getBo() != null && incident.getBo().getInfo() != null) {
             informations.add(incident.getBo().getInfo());
         }
 
-        if (exposeInfoField) {
+        if (exposeInfoField && incident.getInfo() != null) {
             informations.add(incident.getInfo());
         }
 
