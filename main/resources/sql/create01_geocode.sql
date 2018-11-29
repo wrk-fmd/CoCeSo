@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS geocode (
   lat DOUBLE PRECISION NOT NULL,
   lng DOUBLE PRECISION NOT NULL
 );
-CREATE UNIQUE INDEX geocode_address ON geocode (
+CREATE UNIQUE INDEX IF NOT EXISTS geocode_address ON geocode (
   LOWER(street), LOWER(intersection), numberFrom, numberTo, LOWER(numberLetter), LOWER(numberBlock), postCode, LOWER(city)
 );
 

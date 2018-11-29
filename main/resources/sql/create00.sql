@@ -148,7 +148,7 @@ CREATE TABLE IF NOT EXISTS container (
   ordering DOUBLE PRECISION NOT NULL
 );
 
-CREATE UNIQUE INDEX ON container(concern_fk) WHERE parent IS NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS container_fk_index ON container(concern_fk) WHERE parent IS NULL;
 
 CREATE TABLE IF NOT EXISTS unit_in_container (
   unit_fk INTEGER PRIMARY KEY REFERENCES unit ON DELETE CASCADE,
