@@ -4,10 +4,8 @@ import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.plugin.geobroker.data.CachedIncident;
-import at.wrk.coceso.plugin.geobroker.utils.CachedIncidents;
 import at.wrk.coceso.plugin.geobroker.utils.GeoBrokerIncidents;
 import at.wrk.coceso.plugin.geobroker.utils.GeoBrokerPoints;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
@@ -16,7 +14,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 @RunWith(JUnitParamsRunner.class)

@@ -12,14 +12,16 @@ import at.wrk.coceso.plugin.geobroker.rest.GeoBrokerUnitPublisher;
 import at.wrk.coceso.plugin.geobroker.utils.CachedIncidents;
 import at.wrk.coceso.plugin.geobroker.utils.GeoBrokerUnits;
 import at.wrk.coceso.plugin.geobroker.utils.Strings;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class ConcurrentGeoBrokerManagerTest {
 

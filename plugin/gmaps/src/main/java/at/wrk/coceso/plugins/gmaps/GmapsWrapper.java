@@ -5,29 +5,38 @@ import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class GmapsWrapper {
+    private static final Logger LOG = LoggerFactory.getLogger(GmapsWrapper.class);
 
-  private final GeoApiContext context;
+    private final GeoApiContext context;
 
-  @Autowired
-  public GmapsWrapper(GeocodeConfig config) {
-    context = config.getGmapsApiKey() == null ? null : new GeoApiContext().setApiKey(config.getGmapsApiKey());
-  }
+    @Autowired
+    public GmapsWrapper(final GeocodeConfig config, final GeoApiContextFactory geoApiContextFactory) {
+        if (config.getGmapsApiKey() == null) {
+            LOG.info("Configuration file does not contain a Google API key. Google geocoding is disabled.");
+            this.context = null;
+        } else {
+            LOG.info("Google API key is loaded and Google geocoding is enabled.");
+            this.context =  geoApiContextFactory.create(config.getGmapsApiKey());
+        }
+    }
 
-  public GeocodingResult[] geocode(String query) throws Exception {
-    return GeocodingApi.geocode(context, query).await();
-  }
+    public GeocodingResult[] geocode(String query) throws Exception {
+        return GeocodingApi.geocode(context, query).await();
+    }
 
-  public GeocodingResult[] reverseGeocode(double lat, double lng) throws Exception {
-    return GeocodingApi.reverseGeocode(context, new LatLng(lat, lng)).await();
-  }
+    public GeocodingResult[] reverseGeocode(double lat, double lng) throws Exception {
+        return GeocodingApi.reverseGeocode(context, new LatLng(lat, lng)).await();
+    }
 
-  public boolean isActive() {
-    return context != null;
-  }
+    public boolean isActive() {
+        return context != null;
+    }
 
 }

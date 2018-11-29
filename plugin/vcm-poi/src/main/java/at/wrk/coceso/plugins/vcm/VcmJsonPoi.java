@@ -13,8 +13,7 @@ import org.springframework.stereotype.Component;
 public class VcmJsonPoi extends JsonPoi {
 
   @Autowired
-  public VcmJsonPoi(ObjectMapper mapper) throws IOException {
+  public VcmJsonPoi(ObjectMapper mapper) {
     super(mapper, new ClassPathResource("vcm.json"));
   }
-
 }

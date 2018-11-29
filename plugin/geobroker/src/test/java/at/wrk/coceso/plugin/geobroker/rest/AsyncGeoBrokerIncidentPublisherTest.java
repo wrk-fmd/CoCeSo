@@ -64,6 +64,7 @@ public class AsyncGeoBrokerIncidentPublisherTest {
 
     @Test
     public void incidentDeleted_unknownIncident_noDeletionPublished() {
+        reset(restTemplate);
 
         sut.incidentDeleted(randomString());
 

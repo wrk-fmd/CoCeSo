@@ -1,53 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration>
-  <Appenders>
-    <File name="file_server" fileName="${sys:catalina.base}/logs/coceso_server.${date:yyyy-MM-dd}.log" append="true">
-      <PatternLayout pattern="%d{DEFAULT} %-5p %c{2} - %m%n"/>
-    </File>
-    <File name="file_application" fileName="${sys:catalina.base}/logs/coceso_application.${date:yyyy-MM-dd}.log" append="true">
-      <PatternLayout pattern="%d{DEFAULT} %-5p %c{2} - %m%n"/>
-    </File>
-    <File name="file_access" fileName="${sys:catalina.base}/logs/coceso_access.${date:yyyy-MM-dd}.log" append="true">
-      <PatternLayout pattern="%d{DEFAULT} %-5p - %m%n"/>
-    </File>
-    <File name="file_client" fileName="${sys:catalina.base}/logs/coceso_client.${date:yyyy-MM-dd}.log" append="true">
-      <PatternLayout pattern="%d{DEFAULT} %-5p - %m%n"/>
-    </File>
-    <File name="file_radio" fileName="${sys:catalina.base}/logs/coceso_radio.${date:yyyy-MM-dd}.log" append="true">
-      <PatternLayout pattern="%d{DEFAULT} %-5p %c{2} - %m%n"/>
-    </File>
-    <File name="file_geocode" fileName="${sys:catalina.base}/logs/coceso_geocode.${date:yyyy-MM-dd}.log" append="true">
-      <PatternLayout pattern="%d{DEFAULT} %-5p %c{2} - %m%n"/>
-    </File>
-    <File name="file_geobroker" fileName="${sys:catalina.base}/logs/coceso_geobroker.${date:yyyy-MM-dd}.log" append="true">
-      <PatternLayout pattern="%d{DEFAULT} %-5p %c{2} - %m%n"/>
-    </File>
-  </Appenders>
-  <Loggers>
-    <Logger name="at.wrk.coceso" additivity="false" level="info">
-      <AppenderRef ref="file_application"/>
-    </Logger>
-    <Logger name="at.wrk.coceso.utils.DataAccessLogger" additivity="false" level="info">
-      <AppenderRef ref="file_access"/>
-    </Logger>
-    <Logger name="at.wrk.coceso.entity.helper.ClientLog" additivity="false" level="info">
-      <AppenderRef ref="file_client"/>
-    </Logger>
-    <Logger name="at.wrk.coceso.radio" additivity="false" level="info">
-      <AppenderRef ref="file_radio"/>
-    </Logger>
-    <Logger name="at.wrk.geocode" additivity="false" level="info">
-      <AppenderRef ref="file_geocode"/>
-    </Logger>
-    <Logger name="at.wrk.coceso.plugin.geobroker" additivity="false" level="info">
-      <AppenderRef ref="file_geobroker"/>
-    </Logger>
+    <Appenders>
+        <RollingFile name="file_coceso"
+                     fileName="${sys:catalina.base}/logs/coceso/coceso.log"
+                     append="true"
+                     filePattern="${sys:catalina.base}/logs/coceso/$${date:yyyy-MM}/coceso-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout>
+                <Pattern>%d{ISO8601}; [%t]; %-5level; %logger{1.}; %msg%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="20 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="20"/>
+        </RollingFile>
 
-    <Logger name="org.springframework" level="warn"/>
-    <Logger name="org.hibernate.SQL" level="warn"/>
+        <RollingFile name="file_error"
+                     fileName="${sys:catalina.base}/logs/coceso/coceso_error.log"
+                     append="true"
+                     filePattern="${sys:catalina.base}/logs/coceso/$${date:yyyy-MM}/coceso_error-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout>
+                <Pattern>%d{ISO8601}; [%t]; %-5level; %logger{1.}; %msg%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="20 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="20"/>
+        </RollingFile>
 
-    <Root level="info">
-      <AppenderRef ref="file_server"/>
-    </Root>
-  </Loggers>
+        <Async name="async_coceso">
+            <AppenderRef ref="file_coceso"/>
+        </Async>
+
+        <Async name="async_error">
+            <AppenderRef ref="file_error"/>
+        </Async>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="at.wrk.coceso" level="debug"/>
+        <Logger name="at.wrk.geocode" level="debug"/>
+
+        <Logger level="error">
+            <AppenderRef ref="async_error"/>
+        </Logger>
+
+        <Root level="warn">
+            <AppenderRef ref="async_coceso"/>
+        </Root>
+    </Loggers>
 </Configuration>

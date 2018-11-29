@@ -64,6 +64,7 @@ public class AsyncGeoBrokerUnitPublisherTest {
 
     @Test
     public void unitDeleted_unknownUnit_noDeletionPublished() {
+        reset(restTemplate);
 
         sut.unitDeleted(randomString());
 

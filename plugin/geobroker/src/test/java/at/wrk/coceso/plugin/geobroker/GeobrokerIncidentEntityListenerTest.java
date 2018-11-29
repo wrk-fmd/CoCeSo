@@ -1,17 +1,12 @@
 package at.wrk.coceso.plugin.geobroker;
 
 import at.wrk.coceso.entity.Incident;
-import at.wrk.coceso.entity.enums.IncidentState;
-import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.plugin.geobroker.data.CachedIncident;
 import at.wrk.coceso.plugin.geobroker.external.ExternalIncidentIdGenerator;
 import at.wrk.coceso.plugin.geobroker.external.GeoBrokerIncidentFactory;
 import at.wrk.coceso.plugin.geobroker.manager.GeoBrokerManager;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
