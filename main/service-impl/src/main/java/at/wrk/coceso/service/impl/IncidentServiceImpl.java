@@ -44,23 +44,28 @@ class IncidentServiceImpl implements IncidentServiceInternal {
 
     private final static Sort SORT = new Sort(Sort.Direction.ASC, "id");
 
-    @Autowired
-    private IncidentRepository incidentRepository;
+    private final IncidentRepository incidentRepository;
+    private final TaskServiceInternal taskService;
+    private final HookService hookService;
+    private final LogService logService;
+    private final PatientServiceInternal patientService;
+    private final UnitService unitService;
 
     @Autowired
-    private TaskServiceInternal taskService;
-
-    @Autowired
-    private HookService hookService;
-
-    @Autowired
-    private LogService logService;
-
-    @Autowired
-    private PatientServiceInternal patientService;
-
-    @Autowired
-    private UnitService unitService;
+    public IncidentServiceImpl(
+            final IncidentRepository incidentRepository,
+            final TaskServiceInternal taskService,
+            final HookService hookService,
+            final LogService logService,
+            final PatientServiceInternal patientService,
+            final UnitService unitService) {
+        this.incidentRepository = incidentRepository;
+        this.taskService = taskService;
+        this.hookService = hookService;
+        this.logService = logService;
+        this.patientService = patientService;
+        this.unitService = unitService;
+    }
 
     @Override
     public Incident getById(int id) {
@@ -111,7 +116,6 @@ class IncidentServiceImpl implements IncidentServiceInternal {
     @Override
     public Incident update(final Incident incident, final Concern concern, final User user, final NotifyList notify) {
         Incident updatedIncident;
-        Map<Unit, TaskState> units = incident.getUnits();
 
         Changes changes = new Changes("incident");
         if (incident.getId() == null) {
@@ -120,17 +124,14 @@ class IncidentServiceImpl implements IncidentServiceInternal {
             updatedIncident = updateIncident(incident, user, notify, changes);
         }
 
-        if (incident.getState().isDone()) {
-            hookService.callIncidentDone(incident, user, notify);
-        } else if (units != null) {
-            units.forEach((unit, state) -> taskService.changeState(incident, unitService.getById(unit.getId()), state, user, notify));
-        }
+        Map<Unit, TaskState> units = incident.getUnits();
+        postProcessUpdatedIncident(user, notify, updatedIncident, units);
 
         return updatedIncident;
     }
 
     @Override
-    public Incident createHoldPosition(Point position, Unit unit, TaskState state, User user, NotifyList notify) {
+    public Incident createHoldPosition(final Point position, final Unit unit, final TaskState state, final User user, final NotifyList notify) {
         Incident hold = new Incident();
         hold.setState(IncidentState.InProgress);
         hold.setType(IncidentType.HoldPosition);
@@ -143,7 +144,7 @@ class IncidentServiceImpl implements IncidentServiceInternal {
     }
 
     @Override
-    public void endTreatments(Patient patient, User user, NotifyList notify) {
+    public void endTreatments(final Patient patient, final User user, final NotifyList notify) {
         if (patient != null && patient.getIncidents() != null) {
             patient.getIncidents().stream()
                     .filter(i -> i.getType() == IncidentType.Treatment && !i.getState().isDone())
@@ -162,7 +163,7 @@ class IncidentServiceImpl implements IncidentServiceInternal {
     }
 
     @Override
-    public Incident createTreatment(Patient patient, Unit group, User user, NotifyList notify) {
+    public Incident createTreatment(final Patient patient, final Unit group, final User user, final NotifyList notify) {
         Changes changes = new Changes("incident");
 
         if (!patient.getConcern().equals(group.getConcern())) {
@@ -198,14 +199,14 @@ class IncidentServiceImpl implements IncidentServiceInternal {
     }
 
     @Override
-    public void assignPatient(int incidentId, int patientId, User user, NotifyList notify) {
+    public void assignPatient(final int incidentId, final int patientId, final User user, final NotifyList notify) {
         Incident incident = getById(incidentId);
         Patient patient = patientService.getByIdNoLog(patientId);
         assignPatient(incident, patient, user, notify);
     }
 
     @Override
-    public void assignPatient(Incident incident, Patient patient, User user, NotifyList notify) {
+    public void assignPatient(final Incident incident, final Patient patient, final User user, final NotifyList notify) {
         if (incident == null || patient == null) {
             throw new ErrorsException(Errors.EntityMissing);
         }
@@ -219,9 +220,17 @@ class IncidentServiceImpl implements IncidentServiceInternal {
         }
 
         incident.setPatient(patient);
-        incident = incidentRepository.saveAndFlush(incident);
-        logService.logAuto(user, LogEntryType.PATIENT_ASSIGN, incident.getConcern(), incident, patient);
-        notify.add(incident);
+        Incident updatedIncident = incidentRepository.saveAndFlush(incident);
+        logService.logAuto(user, LogEntryType.PATIENT_ASSIGN, updatedIncident.getConcern(), updatedIncident, patient);
+        notify.add(updatedIncident);
+    }
+
+    private void postProcessUpdatedIncident(final User user, final NotifyList notify, final Incident updatedIncident, final Map<Unit, TaskState> units) {
+        if (updatedIncident.getState().isDone()) {
+            hookService.callIncidentDone(updatedIncident, user, notify);
+        } else if (units != null) {
+            units.forEach((unit, state) -> taskService.changeState(updatedIncident, unitService.getById(unit.getId()), state, user, notify));
+        }
     }
 
     private Incident createIncident(final Incident incident, final Concern concern, final User user, final NotifyList notify, final Changes changes) {

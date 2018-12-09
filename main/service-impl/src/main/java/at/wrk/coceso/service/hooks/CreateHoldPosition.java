@@ -18,32 +18,37 @@ import org.springframework.stereotype.Component;
 @Order(3)
 class CreateHoldPosition implements TaskStateHook {
 
-  private final static Logger LOG = LoggerFactory.getLogger(CreateHoldPosition.class);
+    private final static Logger LOG = LoggerFactory.getLogger(CreateHoldPosition.class);
 
-  @Autowired
-  private IncidentServiceInternal incidentService;
+    private final IncidentServiceInternal incidentService;
 
-  @Override
-  public TaskState call(final Incident incident, final Unit unit, final TaskState taskState, final User user, final NotifyList notify) {
-    if (taskState != TaskState.AAO) {
-      return taskState;
-    }
-    if (incident.getType() == IncidentType.ToHome) {
-      LOG.debug("{}: Autodetaching ToHome {} of unit {} on AAO", user, incident, unit);
-      // ToHome: Just detach, unit is marked as 'at home'
-      return TaskState.Detached;
-    }
-    if (incident.getType() != IncidentType.Relocation) {
-      return taskState;
+    @Autowired
+    public CreateHoldPosition(final IncidentServiceInternal incidentService) {
+        this.incidentService = incidentService;
     }
 
-    // If Relocation goes to unit.home -> just detach, so unit is marked as 'at Home'
-    if (incident.hasAo() && !Point.infoEquals(incident.getAo(), unit.getHome())) {
-      LOG.debug("{}: Creating HoldPosition for unit {} on AAO", user, incident, unit);
-      incidentService.createHoldPosition(incident.getAo(), unit, TaskState.AAO, user, notify);
+    @Override
+    public TaskState call(final Incident incident, final Unit unit, final TaskState taskState, final User user, final NotifyList notify) {
+        if (taskState != TaskState.AAO) {
+            return taskState;
+        }
+
+        if (incident.getType() == IncidentType.ToHome) {
+            LOG.debug("{}: Autodetaching ToHome {} of unit {} on AAO", user, incident, unit);
+            // ToHome: Just detach, unit is marked as 'at home'
+            return TaskState.Detached;
+        }
+
+        if (incident.getType() != IncidentType.Relocation) {
+            return taskState;
+        }
+
+        // If Relocation goes to unit.home -> just detach, so unit is marked as 'at Home'
+        if (incident.hasAo() && !Point.infoEquals(incident.getAo(), unit.getHome())) {
+            LOG.debug("{}: Creating HoldPosition for unit {} on AAO", user, incident, unit);
+            incidentService.createHoldPosition(incident.getAo(), unit, TaskState.AAO, user, notify);
+        }
+
+        return TaskState.Detached;
     }
-
-    return TaskState.Detached;
-  }
-
 }

@@ -6,35 +6,43 @@ import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entityevent.impl.NotifyList;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class HookService {
 
-  @Autowired
-  private List<TaskStateHook> taskStateHooks;
+    private final List<TaskStateHook> taskStateHooks;
+    private final List<IncidentDoneHook> incidentStateHooks;
+    private final List<PatientDoneHook> patientDoneHooks;
 
-  @Autowired
-  private List<IncidentDoneHook> incidentStateHooks;
-
-  @Autowired
-  private List<PatientDoneHook> patientDoneHooks;
-
-  public TaskState callTaskStateChanged(Incident incident, Unit unit, TaskState state, User user, NotifyList notify) {
-    for (TaskStateHook taskStateHook : taskStateHooks) {
-      state = taskStateHook.call(incident, unit, state, user, notify);
+    @Autowired
+    public HookService(
+            final List<TaskStateHook> taskStateHooks,
+            final List<IncidentDoneHook> incidentStateHooks,
+            final List<PatientDoneHook> patientDoneHooks) {
+        this.taskStateHooks = taskStateHooks;
+        this.incidentStateHooks = incidentStateHooks;
+        this.patientDoneHooks = patientDoneHooks;
     }
-    return state;
-  }
 
-  public void callIncidentDone(Incident incident, User user, NotifyList notify) {
-    incidentStateHooks.forEach(h -> h.call(incident, user, notify));
-  }
+    public TaskState callTaskStateChanged(final Incident incident, final Unit unit, final TaskState state, final User user, final NotifyList notify) {
+        TaskState calculatedTaskState = state;
+        for (TaskStateHook taskStateHook : taskStateHooks) {
+            calculatedTaskState = taskStateHook.call(incident, unit, state, user, notify);
+        }
 
-  public void callPatientDone(Patient patient, User user, NotifyList notify) {
-    patientDoneHooks.forEach(h -> h.call(patient, user, notify));
-  }
+        return calculatedTaskState;
+    }
+
+    public void callIncidentDone(final Incident incident, final User user, final NotifyList notify) {
+        incidentStateHooks.forEach(h -> h.call(incident, user, notify));
+    }
+
+    public void callPatientDone(final Patient patient, final User user, final NotifyList notify) {
+        patientDoneHooks.forEach(h -> h.call(patient, user, notify));
+    }
 
 }

@@ -8,5 +8,5 @@ import at.wrk.coceso.entityevent.impl.NotifyList;
 
 interface TaskStateHook {
 
-  public TaskState call(final Incident incident, final Unit unit, final TaskState state, final User user, final NotifyList notify);
+    TaskState call(Incident incident, Unit unit, TaskState state, User user, NotifyList notify);
 }
