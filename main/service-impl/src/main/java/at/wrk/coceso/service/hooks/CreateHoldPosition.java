@@ -20,12 +20,8 @@ class CreateHoldPosition implements TaskStateHook {
 
     private final static Logger LOG = LoggerFactory.getLogger(CreateHoldPosition.class);
 
-    private final IncidentServiceInternal incidentService;
-
     @Autowired
-    public CreateHoldPosition(final IncidentServiceInternal incidentService) {
-        this.incidentService = incidentService;
-    }
+    private IncidentServiceInternal incidentService;
 
     @Override
     public TaskState call(final Incident incident, final Unit unit, final TaskState taskState, final User user, final NotifyList notify) {
