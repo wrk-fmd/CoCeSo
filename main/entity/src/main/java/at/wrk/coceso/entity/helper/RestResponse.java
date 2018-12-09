@@ -3,13 +3,14 @@ package at.wrk.coceso.entity.helper;
 import at.wrk.coceso.entity.enums.Errors;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class RestResponse implements Serializable {
@@ -18,30 +19,30 @@ public class RestResponse implements Serializable {
 
   private final Map<String, Object> data;
 
-  public RestResponse(boolean success) {
+  public RestResponse(final boolean success) {
     this.success = success;
     this.data = null;
   }
 
-  public RestResponse(boolean success, RestProperty... properties) {
+  public RestResponse(final boolean success, final RestProperty... properties) {
     this.success = success;
-    this.data = Arrays.asList(properties).stream().collect(Collectors.toMap(RestProperty::getKey, RestProperty::getValue));
+    this.data = Arrays.stream(properties).collect(Collectors.toMap(RestProperty::getKey, RestProperty::getValue));
   }
 
-  public RestResponse(Errors e) {
+  public RestResponse(final Errors e) {
     this.success = false;
     this.data = new HashMap<>();
     data.put("error", e.getCode());
     data.put("msg", e.getMessage());
   }
 
-  public RestResponse(Errors e, RestProperty... properties) {
+  public RestResponse(final Errors e, final RestProperty... properties) {
     this(false, properties);
     data.put("error", e.getCode());
     data.put("msg", e.getMessage());
   }
 
-  public RestResponse(BindingResult result) {
+  public RestResponse(final BindingResult result) {
     this.success = false;
     this.data = new HashMap<>();
     data.put("error", Errors.Validation.getCode());
@@ -57,5 +58,4 @@ public class RestResponse implements Serializable {
   public Map<String, Object> getData() {
     return data;
   }
-
 }

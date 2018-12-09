@@ -2,14 +2,25 @@ package at.wrk.coceso.entity;
 
 import at.wrk.coceso.entity.helper.JsonViews;
 import com.fasterxml.jackson.annotation.JsonView;
-import javax.persistence.*;
+import org.hibernate.Hibernate;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import org.hibernate.Hibernate;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
 
 @Entity
 public class Concern implements Serializable {
@@ -34,7 +45,7 @@ public class Concern implements Serializable {
   private boolean closed;
 
   @JsonView({JsonViews.Main.class, JsonViews.Edit.class})
-  @ElementCollection
+  @ElementCollection(fetch = FetchType.EAGER)
   @CollectionTable(name = "sections", joinColumns = {
     @JoinColumn(name = "concern_fk")})
   @Column(name = "name", length = 30)
