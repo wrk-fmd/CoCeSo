@@ -44,28 +44,19 @@ class IncidentServiceImpl implements IncidentServiceInternal {
 
     private final static Sort SORT = new Sort(Sort.Direction.ASC, "id");
 
-    private final IncidentRepository incidentRepository;
-    private final TaskServiceInternal taskService;
-    private final HookService hookService;
-    private final LogService logService;
-    private final PatientServiceInternal patientService;
-    private final UnitService unitService;
-
     @Autowired
-    public IncidentServiceImpl(
-            final IncidentRepository incidentRepository,
-            final TaskServiceInternal taskService,
-            final HookService hookService,
-            final LogService logService,
-            final PatientServiceInternal patientService,
-            final UnitService unitService) {
-        this.incidentRepository = incidentRepository;
-        this.taskService = taskService;
-        this.hookService = hookService;
-        this.logService = logService;
-        this.patientService = patientService;
-        this.unitService = unitService;
-    }
+    private IncidentRepository incidentRepository;
+    @Autowired
+    private TaskServiceInternal taskService;
+    @Autowired
+    private HookService hookService;
+    @Autowired
+    private LogService logService;
+    @Autowired
+    private PatientServiceInternal patientService;
+    @Autowired
+    private UnitService unitService;
+
 
     @Override
     public Incident getById(int id) {

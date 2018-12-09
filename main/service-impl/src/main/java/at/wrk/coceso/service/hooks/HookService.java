@@ -14,19 +14,12 @@ import java.util.List;
 @Component
 public class HookService {
 
-    private final List<TaskStateHook> taskStateHooks;
-    private final List<IncidentDoneHook> incidentStateHooks;
-    private final List<PatientDoneHook> patientDoneHooks;
-
     @Autowired
-    public HookService(
-            final List<TaskStateHook> taskStateHooks,
-            final List<IncidentDoneHook> incidentStateHooks,
-            final List<PatientDoneHook> patientDoneHooks) {
-        this.taskStateHooks = taskStateHooks;
-        this.incidentStateHooks = incidentStateHooks;
-        this.patientDoneHooks = patientDoneHooks;
-    }
+    private List<TaskStateHook> taskStateHooks;
+    @Autowired
+    private List<IncidentDoneHook> incidentStateHooks;
+    @Autowired
+    private List<PatientDoneHook> patientDoneHooks;
 
     public TaskState callTaskStateChanged(final Incident incident, final Unit unit, final TaskState state, final User user, final NotifyList notify) {
         TaskState calculatedTaskState = state;
