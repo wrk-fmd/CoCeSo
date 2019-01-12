@@ -23,7 +23,7 @@
 
         <itextpdf.version>5.5.13</itextpdf.version>
 
-        <jackson.version>2.9.7</jackson.version>
+        <jackson.version>2.9.8</jackson.version>
         <com.fatboyindustrial.gson.javatime.serialisers>1.1.1</com.fatboyindustrial.gson.javatime.serialisers>
 
         <google.maps.services.version>0.1.17</google.maps.services.version>
