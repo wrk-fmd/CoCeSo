@@ -13,7 +13,6 @@ import at.wrk.coceso.service.patadmin.RegistrationService;
 import at.wrk.coceso.utils.ActiveConcern;
 import at.wrk.coceso.utils.Initializer;
 import com.fasterxml.jackson.annotation.JsonView;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/data/patadmin/registration", method = RequestMethod.GET)
@@ -36,23 +37,27 @@ public class RegistrationRestController {
   private final EntityEventHandler<Unit> entityEventHandler;
 
   @Autowired
-  public RegistrationRestController(EntityEventFactory eehf) {
-    this.entityEventHandler = eehf.getEntityEventHandler(Unit.class);
+  public RegistrationRestController(EntityEventFactory entityEventFactory) {
+    this.entityEventHandler = entityEventFactory.getEntityEventHandler(Unit.class);
   }
 
   @PreAuthorize("@auth.hasPermission(#concern, 'PatadminRegistration')")
   @Transactional
   @JsonView(JsonViews.Patadmin.class)
   @RequestMapping(value = "patients", produces = "application/json", method = RequestMethod.GET)
-  public List<Patient> getPatients(@RequestParam("f") String f, @RequestParam("q") String q, @ActiveConcern Concern concern, @AuthenticationPrincipal User user) {
-    return Initializer.initGroups(registrationService.getForAutocomplete(concern, q, f, user));
+  public List<Patient> getPatients(
+          @RequestParam("f") final String field,
+          @RequestParam("q") final String query,
+          @ActiveConcern final Concern concern,
+          @AuthenticationPrincipal final User user) {
+    return Initializer.initGroups(registrationService.getForAutocomplete(concern, query, field, user));
   }
 
   @PreAuthorize("@auth.hasPermission(#concern, 'PatadminRegistration')")
   @Transactional
   @JsonView(JsonViews.Patadmin.class)
   @RequestMapping(value = "groups", produces = "application/json", method = RequestMethod.GET)
-  public SequencedResponse<List<Unit>> getGroups(@ActiveConcern Concern concern) {
+  public SequencedResponse<List<Unit>> getGroups(@ActiveConcern final Concern concern) {
     return new SequencedResponse<>(entityEventHandler.getHver(), entityEventHandler.getSeq(concern.getId()),
         Initializer.init(patadminService.getGroups(concern), Unit::getIncidents));
   }

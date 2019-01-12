@@ -3,12 +3,13 @@ package at.wrk.coceso.repository;
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.Unit;
-import java.util.List;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface IncidentRepository extends JpaRepository<Incident, Integer> {
@@ -19,16 +20,16 @@ public interface IncidentRepository extends JpaRepository<Incident, Integer> {
 
   List<Incident> findByConcern(Concern concern, Sort sort);
 
-  @Query("SELECT i FROM Incident i WHERE concern = :concern AND type != 'Treatment' AND (state != 'Done' OR type NOT IN ('ToHome', 'Standby', 'HoldPosition'))")
+  @Query("SELECT i FROM Incident i WHERE concern = :concern AND type <> 'Treatment' AND (state <> 'Done' OR type NOT IN ('ToHome', 'Standby', 'HoldPosition'))")
   List<Incident> findRelevant(@Param("concern") Concern concern);
 
-  @Query("SELECT i FROM Incident i WHERE concern = :concern AND state != 'Done'")
+  @Query("SELECT i FROM Incident i WHERE concern = :concern AND state <> 'Done'")
   List<Incident> findActive(@Param("concern") Concern concern, Sort sort);
 
   @Query("SELECT i FROM Incident i WHERE concern = :concern AND type NOT IN ('ToHome', 'Standby', 'HoldPosition', 'Treatment')")
   List<Incident> findNonSingleUnit(@Param("concern") Concern concern, Sort sort);
 
-  @Query("SELECT i FROM Incident i WHERE concern = :concern AND state != 'Done' AND type NOT IN ('ToHome', 'Standby', 'HoldPosition', 'Treatment')")
+  @Query("SELECT i FROM Incident i WHERE concern = :concern AND state <> 'Done' AND type NOT IN ('ToHome', 'Standby', 'HoldPosition', 'Treatment')")
   List<Incident> findActiveNonSingleUnit(@Param("concern") Concern concern, Sort sort);
 
   @Query("SELECT i FROM Incident i WHERE concern = :concern AND type = 'Transport'")

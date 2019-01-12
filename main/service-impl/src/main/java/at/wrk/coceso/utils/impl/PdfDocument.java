@@ -22,6 +22,7 @@ import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 
@@ -322,7 +323,7 @@ public class PdfDocument extends Document implements AutoCloseable {
                 addCell(table, patient.isDone() ? getMessage("patient.discharged", null) : "");
             }
 
-            String casusNr = patient.getIncidents().stream().findFirst().map(Incident::getCasusNr).orElse("");
+            String casusNr = patient.getIncidents().stream().map(Incident::getCasusNr).filter(StringUtils::isNotBlank).findFirst().orElse("");
             addCell(table, casusNr);
         });
 

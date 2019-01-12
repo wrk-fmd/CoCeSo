@@ -3,12 +3,9 @@ package at.wrk.coceso.controller.patadmin;
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.User;
 import at.wrk.coceso.form.GroupsForm;
-import at.wrk.coceso.utils.ActiveConcern;
 import at.wrk.coceso.service.patadmin.PatadminService;
 import at.wrk.coceso.service.patadmin.PatadminWriteService;
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
+import at.wrk.coceso.utils.ActiveConcern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +18,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
 
 @Controller
 @RequestMapping(value = "/patadmin")
@@ -36,7 +37,7 @@ public class PatadminController {
 
   @PreAuthorize("@auth.hasPermission(#concern, 'Patadmin')")
   @RequestMapping(value = "", method = RequestMethod.GET)
-  public String showIndex(ModelMap map, @ActiveConcern Concern concern) {
+  public String showIndex(final ModelMap map, @ActiveConcern final Concern concern) {
     boolean[] accessLevels = patadminService.getAccessLevels(concern);
 
     if (!accessLevels[0]) {
@@ -58,7 +59,7 @@ public class PatadminController {
 
   @PreAuthorize("@auth.hasPermission(#concern, 'PatadminSettings')")
   @RequestMapping(value = "/settings", method = RequestMethod.GET)
-  public ModelAndView showSettings(ModelMap map, @ActiveConcern Concern concern) {
+  public ModelAndView showSettings(final ModelMap map, @ActiveConcern final Concern concern) {
     try {
       File[] images = new ClassPathResource("../../static/imgs/groups").getFile().listFiles();
       Arrays.sort(images);
@@ -74,7 +75,7 @@ public class PatadminController {
 
   @PreAuthorize("@auth.hasPermission(#concern, 'PatadminSettings')")
   @RequestMapping(value = "/settings", method = RequestMethod.POST)
-  public String saveSettings(@ModelAttribute GroupsForm form, @ActiveConcern Concern concern, @AuthenticationPrincipal User user) {
+  public String saveSettings(@ModelAttribute final GroupsForm form, @ActiveConcern final Concern concern, @AuthenticationPrincipal final User user) {
     patadminWriteService.update(form, concern, user);
     return "redirect:settings";
   }
