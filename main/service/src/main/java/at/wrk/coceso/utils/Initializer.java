@@ -2,8 +2,9 @@ package at.wrk.coceso.utils;
 
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.Patient;
-import java.util.function.Function;
 import org.hibernate.Hibernate;
+
+import java.util.function.Function;
 
 public class Initializer {
 
@@ -28,7 +29,7 @@ public class Initializer {
   }
 
   public static <I extends Iterable<Patient>> I initGroups(I patients) {
-    patients.forEach(patient -> initGroups(patient));
+    patients.forEach(Initializer::initGroups);
     return patients;
   }
 
