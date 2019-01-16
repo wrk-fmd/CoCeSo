@@ -26,10 +26,24 @@
  * @param {module:utils/destroy} destroy
  * @param {module:utils/i18n} _
  */
-define(["knockout", "./form", "../models/incident", "../models/task", "../models/unit", "../navigation",
-  "data/save", "data/store/incidents", "data/store/sections", "utils/constants", "utils/destroy", "utils/i18n",
-  "ko/bindings/point", "ko/extenders/boolean", "ko/extenders/changes", "ko/extenders/arrayChanges"],
-  function(ko, Form, Incident, Task, Unit, navigation, save, store, sections, constants, destroy, _) {
+define([
+    "knockout",
+    "./form",
+    "../models/incident",
+    "../models/task",
+    "../models/unit",
+    "../navigation",
+    "data/save",
+    "data/store/incidents",
+    "data/store/sections",
+    "utils/constants",
+    "utils/destroy",
+    "utils/i18n",
+    "ko/bindings/point",
+    "ko/extenders/boolean",
+    "ko/extenders/changes",
+    "ko/extenders/arrayChanges"],
+  function (ko, Form, Incident, Task, Unit, navigation, save, store, sections, constants, destroy, _) {
     "use strict";
 
     /**
@@ -40,7 +54,7 @@ define(["knockout", "./form", "../models/incident", "../models/task", "../models
      * @extends module:main/viewmodels/form
      * @param {Object} data
      */
-    var IncidentVM = function(data) {
+    var IncidentVM = function (data) {
       var self = this;
 
       this.sections = sections;
@@ -63,7 +77,7 @@ define(["knockout", "./form", "../models/incident", "../models/task", "../models
        */
       this.model = ko.observable(null);
 
-      this.dialogTitle = ko.computed(function() {
+      this.dialogTitle = ko.computed(function () {
         if (!this.idObs()) {
           return _("incident.add");
         }
@@ -100,7 +114,7 @@ define(["knockout", "./form", "../models/incident", "../models/task", "../models
        * @type ko.computed
        * @returns {void}
        */
-      this.modelChange = ko.computed(function() {
+      this.modelChange = ko.computed(function () {
         var newModel = store.get(this.idObs()),
           oldModel = this.model.peek();
 
@@ -122,7 +136,7 @@ define(["knockout", "./form", "../models/incident", "../models/task", "../models
        * @function
        * @type ko.computed
        */
-      this.load = ko.computed(function() {
+      this.load = ko.computed(function () {
         //Subscribe to change of model
         this.model();
 
@@ -187,9 +201,9 @@ define(["knockout", "./form", "../models/incident", "../models/task", "../models
        * @function
        * @type ko.computed
        */
-      this.setAssociatedUnits = ko.computed(function() {
-        ko.utils.arrayForEach(this.model().units(), function(task) {
-          var local = ko.utils.arrayFirst(self.units.peek(), function(item) {
+      this.setAssociatedUnits = ko.computed(function () {
+        ko.utils.arrayForEach(this.model().units(), function (task) {
+          var local = ko.utils.arrayFirst(self.units.peek(), function (item) {
             return (item.unit_id === task.unit_id);
           });
           if (local) {
@@ -209,11 +223,11 @@ define(["knockout", "./form", "../models/incident", "../models/task", "../models
           }
         });
         //Remove detached units
-        this.units.remove(function(task) {
+        this.units.remove(function (task) {
           if (!task.taskState.orig()) {
             return false;
           }
-          return (!ko.utils.arrayFirst(self.model().units(), function(item) {
+          return (!ko.utils.arrayFirst(self.model().units(), function (item) {
             return (task.unit_id === item.unit_id);
           }));
         });
@@ -221,7 +235,7 @@ define(["knockout", "./form", "../models/incident", "../models/task", "../models
 
       if (data.autoSave) {
         //Saving results in reloading the data, but reloading is not possible before loading is completed
-        window.setTimeout(function() {
+        window.setTimeout(function () {
           self.save.call(self);
         }, 100);
       }
@@ -233,7 +247,7 @@ define(["knockout", "./form", "../models/incident", "../models/task", "../models
        * @type ko.computed
        * @returns {boolean}
        */
-      this.hasAO = ko.computed(function() {
+      this.hasAO = ko.computed(function () {
         return !!this.ao();
       }, this);
 
@@ -244,7 +258,7 @@ define(["knockout", "./form", "../models/incident", "../models/task", "../models
        * @type ko.computed
        * @returns {boolean}
        */
-      this.disableAAO = ko.computed(function() {
+      this.disableAAO = ko.computed(function () {
         return !this.hasAO();
       }, this);
 
@@ -255,7 +269,7 @@ define(["knockout", "./form", "../models/incident", "../models/task", "../models
        * @type ko.computed
        * @returns {boolean}
        */
-      this.disableZAO = ko.computed(function() {
+      this.disableZAO = ko.computed(function () {
         return (this.isStandby() || this.isHoldPosition() || !this.hasAO());
       }, this);
 
@@ -266,7 +280,7 @@ define(["knockout", "./form", "../models/incident", "../models/task", "../models
        * @type ko.computed
        * @returns {boolean}
        */
-      this.disableTask = ko.computed(function() {
+      this.disableTask = ko.computed(function () {
         return (this.idObs() && !this.isTask() && !this.isTransport());
       }, this);
 
@@ -277,7 +291,7 @@ define(["knockout", "./form", "../models/incident", "../models/task", "../models
        * @type ko.computed
        * @returns {boolean}
        */
-      this.disableRelocation = ko.computed(function() {
+      this.disableRelocation = ko.computed(function () {
         return (this.idObs() && !this.isRelocation());
       }, this);
 
@@ -288,8 +302,8 @@ define(["knockout", "./form", "../models/incident", "../models/task", "../models
        * @type ko.computed
        * @returns {boolean}
        */
-      this.disableInProgress = ko.computed(function() {
-        return (ko.utils.arrayFirst(this.units(), function(task) {
+      this.disableInProgress = ko.computed(function () {
+        return (ko.utils.arrayFirst(this.units(), function (task) {
           return !task.isDetached();
         }) === null);
       }, this);
@@ -301,9 +315,9 @@ define(["knockout", "./form", "../models/incident", "../models/task", "../models
        * @type ko.computed
        * @returns {boolean}
        */
-      this.highlightAO = ko.computed(function() {
+      this.highlightAO = ko.computed(function () {
         if (this.unitCount() > 0) {
-          return (!this.hasAO() && ko.utils.arrayFilter(this.units(), function(task) {
+          return (!this.hasAO() && ko.utils.arrayFilter(this.units(), function (task) {
             return task.isABO();
           }).length >= 1);
         }
@@ -316,7 +330,7 @@ define(["knockout", "./form", "../models/incident", "../models/task", "../models
        * @param {Event} event The jQuery Event (unused)
        * @param {Object} ui jQuery UI properties
        */
-      this.assignUnitForm = function(event, ui) {
+      this.assignUnitForm = function (event, ui) {
         var viewmodel = ko.dataFor(ui.draggable[0]);
         if (!(viewmodel instanceof Unit)) {
           return;
@@ -330,7 +344,7 @@ define(["knockout", "./form", "../models/incident", "../models/task", "../models
        * @function
        * @param {module:main/models/task} task Optional task to remove from current and bind to new incident
        */
-      this.duplicate = function(task) {
+      this.duplicate = function (task) {
         var data = {
           caller: self.caller(),
           bo: {info: self.bo()},
@@ -365,7 +379,7 @@ define(["knockout", "./form", "../models/incident", "../models/task", "../models
        *
        * @param {Object} data The data returned from server
        */
-      this.afterSave = function(data) {
+      this.afterSave = function (data) {
         self.error(false);
         if (data.incident_id && data.incident_id !== self.id) {
           //ID has changed
@@ -381,9 +395,9 @@ define(["knockout", "./form", "../models/incident", "../models/task", "../models
        * @function
        */
       setTaskState: {
-        value: function(unit, taskState) {
+        value: function (unit, taskState) {
           if (unit) {
-            var assigned = ko.utils.arrayFirst(this.units(), function(task) {
+            var assigned = ko.utils.arrayFirst(this.units(), function (task) {
               return (task.unit_id === unit);
             });
             if (assigned === null) {
@@ -405,7 +419,7 @@ define(["knockout", "./form", "../models/incident", "../models/task", "../models
        * @returns {boolean}
        */
       save: {
-        value: function() {
+        value: function () {
           var data = {
             id: this.id,
             ao: this.ao(),
@@ -422,7 +436,7 @@ define(["knockout", "./form", "../models/incident", "../models/task", "../models
           };
 
           var units = this.units, remove = [];
-          ko.utils.arrayForEach(units(), function(task) {
+          ko.utils.arrayForEach(units(), function (task) {
             if (task.taskState.changed()) {
               data.units[task.unit_id] = task.taskState();
               if (!task.taskState.orig() && task.isDetached()) {
@@ -430,7 +444,7 @@ define(["knockout", "./form", "../models/incident", "../models/task", "../models
               }
             }
           });
-          ko.utils.arrayForEach(remove, function(task) {
+          ko.utils.arrayForEach(remove, function (task) {
             units.remove(task);
           });
 
@@ -443,7 +457,7 @@ define(["knockout", "./form", "../models/incident", "../models/task", "../models
        * @function
        */
       destroy: {
-        value: function() {
+        value: function () {
           destroy(this);
         }
       }

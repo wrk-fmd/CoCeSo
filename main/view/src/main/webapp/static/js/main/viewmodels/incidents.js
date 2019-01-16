@@ -19,8 +19,14 @@
  * @param {module:utils/constants} _constants
  * @param {module:utils/i18n} _
  */
-define(["knockout", "./filterable", "data/store/incidents", "utils/constants", "utils/i18n",
-  "ko/bindings/accordion", "ko/extenders/list"],
+define([
+    "knockout",
+      "./filterable",
+      "data/store/incidents",
+      "utils/constants",
+      "utils/i18n",
+      "ko/bindings/accordion",
+      "ko/extenders/list"],
   function(ko, Filterable, store, _constants, _) {
     "use strict";
 
@@ -43,7 +49,9 @@ define(["knockout", "./filterable", "data/store/incidents", "utils/constants", "
       this.filter = {
         type: ko.observableArray((options.manualFilters && options.manualFilters.type) || []),
         blue: ko.observableArray((options.manualFilters && options.manualFilters.blue) || []),
-        state: ko.observableArray((options.manualFilters && options.manualFilters.state) || [])
+        state: ko.observableArray((options.manualFilters && options.manualFilters.state) || []),
+        isCasusNrSet: ko.observableArray((options.manualFilters && options.manualFilters.isCasusNrSet) || []),
+        hasPatientAssigned: ko.observableArray((options.manualFilters && options.manualFilters.hasPatientAssigned) || [])
       };
 
       this.dialogState = ko.computed(function() {
@@ -51,7 +59,9 @@ define(["knockout", "./filterable", "data/store/incidents", "utils/constants", "
           manualFilters: {
             type: this.filter.type(),
             blue: this.filter.blue(),
-            state: this.filter.state()
+            state: this.filter.state(),
+            isCasusNrSet: this.filter.isCasusNrSet(),
+            hasPatientAssigned: this.filter.hasPatientAssigned()
           }
         };
       }, this);

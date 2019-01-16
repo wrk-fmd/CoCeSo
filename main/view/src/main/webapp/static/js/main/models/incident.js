@@ -27,8 +27,8 @@
  * @returns {Incident}
  */
 define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save", "data/store/patients",
-  "utils/constants", "utils/destroy", "utils/i18n", "ko/extenders/isvalue", "ko/extenders/timeinterval"],
-  function(ko, Point, Task, Unit, navigation, save, patients, constants, destroy, _) {
+    "utils/constants", "utils/destroy", "utils/i18n", "ko/extenders/isvalue", "ko/extenders/timeinterval"],
+  function (ko, Point, Task, Unit, navigation, save, patients, constants, destroy, _) {
     "use strict";
 
     /**
@@ -38,7 +38,7 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
      * @alias module:main/models/incident
      * @param {Object} data
      */
-    var Incident = function(data) {
+    var Incident = function (data) {
       var self = this;
       data = data || {};
 
@@ -67,16 +67,16 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
        * @param {Object} data
        * @returns {void}
        */
-      this.setData = function(data) {
+      this.setData = function (data) {
         self.ao.setData(data.ao);
         self.bo.setData(data.bo);
         if (data.units) {
-          ko.utils.objectForEach(data.units, function(unit, taskState) {
+          ko.utils.objectForEach(data.units, function (unit, taskState) {
             unit = parseInt(unit);
             if (!unit || isNaN(unit)) {
               return;
             }
-            var task = ko.utils.arrayFirst(self.units(), function(item) {
+            var task = ko.utils.arrayFirst(self.units(), function (item) {
               return (item.unit_id === unit);
             });
             if (task) {
@@ -88,7 +88,7 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
             }
           });
           //Remove detached units
-          self.units.remove(function(task) {
+          self.units.remove(function (task) {
             return (!data.units[task.unit_id]);
           });
         } else {
@@ -207,7 +207,7 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
        * @type ko.pureComputed
        * @returns {Integer} Time since the creation/last taskstate change in minutes
        */
-      this.timer = ko.pureComputed(function() {
+      this.timer = ko.pureComputed(function () {
         return this.arrival() ? this.stateChange.interval() : this.created.interval();
       }, this);
 
@@ -216,7 +216,7 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
        * @type ko.pureComputed
        * @returns {String} CSS class for the timer based on elapsed time
        */
-      this.timerCss = ko.pureComputed(function() {
+      this.timerCss = ko.pureComputed(function () {
         var timer = this.timer();
         if (this.arrival()) {
           if (timer >= 35) {
@@ -243,7 +243,7 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
        * @type ko.pureComputed
        * @returns {Patient}
        */
-      this.patient = ko.pureComputed(function() {
+      this.patient = ko.pureComputed(function () {
         return patients.get(this.patientId());
       }, this);
 
@@ -254,7 +254,7 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
        * @type ko.computed
        * @returns {boolean}
        */
-      this.isInterruptible = ko.computed(function() {
+      this.isInterruptible = ko.computed(function () {
         return (this.isStandby() || this.isToHome() || this.isHoldPosition() || this.isRelocation());
       }, this);
 
@@ -266,7 +266,7 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
        * @type ko.computed
        * @returns {boolean}
        */
-      this.hasAO = ko.computed(function() {
+      this.hasAO = ko.computed(function () {
         return !this.ao.isEmpty();
       }, this);
 
@@ -277,8 +277,31 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
        * @type ko.computed
        * @returns {boolean}
        */
-      this.isHighlighted = ko.computed(function() {
+      this.isHighlighted = ko.computed(function () {
         return (this.isOpen() || this.isDemand() || (this.isTransport() && !this.hasAO()));
+      }, this);
+
+      /**
+       * Is casus number set and not empty.
+       *
+       * @function
+       * @type ko.computed
+       * @returns {boolean}
+       */
+      this.isCasusNrSet = ko.computed(function () {
+        var tempCasusNr = this.casusNr();
+        return !!tempCasusNr && !!tempCasusNr.trim();
+      }, this);
+
+      /**
+       * Incident has a patient assigned.
+       *
+       * @function
+       * @type ko.computed
+       * @returns {boolean}
+       */
+      this.hasPatientAssigned = ko.computed(function () {
+        return !!this.patientId();
       }, this);
 
       /**
@@ -288,7 +311,7 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
        * @type ko.computed
        * @returns {boolean}
        */
-      this.disableBO = ko.computed(function() {
+      this.disableBO = ko.computed(function () {
         return (!this.isTask() && !this.isTransport());
       }, this);
 
@@ -299,7 +322,7 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
        * @type ko.computed
        * @returns {boolean}
        */
-      this.disableAssigned = ko.computed(function() {
+      this.disableAssigned = ko.computed(function () {
         return (this.isStandby() || this.isHoldPosition());
       }, this);
 
@@ -310,7 +333,7 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
        * @type ko.computed
        * @returns {boolean}
        */
-      this.disableAAO = ko.computed(function() {
+      this.disableAAO = ko.computed(function () {
         return !this.hasAO();
       }, this);
 
@@ -321,7 +344,7 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
        * @type ko.computed
        * @returns {boolean}
        */
-      this.disableZAO = ko.computed(function() {
+      this.disableZAO = ko.computed(function () {
         return (this.isStandby() || this.isHoldPosition() || !this.hasAO());
       }, this);
 
@@ -332,7 +355,7 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
        * @type ko.pureComputed
        * @returns {integer}
        */
-      this.unitCount = ko.pureComputed(function() {
+      this.unitCount = ko.pureComputed(function () {
         return this.units().length;
       }, this);
 
@@ -343,7 +366,7 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
        * @type ko.pureComputed
        * @returns {String}
        */
-      this.title = ko.pureComputed(function() {
+      this.title = ko.pureComputed(function () {
         if (!this.disableBO()) {
           return (this.bo.isEmpty()) ? _("incident.nobo") : this.bo.info();
         }
@@ -357,7 +380,7 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
        * @type ko.pureComputed
        * @returns {String}
        */
-      this.typeString = ko.pureComputed(function() {
+      this.typeString = ko.pureComputed(function () {
         if (this.type()) {
           if (this.isTask() && this.blue()) {
             return _("incident.type.task.blue");
@@ -374,7 +397,7 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
        * @type ko.pureComputed
        * @returns {String}
        */
-      this.typeChar = ko.pureComputed(function() {
+      this.typeChar = ko.pureComputed(function () {
         if (this.isTask()) {
           return this.blue() ? _("incident.stype.task.blue") : _("incident.stype.task");
         }
@@ -403,7 +426,7 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
        * @type ko.pureComputed
        * @returns {string} The CSS class
        */
-      this.typeCss = ko.pureComputed(function() {
+      this.typeCss = ko.pureComputed(function () {
         if (this.isTask() || this.isTransport()) {
           return (this.blue()) ? "unit_state_task_blue" : "unit_state_task";
         }
@@ -430,7 +453,7 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
        * @type ko.pureComputed
        * @returns {String}
        */
-      this.dropdownTitle = ko.pureComputed(function() {
+      this.dropdownTitle = ko.pureComputed(function () {
         var titleVal = this.title();
         if (!titleVal) {
           titleVal = "";
@@ -449,7 +472,7 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
        * @type ko.pureComputed
        * @returns {String}
        */
-      this.assignedTitle = ko.pureComputed(function() {
+      this.assignedTitle = ko.pureComputed(function () {
         if (this.isTask() || this.isTransport() || this.isRelocation()) {
           return this.typeChar() + ": " + this.title().split("\n")[0].escapeHTML();
         }
@@ -466,7 +489,7 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
        * @param {Object} ui jQuery UI properties
        * @returns {void}
        */
-      this.assignUnitList = function(event, ui) {
+      this.assignUnitList = function (event, ui) {
         var unit = ko.dataFor(ui.draggable[0]);
 
         if ((unit instanceof Unit) && self.id && unit.id) {
@@ -482,7 +505,7 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
        * @returns {void}
        */
       openForm: {
-        value: function() {
+        value: function () {
           var id;
           if (this instanceof Incident) {
             id = this.id;
@@ -501,7 +524,7 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
        * @returns {void}
        */
       addLog: {
-        value: function() {
+        value: function () {
           if (this.id) {
             navigation.openLogAdd({incident: this.id});
           }
@@ -513,7 +536,7 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
        * @returns {void}
        */
       openLog: {
-        value: function() {
+        value: function () {
           if (this.id) {
             navigation.openLogs({url: "log/getByIncident/" + this.id, title: "Incident-Log"});
           }
@@ -525,7 +548,7 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
        * @returns {void}
        */
       openPatient: {
-        value: function() {
+        value: function () {
           navigation.openPatient({id: this.patientId(), incident: !this.patientId() && this.id});
         }
       },
@@ -536,7 +559,7 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
        * @returns {void}
        */
       destroy: {
-        value: function() {
+        value: function () {
           destroy(this);
         }
       }
