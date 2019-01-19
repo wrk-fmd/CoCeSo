@@ -5,19 +5,19 @@ import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
 import gnu.io.UnsupportedCommOperationException;
+import org.apache.commons.lang3.ArrayUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.TooManyListenersException;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import org.apache.commons.lang3.ArrayUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * ########################################################### Represents a physical Transceiver connected via serial
- * port ###########################################################
+ * Represents a physical Transceiver connected via serial port
  */
 public class Transceiver {
 

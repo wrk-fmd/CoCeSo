@@ -18,12 +18,12 @@
         <dependency>
             <groupId>at.wrk.coceso</groupId>
             <artifactId>coceso-entity</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>at.wrk.coceso</groupId>
             <artifactId>coceso-service</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- Spring -->

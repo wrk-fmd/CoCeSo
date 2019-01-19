@@ -1,9 +1,7 @@
 package at.wrk.coceso.plugin.geobroker.rest;
 
 import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerIncident;
-import com.fatboyindustrial.gsonjavatime.Converters;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,17 +9,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.client.AsyncRestTemplate;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static at.wrk.coceso.plugin.geobroker.rest.HttpEntities.createHttpEntityForJsonString;
+import static at.wrk.coceso.utils.HttpEntities.createHttpEntityForJsonString;
 
 @Component
 public class AsyncGeoBrokerIncidentPublisher implements GeoBrokerIncidentPublisher {
@@ -36,13 +32,13 @@ public class AsyncGeoBrokerIncidentPublisher implements GeoBrokerIncidentPublish
     @Autowired
     public AsyncGeoBrokerIncidentPublisher(
             final AsyncRestTemplate restTemplate,
-            final @Value("${geobroker.private.api.url}") String privateApiUrl) {
+            final @Value("${geobroker.private.api.url}") String privateApiUrl,
+            final Gson gson) {
         this.restTemplate = restTemplate;
         this.privateApiUrl = privateApiUrl;
-        this.gson = Converters.registerAll(new GsonBuilder()).create();
+        this.gson = gson;
 
         this.incidentCache = new ConcurrentHashMap<>();
-        restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
     }
 
     @Override

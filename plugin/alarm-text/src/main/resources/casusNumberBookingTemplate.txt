@@ -1,0 +1,4 @@
+CCS{incidentId} {time}
+AO: {ao}
+Casus: {casusnumber} {emergencyRoomType}
+AO URL: {aoCoordinateUrl}
