@@ -39,17 +39,16 @@ public class AlarmTextController {
 
         CreateAlarmTextResponse response;
         if (request.getIncidentId() == null || request.getType() == null) {
-            response = new CreateAlarmTextResponse("Invalid parameters to create an alarm text.", null, null);
+            response = CreateAlarmTextResponse.createError("Invalid parameters to create an alarm text.", 10);
         } else {
             Optional<String> alarmText = alarmTextService.createAlarmText(request.getIncidentId(), request.getType(), locale);
             response = alarmText
-                    .map(createdText -> new CreateAlarmTextResponse(null, createdText, request.getType()))
-                    .orElseGet(() -> new CreateAlarmTextResponse("Failed to create alarm text.", null, null));
+                    .map(createdText -> CreateAlarmTextResponse.createSuccess(createdText, request.getType()))
+                    .orElseGet(() -> CreateAlarmTextResponse.createError("Failed to create alarm text.", 10));
         }
 
         return response;
     }
-
 
     @RequestMapping(value = "send", method = RequestMethod.POST, produces = "application/json")
     public SendAlarmTextResponse sendAlarmText(
@@ -58,15 +57,15 @@ public class AlarmTextController {
             @AuthenticationPrincipal final User user) {
         SendAlarmTextResponse response;
         if (request.getIncidentId() == null || request.getType() == null || request.getAlarmText() == null) {
-            response = new SendAlarmTextResponse("Invalid parameters to send an alarm text.");
+            response = SendAlarmTextResponse.createError("Invalid parameters to send an alarm text.", 10);
         } else {
             SendAlarmTextResult result = alarmTextService.sendAlarmText(request.getIncidentId(), request.getAlarmText(), request.getType(), locale, user);
             if (result == SendAlarmTextResult.SUCCESS) {
-                response = new SendAlarmTextResponse();
+                response = SendAlarmTextResponse.createSuccess();
             } else if (result == SendAlarmTextResult.NO_TARGETS_FOUND) {
-                response = new SendAlarmTextResponse("No targets found for the given incident id.");
+                response = SendAlarmTextResponse.createError("No targets found for the given incident id.", 60);
             } else{
-                response = new SendAlarmTextResponse("No gateway for alarm text sending configured.");
+                response = SendAlarmTextResponse.createError("No gateway for alarm text sending configured.", 61);
             }
         }
 

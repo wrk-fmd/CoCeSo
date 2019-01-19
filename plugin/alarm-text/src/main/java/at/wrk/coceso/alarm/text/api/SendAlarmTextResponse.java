@@ -10,14 +10,20 @@ public class SendAlarmTextResponse implements Serializable {
 
     private final boolean success;
     private final String errorDescription;
+    private final Integer error;
 
-    public SendAlarmTextResponse() {
-        this(null);
+    public static SendAlarmTextResponse createError(final String errorDescription, final int error) {
+        return new SendAlarmTextResponse(false, errorDescription, error);
     }
 
-    public SendAlarmTextResponse(final String errorDescription) {
-        this.success = errorDescription == null;
+    public static SendAlarmTextResponse createSuccess() {
+        return new SendAlarmTextResponse(true, null, null);
+    }
+
+    private SendAlarmTextResponse(final boolean success, final String errorDescription, final Integer error) {
+        this.success = success;
         this.errorDescription = errorDescription;
+        this.error = error;
     }
 
     public boolean isSuccess() {
@@ -28,11 +34,16 @@ public class SendAlarmTextResponse implements Serializable {
         return errorDescription;
     }
 
+    public Integer getError() {
+        return error;
+    }
+
     @Override
     public String toString() {
         return "SendAlarmTextResponse{" +
                 "success=" + success +
                 ", errorDescription='" + errorDescription + '\'' +
+                ", error='" + error + '\'' +
                 '}';
     }
 }

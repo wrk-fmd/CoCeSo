@@ -22,9 +22,10 @@ define(["knockout", "./i18n"], function(ko, _) {
   "use strict";
 
   function errorText() {
+    var localizedErrorCodes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 60, 61, 403, 404];
     var error = this.error();
 
-    if (error >= 1 && error <= 8) {
+    if (localizedErrorCodes.includes(error)) {
       return _("error." + error);
     }
 
