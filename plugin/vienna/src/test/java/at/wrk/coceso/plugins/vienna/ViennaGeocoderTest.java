@@ -31,7 +31,7 @@ public class ViennaGeocoderTest {
         AddressMatcher addressMatcher = new AddressMatcher(LevenshteinDistance.getDefaultInstance(), new AddressNumberMatcher());
 
         ViennaGeocoderConfiguration viennaGeocoderConfiguration = new ViennaGeocoderConfiguration();
-        RestTemplate restTemplate = viennaGeocoderConfiguration.createRestTemplate(viennaGeocoderConfiguration.createFactory());
+        RestTemplate restTemplate = viennaGeocoderConfiguration.createRestTemplate();
 
         sut = new ViennaGeocoder(addressMatcher, restTemplate);
     }

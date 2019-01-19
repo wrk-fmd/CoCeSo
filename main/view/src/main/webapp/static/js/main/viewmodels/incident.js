@@ -308,6 +308,10 @@ define([
         }) === null);
       }, this);
 
+      this.isAlarmTextSendingEnabled = ko.computed(function () {
+        return !!this.idObs() && !this.form.changed()
+      }, this);
+
       /**
        * Highlight AO Field if empty and minimum of 1 Unit is ABO
        *

@@ -1,4 +1,4 @@
-package at.wrk.coceso.plugin.geobroker.rest;
+package at.wrk.coceso.utils;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;

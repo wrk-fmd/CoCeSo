@@ -129,6 +129,13 @@
             <scope>runtime</scope>
         </dependency>
 
+        <dependency>
+            <groupId>at.wrk.coceso-plugins</groupId>
+            <artifactId>alarm-text</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
         <!-- Spring -->
         <dependency>
             <groupId>org.springframework</groupId>

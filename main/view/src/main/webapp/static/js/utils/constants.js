@@ -48,5 +48,11 @@ define({
       male: "Male",
       female: "Female"
     }
+  },
+  AlarmText: {
+    type: {
+      incidentInformation: "incidentInformation",
+      casusnumberBooking: "casusnumberBooking"
+    }
   }
 });

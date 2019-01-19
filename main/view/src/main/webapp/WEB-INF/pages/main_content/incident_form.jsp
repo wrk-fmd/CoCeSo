@@ -103,7 +103,7 @@
           <!-- /ko -->
           <!-- ko ifnot: patient -->
           <div class="form-group col-md-5">
-            <button type="button" class="btn btn-danger btn-sm" data-bind="click: openPatient"><spring:message code="patient.add"/></button>
+            <button type="button" class="btn btn-success btn-sm" data-bind="click: openPatient"><spring:message code="patient.add"/></button>
           </div>
           <!-- /ko -->
         </div>
@@ -177,18 +177,31 @@
         </div>
 
         <div class="clearfix">
-          <div class="form-group col-md-offset-2 col-md-10">
+          <div class="form-group col-md-7">
             <button type="button" class="btn btn-success" data-bind="enable: form.enable, click: ok">
               <spring:message code="ok"/>
             </button>
+
             <button type="submit" class="btn btn-primary" data-bind="enable: form.enable">
               <spring:message code="save"/>
             </button>
+
             <button type="button" class="btn btn-warning" data-bind="enable: form.changed, click: form.reset">
               <spring:message code="reset"/>
             </button>
+
             <button type="button" class="btn btn-default" data-bind="click: duplicate">
               <spring:message code="incident.duplicate"/>
+            </button>
+          </div>
+
+          <div class="form-group col-md-5 text-right">
+            <button type="button" class="btn btn-warning" data-bind="enable: idObs, click: openAlarmIncident">
+              <spring:message code="incident.alarm.full"/>
+            </button>
+
+            <button type="button" class="btn btn-warning" data-bind="enable: idObs, click: openAlarmCasusInformation">
+              <spring:message code="incident.alarm.casus"/>
             </button>
           </div>
         </div>

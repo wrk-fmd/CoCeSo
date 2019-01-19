@@ -2,6 +2,8 @@ package at.wrk.coceso.plugin.geobroker.rest;
 
 import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerUnit;
 import at.wrk.coceso.plugin.geobroker.utils.GeoBrokerUnits;
+import com.fatboyindustrial.gsonjavatime.Converters;
+import com.google.gson.GsonBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpEntity;
@@ -28,7 +30,7 @@ public class AsyncGeoBrokerUnitPublisherTest {
     public void init() {
         restTemplate = mock(AsyncRestTemplate.class, withSettings().defaultAnswer(RETURNS_MOCKS));
         privateApiUrl = "http://local.invalid/private";
-        sut = new AsyncGeoBrokerUnitPublisher(restTemplate, privateApiUrl);
+        sut = new AsyncGeoBrokerUnitPublisher(restTemplate, privateApiUrl, Converters.registerAll(new GsonBuilder()).create());
     }
 
     @Test
