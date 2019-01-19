@@ -180,6 +180,16 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
           options: data || {}
         });
       },
+
+      openAlarmText: function(alarmTextData, windowPosition) {
+        taskbar.winman("addWindow", {
+          src: conf.get("contentBase") + "alarm_text_form.html",
+          pos: windowPosition || "left+25% top+35%",
+          model: "main/viewmodels/alarm",
+          options: alarmTextData
+        });
+      },
+
       /**
        * Open the radio Window
        *

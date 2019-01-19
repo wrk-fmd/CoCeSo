@@ -552,6 +552,19 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
           navigation.openPatient({id: this.patientId(), incident: !this.patientId() && this.id});
         }
       },
+
+      openAlarmIncident: {
+        value: function () {
+          navigation.openAlarmText({incidentId: this.id, alarmType: constants.AlarmText.type.incidentInformation}, null)
+        }
+      },
+
+      openAlarmCasusInformation: {
+        value: function () {
+          navigation.openAlarmText({incidentId: this.id, alarmType: constants.AlarmText.type.casusnumberBooking}, null)
+        }
+      },
+
       /**
        * Destroy the object
        *

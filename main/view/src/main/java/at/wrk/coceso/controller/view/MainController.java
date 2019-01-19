@@ -81,6 +81,11 @@ public class MainController {
     return "main_content/log_add";
   }
 
+  @RequestMapping(value = "alarm_text_form", method = RequestMethod.GET)
+  public String alarmTextForm() {
+    return "main_content/alarm_text_form";
+  }
+
   @RequestMapping(value = "radio", method = RequestMethod.GET)
   public String radio() {
     return "main_content/radio";
