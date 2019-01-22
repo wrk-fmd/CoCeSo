@@ -31,7 +31,7 @@
 
     <div class="col-md-12 form-group">
       <label for="alarmText"><spring:message code="incident.alarm.text.message.content"/>:</label>
-      <textarea id="alarmText" rows="5" class="form-control" placeholder="<spring:message code="incident.alarm.text.message.content"/>" autofocus
+      <textarea id="alarmText" rows="10" class="form-control" placeholder="<spring:message code="incident.alarm.text.message.content"/>" autofocus
                 data-bind="value: alarmMessageContent, valueUpdate: 'input'"></textarea>
     </div>
 

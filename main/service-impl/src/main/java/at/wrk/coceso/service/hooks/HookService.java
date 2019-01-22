@@ -24,7 +24,7 @@ public class HookService {
     public TaskState callTaskStateChanged(final Incident incident, final Unit unit, final TaskState state, final User user, final NotifyList notify) {
         TaskState calculatedTaskState = state;
         for (TaskStateHook taskStateHook : taskStateHooks) {
-            calculatedTaskState = taskStateHook.call(incident, unit, state, user, notify);
+            calculatedTaskState = taskStateHook.call(incident, unit, calculatedTaskState, user, notify);
         }
 
         return calculatedTaskState;
