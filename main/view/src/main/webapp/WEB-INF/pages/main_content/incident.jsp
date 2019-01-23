@@ -41,7 +41,6 @@
               <spring:message code="incident.type.transport"/>
             </label>
           </div>
-          <br/>
           <div class="checkbox-inline">
             <label>
               <input type="checkbox" data-bind="value: constants.type.relocation, checked: filter.type"/>
@@ -84,7 +83,6 @@
               <spring:message code="incident.state.demand"/>
             </label>
           </div>
-          <br/>
           <div class="checkbox-inline" data-bind="visible: (!disableFilter.state || disableFilter.state.inprogress !== true)">
             <label>
               <input type="checkbox" data-bind="value: constants.state.inprogress, checked: filter.state"/>
