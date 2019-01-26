@@ -57,7 +57,7 @@ public class AlarmTextServiceImpl implements AlarmTextService {
 
         String sanitizedAlarmText = sanitizeString(alarmText);
 
-        Map<String, SendAlarmTextResult> resultMap = alarmAllTargets(incidentId, alarmText, alarmType, alarmTargets);
+        Map<String, SendAlarmTextResult> resultMap = alarmAllTargets(incidentId, sanitizedAlarmText, alarmType, alarmTargets);
         LOG.debug("Result of alarm text send operation: {}", resultMap);
 
         SendAlarmTextResult overallResult = calculateOverallResult(resultMap);
