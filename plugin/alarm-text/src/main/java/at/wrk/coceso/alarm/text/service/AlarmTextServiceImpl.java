@@ -5,6 +5,7 @@ import at.wrk.coceso.alarm.text.data.SendAlarmTextResult;
 import at.wrk.coceso.alarm.text.sender.AlarmTextSender;
 import at.wrk.coceso.alarm.text.service.text.AlarmTextFactory;
 import at.wrk.coceso.entity.User;
+import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+
+import static java.util.stream.Collectors.toMap;
 
 @Service
 public class AlarmTextServiceImpl implements AlarmTextService {
@@ -20,18 +25,18 @@ public class AlarmTextServiceImpl implements AlarmTextService {
 
     private final AlarmTextFactory alarmTextFactory;
     private final AlarmTextTargetFactory alarmTextTargetFactory;
-    private final AlarmTextSender alarmTextSender;
+    private final Map<String, AlarmTextSender> alarmTextSenders;
     private final AlarmTextSendingListener alarmTextSendingListener;
 
     @Autowired
     public AlarmTextServiceImpl(
             final AlarmTextFactory alarmTextFactory,
             final AlarmTextTargetFactory alarmTextTargetFactory,
-            final AlarmTextSender alarmTextSender,
+            final List<AlarmTextSender> alarmTextSenderList,
             final AlarmTextSendingListener alarmTextSendingListener) {
         this.alarmTextFactory = alarmTextFactory;
         this.alarmTextTargetFactory = alarmTextTargetFactory;
-        this.alarmTextSender = alarmTextSender;
+        this.alarmTextSenders = alarmTextSenderList.stream().collect(toMap(AlarmTextSender::getSupportedUriSchema, Function.identity()));
         this.alarmTextSendingListener = alarmTextSendingListener;
     }
 
@@ -42,19 +47,39 @@ public class AlarmTextServiceImpl implements AlarmTextService {
     }
 
     @Override
-    public SendAlarmTextResult sendAlarmText(final int incidentId, final String alarmText, final AlarmTextType type, final Locale locale, final User user) {
-        List<String> alarmTargets = alarmTextTargetFactory.createTargetList(incidentId, type);
-        SendAlarmTextResult result;
-        if (alarmTargets.isEmpty()) {
-            result = SendAlarmTextResult.NO_TARGETS_FOUND;
-        } else {
-            LOG.debug("Sending alarm text for incident #{} of type {} to {} targets: {}", incidentId, type, alarmTargets.size(), alarmTargets);
-            result = alarmTextSender.sendAlarmText(alarmText, alarmTargets);
-            if (result == SendAlarmTextResult.SUCCESS) {
-                alarmTextSendingListener.alarmTextSent(incidentId, type, locale, user);
+    public SendAlarmTextResult sendAlarmText(final int incidentId, final String alarmText, final AlarmTextType alarmType, final Locale locale, final User user) {
+        Map<String, List<String>> alarmTargets = alarmTextTargetFactory.createTargetList(incidentId, alarmType);
+        final Map<String, SendAlarmTextResult> resultMap = Maps.newHashMap();
+
+        alarmTargets.forEach((targetType, targetList) -> {
+            if (targetList.isEmpty()) {
+                resultMap.put(targetType, SendAlarmTextResult.NO_TARGETS_FOUND);
+            } else {
+                LOG.debug("Sending alarm text {} for incident #{} to {} targets of type {}. Targets: {}", alarmType, incidentId, alarmTargets.size(), targetType, alarmTargets);
+                AlarmTextSender sender = this.alarmTextSenders.get(targetType);
+                if (sender != null) {
+                    SendAlarmTextResult result = sender.sendAlarmText(alarmText, targetList);
+                    resultMap.put(targetType, result);
+                } else {
+                    LOG.warn("Could not load sender for type {}", targetType);
+                    resultMap.put(targetType, SendAlarmTextResult.NO_GATEWAY_CONFIGURED);
+                }
             }
+        });
+
+        LOG.debug("Result of alarm text send operation: {}", resultMap);
+
+        SendAlarmTextResult overallResult;
+        if (resultMap.containsValue(SendAlarmTextResult.SUCCESS)) {
+            overallResult = SendAlarmTextResult.SUCCESS;
+        } else {
+            overallResult = resultMap.containsValue(SendAlarmTextResult.NO_TARGETS_FOUND) ? SendAlarmTextResult.NO_TARGETS_FOUND : SendAlarmTextResult.NO_GATEWAY_CONFIGURED;
         }
 
-        return result;
+        if (overallResult == SendAlarmTextResult.SUCCESS) {
+            alarmTextSendingListener.alarmTextSent(incidentId, alarmType, locale, user);
+        }
+
+        return overallResult;
     }
 }

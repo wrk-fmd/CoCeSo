@@ -1,4 +1,4 @@
-package at.wrk.coceso.alarm.text.sender.api;
+package at.wrk.coceso.alarm.text.sender.sms;
 
 import com.google.common.collect.ImmutableList;
 

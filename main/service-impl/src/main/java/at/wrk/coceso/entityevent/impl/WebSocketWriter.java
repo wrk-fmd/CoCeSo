@@ -35,14 +35,16 @@ class WebSocketWriter<T> implements EntityEventListener<T> {
             }
         }
 
-        LOG.debug("Publishing changed entity on WebSocket. URL={}, Entity={}", url, entity);
-        messagingTemplate.send(String.format(url, concern), new SequencedResponse<>(hver, seq, entity), jsonView);
+        String formattedUrl = String.format(url, concern);
+        LOG.debug("Publishing changed entity on WebSocket. URL={}, Entity={}", formattedUrl, entity);
+        messagingTemplate.send(formattedUrl, new SequencedResponse<>(hver, seq, entity), jsonView);
     }
 
     @Override
     public void entityDeleted(int id, int concern, int hver, int seq) {
-        LOG.debug("Publishing deleted entity on WebSocket. URL={}, id={}", url, id);
-        messagingTemplate.send(String.format(url, concern), new SequencedDeleted(hver, seq, id), null);
+        String formattedUrl = String.format(url, concern);
+        LOG.debug("Publishing deleted entity on WebSocket. URL={}, id={}", formattedUrl, id);
+        messagingTemplate.send(formattedUrl, new SequencedDeleted(hver, seq, id), null);
     }
 
     @Override

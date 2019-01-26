@@ -1,6 +1,7 @@
 package at.wrk.coceso.alarm.text.service;
 
 import at.wrk.coceso.alarm.text.configuration.AlarmTextConfiguration;
+import at.wrk.coceso.alarm.text.service.normalizer.PhoneNumberNormalizer;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -9,14 +10,15 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class NumberNormalizerTest {
-    private NumberNormalizer sut;
+public class PhoneNumberNormalizerTest {
+    private PhoneNumberNormalizer sut;
 
     @Before
     public void init() {
         AlarmTextConfiguration alarmTextConfiguration = mock(AlarmTextConfiguration.class);
-        when(alarmTextConfiguration.getValidPrefix()).thenReturn("+43");
-        sut = new NumberNormalizer(alarmTextConfiguration);
+        when(alarmTextConfiguration.getValidPrefix()).thenReturn("+436");
+        when(alarmTextConfiguration.getDefaultCountryCode()).thenReturn("+43");
+        sut = new PhoneNumberNormalizer(alarmTextConfiguration);
     }
 
     @Test
@@ -57,6 +59,13 @@ public class NumberNormalizerTest {
     @Test
     public void numberWithForeignCarrier_emptyString() {
         String normalized = sut.normalize("+49 678 933 543");
+
+        assertThat(normalized, equalTo(""));
+    }
+
+    @Test
+    public void numberNotMatchingValidPrefix_emptyString() {
+        String normalized = sut.normalize("+43 128 933 543");
 
         assertThat(normalized, equalTo(""));
     }

@@ -1,7 +1,5 @@
 package at.wrk.coceso.alarm.text.configuration;
 
-import com.google.common.collect.ImmutableSet;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,42 +8,38 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Component
 public class AlarmTextConfiguration {
     private static final Logger LOG = LoggerFactory.getLogger(AlarmTextConfiguration.class);
 
-    private final URI alarmTextGatewayUrl;
+    private final URI smsGatewayUrl;
+    private final URI tetraGatewayUrlString;
     private final String validPrefix;
-    private final Set<String> transparentUriSchemas;
+    private final String defaultCountryCode;
     private final String authenticationToken;
 
     public AlarmTextConfiguration(
-            @Value("${alarm.text.gateway.uri}") final String alarmTextGatewayUrlString,
+            @Value("${alarm.text.gateway.sms.uri}") final String smsGatewayUrl,
+            @Value("${alarm.text.gateway.tetra.uri}") final String tetraGatewayUrlString,
             @Value("${alarm.text.gateway.phone.number.prefix}") final String validPhonePrefix,
-            @Value("${alarm.text.gateway.transparent.uri.schemas}") final String transparentUriSchemas,
+            @Value("${alarm.text.gateway.phone.number.default.country.code}") final String defaultCountryCode,
             @Value("${alarm.text.gateway.authenticationToken}") final String authenticationToken) {
-        this.alarmTextGatewayUrl = parseUriFromString(alarmTextGatewayUrlString);
+        this.smsGatewayUrl = parseUriFromString(smsGatewayUrl);
+        this.tetraGatewayUrlString = parseUriFromString(tetraGatewayUrlString);
         this.validPrefix = trimIfNotNull(validPhonePrefix);
-        this.transparentUriSchemas = createListFromCommaSeparatedString(transparentUriSchemas);
+        this.defaultCountryCode = trimIfNotNull(defaultCountryCode);
         this.authenticationToken = trimIfNotNull(authenticationToken);
     }
 
-    private Set<String> createListFromCommaSeparatedString(final String transparentUriSchemas) {
-        return transparentUriSchemas == null ?
-                ImmutableSet.of() :
-                ImmutableSet.copyOf(
-                        Stream.of(transparentUriSchemas.split(","))
-                                .filter(StringUtils::isNotBlank)
-                                .collect(Collectors.toSet()));
+    @Nullable
+    public URI getSmsGatewayUrl() {
+        return smsGatewayUrl;
     }
 
     @Nullable
-    public URI getAlarmTextGatewayUrl() {
-        return alarmTextGatewayUrl;
+    public URI getTetraGatewayUrlString() {
+        return tetraGatewayUrlString;
     }
 
     @Nullable
@@ -53,8 +47,8 @@ public class AlarmTextConfiguration {
         return validPrefix;
     }
 
-    public Set<String> getTransparentUriSchemas() {
-        return transparentUriSchemas;
+    public String getDefaultCountryCode() {
+        return defaultCountryCode;
     }
 
     @Nullable

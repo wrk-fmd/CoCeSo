@@ -38,5 +38,8 @@ alarm.text.gateway.authenticationToken=
 # The prefix which shall be used to validate phone numbers
 alarm.text.gateway.phone.number.prefix=+43
 
-# The schemas of the URI, which will be sent to the gateway without validation. Comma separated list.
-alarm.text.gateway.transparent.uri.schemas=
+# The default country code for phone numbers. Used if a number starts with '0'.
+alarm.text.gateway.phone.number.default.country.code=+43
+
+# The URI of the TETRA gateway. For example 'https://tetra-gw.local:8081/'
+alarm.text.gateway.tetra.uri=

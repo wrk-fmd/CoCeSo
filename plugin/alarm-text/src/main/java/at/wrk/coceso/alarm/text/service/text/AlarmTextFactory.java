@@ -172,7 +172,7 @@ public class AlarmTextFactory {
 
     private String buildTime() {
         LocalTime localTime = LocalTime.now();
-        return String.format("[%02d:%02d]", localTime.getHour(), localTime.getMinute());
+        return String.format("%02d:%02d", localTime.getHour(), localTime.getMinute());
     }
 
     private String getLocalizedMessage(final String code, final Locale locale) {
