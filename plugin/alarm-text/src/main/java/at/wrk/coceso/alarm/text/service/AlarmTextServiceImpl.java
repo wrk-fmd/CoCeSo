@@ -47,8 +47,37 @@ public class AlarmTextServiceImpl implements AlarmTextService {
     }
 
     @Override
-    public SendAlarmTextResult sendAlarmText(final int incidentId, final String alarmText, final AlarmTextType alarmType, final Locale locale, final User user) {
+    public SendAlarmTextResult sendAlarmText(
+            final int incidentId,
+            final String alarmText,
+            final AlarmTextType alarmType,
+            final Locale locale,
+            final User user) {
         Map<String, List<String>> alarmTargets = alarmTextTargetFactory.createTargetList(incidentId, alarmType);
+
+        String sanitizedAlarmText = sanitizeString(alarmText);
+
+        Map<String, SendAlarmTextResult> resultMap = alarmAllTargets(incidentId, alarmText, alarmType, alarmTargets);
+        LOG.debug("Result of alarm text send operation: {}", resultMap);
+
+        SendAlarmTextResult overallResult = calculateOverallResult(resultMap);
+
+        if (overallResult == SendAlarmTextResult.SUCCESS) {
+            alarmTextSendingListener.alarmTextSent(incidentId, alarmType, locale, user);
+        }
+
+        return overallResult;
+    }
+
+    private String sanitizeString(final String alarmText) {
+        return alarmText.replace("\r\n", "\n").replace("\r", "\n");
+    }
+
+    private Map<String, SendAlarmTextResult> alarmAllTargets(
+            final int incidentId,
+            final String alarmText,
+            final AlarmTextType alarmType,
+            final Map<String, List<String>> alarmTargets) {
         final Map<String, SendAlarmTextResult> resultMap = Maps.newHashMap();
 
         alarmTargets.forEach((targetType, targetList) -> {
@@ -66,20 +95,16 @@ public class AlarmTextServiceImpl implements AlarmTextService {
                 }
             }
         });
+        return resultMap;
+    }
 
-        LOG.debug("Result of alarm text send operation: {}", resultMap);
-
+    private SendAlarmTextResult calculateOverallResult(final Map<String, SendAlarmTextResult> resultMap) {
         SendAlarmTextResult overallResult;
         if (resultMap.containsValue(SendAlarmTextResult.SUCCESS)) {
             overallResult = SendAlarmTextResult.SUCCESS;
         } else {
             overallResult = resultMap.containsValue(SendAlarmTextResult.NO_TARGETS_FOUND) ? SendAlarmTextResult.NO_TARGETS_FOUND : SendAlarmTextResult.NO_GATEWAY_CONFIGURED;
         }
-
-        if (overallResult == SendAlarmTextResult.SUCCESS) {
-            alarmTextSendingListener.alarmTextSent(incidentId, alarmType, locale, user);
-        }
-
         return overallResult;
     }
 }
