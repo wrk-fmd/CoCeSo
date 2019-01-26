@@ -31,6 +31,9 @@ public class AlarmTextFactory {
     private static final String INCIDENT_INFORMATION_TEMPLATE_FILE = "/incidentInformationTemplate.txt";
     private static final String INCIDENT_INFORMATION_DEFAULT_TEMPLATE = "{time}: #{incidentId} {type}\n{bo}\n{info}\n{units}";
 
+    private static final String RELOCATION_INFORMATION_TEMPLATE_FILE = "/relocationInformationTemplate.txt";
+    private static final String RELOCATION_INFORMATION_DEFAULT_TEMPLATE = "{time}: #{incidentId} {type}\n{ao}\n{info}";
+
     private static final String CASUSNUMBER_TEMPLATE_FILE = "/casusNumberBookingTemplate.txt";
     private static final String CASUSNUMBER_DEFAULT_TEMPLATE = "{time}: #{incidentId} {type}\n{bo}\n{info}\n{units}";
 
@@ -47,18 +50,11 @@ public class AlarmTextFactory {
 
     @Transactional
     public Optional<String> createAlarmText(final int incidentId, final AlarmTextType type, final Locale locale) {
-        String template;
-        if (type == AlarmTextType.INCIDENT_INFORMATION) {
-            template = loadTemplate(INCIDENT_INFORMATION_TEMPLATE_FILE, INCIDENT_INFORMATION_DEFAULT_TEMPLATE);
-        } else {
-            template = loadTemplate(CASUSNUMBER_TEMPLATE_FILE, CASUSNUMBER_DEFAULT_TEMPLATE);
-        }
-
         Optional<String> alarmText = Optional.empty();
 
         Incident incident = incidentService.getById(incidentId);
         if (incident != null) {
-            alarmText = Optional.of(buildAlarmText(incident, template, locale));
+            alarmText = Optional.of(buildAlarmText(incident, type, locale));
         } else {
             LOG.info("Incident #{} does not exist. Alarm text cannot be created.");
         }
@@ -78,7 +74,19 @@ public class AlarmTextFactory {
         return template;
     }
 
-    private String buildAlarmText(final Incident incident, final String template, final Locale locale) {
+    private String buildAlarmText(final Incident incident, final AlarmTextType alarmTextType, final Locale locale) {
+        String template;
+        if (alarmTextType == AlarmTextType.INCIDENT_INFORMATION) {
+            if (incident.getType() == IncidentType.Relocation) {
+                template = loadTemplate(RELOCATION_INFORMATION_TEMPLATE_FILE, RELOCATION_INFORMATION_DEFAULT_TEMPLATE);
+            } else {
+                template = loadTemplate(INCIDENT_INFORMATION_TEMPLATE_FILE, INCIDENT_INFORMATION_DEFAULT_TEMPLATE);
+            }
+        } else {
+            template = loadTemplate(CASUSNUMBER_TEMPLATE_FILE, CASUSNUMBER_DEFAULT_TEMPLATE);
+        }
+
+
         String alarmText = template;
 
         alarmText = alarmText.replace("{incidentId}", incident.getId() + "");

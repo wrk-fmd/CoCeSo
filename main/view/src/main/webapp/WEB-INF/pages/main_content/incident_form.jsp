@@ -196,11 +196,11 @@
           </div>
 
           <div class="form-group col-md-5 text-right">
-            <button type="button" class="btn btn-warning" data-bind="enable: idObs, click: openAlarmIncident">
+            <button type="button" class="btn btn-warning" data-bind="enable: isAlarmTextSendingEnabled, click: openAlarmIncident">
               <spring:message code="incident.alarm.full"/>
             </button>
 
-            <button type="button" class="btn btn-warning" data-bind="enable: idObs, click: openAlarmCasusInformation">
+            <button type="button" class="btn btn-warning" data-bind="enable: isAlarmTextSendingEnabled, click: openAlarmCasusInformation">
               <spring:message code="incident.alarm.casus"/>
             </button>
           </div>

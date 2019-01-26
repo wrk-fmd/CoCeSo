@@ -1,6 +1,6 @@
-CCS{incidentId} {time}: {type}
+{time}
+CCS{incidentId}: {type}
 BO: {bo}
-AO: {ao}
 {info}
 {unitsName}: {units}
 
