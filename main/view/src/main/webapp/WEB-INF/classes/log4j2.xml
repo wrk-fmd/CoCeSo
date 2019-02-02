@@ -6,9 +6,9 @@
 
     <Appenders>
         <RollingFile name="file_coceso"
-                     fileName="${sys:catalina.base}/logs/${cocesoInstallationName}/coceso.log"
+                     fileName="${sys:catalina.base}/logs/${sys:cocesoInstallationName}/coceso.log"
                      append="true"
-                     filePattern="${sys:catalina.base}/logs/${cocesoInstallationName}/$${date:yyyy-MM}/coceso-%d{yyyy-MM-dd}-%i.log.gz">
+                     filePattern="${sys:catalina.base}/logs/${sys:cocesoInstallationName}/$${date:yyyy-MM}/coceso-%d{yyyy-MM-dd}-%i.log.gz">
             <PatternLayout>
                 <Pattern>%d{ISO8601}; [%t]; %-5level; %logger{1.}; %msg%n</Pattern>
             </PatternLayout>
@@ -20,9 +20,9 @@
         </RollingFile>
 
         <RollingFile name="file_error"
-                     fileName="${sys:catalina.base}/logs/${cocesoInstallationName}/coceso_error.log"
+                     fileName="${sys:catalina.base}/logs/${sys:cocesoInstallationName}/coceso_error.log"
                      append="true"
-                     filePattern="${sys:catalina.base}/logs/${cocesoInstallationName}/$${date:yyyy-MM}/coceso_error-%d{yyyy-MM-dd}-%i.log.gz">
+                     filePattern="${sys:catalina.base}/logs/${sys:cocesoInstallationName}/$${date:yyyy-MM}/coceso_error-%d{yyyy-MM-dd}-%i.log.gz">
             <PatternLayout>
                 <Pattern>%d{ISO8601}; [%t]; %-5level; %logger{1.}; %msg%n</Pattern>
             </PatternLayout>
