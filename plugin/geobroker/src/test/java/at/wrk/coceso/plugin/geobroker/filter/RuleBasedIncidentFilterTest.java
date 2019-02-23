@@ -25,7 +25,7 @@ public class RuleBasedIncidentFilterTest {
         sut = new RuleBasedIncidentFilter();
     }
 
-    @Parameters({"Task", "Transport"})
+    @Parameters({"Task", "Transport", "Relocation"})
     @Test
     public void supportedIncidentType_returnTrue(final IncidentType incidentType) {
         CachedIncident incident = new CachedIncident(
@@ -42,7 +42,7 @@ public class RuleBasedIncidentFilterTest {
         MatcherAssert.assertThat(incidentRelevantForGeoBroker, equalTo(true));
     }
 
-    @Parameters({"HoldPosition", "Standby", "Relocation", "ToHome", "Treatment"})
+    @Parameters({"HoldPosition", "Standby", "ToHome", "Treatment"})
     @Test
     public void notSupportedIncidentType_returnFalse(final IncidentType incidentType) {
         CachedIncident incident = new CachedIncident(
@@ -124,11 +124,12 @@ public class RuleBasedIncidentFilterTest {
         MatcherAssert.assertThat(incidentRelevantForGeoBroker, equalTo(false));
     }
 
+    @Parameters({"Detached"})
     @Test
-    public void unitsNoLongerAtIncidentAndInProgress_returnFalse() {
+    public void unitsNoLongerAtIncidentAndInProgress_returnFalse(final TaskState taskState) {
         CachedIncident incident = new CachedIncident(
                 GeoBrokerIncidents.random(),
-                ImmutableMap.of("unit1", TaskState.ZAO, "unit2", TaskState.AAO),
+                ImmutableMap.of("unit1", taskState),
                 GeoBrokerPoints.randomPoint(),
                 42,
                 IncidentType.Task,
@@ -140,11 +141,12 @@ public class RuleBasedIncidentFilterTest {
         MatcherAssert.assertThat(incidentRelevantForGeoBroker, equalTo(false));
     }
 
+    @Parameters({"Assigned", "ZBO", "ABO", "ZAO", "AAO"})
     @Test
-    public void unitsStillAtIncidentAndInProgress_returnTrue() {
+    public void unitsStillAtIncidentAndInProgress_returnTrue(final TaskState taskState) {
         CachedIncident incident = new CachedIncident(
                 GeoBrokerIncidents.random(),
-                ImmutableMap.of("unit1", TaskState.ZBO, "unit2", TaskState.AAO),
+                ImmutableMap.of("unit1", taskState),
                 GeoBrokerPoints.randomPoint(),
                 42,
                 IncidentType.Task,

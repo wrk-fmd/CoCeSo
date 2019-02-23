@@ -12,8 +12,16 @@ import java.util.List;
 @Component
 public class RuleBasedIncidentFilter implements IncidentFilter {
 
-    private static final List<IncidentType> SUPPORTED_INCIDENT_TYPES = ImmutableList.of(IncidentType.Task, IncidentType.Transport);
-    private static final List<TaskState> AT_INCIDENT_TASK_STATES = ImmutableList.of(TaskState.Assigned, TaskState.ZBO, TaskState.ABO);
+    private static final List<IncidentType> SUPPORTED_INCIDENT_TYPES = ImmutableList.of(
+            IncidentType.Task,
+            IncidentType.Transport,
+            IncidentType.Relocation);
+    private static final List<TaskState> RELEVANT_TASK_STATES = ImmutableList.of(
+            TaskState.Assigned,
+            TaskState.ZBO,
+            TaskState.ABO,
+            TaskState.ZAO,
+            TaskState.AAO);
 
     @Override
     public boolean isIncidentRelevantForGeoBroker(final CachedIncident incident) {
@@ -31,6 +39,6 @@ public class RuleBasedIncidentFilter implements IncidentFilter {
         return incident.getAssignedExternalUnitIds()
                 .values()
                 .stream()
-                .anyMatch(AT_INCIDENT_TASK_STATES::contains);
+                .anyMatch(RELEVANT_TASK_STATES::contains);
     }
 }
