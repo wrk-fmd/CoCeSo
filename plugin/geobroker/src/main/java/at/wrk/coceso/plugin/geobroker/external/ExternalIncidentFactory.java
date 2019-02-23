@@ -26,17 +26,23 @@ public class ExternalIncidentFactory implements GeoBrokerIncidentFactory {
     private final ExternalUnitIdGenerator unitIdGenerator;
     private final boolean exposeInfoField;
     private boolean exposeBoField;
+    private final boolean exposeAoField;
+    private final boolean exposeCasusField;
 
     @Autowired
     public ExternalIncidentFactory(
             final ExternalIncidentIdGenerator incidentIdGenerator,
             final ExternalUnitIdGenerator unitIdGenerator,
             @Value("${geobroker.expose.info.field:false}") final boolean exposeInfoField,
-            @Value("${geobroker.expose.bo.field:false}") final boolean exposeBoField) {
+            @Value("${geobroker.expose.bo.field:false}") final boolean exposeBoField,
+            @Value("${geobroker.expose.ao.field:false}") final boolean exposeAoField,
+            @Value("${geobroker.expose.casus.field:false}") final boolean exposeCasusField) {
         this.incidentIdGenerator = incidentIdGenerator;
         this.unitIdGenerator = unitIdGenerator;
         this.exposeInfoField = exposeInfoField;
         this.exposeBoField = exposeBoField;
+        this.exposeAoField = exposeAoField;
+        this.exposeCasusField = exposeCasusField;
     }
 
     @Override
@@ -69,16 +75,24 @@ public class ExternalIncidentFactory implements GeoBrokerIncidentFactory {
     }
 
     private String createGeoBrokerInfo(final Incident incident) {
-        List<String> informations = new ArrayList<>();
+        List<String> infoFieldLines = new ArrayList<>();
 
         if (exposeBoField && incident.getBo() != null && incident.getBo().getInfo() != null) {
-            informations.add(incident.getBo().getInfo());
+            infoFieldLines.add("BO: " + incident.getBo().getInfo());
+        }
+
+        if (exposeAoField && incident.getAo() != null && incident.getAo().getInfo() != null) {
+            infoFieldLines.add("AO: " + incident.getAo().getInfo());
+        }
+
+        if (exposeCasusField && StringUtils.isNotBlank(incident.getCasusNr())) {
+            infoFieldLines.add("Casus: " + incident.getCasusNr());
         }
 
         if (exposeInfoField && incident.getInfo() != null) {
-            informations.add(incident.getInfo());
+            infoFieldLines.add(incident.getInfo());
         }
 
-        return StringUtils.join(informations, "\n\n");
+        return StringUtils.join(infoFieldLines, "\n\n");
     }
 }
