@@ -31,7 +31,13 @@ public class ExternalIncidentFactoryTest {
     public void init() {
         incidentIdGenerator = mock(ExternalIncidentIdGenerator.class);
         unitIdGenerator = mock(ExternalUnitIdGenerator.class);
-        sut = new ExternalIncidentFactory(incidentIdGenerator, unitIdGenerator, true, true);
+        sut = new ExternalIncidentFactory(
+                incidentIdGenerator,
+                unitIdGenerator,
+                true,
+                true,
+                true,
+                true);
     }
 
     @Test
