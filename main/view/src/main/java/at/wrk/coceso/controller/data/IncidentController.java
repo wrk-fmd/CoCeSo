@@ -52,7 +52,7 @@ public class IncidentController {
     }
 
     @JsonView(JsonViews.Main.class)
-    @Transactional(readOnly = true)
+    @Transactional
     @RequestMapping(value = "main", produces = "application/json", method = RequestMethod.GET)
     public SequencedResponse<List<Incident>> getForMain(@ActiveConcern Concern concern) {
         List<Incident> relevantIncidents = Initializer.init(
