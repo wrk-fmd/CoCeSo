@@ -5,19 +5,23 @@ import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.helper.BatchUnits;
 import at.wrk.coceso.entity.helper.JsonViews;
+import at.wrk.coceso.entity.point.Point;
 import at.wrk.coceso.entityevent.EntityEventFactory;
 import at.wrk.coceso.entityevent.EntityEventHandler;
 import at.wrk.coceso.entityevent.EntityEventListener;
 import at.wrk.coceso.entityevent.impl.NotifyList;
+import at.wrk.coceso.service.ContainerWriteService;
+import at.wrk.coceso.service.UnitWriteService;
 import at.wrk.coceso.service.internal.UnitServiceInternal;
-import java.util.List;
-import javax.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import at.wrk.coceso.service.ContainerWriteService;
-import at.wrk.coceso.service.UnitWriteService;
+
+import javax.annotation.PreDestroy;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 
 @Service
 @Transactional(propagation = Propagation.NOT_SUPPORTED)
@@ -52,13 +56,15 @@ class UnitWriteServiceImpl implements UnitWriteService {
   }
 
   @Override
-  public Unit updateMain(Unit unit, User user) {
+  public Unit updateMain(final Unit unit, final User user) {
+    resolvePoints(unit);
     return NotifyList.execute(n -> unitService.updateMain(unit, user, n), eef);
   }
 
   @Override
-  public Unit updateEdit(Unit unit, Concern concern, User user) {
+  public Unit updateEdit(final Unit unit, final Concern concern, final User user) {
     boolean isNew = unit.getId() == null;
+    resolvePoints(unit);
     Unit u = NotifyList.execute(n -> unitService.updateEdit(unit, concern, user, n), eef);
     if (isNew) {
       containerWriteService.notifyRoot(concern);
@@ -67,48 +73,60 @@ class UnitWriteServiceImpl implements UnitWriteService {
   }
 
   @Override
-  public List<Integer> batchCreate(BatchUnits batch, Concern concern, User user) {
+  public List<Integer> batchCreate(final BatchUnits batch, final Concern concern, final User user) {
+    Optional.ofNullable(batch.getHome())
+            .ifPresent(Point::tryToResolveExternalData);
     List<Integer> created = NotifyList.execute(n -> unitService.batchCreate(batch, concern, user, n), eef);
     containerWriteService.notifyRoot(concern);
     return created;
   }
 
   @Override
-  public void remove(int unitId, User user) {
+  public void remove(final int unitId, final User user) {
     Unit unit = unitService.doRemove(unitId, user);
     entityEventHandler.entityDeleted(unit.getId(), unit.getConcern().getId());
   }
 
   @Override
-  public void sendHome(int unitId, User user) {
+  public void sendHome(final int unitId, final User user) {
     NotifyList.executeVoid(n -> unitService.sendHome(unitId, user, n), eef);
   }
 
   @Override
-  public void holdPosition(int unitId, User user) {
+  public void holdPosition(final int unitId, final User user) {
     NotifyList.executeVoid(n -> unitService.holdPosition(unitId, user, n), eef);
   }
 
   @Override
-  public void standby(int unitId, User user) {
+  public void standby(final int unitId, final User user) {
     NotifyList.executeVoid(n -> unitService.standby(unitId, user, n), eef);
   }
 
   @Override
-  public void removeCrew(int unit_id, int user_id) {
-    NotifyList.executeVoid(n -> unitService.removeCrew(unit_id, user_id, n), eef);
+  public void removeCrew(final int unitId, final int userId) {
+    NotifyList.executeVoid(n -> unitService.removeCrew(unitId, userId, n), eef);
   }
 
   @Override
-  public void addCrew(int unit_id, int user_id) {
-    NotifyList.executeVoid(n -> unitService.addCrew(unit_id, user_id, n), eef);
+  public void addCrew(final int unitId, final int userId) {
+    NotifyList.executeVoid(n -> unitService.addCrew(unitId, userId, n), eef);
   }
 
   @Override
-  public int importUnits(String data, Concern concern, User user) {
+  public int importUnits(final String data, final Concern concern, final User user) {
     int imported = NotifyList.execute(n -> unitService.importUnits(data, concern, user, n), eef);
     containerWriteService.notifyRoot(concern);
     return imported;
   }
 
+  private void resolvePoints(final Unit unit) {
+    resolvePointOfUnit(unit, Unit::getHome);
+    resolvePointOfUnit(unit, Unit::getPosition);
+  }
+
+  private void resolvePointOfUnit(final Unit unit, final Function<Unit, Point> pointAccessor) {
+    Optional.ofNullable(unit)
+            .map(pointAccessor)
+            .ifPresent(Point::tryToResolveExternalData);
+  }
 }

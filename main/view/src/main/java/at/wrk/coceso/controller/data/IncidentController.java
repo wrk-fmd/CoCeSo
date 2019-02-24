@@ -52,36 +52,50 @@ public class IncidentController {
     }
 
     @JsonView(JsonViews.Main.class)
-    @Transactional
+    @Transactional(readOnly = true)
     @RequestMapping(value = "main", produces = "application/json", method = RequestMethod.GET)
     public SequencedResponse<List<Incident>> getForMain(@ActiveConcern Concern concern) {
-        return new SequencedResponse<>(entityEventHandler.getHver(), entityEventHandler.getSeq(concern.getId()),
-                Initializer.init(incidentService.getAllRelevant(concern), Incident::getUnits, Incident::getPatient));
+        List<Incident> relevantIncidents = Initializer.init(
+                incidentService.getAllRelevant(concern),
+                Incident::getUnits,
+                Incident::getPatient);
+        return new SequencedResponse<>(
+                entityEventHandler.getHver(),
+                entityEventHandler.getSeq(concern.getId()),
+                relevantIncidents);
     }
 
     @RequestMapping(value = "update", produces = "application/json", method = RequestMethod.POST)
-    public RestResponse update(@RequestBody Incident incident, BindingResult result,
-                               @ActiveConcern Concern concern, @AuthenticationPrincipal User user) {
+    public RestResponse update(
+            @RequestBody Incident incident,
+            final BindingResult result,
+            @ActiveConcern final Concern concern,
+            @AuthenticationPrincipal final User user) {
         if (result.hasErrors()) {
             return new RestResponse(result);
         }
 
         boolean isNew = incident.getId() == null;
-        incident = incidentWriteService.update(incident, concern, user);
-        return new RestResponse(true, new RestProperty("new", isNew), new RestProperty("incident_id", incident.getId()));
+        Incident updatedIncident = incidentWriteService.update(incident, concern, user);
+        return new RestResponse(true, new RestProperty("new", isNew), new RestProperty("incident_id", updatedIncident.getId()));
     }
 
     @RequestMapping(value = "setToState", produces = "application/json", method = RequestMethod.POST)
-    public RestResponse setToState(@RequestParam("incident_id") int incident_id, @RequestParam("unit_id") int unit_id,
-                                   @RequestParam("state") TaskState state, @AuthenticationPrincipal User user) {
-        taskWriteService.changeState(incident_id, unit_id, state, user);
+    public RestResponse setToState(
+            @RequestParam("incident_id") final int incidentId,
+            @RequestParam("unit_id") final int unitId,
+            @RequestParam("state") final TaskState state,
+            @AuthenticationPrincipal final User user) {
+        taskWriteService.changeState(incidentId, unitId, state, user);
         return new RestResponse(true);
     }
 
     @RequestMapping(value = "assignPatient", produces = "application/json", method = RequestMethod.POST)
-    public RestResponse assignPatient(@RequestParam("incident_id") int incident_id, @RequestParam("patient_id") int patient_id,
-                                      @AuthenticationPrincipal User user) {
-        incidentWriteService.assignPatient(incident_id, patient_id, user);
+    public RestResponse assignPatient(
+            @RequestParam("incident_id") int incidentId,
+            @RequestParam("patient_id") int patientId,
+            @AuthenticationPrincipal User user) {
+        incidentWriteService.assignPatient(incidentId, patientId, user);
         return new RestResponse(true);
     }
 

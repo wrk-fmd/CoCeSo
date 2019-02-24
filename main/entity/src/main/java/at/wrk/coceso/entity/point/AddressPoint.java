@@ -11,6 +11,8 @@ import at.wrk.geocode.util.IntegerUtils;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,6 +27,7 @@ import java.util.regex.Pattern;
  */
 @Configurable
 class AddressPoint implements Point, Address {
+    private static final Logger LOG = LoggerFactory.getLogger(AddressPoint.class);
 
     // TODO Using @Qualifier here feels kinda like hardcoding, maybe define that somewhere else
     @Autowired
@@ -245,13 +248,15 @@ class AddressPoint implements Point, Address {
     @JsonView({JsonViews.Database.class, JsonViews.PointMinimal.class})
     @Override
     public LatLng getCoordinates() {
-        fill();
         return coordinates;
     }
 
-    private void fill() {
+    @Override
+    public void tryToResolveExternalData() {
         if (!filled && coordinates == null && !isEmpty()) {
             filled = true;
+            LOG.debug("Address point was not resolved yet. Adress geocoder is called.");
+
             ImmutableAddress addressToSearch = ImmutableAddress.createFromAddress(this);
             coordinates = addressGeocoder.geocode(addressToSearch);
         }

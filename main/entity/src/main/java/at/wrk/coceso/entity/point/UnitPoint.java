@@ -64,6 +64,10 @@ public class UnitPoint implements Point {
     return coordinates;
   }
 
+  /**
+   * This should be filled dynamically, because home points can change.
+   * Anyway it should be changed to an explicit resolving in the future, instead of being called in a getter.
+   */
   private void fill() {
     if (!filled && (call == null || coordinates == null) && !isEmpty()) {
       // Never try to fill more than once

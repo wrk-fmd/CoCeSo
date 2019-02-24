@@ -2,8 +2,8 @@ package at.wrk.coceso.entity.point;
 
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Unit;
-import at.wrk.geocode.autocomplete.AutocompleteSupplier;
 import at.wrk.geocode.LatLng;
+import at.wrk.geocode.autocomplete.AutocompleteSupplier;
 import at.wrk.geocode.poi.Poi;
 import at.wrk.geocode.poi.PoiSupplier;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -12,11 +12,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * General interface for a point
@@ -33,7 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 })
 public interface Point extends Serializable {
 
-  static final Pattern coordinatePattern = Pattern.compile("^\\(?(\\s*\\d+(\\.\\d+)?)(,| +)(\\d+(\\.\\d+)?)\\)?$", Pattern.UNICODE_CHARACTER_CLASS);
+  Pattern coordinatePattern = Pattern.compile("^\\(?(\\s*\\d+(\\.\\d+)?)(,| +)(\\d+(\\.\\d+)?)\\)?$", Pattern.UNICODE_CHARACTER_CLASS);
 
   /**
    * A human readable String representation of the Point
@@ -65,6 +66,13 @@ public interface Point extends Serializable {
   Point deepCopy();
 
   /**
+   * The geocoding features are a big mess and have a huge impact on performance.
+   * To mitigate it, a point needs to be called explicitly to this hook to resolve any external data.
+   * This should be done only once in a lifetime of a Point.
+   */
+  default void tryToResolveExternalData() {}
+
+  /**
    * Resolve the information stored in the instance to the appropriate subclass
    *
    * @param concern The concern, for which the resolving should take place
@@ -81,7 +89,7 @@ public interface Point extends Serializable {
    * @param concern
    * @return Null if point is null, result of calling #create(concern) on point otherwise
    */
-  public static Point create(Point point, Concern concern) {
+  static Point create(Point point, Concern concern) {
     return point == null ? null : point.create(concern);
   }
 
@@ -94,7 +102,7 @@ public interface Point extends Serializable {
    * @param unitSupplier
    * @return Null if info is blank, a Point instance otherwise
    */
-  public static Point create(String info, Concern concern, PoiSupplier poiSupplier, UnitSupplier unitSupplier) {
+  static Point create(String info, Concern concern, PoiSupplier poiSupplier, UnitSupplier unitSupplier) {
     info = StringUtils.trimToNull(info);
 
     if (info == null) {
@@ -131,7 +139,7 @@ public interface Point extends Serializable {
    * @param point
    * @return True if point is null, result of calling #isEmpty() on point otherwise
    */
-  public static boolean isEmpty(Point point) {
+  static boolean isEmpty(Point point) {
     return point == null || point.isEmpty();
   }
 
@@ -141,7 +149,7 @@ public interface Point extends Serializable {
    * @param point
    * @return Null if point is null or empty, result of calling #toString() on point otherwise
    */
-  public static String toStringOrNull(Point point) {
+  static String toStringOrNull(Point point) {
     return isEmpty(point) ? null : point.toString();
   }
 
@@ -152,7 +160,7 @@ public interface Point extends Serializable {
    * @param b
    * @return True if points are both null or info strings are equal, false otherwise
    */
-  public static boolean infoEquals(Point a, Point b) {
+  static boolean infoEquals(Point a, Point b) {
     return Objects.equals(
         a == null ? null : StringUtils.defaultIfEmpty(a.getInfo(), null),
         b == null ? null : StringUtils.defaultIfEmpty(b.getInfo(), null)

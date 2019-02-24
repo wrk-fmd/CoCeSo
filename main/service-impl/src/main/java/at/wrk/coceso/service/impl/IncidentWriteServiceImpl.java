@@ -4,6 +4,7 @@ import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.helper.JsonViews;
+import at.wrk.coceso.entity.point.Point;
 import at.wrk.coceso.entityevent.EntityEventFactory;
 import at.wrk.coceso.entityevent.EntityEventHandler;
 import at.wrk.coceso.entityevent.EntityEventListener;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PreDestroy;
+import java.util.Optional;
 import java.util.function.Function;
 
 @Service
@@ -49,11 +51,21 @@ class IncidentWriteServiceImpl implements IncidentWriteService {
 
     @Override
     public Incident update(final Incident incident, final Concern concern, final User user) {
+        resolvePointOfIncident(incident, Incident::getBo);
+        resolvePointOfIncident(incident, Incident::getAo);
         return NotifyList.execute(notifyList -> incidentService.update(incident, concern, user, notifyList), entityEventFactory);
     }
 
     @Override
     public void assignPatient(final int incidentId, final int patientId, final User user) {
         NotifyList.executeVoid(notifyList -> incidentService.assignPatient(incidentId, patientId, user, notifyList), entityEventFactory);
+    }
+
+    private void resolvePointOfIncident(
+            final Incident incident,
+            final Function<Incident, Point> pointAccessor) {
+        Optional.ofNullable(incident)
+                .map(pointAccessor)
+                .ifPresent(Point::tryToResolveExternalData);
     }
 }

@@ -7,6 +7,8 @@ import at.wrk.geocode.address.ImmutableAddress;
 import at.wrk.geocode.poi.Poi;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,6 +20,7 @@ import java.util.Objects;
  */
 @Configurable
 class PoiPoint implements Poi, Point {
+  private static final Logger LOG = LoggerFactory.getLogger(PoiPoint.class);
 
   // TODO Using @Qualifier here feels kinda like hardcoding, maybe define that somewhere else
   @Autowired
@@ -82,13 +85,15 @@ class PoiPoint implements Poi, Point {
   @JsonView({JsonViews.Database.class, JsonViews.PointMinimal.class})
   @Override
   public LatLng getCoordinates() {
-    fill();
     return coordinates;
   }
 
-  private void fill() {
+  @Override
+  public void tryToResolveExternalData() {
     if (!filled && coordinates == null && !isEmpty()) {
       filled = true;
+      LOG.debug("POI point is not yet resolved. POI geocoder is called.");
+
       coordinates = poiGeocoder.geocode(this);
       if (coordinates == null) {
         // No coordinates in POI entry, use normal address
