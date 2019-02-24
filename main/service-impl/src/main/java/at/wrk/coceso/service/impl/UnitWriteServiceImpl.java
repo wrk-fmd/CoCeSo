@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.PreDestroy;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 
 @Service
 @Transactional(propagation = Propagation.NOT_SUPPORTED)
@@ -57,14 +56,12 @@ class UnitWriteServiceImpl implements UnitWriteService {
 
   @Override
   public Unit updateMain(final Unit unit, final User user) {
-    resolvePoints(unit);
     return NotifyList.execute(n -> unitService.updateMain(unit, user, n), eef);
   }
 
   @Override
   public Unit updateEdit(final Unit unit, final Concern concern, final User user) {
     boolean isNew = unit.getId() == null;
-    resolvePoints(unit);
     Unit u = NotifyList.execute(n -> unitService.updateEdit(unit, concern, user, n), eef);
     if (isNew) {
       containerWriteService.notifyRoot(concern);
@@ -117,16 +114,5 @@ class UnitWriteServiceImpl implements UnitWriteService {
     int imported = NotifyList.execute(n -> unitService.importUnits(data, concern, user, n), eef);
     containerWriteService.notifyRoot(concern);
     return imported;
-  }
-
-  private void resolvePoints(final Unit unit) {
-    resolvePointOfUnit(unit, Unit::getHome);
-    resolvePointOfUnit(unit, Unit::getPosition);
-  }
-
-  private void resolvePointOfUnit(final Unit unit, final Function<Unit, Point> pointAccessor) {
-    Optional.ofNullable(unit)
-            .map(pointAccessor)
-            .ifPresent(Point::tryToResolveExternalData);
   }
 }

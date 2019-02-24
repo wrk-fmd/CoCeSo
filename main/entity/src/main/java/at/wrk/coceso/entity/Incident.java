@@ -130,17 +130,29 @@ public class Incident implements Serializable, Comparable<Incident>, ConcernBoun
     if (state == null) {
       state = IncidentState.Open;
     }
+
     if (casusNr == null) {
       casusNr = "";
     }
+
     if (caller == null) {
       caller = "";
     }
+
     if (info == null) {
       info = "";
     }
+
     if (created == null) {
       created = OffsetDateTime.now();
+    }
+
+    if (bo != null) {
+      bo.tryToResolveExternalData();
+    }
+
+    if (ao != null) {
+      ao.tryToResolveExternalData();
     }
   }
 

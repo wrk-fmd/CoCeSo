@@ -5,17 +5,21 @@ import at.wrk.coceso.entity.helper.JsonViews;
 import at.wrk.geocode.LatLng;
 import at.wrk.geocode.poi.PoiSupplier;
 import com.fasterxml.jackson.annotation.JsonView;
-import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.util.Objects;
 
 /**
  * A dummy for unresolved point data that should not actually be stored anywhere, but resolved by using #create()
  */
 @Configurable
 public class DummyPoint implements Point {
+  private static final Logger LOG = LoggerFactory.getLogger(DummyPoint.class);
 
   // TODO Using @Qualifier here feels kinda like hardcoding, maybe define that somewhere else
   @Autowired
@@ -64,6 +68,12 @@ public class DummyPoint implements Point {
   @Override
   public Point create(Concern concern) {
     return isEmpty() ? null : Point.create(info, concern, poiSupplier, unitSupplier);
+  }
+
+  @Override
+  public void tryToResolveExternalData() {
+    // Yes, this is needed, because of the WTF-implementation of this Point contract...
+    LOG.info("Trying to resolve a dummy point! Please check workflow on data validation.");
   }
 
   @Override

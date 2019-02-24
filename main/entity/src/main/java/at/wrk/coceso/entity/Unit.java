@@ -9,6 +9,26 @@ import at.wrk.coceso.entity.point.Point;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
+import org.hibernate.annotations.Formula;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.persistence.Basic;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyJoinColumn;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,10 +36,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.persistence.*;
-import org.hibernate.annotations.Formula;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
 public class Unit implements Serializable, Comparable<Unit>, ConcernBoundEntity {
@@ -129,14 +145,25 @@ public class Unit implements Serializable, Comparable<Unit>, ConcernBoundEntity 
     if (state == null) {
       state = UnitState.AD;
     }
+
     if (call == null) {
       call = "";
     }
+
     if (ani == null) {
       ani = "";
     }
+
     if (info == null) {
       info = "";
+    }
+
+    if (home != null) {
+      home.tryToResolveExternalData();
+    }
+
+    if (position != null) {
+      position.tryToResolveExternalData();
     }
   }
 
