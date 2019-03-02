@@ -100,11 +100,14 @@ public class AlarmTextServiceImpl implements AlarmTextService {
 
     private SendAlarmTextResult calculateOverallResult(final Map<String, SendAlarmTextResult> resultMap) {
         SendAlarmTextResult overallResult;
-        if (resultMap.containsValue(SendAlarmTextResult.SUCCESS)) {
+        if (resultMap.isEmpty()) {
+            overallResult = SendAlarmTextResult.NO_TARGETS_FOUND;
+        } else if (resultMap.containsValue(SendAlarmTextResult.SUCCESS)) {
             overallResult = SendAlarmTextResult.SUCCESS;
         } else {
             overallResult = resultMap.containsValue(SendAlarmTextResult.NO_TARGETS_FOUND) ? SendAlarmTextResult.NO_TARGETS_FOUND : SendAlarmTextResult.NO_GATEWAY_CONFIGURED;
         }
+
         return overallResult;
     }
 }
