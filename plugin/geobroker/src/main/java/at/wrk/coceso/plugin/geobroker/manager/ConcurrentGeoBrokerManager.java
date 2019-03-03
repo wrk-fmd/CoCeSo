@@ -186,7 +186,8 @@ public class ConcurrentGeoBrokerManager implements GeoBrokerManager {
                 assignedUnits,
                 incidents,
                 geoBrokerUnit.getLastPoint(),
-                targetPoint);
+                targetPoint,
+                geoBrokerUnit.getAvailableForDispatching());
     }
 
     private List<String> getAllExternalUnitIdsForConcernId(final int concernId) {

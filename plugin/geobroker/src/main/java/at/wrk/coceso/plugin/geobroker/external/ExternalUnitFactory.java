@@ -24,15 +24,18 @@ public class ExternalUnitFactory implements GeoBrokerUnitFactory {
     private final ExternalUnitIdGenerator unitIdGenerator;
     private final ExternalUnitTokenGenerator tokenGenerator;
     private final ExternalIncidentIdGenerator incidentIdGenerator;
+    private final AvailableForDispatchingCalculator availableForDispatchingCalculator;
 
     @Autowired
     public ExternalUnitFactory(
             final ExternalUnitIdGenerator unitIdGenerator,
             final ExternalUnitTokenGenerator tokenGenerator,
-            final ExternalIncidentIdGenerator incidentIdGenerator) {
+            final ExternalIncidentIdGenerator incidentIdGenerator,
+            final AvailableForDispatchingCalculator availableForDispatchingCalculator) {
         this.unitIdGenerator = unitIdGenerator;
         this.tokenGenerator = tokenGenerator;
         this.incidentIdGenerator = incidentIdGenerator;
+        this.availableForDispatchingCalculator = availableForDispatchingCalculator;
     }
 
     @Override
@@ -48,12 +51,15 @@ public class ExternalUnitFactory implements GeoBrokerUnitFactory {
 
         Map<String, TaskState> externalIncidentIds = mapToExternalIncidentIds(concernId, unit.getIncidents());
 
+        boolean isAvailableForDispatching = availableForDispatchingCalculator.isAvailableForDispatching(unit);
+
         // Target Point and referenced Units are caluculated in GeoBrokerManager.
         GeoBrokerUnit geoBrokerUnit = new GeoBrokerUnit(
                 externalId,
                 Optional.ofNullable(unit.getCall()).orElse(""),
                 token,
-                mapPoint(unit.getPosition()));
+                mapPoint(unit.getPosition()),
+                isAvailableForDispatching);
 
         return new CachedUnit(geoBrokerUnit, externalIncidentIds, unit.getType(), unit.getConcern().getId());
     }

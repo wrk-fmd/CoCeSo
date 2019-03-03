@@ -2,6 +2,7 @@ package at.wrk.coceso.plugin.geobroker.utils;
 
 import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerUnit;
 import com.google.common.collect.ImmutableList;
+import org.apache.commons.lang3.RandomUtils;
 
 import static at.wrk.coceso.plugin.geobroker.utils.GeoBrokerPoints.randomPoint;
 import static at.wrk.coceso.plugin.geobroker.utils.Strings.randomString;
@@ -22,7 +23,7 @@ public final class GeoBrokerUnits {
                 ImmutableList.of(randomString()),
                 ImmutableList.of(randomString()),
                 randomPoint(),
-                randomPoint()
-        );
+                randomPoint(),
+                RandomUtils.nextBoolean());
     }
 }

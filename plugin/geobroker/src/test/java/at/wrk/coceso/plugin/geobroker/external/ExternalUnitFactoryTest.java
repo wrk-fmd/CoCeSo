@@ -5,6 +5,7 @@ import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.plugin.geobroker.data.CachedUnit;
 import com.google.common.collect.ImmutableMap;
+import org.apache.commons.lang3.RandomUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,16 +21,19 @@ public class ExternalUnitFactoryTest {
     private ExternalUnitIdGenerator unitIdGenerator;
     private ExternalUnitTokenGenerator tokenGenerator;
     private ExternalIncidentIdGenerator incidentIdGenerator;
+    private AvailableForDispatchingCalculator availableForDispatchingCalculator;
 
     @Before
     public void init() {
         unitIdGenerator = mock(ExternalUnitIdGenerator.class);
         tokenGenerator = mock(ExternalUnitTokenGenerator.class);
         incidentIdGenerator = mock(ExternalIncidentIdGenerator.class);
+        availableForDispatchingCalculator = mock(AvailableForDispatchingCalculator.class);
         sut = new ExternalUnitFactory(
                 unitIdGenerator,
                 tokenGenerator,
-                incidentIdGenerator);
+                incidentIdGenerator,
+                availableForDispatchingCalculator);
     }
 
     @Test
@@ -38,13 +42,17 @@ public class ExternalUnitFactoryTest {
 
         Unit unit = new Unit(5);
         unit.setConcern(new Concern(42));
+        boolean isAvailableForDispatching = RandomUtils.nextBoolean();
+        when(availableForDispatchingCalculator.isAvailableForDispatching(unit)).thenReturn(isAvailableForDispatching);
 
         String externalToken = tokenGeneratorReturns(unit);
 
         CachedUnit externalUnit = sut.createExternalUnit(unit);
 
+        assertThat(externalUnit.getUnitType(), equalTo(unit.getType()));
         assertThat(externalUnit.getUnit().getId(), equalTo(externalUnitId));
         assertThat(externalUnit.getUnit().getToken(), equalTo(externalToken));
+        assertThat(externalUnit.getUnit().getAvailableForDispatching(), equalTo(isAvailableForDispatching));
     }
 
     @Test
