@@ -15,4 +15,9 @@ public interface GeoBrokerIncidentPublisher {
      * Informs the external GeoBroker about the deleted incident with the given identifier.
      */
     void incidentDeleted(String externalIncidentId);
+
+    /**
+     * Re-sends the full state towards GeoBroker.
+     */
+    void resendFullState();
 }

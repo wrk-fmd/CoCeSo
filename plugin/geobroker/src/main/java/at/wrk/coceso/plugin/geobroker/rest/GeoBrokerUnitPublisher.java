@@ -15,4 +15,9 @@ public interface GeoBrokerUnitPublisher {
      * Informs the external GeoBroker about the deleted unit with the given identifier.
      */
     void unitDeleted(String externalUnitId);
+
+    /**
+     * Re-sends the full state towards GeoBroker.
+     */
+    void resendFullState();
 }

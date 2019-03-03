@@ -63,6 +63,11 @@ public class AsyncGeoBrokerUnitPublisher implements GeoBrokerUnitPublisher {
         }
     }
 
+    @Override
+    public void resendFullState() {
+        unitCache.values().forEach(this::publishUnitUpdate);
+    }
+
     private void publishUnitDeletion(final String externalUnitId) {
         String url = getUrlForUnit(externalUnitId);
         ListenableFuture<?> future = restTemplate.delete(url);

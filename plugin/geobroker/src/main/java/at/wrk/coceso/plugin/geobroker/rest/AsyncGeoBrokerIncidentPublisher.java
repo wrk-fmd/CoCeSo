@@ -61,6 +61,11 @@ public class AsyncGeoBrokerIncidentPublisher implements GeoBrokerIncidentPublish
         }
     }
 
+    @Override
+    public void resendFullState() {
+        incidentCache.values().forEach(this::publishIncidentUpdate);
+    }
+
     private void publishIncidentDeletion(final String externalIncidentId) {
         String url = getUrlForIncident(externalIncidentId);
         ListenableFuture<?> future = restTemplate.delete(url);
