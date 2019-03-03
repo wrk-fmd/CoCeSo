@@ -5,7 +5,9 @@ import at.wrk.coceso.plugin.geobroker.data.CachedUnit;
 import at.wrk.coceso.plugin.geobroker.external.ExternalUnitFactory;
 import at.wrk.coceso.plugin.geobroker.external.ExternalUnitIdGenerator;
 import at.wrk.coceso.plugin.geobroker.external.GeoBrokerUnitFactory;
+import at.wrk.coceso.plugin.geobroker.loader.UnitLoader;
 import at.wrk.coceso.plugin.geobroker.manager.GeoBrokerManager;
+import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.Before;
@@ -24,13 +26,15 @@ public class GeobrokerUnitEntityListenerTest {
     private GeoBrokerUnitFactory unitFactory;
     private GeoBrokerManager brokerManager;
     private ExternalUnitIdGenerator unitIdGenerator;
+    private UnitLoader unitLoader;
 
     @Before
     public void init() {
         unitFactory = mock(ExternalUnitFactory.class);
         brokerManager = mock(GeoBrokerManager.class);
         unitIdGenerator = mock(ExternalUnitIdGenerator.class);
-        sut = new GeobrokerUnitEntityListener(brokerManager, unitIdGenerator, unitFactory);
+        unitLoader = mock(UnitLoader.class);
+        sut = new GeobrokerUnitEntityListener(brokerManager, unitIdGenerator, unitFactory, unitLoader);
     }
 
     @Test
@@ -54,6 +58,19 @@ public class GeobrokerUnitEntityListenerTest {
         when(unitFactory.createExternalUnit(unit)).thenReturn(geoBrokerUnit);
 
         sut.entityChanged(unit, 0, 0, 0);
+
+        verify(brokerManager).unitUpdated(geoBrokerUnit);
+    }
+
+    @Test
+    public void contextRefreshed() {
+        Unit unit = mock(Unit.class);
+        CachedUnit geoBrokerUnit = mock(CachedUnit.class);
+        when(unitFactory.createExternalUnit(unit)).thenReturn(geoBrokerUnit);
+
+        when(unitLoader.loadAllUnitsOfActiveConcerns()).thenReturn(ImmutableSet.of(unit));
+
+        sut.onContextRefreshed(null);
 
         verify(brokerManager).unitUpdated(geoBrokerUnit);
     }
