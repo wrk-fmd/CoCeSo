@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Component
@@ -56,8 +57,11 @@ public class GeoBrokerHeartbeatScheduler {
     private void checkIfGeoBrokerInstanceChanged(final StatusResponse statusResponse) {
         String receivedInstanceId = statusResponse.getInstanceId();
         if (receivedInstanceId != null) {
-            if (lastReceivedInstanceId != null && !lastReceivedInstanceId.equals(receivedInstanceId)) {
-                LOG.info("Instance of geobroker changed. Full update of units and incidents is sent.");
+            if (!Objects.equals(lastReceivedInstanceId, receivedInstanceId)) {
+                LOG.info(
+                        "Instance of geobroker changed from '{}' to '{}'. Full update of units and incidents is sent.",
+                        lastReceivedInstanceId,
+                        receivedInstanceId);
 
                 unitPublisher.resendFullState();
                 incidentPublisher.resendFullState();
@@ -104,9 +108,10 @@ public class GeoBrokerHeartbeatScheduler {
         try {
             responseEntity = restTemplate.getForEntity(url, String.class);
         } catch (RestClientException e) {
-            LOG.warn("Geobroker returned an error: " + e.getMessage());
-            LOG.debug("Underlying exception", e);
+            LOG.warn("Geobroker returned an error on checking status: " + e.getMessage());
+            LOG.trace("Underlying exception", e);
         }
+
         return responseEntity;
     }
 }
