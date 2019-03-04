@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Optional;
@@ -73,7 +74,18 @@ public class GeoBrokerHeartbeatScheduler {
     private Optional<StatusResponse> getStatusResponse() {
         Optional<StatusResponse> statusResponse = Optional.empty();
         String url = privateApiUrl + "/status";
-        ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
+
+        ResponseEntity<String> responseEntity = getResponseEntity(url);
+
+        if (responseEntity != null) {
+            statusResponse = handleStatusResponse(responseEntity);
+        }
+
+        return statusResponse;
+    }
+
+    private Optional<StatusResponse> handleStatusResponse(final ResponseEntity<String> responseEntity) {
+        Optional<StatusResponse> statusResponse = Optional.empty();
         if (responseEntity.getStatusCode() != HttpStatus.OK) {
             LOG.warn("Geobroker did not return return 200 OK on status query. Actual code: {}", responseEntity.getStatusCode());
         } else {
@@ -83,6 +95,18 @@ public class GeoBrokerHeartbeatScheduler {
                 LOG.warn("Status response of geobroker is not a JSON response", e);
             }
         }
+
         return statusResponse;
+    }
+
+    private ResponseEntity<String> getResponseEntity(final String url) {
+        ResponseEntity<String> responseEntity = null;
+        try {
+            responseEntity = restTemplate.getForEntity(url, String.class);
+        } catch (RestClientException e) {
+            LOG.warn("Geobroker returned an error: " + e.getMessage());
+            LOG.debug("Underlying exception", e);
+        }
+        return responseEntity;
     }
 }
