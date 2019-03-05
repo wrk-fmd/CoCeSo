@@ -70,6 +70,7 @@ public class ExternalIncidentFactory implements GeoBrokerIncidentFactory {
                 incident.isBlue(),
                 createGeoBrokerInfo(incident),
                 mapPoint(incident.getBo()),
+                mapPoint(incident.getAo()),
                 externalAssignedUnitsMap);
         return new CachedIncident(geoBrokerIncident, assignedUnitIds, mapPoint(incident.getAo()), concernId, incident.getType(), incident.getState());
     }

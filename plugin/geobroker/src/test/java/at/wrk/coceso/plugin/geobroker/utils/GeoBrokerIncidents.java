@@ -18,6 +18,7 @@ public final class GeoBrokerIncidents {
                 true,
                 randomString(),
                 randomPoint(),
+                randomPoint(),
                 ImmutableMap.of("externalUnitId-42", "ZBO"));
     }
 }

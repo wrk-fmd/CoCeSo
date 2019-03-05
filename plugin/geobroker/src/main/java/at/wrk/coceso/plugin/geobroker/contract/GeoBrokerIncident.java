@@ -17,6 +17,7 @@ public class GeoBrokerIncident implements Serializable {
     private final Boolean blue;
     private final String info;
     private final GeoBrokerPoint location;
+    private final GeoBrokerPoint destination;
     private final Map<String, String> assignedUnits;
 
     public GeoBrokerIncident(
@@ -25,13 +26,16 @@ public class GeoBrokerIncident implements Serializable {
             final Boolean priority,
             final Boolean blue,
             final String info,
-            final GeoBrokerPoint location, final Map<String, String> assignedUnits) {
+            final GeoBrokerPoint location,
+            final GeoBrokerPoint destination,
+            final Map<String, String> assignedUnits) {
         this.id = id;
         this.type = type;
         this.priority = priority;
         this.blue = blue;
         this.info = info;
         this.location = location;
+        this.destination = destination;
         this.assignedUnits = assignedUnits == null ? ImmutableMap.of() : ImmutableMap.copyOf(assignedUnits);
     }
 
@@ -59,6 +63,10 @@ public class GeoBrokerIncident implements Serializable {
         return location;
     }
 
+    public GeoBrokerPoint getDestination() {
+        return destination;
+    }
+
     public Map<String, String> getAssignedUnits() {
         return assignedUnits;
     }
@@ -78,12 +86,13 @@ public class GeoBrokerIncident implements Serializable {
                 Objects.equals(blue, that.blue) &&
                 Objects.equals(info, that.info) &&
                 Objects.equals(location, that.location) &&
+                Objects.equals(destination, that.destination) &&
                 Objects.equals(assignedUnits, that.assignedUnits);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, type, priority, blue, info, location, assignedUnits);
+        return Objects.hash(id, type, priority, blue, info, location, destination, assignedUnits);
     }
 
     @Override
@@ -95,6 +104,7 @@ public class GeoBrokerIncident implements Serializable {
                 .append("blue", blue)
                 .append("info", info)
                 .append("location", location)
+                .append("destination", destination)
                 .append("assignedUnits", assignedUnits)
                 .toString();
     }
