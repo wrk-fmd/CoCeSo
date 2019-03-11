@@ -28,11 +28,15 @@ geocode.db.password=password
 geocode.gmaps.apikey=
 
 
-# Alarm Text Module Configuration
+### Alarm Text Module Configuration
+
+# Type of the SMS Gateway. Can be 'internal' or 'gammu'.
+alarm.text.gateway.sms.type=gammu
+
 # The URI of the SMS gateway. For example 'https://sms-gw.local:8082/'
 alarm.text.gateway.uri=
 
-# The authentication token to authenticate agains the SMS gateway.
+# The authentication token to authenticate agains the SMS gateway. For the type 'internal' it must contain a valid BASIC encoded authentication string.
 alarm.text.gateway.authenticationToken=
 
 # The prefix which shall be used to validate phone numbers
