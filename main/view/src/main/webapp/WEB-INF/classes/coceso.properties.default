@@ -33,7 +33,7 @@ geocode.gmaps.apikey=
 # Type of the SMS Gateway. Can be 'internal' or 'gammu'.
 alarm.text.gateway.sms.type=gammu
 
-# The URI of the SMS gateway. For example 'https://sms-gw.local:8082/'
+# The URI of the SMS gateway. For example 'https://sms-gw.local:8082/sms/send'
 alarm.text.gateway.uri=
 
 # The authentication token to authenticate agains the SMS gateway. For the type 'internal' it must contain a valid BASIC encoded authentication string.

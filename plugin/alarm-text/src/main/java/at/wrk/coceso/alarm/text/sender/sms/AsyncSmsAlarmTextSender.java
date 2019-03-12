@@ -4,7 +4,6 @@ import at.wrk.coceso.alarm.text.configuration.AlarmTextConfiguration;
 import at.wrk.coceso.alarm.text.data.SendAlarmTextResult;
 import at.wrk.coceso.alarm.text.sender.AlarmTextSender;
 import at.wrk.coceso.alarm.text.sender.sms.data.SendTextMessageRequestFactory;
-import at.wrk.coceso.alarm.text.util.UriUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,14 +32,10 @@ public class AsyncSmsAlarmTextSender implements AlarmTextSender {
             final AsyncRestTemplate asyncRestTemplate,
             final SmsSendAlarmTextCallback callback,
             final SendTextMessageRequestFactory sendTextMessageRequestFactory) {
-        this.gatewayUrl = buildSendUrl(alarmTextConfiguration.getSmsGatewayUrl());
+        this.gatewayUrl = alarmTextConfiguration.getSmsGatewayUrl();
         this.asyncRestTemplate = asyncRestTemplate;
         this.callback = callback;
         this.sendTextMessageRequestFactory = sendTextMessageRequestFactory;
-    }
-
-    private static URI buildSendUrl(final URI alarmTextGatewayUrl) {
-        return alarmTextGatewayUrl == null ? null : UriUtil.appendPath(alarmTextGatewayUrl, "/sms/send");
     }
 
     @Override

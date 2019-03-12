@@ -79,6 +79,6 @@ public class SendTextMessageRequestFactory {
     }
 
     private NiuSendTextMessageRequest createInternalRequest(final String alarmText, final List<String> targets) {
-        return new NiuSendTextMessageRequest(targets, alarmText);
+        return new NiuSendTextMessageRequest(targets, alarmText, false);
     }
 }
