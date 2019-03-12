@@ -1,7 +1,9 @@
 package at.wrk.coceso.alarm.text.api;
 
+import at.wrk.coceso.contract.ToStringStyle;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;
 
@@ -36,10 +38,10 @@ public class SendAlarmTextRequest implements Serializable {
 
     @Override
     public String toString() {
-        return "SendAlarmTextRequest{" +
-                "incidentId=" + incidentId +
-                ", alarmText='" + alarmText + '\'' +
-                ", type=" + type +
-                '}';
+        return new ToStringBuilder(this, ToStringStyle.STYLE)
+                .append("incidentId", incidentId)
+                .append("alarmText", alarmText)
+                .append("type", type)
+                .toString();
     }
 }

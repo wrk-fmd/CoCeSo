@@ -41,7 +41,9 @@ public class AlarmTextTargetFactoryTest {
         otherNumberNormalizer = mock(NumberNormalizer.class);
         when(otherNumberNormalizer.getSupportedUriSchema()).thenReturn("other");
 
-        sut = new AlarmTextTargetFactory(incidentService, ImmutableList.of(phoneNumberNormalizer, otherNumberNormalizer));
+        // TODO: Split tests for unit target factory and alarm text target factory
+        ImmutableList<NumberNormalizer> numberNormalizers = ImmutableList.of(phoneNumberNormalizer, otherNumberNormalizer);
+        sut = new AlarmTextTargetFactory(incidentService, new UnitTargetFactory(numberNormalizers));
     }
 
     @Test

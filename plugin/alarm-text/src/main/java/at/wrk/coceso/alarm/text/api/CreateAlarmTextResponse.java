@@ -1,6 +1,8 @@
 package at.wrk.coceso.alarm.text.api;
 
+import at.wrk.coceso.contract.ToStringStyle;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;
 
@@ -57,12 +59,12 @@ public class CreateAlarmTextResponse implements Serializable {
 
     @Override
     public String toString() {
-        return "CreateAlarmTextResponse{" +
-                "success=" + success +
-                ", error='" + error + '\'' +
-                ", errorDescription='" + errorDescription + '\'' +
-                ", alarmText='" + alarmText + '\'' +
-                ", type=" + type +
-                '}';
+        return new ToStringBuilder(this, ToStringStyle.STYLE)
+                .append("success", success)
+                .append("error", error)
+                .append("errorDescription", errorDescription)
+                .append("alarmText", alarmText)
+                .append("type", type)
+                .toString();
     }
 }

@@ -1,8 +1,8 @@
 package at.wrk.coceso.controller.data;
 
 import at.wrk.coceso.entity.Concern;
-import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.Unit;
+import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.helper.BatchUnits;
 import at.wrk.coceso.entity.helper.JsonViews;
 import at.wrk.coceso.entity.helper.RestProperty;
@@ -15,13 +15,18 @@ import at.wrk.coceso.service.UnitWriteService;
 import at.wrk.coceso.utils.ActiveConcern;
 import at.wrk.coceso.utils.Initializer;
 import com.fasterxml.jackson.annotation.JsonView;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/data/unit")
@@ -36,8 +41,8 @@ public class UnitController {
   private final EntityEventHandler<Unit> entityEventHandler;
 
   @Autowired
-  public UnitController(EntityEventFactory eehf) {
-    this.entityEventHandler = eehf.getEntityEventHandler(Unit.class);
+  public UnitController(EntityEventFactory entityEventFactory) {
+    this.entityEventHandler = entityEventFactory.getEntityEventHandler(Unit.class);
   }
 
   @PreAuthorize("@auth.hasAccessLevel('Main')")

@@ -20,6 +20,12 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>at.wrk.coceso</groupId>
+            <artifactId>coceso-db</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Commons -->
         <dependency>
             <groupId>com.google.guava</groupId>

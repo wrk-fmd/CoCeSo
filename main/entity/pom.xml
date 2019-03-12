@@ -77,6 +77,11 @@
             <artifactId>commons-lang3</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+
         <!-- Test dependency on commons-logging
         including it via spring-core to stay compatible with webapp -->
         <dependency>
