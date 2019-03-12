@@ -149,7 +149,7 @@
                 </div>
                 <div class="form-group col-md-4" data-bind="css: personnelId.formcss">
                   <label for="edit_personnelid"><spring:message code="user.personnelId"/></label>
-                  <input type="text" id="edit_personnelid" class="form-control" data-bind="value: personnelId, valueUpdate: 'input'"/>
+                  <input type="number" id="edit_personnelid" class="form-control" data-bind="value: personnelId, valueUpdate: 'input'"/>
                 </div>
               </div>
               <div class="row">
