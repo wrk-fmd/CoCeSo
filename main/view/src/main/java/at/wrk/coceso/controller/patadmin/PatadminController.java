@@ -75,7 +75,10 @@ public class PatadminController {
 
   @PreAuthorize("@auth.hasPermission(#concern, 'PatadminSettings')")
   @RequestMapping(value = "/settings", method = RequestMethod.POST)
-  public String saveSettings(@ModelAttribute final GroupsForm form, @ActiveConcern final Concern concern, @AuthenticationPrincipal final User user) {
+  public String saveSettings(
+          @ModelAttribute final GroupsForm form,
+          @ActiveConcern final Concern concern,
+          @AuthenticationPrincipal final User user) {
     patadminWriteService.update(form, concern, user);
     return "redirect:settings";
   }

@@ -17,14 +17,9 @@ import at.wrk.coceso.form.Group;
 import at.wrk.coceso.repository.PatientRepository;
 import at.wrk.coceso.repository.UnitRepository;
 import at.wrk.coceso.service.LogService;
-import at.wrk.coceso.utils.DataAccessLogger;
 import at.wrk.coceso.service.patadmin.internal.PatadminServiceInternal;
 import at.wrk.coceso.specification.PatientSearchSpecification;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
+import at.wrk.coceso.utils.DataAccessLogger;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +27,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -52,7 +53,7 @@ class PatadminServiceImpl implements PatadminServiceInternal {
   private LogService logService;
 
   @Override
-  public boolean[] getAccessLevels(Concern concern) {
+  public boolean[] getAccessLevels(final Concern concern) {
     return new boolean[]{
       auth.hasPermission(concern, AccessLevel.PatadminSettings),
       auth.hasPermission(concern, AccessLevel.PatadminRegistration),
@@ -62,12 +63,12 @@ class PatadminServiceImpl implements PatadminServiceInternal {
   }
 
   @Override
-  public void addAccessLevels(ModelMap map, Concern concern) {
+  public void addAccessLevels(final ModelMap map, final Concern concern) {
     map.addAttribute("accessLevels", getAccessLevels(concern));
   }
 
   @Override
-  public List<Patient> getAllInTreatment(Concern concern, User user) {
+  public List<Patient> getAllInTreatment(final Concern concern, final User user) {
     List<Patient> patients = patientRepository.findInTreatment(concern);
     DataAccessLogger.logPatientAccess(patients, concern, user);
     return patients;
@@ -86,14 +87,14 @@ class PatadminServiceImpl implements PatadminServiceInternal {
   }
 
   @Override
-  public List<Unit> getGroups(Concern concern) {
+  public List<Unit> getGroups(final Concern concern) {
     List<Unit> groups = unitRepository.findByConcernAndTypeIn(concern, UnitType.treatmentTypes);
     Collections.sort(groups);
     return groups;
   }
 
   @Override
-  public Unit getGroup(int id) {
+  public Unit getGroup(final int id) {
     Unit group = unitRepository.findOne(id);
     if (group == null) {
       throw new ErrorsException(Errors.EntityMissing);
@@ -108,7 +109,7 @@ class PatadminServiceImpl implements PatadminServiceInternal {
   }
 
   @Override
-  public List<Unit> update(List<Group> groups, Concern concern, User user, NotifyList notify) {
+  public List<Unit> update(final List<Group> groups, final Concern concern, final User user, final NotifyList notify) {
     Set<Unit> save = groups.stream()
         .map(group -> {
           Unit unit = getGroup(group.getId());
