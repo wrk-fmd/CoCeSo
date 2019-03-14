@@ -3,21 +3,25 @@ package at.wrk.coceso.controller.data;
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.enums.Errors;
-import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entity.helper.ClientLog;
 import at.wrk.coceso.entity.helper.RestProperty;
 import at.wrk.coceso.entity.helper.RestResponse;
 import at.wrk.coceso.service.ConcernService;
-import at.wrk.coceso.service.UserService;
 import at.wrk.coceso.service.PointService;
 import at.wrk.coceso.service.TaskWriteService;
+import at.wrk.coceso.service.UserService;
 import at.wrk.coceso.utils.ActiveConcern;
-import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Collection;
 
 @RestController
 @RequestMapping("/data/")
@@ -37,9 +41,11 @@ public class DataController {
 
   @PreAuthorize("@auth.hasAccessLevel('Main')")
   @RequestMapping(value = "assignUnit", produces = "application/json", method = RequestMethod.POST)
-  public RestResponse assignUnit(@RequestParam("incident_id") int incident_id, @RequestParam("unit_id") int unit_id,
-      @AuthenticationPrincipal User user) {
-    taskWriteService.changeState(incident_id, unit_id, TaskState.Assigned, user);
+  public RestResponse assignUnit(
+          @RequestParam("incident_id") final int incidentId,
+          @RequestParam("unit_id") final int unitId,
+        @AuthenticationPrincipal final User user) {
+    taskWriteService.assignUnit(incidentId, unitId, user);
     return new RestResponse(true);
   }
 

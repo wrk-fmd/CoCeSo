@@ -10,6 +10,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(propagation = Propagation.NOT_SUPPORTED)
 public interface TaskWriteService {
 
-  void changeState(int incident_id, int unit_id, TaskState state, User user);
+    /**
+     * Changes the state of the given incident and unit combination to the specified state.
+     */
+    void changeState(int incidentId, int unitId, TaskState state, User user);
 
+    /**
+     * Assigns the given unit to the incident. If the unit is already assigned, no operation is performed.
+     */
+    void assignUnit(int incidentId, int unitId, User user);
 }

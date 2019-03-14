@@ -45,10 +45,21 @@ class TaskServiceImpl implements TaskServiceInternal {
     private LogService logService;
 
     @Override
-    public synchronized void changeState(int incident_id, int unit_id, TaskState state, User user, NotifyList notify) {
-        Incident i = incidentService.getById(incident_id);
-        Unit u = unitService.getById(unit_id);
-        changeState(i, u, state, user, notify);
+    public void assignUnit(final int incidentId, final int unitId, final User user, final NotifyList notify) {
+        Incident incident = incidentService.getById(incidentId);
+        Unit unit = unitService.getById(unitId);
+        if (incident.getUnits() != null && incident.getUnits().get(unit) == null) {
+            changeState(incident, unit, TaskState.Assigned, user, notify);
+        } else {
+            LOG.info("{}: Unit {} is already assigned to incident {}. Assigning the unit again is skipped.", user, unit, incident);
+        }
+    }
+
+    @Override
+    public synchronized void changeState(int incidentId, int unitId, TaskState state, User user, NotifyList notify) {
+        Incident incident = incidentService.getById(incidentId);
+        Unit unit = unitService.getById(unitId);
+        changeState(incident, unit, state, user, notify);
     }
 
     @Override
@@ -61,7 +72,7 @@ class TaskServiceImpl implements TaskServiceInternal {
         }
 
         if (!Objects.equals(incident.getConcern(), unit.getConcern())) {
-            LOG.info("{}: Combination Unit {}/incident {} in different concerns", user, unit, incident);
+            LOG.warn("{}: Combination of unit {} and incident {} is in different concerns.", user, unit, incident);
             throw new ErrorsException(Errors.ConcernMismatch);
         }
 
@@ -76,7 +87,7 @@ class TaskServiceImpl implements TaskServiceInternal {
         }
 
         if (!incident.getType().isPossibleState(state)) {
-            LOG.warn("{}: TaskService.changeState(): New state not possible for Unit {}/incident {}", user, unit, incident);
+            LOG.warn("{}: TaskService.changeState(): New state not possible for unit {} and incident {}", user, unit, incident);
             throw new ErrorsException(Errors.ImpossibleTaskState);
         }
 
@@ -86,7 +97,8 @@ class TaskServiceImpl implements TaskServiceInternal {
             updatedUnit = assign(incident, unit, state, user, notify);
         } else {
             LOG.debug("{}: Unit {} was already assigned to incident {}. TaskState is updated to {}.", user, unit, incident, state);
-            updatedUnit = setState(incident, unit, state, user, notify);
+            LogEntryType logEntryType = state == TaskState.Detached ? LogEntryType.UNIT_DETACH : LogEntryType.TASKSTATE_CHANGED;
+            updatedUnit = setState(incident, unit, state, user, notify, logEntryType);
         }
 
         if (updatedUnit != null) {
@@ -129,18 +141,13 @@ class TaskServiceImpl implements TaskServiceInternal {
                 .filter(this::isAutoDetachApplicable)
                 .forEach(incidentOfUnit -> autoDetachUnitFromIncident(unit, user, notify, incidentOfUnit));
 
-        TaskState effectiveTaskState = hookService.callTaskStateChanged(incident, unit, state, user, notify);
-
-        // Add incident to unit's task list
-        unit.addIncident(incident, effectiveTaskState);
-
-        logService.logAuto(user, LogEntryType.UNIT_ASSIGN, unit.getConcern(), unit, incident, effectiveTaskState);
+        setState(incident, unit, state, user, notify, LogEntryType.UNIT_ASSIGN);
 
         return unit;
     }
 
     private void autoDetachUnitFromIncident(final Unit unit, final User user, final NotifyList notify, final Incident incident) {
-        LOG.debug("{}: Auto-detach unit #{}, incident #{}", user, unit.getId(), incident.getId());
+        LOG.debug("{}: Auto-detach unit #{} from incident #{}", user, unit.getId(), incident.getId());
         logService.logAuto(user, LogEntryType.UNIT_AUTO_DETACH, unit.getConcern(), unit, incident, TaskState.Detached);
 
         hookService.callTaskStateChanged(incident, unit, TaskState.Detached, user, notify);
@@ -153,22 +160,28 @@ class TaskServiceImpl implements TaskServiceInternal {
         return inc.getType().isSingleUnit() || inc.getType() == IncidentType.Relocation;
     }
 
-    private Unit setState(Incident i, Unit u, TaskState state, User user, NotifyList notify) {
-        logService.logAuto(user, state == TaskState.Detached ? LogEntryType.UNIT_DETACH : LogEntryType.TASKSTATE_CHANGED, i.getConcern(), u, i, state);
-
+    private Unit setState(Incident incident, Unit unit, TaskState state, User user, NotifyList notify, final LogEntryType logEntryType) {
         // Call additional hooks
-        state = hookService.callTaskStateChanged(i, u, state, user, notify);
+        TaskState effectiveState = hookService.callTaskStateChanged(incident, unit, state, user, notify);
 
-        if (state == TaskState.Detached) {
-            LOG.debug("{}: Detaching unit {} from incident {}", user, u, i);
-            u.removeIncident(i);
+        logService.logAuto(
+                user,
+                logEntryType,
+                incident.getConcern(),
+                unit,
+                incident,
+                effectiveState);
+
+        if (effectiveState == TaskState.Detached) {
+            LOG.debug("{}: Detaching unit {} from incident {}", user, unit, incident);
+            unit.removeIncident(incident);
         } else {
             // Only save if not already done by assignUnit
-            LOG.debug("{}: Updating TaskState for unit {}/incident {} to {}", user, u, i, state);
-            u.addIncident(i, state);
+            LOG.debug("{}: Updating TaskState for unit {} in incident {} to {}", user, unit, incident, effectiveState);
+            unit.addIncident(incident, effectiveState);
         }
 
-        return u;
+        return unit;
     }
 
 }

@@ -12,10 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public interface TaskServiceInternal {
 
-  void changeState(int incident_id, int unit_id, TaskState state, User user, NotifyList notify);
+  void assignUnit(int incidentId, int unitId, User user, NotifyList notify);
 
-  void changeState(Incident i, Unit u, TaskState state, User user, NotifyList notify);
+  void changeState(int incidentId, int unitId, TaskState state, User user, NotifyList notify);
 
-  void uncheckedChangeState(Incident i, Unit u, TaskState state, User user, NotifyList notify);
+  void changeState(Incident incident, Unit unit, TaskState state, User user, NotifyList notify);
+
+  void uncheckedChangeState(Incident incident, Unit unit, TaskState state, User user, NotifyList notify);
 
 }

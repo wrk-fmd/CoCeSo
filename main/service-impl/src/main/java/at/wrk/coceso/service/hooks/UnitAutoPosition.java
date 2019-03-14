@@ -48,7 +48,7 @@ class UnitAutoPosition implements TaskStateHook {
       return state;
     }
 
-    LOG.debug("{}: Position autoset for unit {}", user, user);
+    LOG.debug("{}: Position autoset for unit {}", user, unit);
 
     Changes changes = new Changes("unit");
     changes.put("position", Point.toStringOrNull(unit.getPosition()), Point.toStringOrNull(position));

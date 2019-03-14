@@ -19,11 +19,15 @@ class TaskWriteServiceImpl implements TaskWriteService {
   private TaskServiceInternal taskService;
 
   @Autowired
-  private EntityEventFactory eef;
+  private EntityEventFactory entityEventFactory;
 
   @Override
-  public synchronized void changeState(int incident_id, int unit_id, TaskState state, User user) {
-    NotifyList.executeVoid(n -> taskService.changeState(incident_id, unit_id, state, user, n), eef);
+  public synchronized void changeState(int incidentId, int unitId, TaskState state, User user) {
+    NotifyList.executeVoid(n -> taskService.changeState(incidentId, unitId, state, user, n), entityEventFactory);
   }
 
+  @Override
+  public void assignUnit(final int incidentId, final int unitId, final User user) {
+    NotifyList.executeVoid(notifyList -> taskService.assignUnit(incidentId, unitId, user, notifyList), entityEventFactory);
+  }
 }
