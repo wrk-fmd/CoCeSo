@@ -55,7 +55,7 @@
           <div class="form-group col-md-12" data-bind="css: bo.formcss">
             <label for="bo" class=""><spring:message code="incident.bo"/>:</label>
             <textarea id="bo" name="bo" rows="3" class="form-control" placeholder="<spring:message code="incident.bo"/>" autofocus
-                      data-bind="disable: disableBO, value: bo, valueUpdate: 'input', css: {'form-highlight': !bo() && !disableBO()}, point: true">
+                      data-bind="disable: disableBO, value: bo, valueUpdate: 'input', css: {'form-highlight': !bo() && !disableBO()}, point: true, hasFocus: true">
             </textarea>
           </div>
         </div>
