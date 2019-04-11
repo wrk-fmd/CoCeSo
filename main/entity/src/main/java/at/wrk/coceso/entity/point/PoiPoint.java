@@ -97,7 +97,7 @@ class PoiPoint implements Poi, Point {
       coordinates = poiGeocoder.geocode(this);
       if (coordinates == null) {
         // No coordinates in POI entry, use normal address
-        ImmutableAddress immutableAddress = ImmutableAddress.createFromAddress(new AddressPoint(getInfo()));
+        ImmutableAddress immutableAddress = ImmutableAddress.createFromAddress(AddressPointParser.parseFromString(getInfo()));
         coordinates = addressGeocoder.geocode(immutableAddress);
       }
     }

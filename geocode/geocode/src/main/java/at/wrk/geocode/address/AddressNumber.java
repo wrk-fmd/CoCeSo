@@ -19,6 +19,10 @@ public class AddressNumber implements IAddressNumber {
     private final String block;
     private final String details;
 
+    public static AddressNumber createEmpty() {
+        return new AddressNumber();
+    }
+
     protected AddressNumber() {
         from = null;
         to = null;

@@ -5,11 +5,8 @@ import at.wrk.geocode.Geocoder;
 import at.wrk.geocode.LatLng;
 import at.wrk.geocode.address.Address;
 import at.wrk.geocode.address.AddressNumber;
-import at.wrk.geocode.address.IAddressNumber;
 import at.wrk.geocode.address.ImmutableAddress;
-import at.wrk.geocode.util.IntegerUtils;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,10 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.util.Arrays;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * A Point representing an address
@@ -34,18 +28,17 @@ class AddressPoint implements Point, Address {
     @Qualifier("ChainedGeocoder")
     private Geocoder<ImmutableAddress> addressGeocoder;
 
-    private static final Pattern isStreet = Pattern.compile("^(\\w[\\w\\s\\-\\.]*?)"
-            + "( ([1-9]\\d*(\\-([1-9]\\d*)|[a-zA-Z])?)?(/.*)?)?( # (\\w[\\w\\s\\-\\.]*))?$", Pattern.UNICODE_CHARACTER_CLASS);
-    private static final Pattern isCity = Pattern.compile("^(([1-9]\\d{3,4}) )?(\\w[\\w\\s\\-\\.]*)$", Pattern.UNICODE_CHARACTER_CLASS);
+    private final String title;
+    private final String street;
+    private final String intersection;
+    private final String city;
+    private final String additional;
+    private final Integer postCode;
 
     private boolean filled = false;
-
-    private final String title, street, intersection, city, additional;
-    private final Integer postCode;
     private LatLng coordinates;
 
-    @JsonDeserialize(as = AddressNumber.class)
-    private final IAddressNumber number;
+    private final AddressNumber number;
 
     private AddressPoint() {
         title = null;
@@ -57,134 +50,36 @@ class AddressPoint implements Point, Address {
         additional = null;
     }
 
-    private AddressPoint(AddressPoint p) {
-        // Create a "deep" copy of p - since all properties are effectively immutable they don't actually have to be copied
-        filled = p.filled;
-        title = p.title;
-        street = p.street;
-        intersection = p.intersection;
-        number = p.number;
-        postCode = p.postCode;
-        city = p.city;
-        additional = p.additional;
-        coordinates = p.coordinates;
+    private AddressPoint(final AddressPoint other) {
+        // Create a "deep" copy of other - since all properties are effectively immutable they don't actually have to be copied
+        super();
+        filled = other.filled;
+        title = other.title;
+        street = other.street;
+        intersection = other.intersection;
+        number = other.number;
+        postCode = other.postCode;
+        city = other.city;
+        additional = other.additional;
+        coordinates = other.coordinates;
+        addressGeocoder = other.addressGeocoder;
     }
 
-    /**
-     * Parse address string
-     *
-     * @param str
-     */
-    public AddressPoint(String str) {
-        String[] parsedData = null;
-        String parsedTitle = null, parsedAdditional = null;
-
-        if (!StringUtils.isBlank(str)) {
-            String[] lines = str.trim().split("\n");
-            for (int i = 0; i < lines.length; i++) {
-                lines[i] = lines[i].trim();
-            }
-
-            Matcher street0, street1, city1, city2;
-
-            switch (lines.length) {
-                case 0:
-                    break;
-                case 1:
-                    street0 = isStreet.matcher(lines[0]);
-                    if (street0.find(0)) {
-                        // First (and only) line represents street
-                        parsedData = getFromRegex(street0, null);
-                    } else if (StringUtils.isNotBlank(lines[0])) {
-                        // Use as title (e.g. POI)
-                        parsedTitle = lines[0];
-                    }
-                    break;
-                case 2:
-                    street0 = isStreet.matcher(lines[0]);
-                    street1 = isStreet.matcher(lines[1]);
-                    city1 = isCity.matcher(lines[1]);
-                    if (street0.find(0) && city1.find(0)) {
-                        // First line is street, second is city
-                        parsedData = getFromRegex(street0, city1);
-                    } else if (street1.find(0)) {
-                        // Second line is street
-                        parsedTitle = lines[0];
-                        parsedData = getFromRegex(street1, null);
-                    } else if (street0.find(0)) {
-                        // First line is street
-                        parsedData = getFromRegex(street0, null);
-                        parsedAdditional = lines[1];
-                    } else {
-                        parsedTitle = lines[0];
-                        parsedAdditional = lines[1];
-                    }
-                    break;
-                default:
-                    street0 = isStreet.matcher(lines[0]);
-                    street1 = isStreet.matcher(lines[1]);
-                    city1 = isCity.matcher(lines[1]);
-                    city2 = isCity.matcher(lines[2]);
-                    int additionalStart;
-
-                    if (street1.find(0) && city2.find(0)) {
-                        // Second line is street, third is city
-                        parsedTitle = lines[0];
-                        parsedData = getFromRegex(street1, city2);
-                        additionalStart = 3;
-                    } else if (street0.find(0) && city1.find(0)) {
-                        // First line is street, second is city
-                        parsedData = getFromRegex(street0, city1);
-                        additionalStart = 2;
-                    } else if (street1.find(0)) {
-                        // Second line is street
-                        parsedTitle = lines[0];
-                        parsedData = getFromRegex(street1, null);
-                        additionalStart = 2;
-                    } else if (street0.find(0)) {
-                        // First line is street
-                        parsedData = getFromRegex(street0, null);
-                        additionalStart = 1;
-                    } else {
-                        parsedTitle = lines[0];
-                        additionalStart = 1;
-                    }
-
-                    parsedAdditional = String.join("\n", Arrays.copyOfRange(lines, additionalStart, lines.length));
-                    break;
-            }
-        }
-
-        if (parsedData == null) {
-            street = null;
-            number = new AddressNumber(null);
-            intersection = null;
-            postCode = null;
-            city = null;
-        } else {
-            street = StringUtils.trimToNull(parsedData[0]);
-            number = new AddressNumber(parsedData[1]);
-            intersection = StringUtils.trimToNull(parsedData[2]);
-            postCode = IntegerUtils.parseInt(parsedData[3]).orElse(null);
-            city = StringUtils.trimToNull(parsedData[4]);
-        }
-
-        title = StringUtils.trimToNull(parsedTitle);
-        additional = StringUtils.trimToNull(parsedAdditional);
-    }
-
-    private String[] getFromRegex(Matcher street, Matcher city) {
-        String[] parsedData = new String[5];
-        if (street != null) {
-            parsedData[0] = street.group(1);
-            parsedData[1] = street.group(3);
-            parsedData[2] = street.group(8);
-        }
-        if (city != null) {
-            parsedData[3] = city.group(2);
-            parsedData[4] = city.group(3);
-        }
-        return parsedData;
+    public AddressPoint(
+            final String title,
+            final String street,
+            final String intersection,
+            final String city,
+            final String additional,
+            final Integer postCode,
+            final AddressNumber number) {
+        this.title = title;
+        this.street = street;
+        this.intersection = intersection;
+        this.city = city;
+        this.additional = additional;
+        this.postCode = postCode;
+        this.number = number;
     }
 
     @JsonView({JsonViews.Database.class, JsonViews.PointFull.class})
@@ -201,7 +96,7 @@ class AddressPoint implements Point, Address {
 
     @JsonView({JsonViews.Database.class, JsonViews.PointFull.class})
     @Override
-    public IAddressNumber getNumber() {
+    public AddressNumber getNumber() {
         return number;
     }
 
