@@ -1,7 +1,15 @@
 package at.wrk.coceso.service.impl;
 
-import at.wrk.coceso.entity.*;
-import at.wrk.coceso.entity.enums.*;
+import at.wrk.coceso.entity.Concern;
+import at.wrk.coceso.entity.Incident;
+import at.wrk.coceso.entity.Unit;
+import at.wrk.coceso.entity.User;
+import at.wrk.coceso.entity.enums.Errors;
+import at.wrk.coceso.entity.enums.IncidentState;
+import at.wrk.coceso.entity.enums.IncidentType;
+import at.wrk.coceso.entity.enums.LogEntryType;
+import at.wrk.coceso.entity.enums.TaskState;
+import at.wrk.coceso.entity.enums.UnitType;
 import at.wrk.coceso.entity.helper.BatchUnits;
 import at.wrk.coceso.entity.helper.Changes;
 import at.wrk.coceso.entity.point.Point;
@@ -16,13 +24,6 @@ import at.wrk.coceso.service.internal.IncidentServiceInternal;
 import at.wrk.coceso.service.internal.TaskServiceInternal;
 import at.wrk.coceso.service.internal.UnitServiceInternal;
 import at.wrk.coceso.utils.Initializer;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -92,7 +101,7 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
   }
 
   @Override
-  public Unit updateMain(Unit unit, User user, NotifyList notify) {
+  public Unit updateMain(final Unit unit, final User user, final NotifyList notify) {
     if (unit.getId() == null) {
       LOG.warn("{}: Tried to create unit with wrong method", user);
       throw new ErrorsException(Errors.UnitCreateNotAllowed);
@@ -119,31 +128,31 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
       changes.put("state", save.getState(), unit.getState());
       save.setState(unit.getState());
     }
+
     if (unit.getInfo() != null && !unit.getInfo().equals(save.getInfo())) {
       changes.put("info", save.getInfo(), unit.getInfo());
       save.setInfo(unit.getInfo());
     }
 
     Point position = Point.create(unit.getPosition(), save.getConcern());
-    if (!Point.infoEquals(position, save.getPosition())) {
+    if (unit.getPosition() != null && !Point.infoEquals(position, save.getPosition())) {
       changes.put("position", Point.toStringOrNull(save.getPosition()), Point.toStringOrNull(position));
       save.setPosition(position);
     }
 
-    unit = unitRepository.saveAndFlush(save);
-    logService.logAuto(user, LogEntryType.UNIT_UPDATE, unit.getConcern(), unit, null, changes);
-    notify.add(unit);
+    final Unit updatedUnit = unitRepository.saveAndFlush(save);
+    logService.logAuto(user, LogEntryType.UNIT_UPDATE, updatedUnit.getConcern(), updatedUnit, null, changes);
+    notify.add(updatedUnit);
 
     if (incidents != null) {
-      final Unit u = unit;
-      incidents.forEach((incident, state) -> taskService.changeState(incidentService.getById(incident.getId()), u, state, user, notify));
+      incidents.forEach((incident, state) -> taskService.changeState(incidentService.getById(incident.getId()), updatedUnit, state, user, notify));
     }
 
-    return unit;
+    return updatedUnit;
   }
 
   @Override
-  public Unit updateEdit(Unit unit, Concern concern, User user, NotifyList notify) {
+  public Unit updateEdit(final Unit unit, final Concern concern, final User user, final NotifyList notify) {
     Changes changes = new Changes("unit");
     Unit save;
     if (unit.getId() == null) {
@@ -257,12 +266,12 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
       save.setSection(unit.getSection());
     }
 
-    unit = unitRepository.saveAndFlush(save);
-    logService.logAuto(user, LogEntryType.UNIT_CREATE, unit.getConcern(), unit, null, changes);
+    Unit updatedUnit = unitRepository.saveAndFlush(save);
+    logService.logAuto(user, LogEntryType.UNIT_CREATE, updatedUnit.getConcern(), updatedUnit, null, changes);
 
-    notify.add(unit);
+    notify.add(updatedUnit);
 
-    return unit;
+    return updatedUnit;
   }
 
   @Override
