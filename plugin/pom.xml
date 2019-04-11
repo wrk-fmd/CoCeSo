@@ -22,8 +22,8 @@
     <module>vcm-poi</module>
     <module>vienna</module>
     <module>wflwr-poi</module>
-      <module>geobroker</module>
-      <module>alarm-text</module>
+    <module>geobroker</module>
+    <module>alarm-text</module>
   </modules>
 
   <profiles>
