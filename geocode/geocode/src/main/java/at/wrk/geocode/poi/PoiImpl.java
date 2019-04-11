@@ -1,19 +1,22 @@
 package at.wrk.geocode.poi;
 
 import at.wrk.geocode.LatLng;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * Basic implementation for a POI
  */
 class PoiImpl implements Poi {
 
-  private String text;
-  private LatLng coordinates;
+  private final String text;
+  private final LatLng coordinates;
 
   public PoiImpl() {
+    this.text = null;
+    this.coordinates = null;
   }
 
-  public PoiImpl(String text, LatLng coordinates) {
+  public PoiImpl(final String text, final LatLng coordinates) {
     this.text = text;
     this.coordinates = coordinates;
   }
@@ -28,4 +31,11 @@ class PoiImpl implements Poi {
     return coordinates;
   }
 
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this)
+            .append("text", text)
+            .append("coordinates", coordinates)
+            .toString();
+  }
 }

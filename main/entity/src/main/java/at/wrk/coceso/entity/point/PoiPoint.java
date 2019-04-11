@@ -41,10 +41,10 @@ class PoiPoint implements Poi, Point {
     this.additional = null;
   }
 
-  private PoiPoint(PoiPoint p) {
-    text = p.text;
-    additional = p.additional;
-    coordinates = p.coordinates;
+  private PoiPoint(final PoiPoint other) {
+    text = other.text;
+    additional = other.additional;
+    coordinates = other.coordinates;
   }
 
   PoiPoint(String text, String additional) {
@@ -52,7 +52,7 @@ class PoiPoint implements Poi, Point {
     this.additional = additional;
   }
 
-  public PoiPoint(Poi poi, String info) {
+  public PoiPoint(final Poi poi, final String info) {
     this.text = poi.getText();
     this.additional = info == null ? null : StringUtils.trimToNull(info.substring(poi.getText().length()));
     this.coordinates = poi.getCoordinates();
@@ -76,9 +76,11 @@ class PoiPoint implements Poi, Point {
     if (text != null) {
       info += text;
     }
+
     if (additional != null) {
-      info += additional;
+      info += (StringUtils.isBlank(info) ? "" : "\n") + additional;
     }
+
     return info;
   }
 
