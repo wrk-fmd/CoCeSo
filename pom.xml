@@ -32,10 +32,10 @@
         <jstl.version>1.2</jstl.version>
         <servlet.version>3.1.0</servlet.version>
 
-        <spring.version>4.3.19.RELEASE</spring.version>
-        <spring.data.version>1.13.15.RELEASE</spring.data.version>
-        <spring.data.jpa.version>1.11.15.RELEASE</spring.data.jpa.version>
-        <spring.security.version>4.2.8.RELEASE</spring.security.version>
+        <spring.version>4.3.23.RELEASE</spring.version>
+        <spring.data.version>1.13.20.RELEASE</spring.data.version>
+        <spring.data.jpa.version>1.11.20.RELEASE</spring.data.jpa.version>
+        <spring.security.version>4.2.12.RELEASE</spring.security.version>
         <apache.httpclient.version>4.5.5</apache.httpclient.version>
         <apache.httpasyncclient.version>4.1.4</apache.httpasyncclient.version>
 
