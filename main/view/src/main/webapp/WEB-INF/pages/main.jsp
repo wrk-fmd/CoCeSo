@@ -78,6 +78,7 @@
                 </a>
               </li>
               <li>
+                <!-- open units filtered for 'alarm not confirmed yet' -->
                 <a href="#" title="<spring:message code="main.unit.radio"/>"
                    data-bind="click: function() {openUnits({filter: ['radio'], title: '<spring:message code="main.unit.radio"/>'}, 'left+30% bottom')}"
                    data-toggle="tooltip" data-placement="bottom" class="tooltipped notification-icon">
@@ -152,7 +153,7 @@
               </a>
               <ul class="dropdown-menu">
                 <li>
-                  <a href="#" title="<spring:message code="incident.add"/>" data-bind="click: function() {openIncident()}">
+                  <a href="#" title="<spring:message code="incident.add"/>" data-bind="click: function() {openIncident({section: sections.filter()})}">
                     <span class="glyphicon glyphicon-plus"></span> <spring:message code="incident.add"/></a>
                 </li>
                 <li class="divider"></li>

@@ -429,7 +429,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
           return;
         }
         if (event.which === keyMapping.openIncidentKey) {
-          nav.openIncident();
+          nav.openIncident({section: sections.filter()});
         }
       });
     }

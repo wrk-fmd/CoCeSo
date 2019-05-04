@@ -22,8 +22,18 @@
  * @param {module:utils/destroy} destroy
  * @param {module:utils/i18n} _
  */
-define(["knockout", "./point", "./task", "../navigation", "data/save", "utils/constants", "utils/destroy", "utils/i18n", "ko/extenders/isvalue"],
-  function(ko, Point, Task, navigation, save, constants, destroy, _) {
+define([
+  "knockout",
+    "./point",
+    "./task",
+    "../navigation",
+    "data/save",
+    "data/store/sections",
+    "utils/constants",
+    "utils/destroy",
+    "utils/i18n",
+    "ko/extenders/isvalue"],
+  function(ko, Point, Task, navigation, save, sectionsStore, constants, destroy, _) {
     "use strict";
 
     /**
@@ -371,8 +381,11 @@ define(["knockout", "./point", "./task", "../navigation", "data/save", "utils/co
        * @returns {void}
        */
       this.addIncident = function() {
-        var data = {units: {}};
-        data.units[this.id] = constants.TaskState.assigned;
+        var data = {
+          units: {},
+          section: sectionsStore.filter()
+        };
+        data.units[self.id] = constants.TaskState.assigned;
         navigation.openIncident(data);
       };
 
@@ -383,13 +396,17 @@ define(["knockout", "./point", "./task", "../navigation", "data/save", "utils/co
        * @returns {void}
        */
       this.reportIncident = function() {
-        var data = {caller: self.call};
+        var data = {
+          caller: self.call
+        };
         if (this.portable) {
           data.bo = {info: self.position.info()};
           data.blue = true;
           data.units = {};
           data.units[self.id] = constants.TaskState.abo;
+          data.section = sectionsStore.filter();
         }
+
         navigation.openIncident(data);
       };
     };
