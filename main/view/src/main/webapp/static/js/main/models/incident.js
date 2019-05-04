@@ -447,6 +447,22 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
       }, this);
 
       /**
+       * Return the type as localized string
+       *
+       * @function
+       * @type ko.pureComputed
+       * @returns {String}
+       */
+      this.stateString = ko.pureComputed(function () {
+        var localizedStateString = "unknown";
+        var currentIncidentState = this.state();
+        if (currentIncidentState) {
+          localizedStateString = _("incident.state." + currentIncidentState.toLowerCase().escapeHTML());
+        }
+        return localizedStateString;
+      }, this);
+
+      /**
        * Title in unit dropdown
        *
        * @function

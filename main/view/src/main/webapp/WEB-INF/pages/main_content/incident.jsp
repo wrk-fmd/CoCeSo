@@ -167,7 +167,7 @@
           <!-- /ko -->
 
           <dt><spring:message code="incident.state"/></dt>
-          <dd data-bind="text: state"></dd>
+          <dd data-bind="text: stateString"></dd>
 
           <!-- ko foreach: units -->
           <dt data-bind="text: unit() && unit().call"></dt>
