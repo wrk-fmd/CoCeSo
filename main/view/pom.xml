@@ -34,13 +34,28 @@
         <profile>
             <id>geobroker</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <activeByDefault>false</activeByDefault>
             </activation>
             <dependencies>
                 <dependency>
                     <groupId>at.wrk.coceso-plugins</groupId>
                     <artifactId>coceso-geobroker</artifactId>
                     <version>${project.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>external-alarm-sending</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>at.wrk.coceso-plugins</groupId>
+                    <artifactId>alarm-text</artifactId>
+                    <version>${project.version}</version>
+                    <scope>runtime</scope>
                 </dependency>
             </dependencies>
         </profile>
@@ -148,13 +163,6 @@
         <dependency>
             <groupId>at.wrk.coceso-plugins</groupId>
             <artifactId>coceso-vienna</artifactId>
-            <version>${project.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>at.wrk.coceso-plugins</groupId>
-            <artifactId>alarm-text</artifactId>
             <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>
