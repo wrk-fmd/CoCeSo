@@ -54,6 +54,7 @@
         <junit.params.version>1.1.1</junit.params.version>
         <hamcrest.version>1.3</hamcrest.version>
         <hamcrest.optional.matcher.version>2.0.0</hamcrest.optional.matcher.version>
+        <org.awaitility.version>3.1.6</org.awaitility.version>
 
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -331,6 +332,13 @@
             <groupId>com.github.npathai</groupId>
             <artifactId>hamcrest-optional</artifactId>
             <version>${hamcrest.optional.matcher.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>${org.awaitility.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

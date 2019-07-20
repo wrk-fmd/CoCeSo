@@ -48,15 +48,14 @@
       <li>
         <a href="<c:url value="/home"/>"><spring:message code="exit"/></a>
       </li>
-    </ul>
 
-    <div class="navbar-hide-on-1000px">
-      <ul class="nav navbar navbar-center">
-        <li>
-          <a class="${autofocus_add}" href="<c:url value="/patadmin/registration/add"/>" accesskey="a"><spring:message code="patient.add"/></a>
-        </li>
-      </ul>
-    </div>
+      <li>
+        &nbsp;
+      </li>
+      <li>
+        <a class="${autofocus_add}" href="<c:url value="/patadmin/registration/add"/>" accesskey="a"><spring:message code="patient.add"/></a>
+      </li>
+    </ul>
 
     <form action="<c:url value="/patadmin/registration/search"/>" class="navbar-form navbar-right" method="get">
       <div class="form-group">

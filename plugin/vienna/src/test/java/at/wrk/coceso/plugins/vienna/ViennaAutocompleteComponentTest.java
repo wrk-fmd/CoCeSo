@@ -2,13 +2,15 @@ package at.wrk.coceso.plugins.vienna;
 
 import at.wrk.coceso.plugins.vienna.util.PostalCodeUtil;
 import at.wrk.coceso.plugins.vienna.util.ViennaStreetParser;
+import org.awaitility.Awaitility;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.Collection;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 public class ViennaAutocompleteComponentTest {
@@ -17,11 +19,10 @@ public class ViennaAutocompleteComponentTest {
 
     @Before
     public void setUp() {
-        try {
-            instance = new ViennaAutocomplete(new StreetnameResourceProvider(), new ViennaStreetParser(new PostalCodeUtil()));
-        } catch (IOException ex) {
-            fail("IOException on loading ViennaAutocomplete");
-        }
+        instance = new ViennaAutocomplete(new StreetnameResourceProvider(), new ViennaStreetParser(new PostalCodeUtil()));
+        instance.onInit();
+        Awaitility.await()
+                .until(instance::isInitialized);
     }
 
     @After
@@ -72,8 +73,6 @@ public class ViennaAutocompleteComponentTest {
 
     private void testContaining(String str, int max) {
         Collection<String> results = instance.getContainingCollection(str, max);
-        if (results.size() > max) {
-            fail("Too many results for ViennaAutocomplete.getContaining for search string " + str);
-        }
+        assertThat("Expected that exactly the maximum result is returned.", results.size(), equalTo(max));
     }
 }
