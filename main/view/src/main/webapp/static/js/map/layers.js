@@ -24,7 +24,9 @@ define(["./leaflet", "./ajaxgeojson", "./popup", "./wfs", "utils/i18n"], functio
 
   return function() {
     // Define Layers
-    var base = {}, overlay = {}, names = {
+    var base = {};
+    var overlay = {};
+    var names = {
       basemap: _("map.basemap"),
       ortho: _("map.ortho"),
       osm: _("map.osm"),
@@ -36,22 +38,22 @@ define(["./leaflet", "./ajaxgeojson", "./popup", "./wfs", "utils/i18n"], functio
     base[names.basemap] = L.tileLayer("https://{s}.wien.gv.at/basemap/bmaphidpi/normal/google3857/{z}/{y}/{x}.jpeg", {
       maxZoom: 19,
       subdomains: ["maps", "maps1", "maps2", "maps3", "maps4"],
-      bounds: [[46.358770, 8.782379], [49.037872, 17.189532]],
-      attribution: _("map.source") + ": <a href='http://basemap.at' target='_blank'>basemap.at</a>, " +
-        "<a href='http://creativecommons.org/licenses/by/3.0/at/deed.de' target='_blank'>CC-BY 3.0</a>"
+      bounds: [[46.154270610819644, 8.693395662694357], [49.02802399434103, 17.677468601643866]],
+      attribution: _("map.source") + ": <a href='https://basemap.at' target='_blank'>basemap.at</a>, " +
+        "<a href='https://creativecommons.org/licenses/by/4.0/deed.de' target='_blank'>CC-BY 4.0</a>"
     });
     base[names.ortho] = L.layerGroup([
       L.tileLayer("https://{s}.wien.gv.at/basemap/bmaporthofoto30cm/normal/google3857/{z}/{y}/{x}.jpeg", {
         maxZoom: 19,
         subdomains: ["maps", "maps1", "maps2", "maps3", "maps4"],
-        bounds: [[46.358770, 8.782379], [49.037872, 17.189532]],
-        attribution: _("map.source") + ": <a href='http://basemap.at' target='_blank'>basemap.at</a>, " +
-          "<a href='http://creativecommons.org/licenses/by/3.0/at/deed.de' target='_blank'>CC-BY 3.0</a>"
+        bounds: [[46.154270610819644, 8.693395662694357], [49.02802399434103, 17.677468601643866]],
+        attribution: _("map.source") + ": <a href='https://basemap.at' target='_blank'>basemap.at</a>, " +
+          "<a href='https://creativecommons.org/licenses/by/4.0/deed.de' target='_blank'>CC-BY 4.0</a>"
       }),
       L.tileLayer("https://{s}.wien.gv.at/basemap/bmapoverlay/normal/google3857/{z}/{y}/{x}.png", {
         maxZoom: 19,
         subdomains: ["maps", "maps1", "maps2", "maps3", "maps4"],
-        bounds: [[46.358770, 8.782379], [49.037872, 17.189532]]
+        bounds: [[46.154270610819644, 8.693395662694357], [49.02802399434103, 17.677468601643866]]
       })
     ]);
     base[names.osm] = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
