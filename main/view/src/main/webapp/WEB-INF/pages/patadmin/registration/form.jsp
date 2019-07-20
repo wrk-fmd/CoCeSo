@@ -67,7 +67,7 @@
                     </div>
                     <div class="form-group col-md-6">
                         <form:label path="externalId"><spring:message code="patient.externalId"/></form:label>
-                        <form:input path="externalId" cssClass="form-control autofocus" required="true"
+                        <form:input path="externalId" cssClass="form-control autofocus"
                                     data-bind="valueInit: externalId, ${empty command.patient ? 'patient: {key: \\\'externalId\\\', callback: callback}' : ''}"/>
                     </div>
                     <div class="form-group col-md-6 hidden">
@@ -87,7 +87,7 @@
                             </c:forEach>
                         </form:select>
                     </div>
-                    <div class="form-group col-md-6 hidden">
+                    <div class="form-group col-md-6">
                         <form:label path="naca"><spring:message code="patient.naca"/></form:label>
                         <form:select path="naca" cssClass="form-control" data-bind="valueInit: naca">
                             <c:forEach items="<%= at.wrk.coceso.entity.enums.Naca.values()%>" var="naca">
@@ -95,7 +95,7 @@
                             </c:forEach>
                         </form:select>
                     </div>
-                    <div class="form-group col-md-6 hidden">
+                    <div class="form-group col-md-6">
                         <form:label path="diagnosis"><spring:message code="patient.diagnosis"/></form:label>
                         <form:textarea path="diagnosis" cssClass="form-control" data-bind="valueInit: diagnosis"/>
                     </div>
