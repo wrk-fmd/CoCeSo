@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PreDestroy;
+
 @Component
 public class GmapsWrapper {
     private static final Logger LOG = LoggerFactory.getLogger(GmapsWrapper.class);
@@ -39,4 +41,11 @@ public class GmapsWrapper {
         return context != null;
     }
 
+    @PreDestroy
+    public void preDestroy() {
+        LOG.info("shutting down Google Maps wrapper.");
+        if (this.context != null) {
+            this.context.shutdown();
+        }
+    }
 }

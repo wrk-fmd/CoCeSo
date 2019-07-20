@@ -8,11 +8,12 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class GeoApiContextFactory {
     public GeoApiContext create(final String apiKey) {
-        return new GeoApiContext()
-                .setApiKey(apiKey)
-                .setConnectTimeout(2, TimeUnit.SECONDS)
-                .setReadTimeout(2, TimeUnit.SECONDS)
-                .setWriteTimeout(2, TimeUnit.SECONDS)
-                .setRetryTimeout(3, TimeUnit.SECONDS);
+        return new GeoApiContext.Builder()
+                .apiKey(apiKey)
+                .connectTimeout(2, TimeUnit.SECONDS)
+                .readTimeout(2, TimeUnit.SECONDS)
+                .writeTimeout(2, TimeUnit.SECONDS)
+                .retryTimeout(3, TimeUnit.SECONDS)
+                .build();
     }
 }

@@ -12,32 +12,36 @@
     <name>Coceso Base</name>
 
     <properties>
-        <commons.lang.version>3.8.1</commons.lang.version>
-        <commons.text.version>1.5</commons.text.version>
-        <commons.csv.version>1.6</commons.csv.version>
-        <guava.version>26.0-jre</guava.version>
+        <commons.lang.version>3.9</commons.lang.version>
+        <commons.text.version>1.7</commons.text.version>
+        <commons.csv.version>1.7</commons.csv.version>
+        <guava.version>28.0-jre</guava.version>
 
-        <hibernate.version>5.1.16.Final</hibernate.version>
+        <hibernate.version>5.1.17.Final</hibernate.version>
         <hibernate.validator.version>5.2.5.Final</hibernate.validator.version>
         <hibernate.persistence.version>1.0.0.Final</hibernate.persistence.version>
 
-        <itextpdf.version>5.5.13</itextpdf.version>
+        <itextpdf.version>5.5.13.1</itextpdf.version>
 
-        <jackson.version>2.9.8</jackson.version>
+        <jackson.version>2.9.9</jackson.version>
+        <jackson.databind.version>2.9.9.1</jackson.databind.version>
         <com.fatboyindustrial.gson.javatime.serialisers>1.1.1</com.fatboyindustrial.gson.javatime.serialisers>
 
-        <google.maps.services.version>0.1.17</google.maps.services.version>
+        <google.maps.services.version>0.9.3</google.maps.services.version>
 
         <jsp.version>2.0</jsp.version>
         <jstl.version>1.2</jstl.version>
         <servlet.version>3.1.0</servlet.version>
 
-        <spring.version>4.3.23.RELEASE</spring.version>
-        <spring.data.version>1.13.20.RELEASE</spring.data.version>
-        <spring.data.jpa.version>1.11.20.RELEASE</spring.data.jpa.version>
-        <spring.security.version>4.2.12.RELEASE</spring.security.version>
-        <apache.httpclient.version>4.5.5</apache.httpclient.version>
+        <spring.version>4.3.24.RELEASE</spring.version>
+        <spring.data.commons.version>1.13.22.RELEASE</spring.data.commons.version>
+        <spring.data.jpa.version>1.11.22.RELEASE</spring.data.jpa.version>
+        <spring.security.version>4.2.13.RELEASE</spring.security.version>
+        <apache.httpclient.version>4.5.9</apache.httpclient.version>
         <apache.httpasyncclient.version>4.1.4</apache.httpasyncclient.version>
+
+        <log4j.version>2.12.0</log4j.version>
+        <slf4j.version>1.7.26</slf4j.version>
 
         <tomcat.version>8.5.34</tomcat.version>
         <postgresql.version>9.1-901-1.jdbc4</postgresql.version>
@@ -79,7 +83,7 @@
             <dependency>
                 <groupId>org.springframework.data</groupId>
                 <artifactId>spring-data-commons</artifactId>
-                <version>${spring.data.version}</version>
+                <version>${spring.data.commons.version}</version>
             </dependency>
 
             <dependency>
@@ -175,7 +179,7 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>${jackson.version}</version>
+                <version>${jackson.databind.version}</version>
             </dependency>
 
             <dependency>
@@ -267,20 +271,20 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.18</version>
+            <version>${slf4j.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>2.5</version>
+            <version>${log4j.version}</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
-            <version>2.5</version>
+            <version>${log4j.version}</version>
             <scope>runtime</scope>
         </dependency>
 

@@ -24,12 +24,7 @@ class AddressInfoEntry implements Comparable<AddressInfoEntry> {
     private AddressInfoEntry(@JsonProperty("geometry") Coordinates coordinates, @JsonProperty("properties") ViennaAddress address) {
         this.coordinates = coordinates == null ? null : coordinates.latLng;
         this.address = address;
-
-        if (address != null) {
-            this.ranking = address.ranking;
-        } else {
-            this.ranking = null;
-        }
+        this.ranking = address == null ? null : address.ranking;
     }
 
     public LatLng getCoordinates() {
@@ -55,6 +50,7 @@ class AddressInfoEntry implements Comparable<AddressInfoEntry> {
         if (Objects.equals(ranking, b.ranking)) {
             return 0;
         }
+
         return ranking < b.ranking ? -1 : 1;
     }
 
@@ -66,7 +62,6 @@ class AddressInfoEntry implements Comparable<AddressInfoEntry> {
         public Coordinates(@JsonProperty("coordinates") double[] coordinates) {
             this.latLng = (coordinates != null && coordinates.length >= 2) ? new LatLng(coordinates[1], coordinates[0]) : null;
         }
-
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

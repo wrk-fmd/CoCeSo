@@ -27,7 +27,7 @@ public class ViennaStreetParser implements CSVRecordParser<String> {
     }
 
     @Override
-    public List<String> parseCsvRecord(CSVRecord record) {
+    public List<String> parseCsvRecord(final CSVRecord record) {
         final String street = record.get(STREET_NAME_COLUMN_NAME).trim();
         final String districts = record.get(DISTRICT_COLUMN_NAME).trim();
 
