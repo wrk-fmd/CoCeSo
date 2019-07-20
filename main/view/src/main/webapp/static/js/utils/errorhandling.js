@@ -18,7 +18,7 @@
  * @param {module:knockout} ko
  * @param {module:utils/i18n} _
  */
-define(["knockout", "./i18n"], function(ko, _) {
+define(["knockout", "./i18n"], function (ko, _) {
   "use strict";
 
   function errorText() {
@@ -32,33 +32,22 @@ define(["knockout", "./i18n"], function(ko, _) {
     return "";
   }
 
-  /**
-   * Create error observables
-   *
-   * @exports module:utils/errorhandling
-   * @param {Object} obj The object to add the properties to
-   * @param {Integer} error Initialize with error
-   * @param {Function} load Reloading function called on error
-   * @returns {void}
-   */
-  var initErrorHandling = function(obj, error, load) {
+  return function (obj, error, load) {
     obj.error = ko.observable(error || false);
     obj.errorText = ko.pureComputed(errorText, obj);
 
-    obj.saveError = function(response) {
+    obj.saveError = function (response) {
       obj.error(response.error || 8);
       if (load instanceof Function) {
         load.call(obj);
       }
     };
 
-    obj.httpError = function() {
+    obj.httpError = function () {
       obj.error(7);
       if (load instanceof Function) {
         load.call(obj);
       }
     };
   };
-
-  return initErrorHandling;
 });

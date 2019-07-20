@@ -70,6 +70,7 @@
             <input id="birthday" type="date" class="form-control" name="birthday"
                    min="1900-01-01" max="<%=java.time.LocalDate.now().toString()%>"
                    data-bind="date: birthday, valueUpdate: 'input'">
+            <label><spring:message code="patient.age"/>: <span data-bind="text: ageInYears"></span></label>
           </div>
         </div>
 

@@ -19,8 +19,8 @@
  * @param {module:utils/destroy} destroy
  * @param {module:utils/i18n} _
  */
-define(["knockout", "../navigation", "utils/constants", "utils/destroy", "utils/i18n", "ko/extenders/isvalue"],
-  function(ko, navigation, constants, destroy, _) {
+define(["knockout", "../navigation", "utils/constants", "utils/destroy", "utils/i18n", "utils/patient", "ko/extenders/isvalue"],
+  function (ko, navigation, constants, destroy, _, patientUtils) {
     "use strict";
 
     /**
@@ -30,7 +30,7 @@ define(["knockout", "../navigation", "utils/constants", "utils/destroy", "utils/
      * @constructor
      * @param {Object} data
      */
-    var Patient = function(data) {
+    var Patient = function (data) {
       var self = this;
 
       data = data || {};
@@ -53,7 +53,7 @@ define(["knockout", "../navigation", "utils/constants", "utils/destroy", "utils/
        * @param {Object} data
        * @returns {void}
        */
-      this.setData = function(data) {
+      this.setData = function (data) {
         self.firstname(data.firstname || "");
         self.lastname(data.lastname || "");
         self.insurance(data.insurance || "");
@@ -75,7 +75,7 @@ define(["knockout", "../navigation", "utils/constants", "utils/destroy", "utils/
        * @type ko.computed
        * @returns {String}
        */
-      this.fullname = ko.computed(function() {
+      this.fullname = ko.computed(function () {
         return this.lastname() + " " + this.firstname();
       }, this);
 
@@ -104,7 +104,7 @@ define(["knockout", "../navigation", "utils/constants", "utils/destroy", "utils/
        * @type ko.pureComputed
        * @returns {boolean}
        */
-      this.isUnknown = ko.pureComputed(function() {
+      this.isUnknown = ko.pureComputed(function () {
         return (!this.isMale() && !this.isFemale());
       }, this);
 
@@ -113,7 +113,7 @@ define(["knockout", "../navigation", "utils/constants", "utils/destroy", "utils/
        *
        * @returns {void}
        */
-      this.isUnknown.set = function() {
+      this.isUnknown.set = function () {
         this.sex(null);
       };
 
@@ -124,13 +124,23 @@ define(["knockout", "../navigation", "utils/constants", "utils/destroy", "utils/
        * @type ko.pureComputed
        * @returns {String}
        */
-      this.isUnknown.state = ko.pureComputed(function() {
+      this.isUnknown.state = ko.pureComputed(function () {
         return this() ? "active" : "";
       }, this.isUnknown);
 
-      this.localizedSex = ko.pureComputed(function() {
+      this.localizedSex = ko.pureComputed(function () {
         return this.isUnknown() ? "" : _('patient.sex.' + this.sex().toLowerCase());
       }, this);
+
+      this.ageInYears = ko.pureComputed(function () {
+        var ageInYearsString = "";
+        if (this()) {
+          var computedAge = patientUtils.getAgeFromBirthday(this());
+          ageInYearsString = computedAge ? computedAge + "" : "";
+        }
+
+        return ageInYearsString;
+      }, this.birthday);
 
     };
     Patient.prototype = Object.create({}, /** @lends Patient.prototype */ {
@@ -141,7 +151,7 @@ define(["knockout", "../navigation", "utils/constants", "utils/destroy", "utils/
        * @returns {void}
        */
       openForm: {
-        value: function() {
+        value: function () {
           navigation.openPatient({id: this.id});
         }
       },
@@ -152,7 +162,7 @@ define(["knockout", "../navigation", "utils/constants", "utils/destroy", "utils/
        * @returns {void}
        */
       destroy: {
-        value: function() {
+        value: function () {
           destroy(this);
         }
       }

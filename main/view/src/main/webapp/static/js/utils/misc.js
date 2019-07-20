@@ -17,7 +17,7 @@
  * @param {module:knockout} ko
  * @param {module:utils/conf} conf
  */
-define(["jquery", "knockout", "utils/conf"], function($, ko, conf) {
+define(["jquery", "knockout", "utils/conf"], function ($, ko, conf) {
   "use strict";
 
   /**
@@ -30,7 +30,7 @@ define(["jquery", "knockout", "utils/conf"], function($, ko, conf) {
    * @param {Object} error Error information
    * @returns {boolean}
    */
-  window.onerror = function(msg, url, line, col, error) {
+  window.onerror = function (msg, url, line, col, error) {
     $.ajax({
       type: "POST",
       url: conf.get("jsonBase") + "jslog",
@@ -50,7 +50,7 @@ define(["jquery", "knockout", "utils/conf"], function($, ko, conf) {
   };
 
   // Helper to read object or array from LocalStorage
-  $.fn.getLocalStorage = function(key, defaultValue) {
+  $.fn.getLocalStorage = function (key, defaultValue) {
     var json = localStorage.getItem(key);
     if (json) {
       try {
@@ -62,11 +62,11 @@ define(["jquery", "knockout", "utils/conf"], function($, ko, conf) {
     return defaultValue;
   };
 
-  ko.observable.fn.equalityComparer = ko.dependentObservable.fn.equalityComparer = function(a, b) {
+  ko.observable.fn.equalityComparer = ko.dependentObservable.fn.equalityComparer = function (a, b) {
     return a === b;
   };
 
-  RegExp.escape = function(s) {
+  RegExp.escape = function (s) {
     return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
   };
 
@@ -75,8 +75,9 @@ define(["jquery", "knockout", "utils/conf"], function($, ko, conf) {
     "<": "lt",
     ">": "gt"
   };
-  String.prototype.escapeHTML = function() {
-    return this.replace(/[&<>]/g, function(m) {
+
+  String.prototype.escapeHTML = function () {
+    return this.replace(/[&<>]/g, function (m) {
       return '&' + String.escapeChars[m] + ';';
     });
   };
