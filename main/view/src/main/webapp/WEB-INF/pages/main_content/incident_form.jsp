@@ -178,16 +178,16 @@
 
         <div class="clearfix">
           <div class="form-group col-md-7">
-            <button type="button" class="btn btn-success" data-bind="enable: form.enable, click: ok">
+            <button type="button" class="btn btn-success" data-bind="click: ok">
               <spring:message code="ok"/>
             </button>
 
-            <button type="submit" class="btn btn-primary" data-bind="enable: form.enable">
-              <spring:message code="save"/>
+            <button type="button" class="btn btn-warning" data-bind="click: closeForm">
+              <spring:message code="cancel"/>
             </button>
 
-            <button type="button" class="btn btn-warning" data-bind="enable: form.changed, click: form.reset">
-              <spring:message code="reset"/>
+            <button type="submit" class="btn btn-primary" data-bind="enable: form.enable">
+              <spring:message code="apply"/>
             </button>
 
             <button type="button" class="btn btn-default" data-bind="click: duplicate">
@@ -196,11 +196,11 @@
           </div>
 
           <div class="form-group col-md-5 text-right">
-            <button type="button" class="btn btn-warning" data-bind="enable: isAlarmTextSendingEnabled, click: openAlarmIncident">
+            <button type="button" class="btn btn-default" data-bind="enable: isAlarmTextSendingEnabled, click: openAlarmIncident">
               <spring:message code="incident.alarm.full"/>
             </button>
 
-            <button type="button" class="btn btn-warning" data-bind="enable: isAlarmTextSendingEnabled, click: openAlarmCasusInformation">
+            <button type="button" class="btn btn-default" data-bind="enable: isAlarmTextSendingEnabled, click: openAlarmCasusInformation">
               <spring:message code="incident.alarm.casus"/>
             </button>
           </div>

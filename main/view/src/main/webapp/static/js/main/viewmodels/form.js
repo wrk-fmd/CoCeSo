@@ -38,6 +38,10 @@ define(["knockout", "utils/errorhandling", "ko/extenders/form"],
          */
         this.ok = function() {
           this.save();
+          this.closeForm();
+        };
+
+        this.closeForm = function() {
           $("#" + this.ui).dialog("destroy");
         };
       };
