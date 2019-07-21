@@ -27,10 +27,22 @@ public class AvailableForDispatchingCalculatorTest {
     public void unitIsEB_returnTrue() {
         Unit unit = new Unit(42);
         unit.setState(UnitState.EB);
+        unit.setPortable(true);
 
         boolean availableForDispatching = sut.isAvailableForDispatching(unit);
 
         assertThat(availableForDispatching, equalTo(true));
+    }
+
+    @Test
+    public void unitIsEBAndNotPortable_returnFalse() {
+        Unit unit = new Unit(42);
+        unit.setState(UnitState.EB);
+        unit.setPortable(false);
+
+        boolean availableForDispatching = sut.isAvailableForDispatching(unit);
+
+        assertThat(availableForDispatching, equalTo(false));
     }
 
     @Test
@@ -39,6 +51,7 @@ public class AvailableForDispatchingCalculatorTest {
         Unit unit = new Unit(42);
         unit.setState(UnitState.EB);
         unit.addIncident(createIncident(incidentType), TaskState.ZBO);
+        unit.setPortable(true);
 
         boolean availableForDispatching = sut.isAvailableForDispatching(unit);
 
@@ -51,6 +64,7 @@ public class AvailableForDispatchingCalculatorTest {
         Unit unit = new Unit(42);
         unit.setState(UnitState.EB);
         unit.addIncident(createIncident(incidentType), TaskState.ZBO);
+        unit.setPortable(true);
 
         boolean availableForDispatching = sut.isAvailableForDispatching(unit);
 

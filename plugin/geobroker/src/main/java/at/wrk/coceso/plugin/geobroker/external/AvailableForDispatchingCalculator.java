@@ -21,7 +21,7 @@ public class AvailableForDispatchingCalculator {
 
     boolean isAvailableForDispatching(final Unit unit) {
         Set<Incident> assignedIncidents = Optional.ofNullable(unit.getIncidents()).map(Map::keySet).orElse(ImmutableSet.of());
-        return unit.getState() == UnitState.EB && hasNoBusyIncidentsAssigned(assignedIncidents);
+        return unit.isPortable() && unit.getState() == UnitState.EB && hasNoBusyIncidentsAssigned(assignedIncidents);
     }
 
     private static boolean hasNoBusyIncidentsAssigned(final Set<Incident> assignedIncidents) {
