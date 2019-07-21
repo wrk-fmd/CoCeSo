@@ -24,8 +24,8 @@
  * @param {module:utils/i18n} _
  */
 define(["knockout", "data/save", "data/store/incidents", "data/store/units",
-  "main/confirm", "main/navigation", "utils/constants", "utils/destroy", "utils/i18n", "ko/extenders/isvalue"],
-  function(ko, save, incidents, units, confirm, navigation, constants, destroy, _) {
+  "main/confirm", "main/navigation", "utils/constants", "utils/destroy", "utils/i18n", "utils/client-logger", "ko/extenders/isvalue"],
+  function(ko, save, incidents, units, confirm, navigation, constants, destroy, _, clientLogger) {
     "use strict";
 
     /**
@@ -316,6 +316,7 @@ define(["knockout", "data/save", "data/store/incidents", "data/store/units",
             title: "<strong>" + unit.call.escapeHTML() + "</strong>" + " - " + incident.typeString(),
             info_text: info, button_text: button, elements: elements,
             save: function() {
+              clientLogger.debugLog("#userInput Confirming task state transition for new state '" + nextState + "'.");
               save({incident_id: incident.id, unit_id: unit.id, state: nextState}, "incident/setToState.json");
             }
           });

@@ -23,25 +23,26 @@ define(["jquery", "knockout", "utils/conf"], function ($, ko, conf) {
   /**
    * Set error handling
    *
-   * @param {string} msg Error msg
+   * @param {string} message Error msg
    * @param {string} url URL of JS file
    * @param {integer} line Line with error
    * @param {integer} col Column with error
    * @param {Object} error Error information
    * @returns {boolean}
    */
-  window.onerror = function (msg, url, line, col, error) {
+  window.onerror = function (message, url, line, col, error) {
     $.ajax({
       type: "POST",
-      url: conf.get("jsonBase") + "jslog",
+      url: conf.get("jsonBase") + "clientLogger",
       dataType: "json",
       contentType: "application/json",
       data: JSON.stringify({
-        msg: msg,
+        message: message,
         url: url,
-        line: line,
-        col: col,
-        stack: error ? error.stack : null
+        codeLine: line,
+        codeColumn: col,
+        stack: error ? error.stack : null,
+        logLevel: "warning"
       }),
       processData: false
     });

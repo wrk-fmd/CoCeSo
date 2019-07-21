@@ -27,8 +27,8 @@
  * @returns {Incident}
  */
 define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save", "data/store/patients",
-    "utils/constants", "utils/destroy", "utils/i18n", "ko/extenders/isvalue", "ko/extenders/timeinterval"],
-  function (ko, Point, Task, Unit, navigation, save, patients, constants, destroy, _) {
+    "utils/constants", "utils/destroy", "utils/i18n", "utils/client-logger", "ko/extenders/isvalue", "ko/extenders/timeinterval"],
+  function (ko, Point, Task, Unit, navigation, save, patients, constants, destroy, _, clientLogger) {
     "use strict";
 
     /**
@@ -509,6 +509,7 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
         var unit = ko.dataFor(ui.draggable[0]);
 
         if ((unit instanceof Unit) && self.id && unit.id) {
+          clientLogger.debugLog("#userInput Assigning unit '" + unit.id + "' to incident '" + self.id + "' via drag&drop into an incident item of the incident list. Incident is automatically saved.");
           save({incident_id: self.id, unit_id: unit.id}, "assignUnit.json");
         }
       };

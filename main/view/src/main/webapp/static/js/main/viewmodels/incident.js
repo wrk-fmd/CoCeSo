@@ -39,11 +39,12 @@ define([
     "utils/constants",
     "utils/destroy",
     "utils/i18n",
+    "utils/client-logger",
     "ko/bindings/point",
     "ko/extenders/boolean",
     "ko/extenders/changes",
     "ko/extenders/arrayChanges"],
-  function (ko, Form, Incident, Task, Unit, navigation, save, store, sections, constants, destroy, _) {
+  function (ko, Form, Incident, Task, Unit, navigation, save, store, sections, constants, destroy, _, clientLogger) {
     "use strict";
 
     /**
@@ -339,6 +340,8 @@ define([
         if (!(viewmodel instanceof Unit)) {
           return;
         }
+
+        clientLogger.debugLog("#userInput Assigning unit '" + viewmodel.id + "' to incident '" + self.id + "' via drag&drop into the incident form.");
         self.setTaskState.call(self, ko.utils.unwrapObservable(viewmodel.id));
       };
 
@@ -375,6 +378,8 @@ define([
             self.units.remove(task);
           }
         }
+
+        clientLogger.debugLog("#userInput Duplicating incident '" + self.id + "'.");
         navigation.openIncident(data);
       };
 

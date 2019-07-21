@@ -1,5 +1,5 @@
-<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%--
 /**
  * CoCeSo
@@ -34,13 +34,19 @@
     <ul class="dropdown-menu">
       <li class="dropdown-header"><spring:message code="unit.state.set"/></li>
       <!-- ko ifnot: isNEB -->
-      <li><a href="#" title="<spring:message code="unit.state.set"/>: <spring:message code="unit.state.neb"/>" data-bind="click: setNEB"><spring:message code="unit.state.neb"/></a></li>
+      <li><a href="#"
+             title="<spring:message code="unit.state.set"/>: <spring:message code="unit.state.neb"/>"
+             data-bind="click: setNEB"><spring:message code="unit.state.neb"/></a></li>
       <!-- /ko -->
       <!-- ko ifnot: isEB -->
-      <li><a href="#" title="<spring:message code="unit.state.set"/>: <spring:message code="unit.state.eb"/>" data-bind="click: setEB"><spring:message code="unit.state.eb"/></a></li>
+      <li><a href="#"
+             title="<spring:message code="unit.state.set"/>: <spring:message code="unit.state.eb"/>"
+             data-bind="click: setEB"><spring:message code="unit.state.eb"/></a></li>
       <!-- /ko -->
       <!-- ko ifnot: isAD -->
-      <li><a href="#" title="<spring:message code="unit.state.set"/>: <spring:message code="unit.state.ad"/>" data-bind="click: setAD"><spring:message code="unit.state.ad"/></a></li>
+      <li><a href="#"
+             title="<spring:message code="unit.state.set"/>: <spring:message code="unit.state.ad"/>"
+             data-bind="click: setAD"><spring:message code="unit.state.ad"/></a></li>
       <!-- /ko -->
 
       <!-- ko if: portable && !( disableSendHome() && disableStandby() && disableHoldPosition() )  -->
@@ -53,7 +59,8 @@
       <li><a href="#" title="<spring:message code="incident.type.standby"/>" data-bind="click: standby"><spring:message code="incident.type.standby"/></a></li>
       <!-- /ko -->
       <!-- ko ifnot: disableHoldPosition -->
-      <li><a href="#" title="<spring:message code="incident.type.holdposition"/>" data-bind="click: holdPosition"><spring:message code="incident.type.holdposition"/></a></li>
+      <li><a href="#" title="<spring:message code="incident.type.holdposition"/>" data-bind="click: holdPosition"><spring:message
+          code="incident.type.holdposition"/></a></li>
       <!-- /ko -->
       <!-- /ko -->
 
@@ -66,7 +73,8 @@
       <li class="divider"></li>
       <li class="dropdown-header"><spring:message code="incidents"/></li>
       <!-- ko foreach: dropdownIncidents -->
-      <li><a href="#" title="<spring:message code="incident.edit"/>" data-bind="click: incident() && incident().openForm, html: incident() && incident().dropdownTitle"></a></li>
+      <li><a href="#" title="<spring:message code="incident.edit"/>"
+             data-bind="click: incident() && incident().openForm, html: incident() && incident().dropdownTitle"></a></li>
       <!-- /ko -->
       <!-- /ko -->
 
@@ -74,10 +82,12 @@
       <!-- ko if: portable -->
       <li><a href="#" title="<spring:message code="unit.incident.new"/>" data-bind="click: addIncident"><spring:message code="unit.incident.new"/></a></li>
       <!-- /ko -->
-      <li><a href="#" title="<spring:message code="unit.incident.report"/>" data-bind="click: reportIncident"><spring:message code="unit.incident.report"/></a></li>
+      <li><a href="#" title="<spring:message code="unit.incident.report"/>" data-bind="click: reportIncident"><spring:message code="unit.incident.report"/></a>
+      </li>
       <li><a href="#" title="<spring:message code="unit.details"/>" data-bind="click: openDetails"><spring:message code="unit.details"/></a></li>
       <li><a href="#" title="<spring:message code="unit.edit"/>" data-bind="click: openForm"><spring:message code="unit.edit"/></a></li>
-      <li><a href="#" target="_blank" title="<spring:message code="log.view"/>" data-bind="attr: {href: '<c:url value="/dashboard?uid="/>' + id}"><spring:message code="log.view"/></a></li>
+      <li><a href="#" target="_blank" title="<spring:message code="log.view"/>"
+             data-bind="attr: {href: '<c:url value="/dashboard?uid="/>' + id}"><spring:message code="log.view"/></a></li>
       <li><a href="#" title="<spring:message code="log.add"/>" data-bind="click: addLog"><spring:message code="log.add"/></a></li>
     </ul>
   </li>
@@ -129,8 +139,10 @@
 
       </div>
       <div class="modal-footer">
-        <button type="button" id="next-state-confirm-no" class="btn btn-danger btn-lg pull-left" data-dismiss="modal" autofocus><spring:message code="no"/></button>
-        <button type="button" id="next-state-confirm-yes" class="btn btn-success btn-lg pull-right" data-dismiss="modal" data-bind="click: save, text: button_text"></button>
+        <button type="button" id="next-state-confirm-no" class="btn btn-danger btn-lg pull-left" data-dismiss="modal" autofocus><spring:message
+            code="no"/></button>
+        <button type="button" id="next-state-confirm-yes" class="btn btn-success btn-lg pull-right" data-dismiss="modal"
+                data-bind="click: save, text: button_text"></button>
       </div>
     </div>
   </div>

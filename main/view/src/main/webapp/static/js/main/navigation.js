@@ -23,9 +23,9 @@
  * @param {module:utils/clock} clock
  */
 define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/store/sections",
-  "utils/conf", "utils/constants", "utils/clock",
+  "utils/conf", "utils/constants", "utils/clock", "utils/client-logger",
   "./winman", "bootstrap/tooltip", "ko/bindings/draggdroppable", "ko/bindings/popover", "ko/extenders/list"],
-  function($, ko, incidents, units, sections, conf, constants, clock) {
+  function($, ko, incidents, units, sections, conf, constants, clock, clientLogger) {
     "use strict";
 
     //Initialize window management
@@ -42,6 +42,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
        * @param {String} position
        */
       openIncidents: function(options, position) {
+        clientLogger.debugLog("#userInput Opening window 'incident list'.");
         taskbar.winman("addWindow", {
           src: conf.get("contentBase") + "incident.html",
           pos: position || "left+70% top+30%",
@@ -57,6 +58,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
        * @param {String} position
        */
       openIncident: function(data, position) {
+        clientLogger.debugLog("#userInput Opening window 'incident form'.");
         taskbar.winman("addWindow", {
           src: conf.get("contentBase") + "incident_form.html",
           pos: position || "left+30% top+10%",
@@ -71,6 +73,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
        * @param {String} position
        */
       openUnits: function(options, position) {
+        clientLogger.debugLog("#userInput Opening window 'unit list'.");
         taskbar.winman("addWindow", {
           src: conf.get("contentBase") + "unit.html",
           pos: position || "left+20% bottom",
@@ -85,6 +88,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
        * @param {String} position
        */
       openHierarchyUnits: function(position) {
+        clientLogger.debugLog("#userInput Opening window 'unit hierarchy'.");
         taskbar.winman("addWindow", {
           src: conf.get("contentBase") + "unit_hierarchy.html",
           pos: position || "left top",
@@ -99,6 +103,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
        * @param {String} position
        */
       openUnit: function(data, position) {
+        clientLogger.debugLog("#userInput Opening window 'unit form'.");
         taskbar.winman("addWindow", {
           src: conf.get("contentBase") + "unit_form.html",
           pos: position || "left+10% top+20%",
@@ -113,6 +118,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
        * @param {String} position
        */
       openUnitDetail: function(id, position) {
+        clientLogger.debugLog("#userInput Opening window 'unit detail'.");
         if (id) {
           taskbar.winman("addWindow", {
             src: conf.get("contentBase") + "unit_detail.html",
@@ -129,6 +135,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
        * @param {String} position
        */
       openLogAdd: function(data, position) {
+        clientLogger.debugLog("#userInput Opening window 'add new log entry'.");
         taskbar.winman("addWindow", {
           src: conf.get("contentBase") + "log_add.html",
           pos: position || "left+20% top+20%",
@@ -143,6 +150,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
        * @param {String} position
        */
       openLogs: function(options, position) {
+        clientLogger.debugLog("#userInput Opening window 'concern log'.");
         taskbar.winman("addWindow", {
           src: conf.get("contentBase") + "log.html",
           pos: position || "left+30% top+10%",
@@ -158,6 +166,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
        * @param {String} position
        */
       openPatients: function(options, position) {
+        clientLogger.debugLog("#userInput Opening window 'patient list'.");
         taskbar.winman("addWindow", {
           src: conf.get("contentBase") + "patient.html",
           pos: position || "left+40% top+30%",
@@ -173,6 +182,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
        * @param {String} position
        */
       openPatient: function(data, position) {
+        clientLogger.debugLog("#userInput Opening window 'patient details'.");
         taskbar.winman("addWindow", {
           src: conf.get("contentBase") + "patient_form.html",
           pos: position || "left+40% top+30%",
@@ -182,6 +192,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
       },
 
       openAlarmText: function(alarmTextData, windowPosition) {
+        clientLogger.debugLog("#userInput Opening window 'alarm text confirmation'.");
         taskbar.winman("addWindow", {
           src: conf.get("contentBase") + "alarm_text_form.html",
           pos: windowPosition || "left+25% top+35%",
@@ -196,6 +207,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
        * @param {String} position
        */
       openRadio: function(position) {
+        clientLogger.debugLog("#userInput Opening window 'radio history'.");
         taskbar.winman("addWindow", {
           src: conf.get("contentBase") + "radio.html",
           pos: position || "left+40% top+10%",
@@ -210,6 +222,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
        * @param {String} position
        */
       openMap: function(options, position) {
+        clientLogger.debugLog("#userInput Opening window 'situation map'.");
         taskbar.winman("addWindow", {
           src: conf.get("contentBase") + "map.html",
           pos: position || "left+10% top",
@@ -417,9 +430,11 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
       var keyMapping = conf.get("keyMapping");
       $("#next-state-confirm").keyup(function(event) {
         if (event.which === keyMapping.noKey) {
+          clientLogger.debugLog("#userInput Declining confirmation popup by keyboard shortcut..");
           $("#next-state-confirm-no").click();
         }
         if (event.which === keyMapping.yesKey) {
+          clientLogger.debugLog("#userInput Accepting confirmation popup by keyboard shortcut.");
           $("#next-state-confirm-yes").click();
         }
       });
@@ -428,7 +443,9 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
         if (t === "INPUT" || t === "TEXTAREA" || t === "SELECT" || t === "BUTTON") {
           return;
         }
+
         if (event.which === keyMapping.openIncidentKey) {
+          clientLogger.debugLog("#userInput Opening a new incident by keyboard shortcut.");
           nav.openIncident({section: sections.filter()});
         }
       });
