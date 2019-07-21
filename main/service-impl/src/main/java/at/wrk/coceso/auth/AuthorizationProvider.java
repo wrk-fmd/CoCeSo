@@ -11,7 +11,6 @@ import at.wrk.coceso.service.ConcernService;
 import at.wrk.coceso.service.IncidentService;
 import at.wrk.coceso.service.PatientService;
 import at.wrk.coceso.service.UnitService;
-import java.io.Serializable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +18,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.Serializable;
 
 @Component("auth")
 @Transactional
@@ -45,14 +46,14 @@ public class AuthorizationProvider {
 
   public boolean hasAccessLevel(String level) {
     try {
-      return level != null ? hasAccessLevel(AccessLevel.valueOf(level)) : false;
+      return level != null && hasAccessLevel(AccessLevel.valueOf(level));
     } catch (IllegalArgumentException e) {
       LOG.warn("Tried to check invalid AccessLevel '{}'", level);
       return false;
     }
   }
 
-  public boolean hasPermission(Object target, Object perm) {
+  public boolean hasPermission(final Object target, final Object perm) {
     try {
       AccessLevel level = AccessLevel.valueOf(perm);
       if (target instanceof Unit) {

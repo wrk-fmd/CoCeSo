@@ -28,9 +28,10 @@ class PatientEndTreatments implements TaskStateHook, PatientDoneHook {
   @Override
   public TaskState call(final Incident incident, final Unit unit, final TaskState state, final User user, final NotifyList notify) {
     if (incident.getType() == IncidentType.Transport && (state == TaskState.ZAO || state == TaskState.AAO)) {
-      LOG.debug("{}: Ending treatments of patient {} on transport", user, incident.getPatient());
+      LOG.debug("{}: Ending treatments of patient {} due to starting transport by unit {}.", user, incident.getPatient(), unit);
       incidentService.endTreatments(incident.getPatient(), user, notify);
     }
+
     return state;
   }
 

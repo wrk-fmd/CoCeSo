@@ -46,7 +46,8 @@ public abstract class CsvAutocomplete<T> extends PreloadedAutocomplete<T> {
             final Function<T, String> keyExtractorFunction) {
         String inputResourceAsString = readInputAsString(charset, source);
 
-        try (CSVParser csvParser = CSVParser.parse(inputResourceAsString, CSVFormat.RFC4180.withDelimiter(delimiter).withHeader())) {
+        CSVFormat csvFormat = CSVFormat.RFC4180.withDelimiter(delimiter).withHeader();
+        try (CSVParser csvParser = CSVParser.parse(inputResourceAsString, csvFormat)) {
             StopWatch stopWatch = StopWatch.createStarted();
             Map<String, T> loadedCsvData = getEntitiesFromCsv(parser, keyExtractorFunction, csvParser);
             super.values.putAll(loadedCsvData);

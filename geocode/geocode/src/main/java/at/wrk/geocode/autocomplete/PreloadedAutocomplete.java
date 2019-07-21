@@ -17,27 +17,30 @@ public abstract class PreloadedAutocomplete<T> implements AutocompleteSupplier<T
    */
   protected final NavigableMap<String, T> values;
 
-  public PreloadedAutocomplete() {
+  protected PreloadedAutocomplete() {
     this(new TreeMap<>());
   }
 
-  public PreloadedAutocomplete(NavigableMap<String, T> values) {
-    this.values = values;
+  protected PreloadedAutocomplete(final Map<String, T> values) {
+    this.values = new TreeMap<>(values);
   }
 
   @Override
-  public Stream<T> getStart(String filter) {
+  public Stream<T> getStart(final String filter) {
     String to = filter.substring(0, filter.length() - 1) + (char) (filter.charAt(filter.length() - 1) + 1);
     return values.subMap(filter, to).values().stream();
   }
 
   @Override
-  public Stream<T> getContaining(String filter, Integer max) {
+  public Stream<T> getContaining(final String filter, final Integer max) {
     if (max != null && max <= 0) {
       return Stream.empty();
     }
 
-    Stream<T> filtered = values.entrySet().stream().filter(e -> e.getKey().indexOf(filter) > 0).map(Map.Entry::getValue);
+    Stream<T> filtered = values.entrySet()
+            .stream()
+            .filter(e -> e.getKey().indexOf(filter) > 0)
+            .map(Map.Entry::getValue);
     return max == null ? filtered : filtered.limit(max);
   }
 

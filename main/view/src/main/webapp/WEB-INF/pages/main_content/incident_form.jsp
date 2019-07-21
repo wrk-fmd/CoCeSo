@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
 /**
  * CoCeSo
@@ -195,15 +196,17 @@
             </button>
           </div>
 
-          <div class="form-group col-md-5 text-right">
-            <button type="button" class="btn btn-default" data-bind="enable: isAlarmTextSendingEnabled, click: openAlarmIncident">
-              <spring:message code="incident.alarm.full"/>
-            </button>
+          <c:if test="${isAlarmTextFeatureAvailable}">
+            <div class="form-group col-md-5 text-right">
+              <button type="button" class="btn btn-default" data-bind="enable: isAlarmTextSendingEnabled, click: openAlarmIncident">
+                <spring:message code="incident.alarm.full"/>
+              </button>
 
-            <button type="button" class="btn btn-default" data-bind="enable: isAlarmTextSendingEnabled, click: openAlarmCasusInformation">
-              <spring:message code="incident.alarm.casus"/>
-            </button>
-          </div>
+              <button type="button" class="btn btn-default" data-bind="enable: isAlarmTextSendingEnabled, click: openAlarmCasusInformation">
+                <spring:message code="incident.alarm.casus"/>
+              </button>
+            </div>
+          </c:if>
         </div>
       </form>
     </div>

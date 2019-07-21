@@ -18,11 +18,24 @@
  * @param {module:knockout} ko
  */
 define(["jquery", "bloodhound", "knockout", "typeahead"],
-  function($, Bloodhound, ko) {
+  function ($, Bloodhound, ko) {
     "use strict";
 
-    var ertypes = ["Intern", "Unfall", "Chirurgie", "Intern Kind", "Unfall Kind", "Chirurgie Kind",
-      "PTCA", "Überwachung", "Intensiv", "Stroke", "Schockraum", "Arbeitsunfall"];
+    var ertypes = [
+      "Intern",
+      "Unfall",
+      "Chirurgie",
+      "Intern Kind",
+      "Unfall Kind",
+      "Chirurgie Kind",
+      "PTCA",
+      "Überwachung",
+      "Intensiv",
+      "Stroke",
+      "Schockraum",
+      "Arbeitsunfall"
+    ];
+
     var bloodhound = new Bloodhound({
       datumTokenizer: Bloodhound.tokenizers.whitespace,
       queryTokenizer: Bloodhound.tokenizers.whitespace,
@@ -34,7 +47,7 @@ define(["jquery", "bloodhound", "knockout", "typeahead"],
       minLength: 0
     }, {
       limit: 20,
-      source: function(q, sync) {
+      source: function (q, sync) {
         if (q === "") {
           sync(bloodhound.get.apply(bloodhound, ertypes));
         } else {
@@ -44,14 +57,14 @@ define(["jquery", "bloodhound", "knockout", "typeahead"],
     });
 
     ko.bindingHandlers.ertype = {
-      init: function(element) {
+      init: function (element) {
         var $element = $(element);
         $element.typeahead({
           highlight: true,
           minLength: 0
         }, {
           limit: 20,
-          source: function(q, sync) {
+          source: function (q, sync) {
             if (q === "") {
               sync(bloodhound.get.apply(bloodhound, ertypes));
             } else {
@@ -59,7 +72,7 @@ define(["jquery", "bloodhound", "knockout", "typeahead"],
             }
           }
         });
-        $element.on("typeahead:selected", function() {
+        $element.on("typeahead:selected", function () {
           $element.trigger("input");
         });
       }

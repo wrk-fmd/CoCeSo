@@ -30,8 +30,10 @@ class IncidentAutoState implements TaskStateHook {
 
   @Override
   public TaskState call(final Incident incident, final Unit unit, final TaskState taskState, final User user, final NotifyList notify) {
-    if (taskState != TaskState.Detached && incident.getState() != IncidentState.Demand && incident.getState() != IncidentState.InProgress) {
-      LOG.debug("{}: Autosetting state for incident {} to InProgress", user, incident);
+    if (taskState != TaskState.Detached
+            && incident.getState() != IncidentState.Demand
+            && incident.getState() != IncidentState.InProgress) {
+      LOG.debug("{}: Auto-set state for incident {} to 'InProgress'", user, incident);
 
       Changes changes = new Changes("incident");
       changes.put("state", incident.getState(), IncidentState.InProgress);

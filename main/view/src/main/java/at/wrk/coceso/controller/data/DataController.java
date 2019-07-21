@@ -92,7 +92,7 @@ public class DataController {
 
     @PreAuthorize("@auth.hasAccessLevel('Main')")
     @RequestMapping(value = "poiAutocomplete", produces = "application/json", method = RequestMethod.GET)
-    public Collection<String> poiAutocomplete(@RequestParam("q") String q, @ActiveConcern Concern concern) {
-        return pointService.autocomplete(q, concern);
+    public Collection<String> poiAutocomplete(@RequestParam("q") String searchQuery, @ActiveConcern Concern concern) {
+        return pointService.autocomplete(searchQuery, concern);
     }
 }

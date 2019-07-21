@@ -1,10 +1,8 @@
 package at.wrk.coceso.auth;
 
 import at.wrk.coceso.config.AuthConfig;
-import at.wrk.coceso.service.UserService;
 import at.wrk.coceso.entity.User;
-import java.io.IOException;
-import java.net.HttpURLConnection;
+import at.wrk.coceso.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +14,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.codec.Base64;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
 
 @Component
 class AuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
@@ -70,20 +71,20 @@ class AuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
         LOG.warn("[failed] {}: Online authentication, failed with exception {}", username, e.getMessage());
       }
     } else if (config.isFirstUse()) {
-      LOG.info("[ OK ] {}: First use authentication", username);
+      LOG.warn("[ OK ] {}: 'First use' authentication is enabled. User is logged in without password check.", username);
       success = true;
     }
 
     if (success) {
       userService.setPassword(user.getId(), password, user);
-      LOG.info("User {}: PW written to DB", username);
-      return;
+      LOG.info("User {}: PW hash for offline authentication was written to DB.", username);
+    } else {
+      throw new BadCredentialsException("Bad credentials");
     }
-    throw new BadCredentialsException("Bad credentials");
   }
 
   @Override
-  protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken upat) throws AuthenticationException {
+  protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken userPasswordAuthenticationToken) throws AuthenticationException {
     User user = userService.getByUsername(username);
     if (user == null) {
       LOG.info("[failed] {}: User not found", username);

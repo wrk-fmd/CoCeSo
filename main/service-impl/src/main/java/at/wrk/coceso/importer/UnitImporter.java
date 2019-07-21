@@ -10,6 +10,16 @@ import at.wrk.coceso.entity.point.Point;
 import at.wrk.coceso.exceptions.ErrorsException;
 import at.wrk.coceso.service.UserService;
 import at.wrk.geocode.poi.PoiSupplier;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -18,16 +28,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 
 @Component
 public class UnitImporter {
+  private static final Logger LOG = LoggerFactory.getLogger(UnitImporter.class);
 
   private static final String CALL = "Rufname";
   private static final String ANI = "ANI";
@@ -77,22 +81,22 @@ public class UnitImporter {
       Changes changes = new Changes("unit");
       boolean isNew;
 
-      String csvval = record.get(CALL);
-      if (cache.containsKey(csvval)) {
-        unit = cache.get(csvval);
+      String parsedUnitCall = record.get(CALL);
+      if (cache.containsKey(parsedUnitCall)) {
+        unit = cache.get(parsedUnitCall);
         isNew = false;
       } else {
         unit = new Unit();
         unit.setConcern(concern);
-        unit.setCall(csvval);
-        changes.put("call", null, csvval);
+        unit.setCall(parsedUnitCall);
+        changes.put("call", null, parsedUnitCall);
         isNew = true;
       }
 
       if (record.isSet(ANI) && (isNew || StringUtils.isBlank(unit.getAni()))) {
-        csvval = record.get(ANI);
-        unit.setAni(csvval);
-        changes.put("ani", null, csvval);
+        String parsedAni = record.get(ANI);
+        unit.setAni(parsedAni);
+        changes.put("ani", null, parsedAni);
       }
 
       if (record.isSet(PORTABLE)) {
@@ -104,26 +108,26 @@ public class UnitImporter {
       }
 
       if (record.isSet(TYPE) && (isNew || unit.getType() == null)) {
-        csvval = record.get(TYPE);
-        if (!StringUtils.isBlank(csvval)) {
+        String parsedUnitType = record.get(TYPE);
+        if (!StringUtils.isBlank(parsedUnitType)) {
           try {
-            UnitType type = UnitType.valueOf(csvval.trim());
+            UnitType type = UnitType.valueOf(parsedUnitType.trim());
             unit.setType(type);
           } catch (EnumConstantNotPresentException e) {
-
+            LOG.debug("Could not parse unit type from '{}'.", parsedUnitType);
           }
         }
       }
 
       if (record.isSet(INFO) && (isNew || StringUtils.isBlank(unit.getInfo()))) {
-        csvval = record.get(INFO);
-        unit.setInfo(csvval);
-        changes.put("info", null, csvval);
+        String parsedInfo = record.get(INFO);
+        unit.setInfo(parsedInfo);
+        changes.put("info", null, parsedInfo);
       }
 
       if (record.isSet(HOME) && (isNew || Point.isEmpty(unit.getHome()))) {
-        csvval = record.get(HOME);
-        Point home = Point.create(csvval, null, poiSupplier, null);
+        String parsedHomePoint = record.get(HOME);
+        Point home = Point.create(parsedHomePoint, null, poiSupplier, null);
         unit.setHome(home);
         changes.put("home", null, home);
       }
@@ -132,19 +136,20 @@ public class UnitImporter {
       List<String> unmappedCrew = new LinkedList<>();
       crewFields.forEach(i -> {
         if (record.size() > i) {
-          String val = record.get(i).trim();
-          if (!val.isEmpty()) {
-            String[] parts = val.split(" ", 2);
+          String parsedPersonnelIdString = record.get(i).trim();
+          if (!parsedPersonnelIdString.isEmpty()) {
+            String[] parts = parsedPersonnelIdString.split(" ", 2);
             // Try to parse personnel number
             User user = null;
             try {
               int pnr = Integer.parseInt(parts[0]);
               user = userService.getByPersonnelId(pnr);
             } catch (NumberFormatException e) {
+              LOG.debug("Could not parse personnel ID from '{}'.", parsedPersonnelIdString);
             }
 
             if (user == null) {
-              unmappedCrew.add(val);
+              unmappedCrew.add(parsedPersonnelIdString);
             } else {
               unit.addCrew(user);
             }

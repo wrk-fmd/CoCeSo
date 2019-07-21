@@ -44,7 +44,7 @@ class CreateHoldPosition implements TaskStateHook {
             LOG.debug("{}: Creating HoldPosition for unit {} on AAO. Relocation {} will be detached.", user, unit, incident);
             incidentService.createHoldPosition(incident.getAo(), unit, TaskState.AAO, user, notify);
         } else {
-            LOG.debug("{}: Relocation task of unit {} had 'Home' as target. Unit is automatically detached to set it to 'at home'.", user, incident, unit);
+            LOG.debug("{}: Relocation task '{}' of unit '{}' had 'Home' as target. Unit is automatically detached to set it to 'at home'.", user, incident, unit);
         }
 
         return TaskState.Detached;
