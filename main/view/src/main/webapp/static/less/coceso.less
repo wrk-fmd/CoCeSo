@@ -639,8 +639,12 @@ body.main {
  * Form dialogs
  */
 
-.incident_form, .unit_form, .patient_form {
-  min-width: 444px;
+.incident_form {
+  min-width: 550px;
+}
+
+.unit_form, .patient_form {
+  min-width: 450px;
 }
 
 .log_form {
@@ -654,6 +658,24 @@ body.main {
 .assigned label.control-label {
   padding-top: 4px;
   text-align: center;
+}
+
+.ajax_content {
+  height: 100%;
+  form.grow {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .grow-content {
+      flex: 1 1 auto;
+      overflow: auto;
+    }
+
+    .grow-footer {
+      flex-shrink: 0;
+    }
+  }
 }
 
 /*
