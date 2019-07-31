@@ -34,7 +34,7 @@
 
         <p>
           <button type="submit" class="btn btn-success"><spring:message code="patient.transported"/></button>
-          <a class="btn btn-warning" href="<c:url value="/patadmin/postprocessing/view/${command.patient}"/>"><spring:message code="cancel"/></a>
+          <a class="btn btn-warning" href="<c:url value="/patadmin/postprocessing/view/${patient.id}"/>"><spring:message code="cancel"/></a>
         </p>
       </form>
     </div>
