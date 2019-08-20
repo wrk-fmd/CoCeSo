@@ -1,7 +1,7 @@
 package at.wrk.coceso.niu.data;
 
-import at.wrk.coceso.niu.NiuToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.Objects;
 import java.util.Set;
@@ -38,13 +38,12 @@ public class ExternalUser {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(externalUserId, telephoneNumbers);
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, NiuToStringStyle.STYLE)
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
                 .append("externalUserId", externalUserId)
                 .append("telephoneNumbers", telephoneNumbers)
                 .toString();

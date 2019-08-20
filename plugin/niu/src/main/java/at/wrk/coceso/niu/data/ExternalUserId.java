@@ -1,7 +1,7 @@
 package at.wrk.coceso.niu.data;
 
-import at.wrk.coceso.niu.NiuToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.Objects;
 
@@ -9,18 +9,18 @@ import java.util.Objects;
  * Combined identifier for imported users.
  */
 public final class ExternalUserId {
-    private final int personellId;
+    private final int personnelId;
     private final String lastname;
     private final String firstname;
 
-    public ExternalUserId(final int personellId, final String lastname, final String firstname) {
-        this.personellId = personellId;
+    public ExternalUserId(final int personnelId, final String lastname, final String firstname) {
+        this.personnelId = personnelId;
         this.lastname = lastname;
         this.firstname = firstname;
     }
 
-    public int getPersonellId() {
-        return personellId;
+    public int getPersonnelId() {
+        return personnelId;
     }
 
     public String getLastname() {
@@ -42,21 +42,20 @@ public final class ExternalUserId {
         }
 
         ExternalUserId that = (ExternalUserId) o;
-        return personellId == that.personellId &&
+        return personnelId == that.personnelId &&
                 Objects.equals(lastname, that.lastname) &&
                 Objects.equals(firstname, that.firstname);
     }
 
     @Override
     public int hashCode() {
-
-        return Objects.hash(personellId, lastname, firstname);
+        return Objects.hash(personnelId, lastname, firstname);
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, NiuToStringStyle.STYLE)
-                .append("personellId", personellId)
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("personnelId", personnelId)
                 .append("lastname", lastname)
                 .append("firstname", firstname)
                 .toString();
