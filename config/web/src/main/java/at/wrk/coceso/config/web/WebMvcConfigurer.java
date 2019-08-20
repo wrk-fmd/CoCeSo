@@ -5,7 +5,6 @@ import at.wrk.coceso.utils.ActiveConcernResolver;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -31,6 +30,9 @@ import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.mvc.WebContentInterceptor;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Configuration
 @ComponentScan(basePackages = {"at.wrk.coceso", "at.wrk.geocode"})
@@ -61,14 +63,17 @@ class WebMvcConfigurer extends WebMvcConfigurerAdapter {
     registry.addInterceptor(localeChangeInterceptor);
 
     WebContentInterceptor webContentInterceptor = new WebContentInterceptor();
-    webContentInterceptor.addCacheMapping(CacheControl.noCache(), "/data/**");
+    webContentInterceptor.addCacheMapping(CacheControl.noStore(), "/data/**");
     registry.addInterceptor(webContentInterceptor);
   }
 
   @Override
   public void addResourceHandlers(ResourceHandlerRegistry registry) {
-    registry.addResourceHandler("/static/i18n/**").addResourceLocations("classpath:i18n/");
-    registry.addResourceHandler("/static/**").addResourceLocations("/static/");
+    registry.addResourceHandler("/static/i18n/**")
+            .addResourceLocations("classpath:i18n/");
+    registry.addResourceHandler("/static/**")
+            .addResourceLocations("/static/")
+            .setCacheControl(CacheControl.maxAge(7, TimeUnit.DAYS).cachePrivate());
   }
 
   @Override
