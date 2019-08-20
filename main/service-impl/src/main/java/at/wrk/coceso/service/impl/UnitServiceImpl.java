@@ -1,5 +1,6 @@
 package at.wrk.coceso.service.impl;
 
+import at.wrk.coceso.data.AuthenticatedUser;
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.Unit;
@@ -23,6 +24,7 @@ import at.wrk.coceso.service.UserService;
 import at.wrk.coceso.service.internal.IncidentServiceInternal;
 import at.wrk.coceso.service.internal.TaskServiceInternal;
 import at.wrk.coceso.service.internal.UnitServiceInternal;
+import at.wrk.coceso.utils.AuthenicatedUserProvider;
 import at.wrk.coceso.utils.Initializer;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -37,6 +39,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -63,6 +66,13 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
 
   @Autowired
   private UnitImporter unitImporter;
+
+  private final AuthenicatedUserProvider authenicatedUserProvider;
+
+  @Autowired
+  UnitServiceImpl(final AuthenicatedUserProvider authenicatedUserProvider) {
+    this.authenicatedUserProvider = authenicatedUserProvider;
+  }
 
   @Override
   public Unit getById(int id) {
@@ -101,13 +111,13 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
   }
 
   @Override
-  public Unit updateMain(final Unit unit, final User user, final NotifyList notify) {
+  public Unit updateMain(final Unit unit, final NotifyList notify) {
+    LOG.debug("{}: Triggered update of unit {}", authenicatedUserProvider.getAuthenticatedUser(), unit);
     if (unit.getId() == null) {
-      LOG.warn("{}: Tried to create unit with wrong method", user);
+      LOG.warn("{}: Tried to create unit via 'update' method. Operation is rejected.", authenicatedUserProvider.getAuthenticatedUser());
       throw new ErrorsException(Errors.UnitCreateNotAllowed);
     }
 
-    LOG.info("{}: Triggered update of unit {}", user, unit);
 
     Map<Incident, TaskState> incidents = unit.getIncidents();
 
@@ -118,7 +128,7 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
     }
 
     if (save.getConcern().isClosed()) {
-      LOG.warn("{}: Tried to update unit {} in closed concern", user, unit);
+      LOG.warn("{}: Tried to update unit {} in closed concern", authenicatedUserProvider.getAuthenticatedUser(), unit);
       throw new ErrorsException(Errors.ConcernClosed);
     }
 
@@ -141,25 +151,25 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
     }
 
     final Unit updatedUnit = unitRepository.saveAndFlush(save);
-    logService.logAuto(user, LogEntryType.UNIT_UPDATE, updatedUnit.getConcern(), updatedUnit, null, changes);
+    logService.logAuto(LogEntryType.UNIT_UPDATE, updatedUnit.getConcern(), updatedUnit, null, changes);
     notify.add(updatedUnit);
 
     if (incidents != null) {
-      incidents.forEach((incident, state) -> taskService.changeState(incidentService.getById(incident.getId()), updatedUnit, state, user, notify));
+      incidents.forEach((incident, state) -> taskService.changeState(incidentService.getById(incident.getId()), updatedUnit, state, notify));
     }
 
     return updatedUnit;
   }
 
   @Override
-  public Unit updateEdit(final Unit unit, final Concern concern, final User user, final NotifyList notify) {
+  public Unit updateEdit(final Unit unit, final Concern concern, final NotifyList notify) {
     Changes changes = new Changes("unit");
     Unit save;
     if (unit.getId() == null) {
-      LOG.info("{}: Triggered unit create", user);
+      LOG.info("{}: Triggered unit create: {}", authenicatedUserProvider.getAuthenticatedUser(), unit);
 
       if (Concern.isClosed(concern)) {
-        LOG.warn("{}: Tried to create unit without open concern", user);
+        LOG.warn("{}: Tried to create unit {} in closed concern.", authenicatedUserProvider.getAuthenticatedUser(), unit);
         throw new ErrorsException(Errors.ConcernClosed);
       }
 
@@ -204,7 +214,7 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
 
       save.setLocked(false);
     } else {
-      LOG.info("{}: Triggered update of unit {}", user, unit);
+      LOG.info("{}: Triggered update of unit: {}", authenicatedUserProvider, unit);
 
       save = getById(unit.getId());
       if (save == null) {
@@ -213,7 +223,7 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
       }
 
       if (save.getConcern().isClosed()) {
-        LOG.warn("{}: Tried to update unit {} in closed concern", user, unit);
+        LOG.warn("{}: Tried to update unit {} in closed concern", authenicatedUserProvider.getAuthenticatedUser(), unit);
         throw new ErrorsException(Errors.ConcernClosed);
       }
 
@@ -267,7 +277,7 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
     }
 
     Unit updatedUnit = unitRepository.saveAndFlush(save);
-    logService.logAuto(user, LogEntryType.UNIT_CREATE, updatedUnit.getConcern(), updatedUnit, null, changes);
+    logService.logAuto(LogEntryType.UNIT_CREATE, updatedUnit.getConcern(), updatedUnit, null, changes);
 
     notify.add(updatedUnit);
 
@@ -275,7 +285,7 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
   }
 
   @Override
-  public List<Integer> batchCreate(BatchUnits batch, Concern concern, User user, NotifyList notify) {
+  public List<Integer> batchCreate(final BatchUnits batch, final Concern concern, final NotifyList notify) {
     List<Integer> ids = new LinkedList<>();
 
     Unit unit = new Unit();
@@ -287,7 +297,7 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
 
     for (int i = batch.getFrom(); i <= batch.getTo(); i++) {
       unit.setCall(batch.getCall() + i);
-      Unit added = updateEdit(unit, concern, user, notify);
+      Unit added = updateEdit(unit, concern, notify);
       ids.add(added.getId());
     }
 
@@ -295,14 +305,14 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
   }
 
   @Override
-  public Unit doRemove(int unitId, User user) {
+  public Unit doRemove(final int unitId) {
     Unit unit = Initializer.init(getById(unitId), Unit::getConcern);
     if (unit == null) {
-      LOG.info("{}: Tried to remove non-existing Unit #{}", user, unitId);
+      LOG.info("{}: Tried to remove non-existing Unit #{}", authenicatedUserProvider.getAuthenticatedUser(), unitId);
       throw new ErrorsException(Errors.EntityMissing);
     }
     if (unit.isLocked()) {
-      LOG.warn("{}: Tried to remove non-deletable Unit #{}", user, unit.getId());
+      LOG.warn("{}: Tried to remove non-deletable Unit #{}", authenicatedUserProvider.getAuthenticatedUser(), unit.getId());
       throw new ErrorsException(Errors.UnitLocked);
     }
 
@@ -312,7 +322,7 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
   }
 
   @Override
-  public void sendHome(int unitId, User user, NotifyList notify) {
+  public void sendHome(final int unitId, final NotifyList notify) {
     Unit unit = getById(unitId);
     if (unit == null) {
       throw new ErrorsException(Errors.EntityMissing);
@@ -327,18 +337,13 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
     }
 
     Incident inc = new Incident();
-    inc.setState(IncidentState.InProgress);
     inc.setType(IncidentType.ToHome);
-    inc.setCaller(user.getUsername());
-    inc.setAo(unit.getHome());
     inc.setBo(unit.getPosition());
-
-    inc = incidentService.update(inc, unit.getConcern(), user, notify);
-    taskService.changeState(inc, unit, TaskState.Assigned, user, notify);
+    setPropertiesAndSave(notify, unit, inc);
   }
 
   @Override
-  public void holdPosition(int unitId, User user, NotifyList notify) {
+  public void holdPosition(final int unitId, final NotifyList notify) {
     Unit unit = getById(unitId);
     if (unit == null) {
       throw new ErrorsException(Errors.EntityMissing);
@@ -350,11 +355,11 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
       throw new ErrorsException(Errors.IncidentNotAllowed);
     }
 
-    incidentService.createHoldPosition(unit.getPosition(), unit, TaskState.Assigned, user, notify);
+    incidentService.createHoldPosition(unit.getPosition(), unit, TaskState.Assigned, notify);
   }
 
   @Override
-  public void standby(int unitId, User user, NotifyList notify) {
+  public void standby(final int unitId, final NotifyList notify) {
     Unit unit = getById(unitId);
     if (unit == null) {
       throw new ErrorsException(Errors.EntityMissing);
@@ -369,19 +374,14 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
     }
 
     Incident inc = new Incident();
-    inc.setState(IncidentState.InProgress);
     inc.setType(IncidentType.Standby);
-    inc.setCaller(user.getUsername());
-    inc.setAo(unit.getHome());
-
-    inc = incidentService.update(inc, unit.getConcern(), user, notify);
-    taskService.changeState(inc, unit, TaskState.Assigned, user, notify);
+    setPropertiesAndSave(notify, unit, inc);
   }
 
   @Override
-  public void removeCrew(int unit_id, int user_id, NotifyList notify) {
-    Unit unit = getById(unit_id);
-    User user = userService.getById(user_id);
+  public void removeCrew(final int unitId, final int userId, final NotifyList notify) {
+    Unit unit = getById(unitId);
+    User user = userService.getById(userId);
     if (unit == null || user == null) {
       throw new ErrorsException(Errors.EntityMissing);
     }
@@ -395,9 +395,9 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
   }
 
   @Override
-  public void addCrew(int unit_id, int user_id, NotifyList notify) {
-    Unit unit = getById(unit_id);
-    User user = userService.getById(user_id);
+  public void addCrew(final int unitId, final int userId, final NotifyList notify) {
+    Unit unit = getById(unitId);
+    User user = userService.getById(userId);
     if (unit == null || user == null) {
       throw new ErrorsException(Errors.EntityMissing);
     }
@@ -411,16 +411,27 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
   }
 
   @Override
-  public int importUnits(String data, Concern concern, User user, NotifyList notify) {
-    LOG.info("{}: started import of units", user.getUsername());
+  public int importUnits(final String data, final Concern concern, final NotifyList notify) {
+    LOG.info("{}: started import of units", authenicatedUserProvider.getAuthenticatedUser());
 
     Map<Unit, Changes> units = unitImporter.importUnits(data, concern, getAll(concern));
-    units.forEach((u, c) -> {
-      u = unitRepository.saveAndFlush(u);
-      logService.logAuto(user, LogEntryType.UNIT_CREATE, u.getConcern(), u, null, c);
-      notify.add(u);
+    units.forEach((unit, changes) -> {
+      Unit savedUnit = unitRepository.saveAndFlush(unit);
+      logService.logAuto(LogEntryType.UNIT_CREATE, savedUnit.getConcern(), savedUnit, null, changes);
+      notify.add(savedUnit);
     });
     return units.size();
   }
 
+
+  private void setPropertiesAndSave(final NotifyList notify, final Unit unit, final Incident inc) {
+    inc.setState(IncidentState.InProgress);
+    Optional.ofNullable(authenicatedUserProvider.getAuthenticatedUser())
+            .map(AuthenticatedUser::getUsername)
+            .ifPresent(inc::setCaller);
+    inc.setAo(unit.getHome());
+
+    Incident savedIncident = incidentService.update(inc, unit.getConcern(), notify);
+    taskService.changeState(savedIncident, unit, TaskState.Assigned, notify);
+  }
 }

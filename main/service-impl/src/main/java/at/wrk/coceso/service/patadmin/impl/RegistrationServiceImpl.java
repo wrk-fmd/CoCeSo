@@ -20,13 +20,14 @@ import at.wrk.coceso.service.patadmin.PatadminService;
 import at.wrk.coceso.service.patadmin.internal.RegistrationServiceInternal;
 import at.wrk.coceso.specification.PatientSearchSpecification;
 import at.wrk.coceso.utils.DataAccessLogger;
-import java.util.List;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.List;
 
 @Service
 @Transactional
@@ -46,6 +47,13 @@ class RegistrationServiceImpl implements RegistrationServiceInternal {
 
   @Autowired
   private PatadminService patadminService;
+
+  private final DataAccessLogger dataAccessLogger;
+
+  @Autowired
+  RegistrationServiceImpl(final DataAccessLogger dataAccessLogger) {
+    this.dataAccessLogger = dataAccessLogger;
+  }
 
   @Override
   public List<Incident> getIncoming(Concern concern) {
@@ -69,7 +77,7 @@ class RegistrationServiceImpl implements RegistrationServiceInternal {
 
   @Override
   public Patient getActivePatient(int patientId, User user) {
-    Patient patient = patientService.getById(patientId, user);
+    Patient patient = patientService.getById(patientId);
     if (patient.isDone()) {
       throw new ErrorsException(Errors.PatientDone);
     }
@@ -112,7 +120,7 @@ class RegistrationServiceImpl implements RegistrationServiceInternal {
         return null;
     }
 
-    DataAccessLogger.logPatientAccess(patients, concern, query, user);
+    dataAccessLogger.logPatientAccess(patients, concern, query);
     return patients;
   }
 
@@ -126,7 +134,6 @@ class RegistrationServiceImpl implements RegistrationServiceInternal {
       throw new ErrorsException(Errors.ConcernClosed);
     }
 
-    final Incident inc = incident;
     if ((incident.getType() != IncidentType.Task && incident.getType() != IncidentType.Transport)
         || incident.getState().isDone() || !(incident.getAo() instanceof UnitPoint)) {
       throw new ErrorsException(Errors.IncidentNotAllowed);
@@ -139,28 +146,28 @@ class RegistrationServiceImpl implements RegistrationServiceInternal {
       return incident.getPatient();
     }
 
-    Patient patient = patientService.update(new Patient(), incident.getConcern(), user, notify);
+    Patient patient = patientService.update(new Patient(), incident.getConcern(), notify);
 
     incident.setPatient(patient);
-    incidentService.assignPatient(incident, patient, user, notify);
+    incidentService.assignPatient(incident, patient, notify);
 
     return patient;
   }
 
   @Override
-  public Patient update(RegistrationForm form, Concern concern, User user, NotifyList notify) {
+  public Patient update(final RegistrationForm form, final Concern concern, final User user, final NotifyList notify) {
     Patient old = form.getPatient() == null ? null : getActivePatient(form.getPatient(), user);
 
     Patient patient = prepare(form, old);
-    patient = patientService.update(patient, concern, user, notify);
+    patient = patientService.update(patient, concern, notify);
 
     if (patient.getIncidents() != null) {
       patient.getIncidents().size();
     }
     if (form.getGroup() != null && (patient.getGroup() == null
-        || !patient.getGroup().stream().anyMatch(g -> g.getId().equals(form.getGroup())))) {
-      incidentService.endTreatments(patient, user, notify);
-      incidentService.createTreatment(patient, patadminService.getGroup(form.getGroup()), user, notify);
+        || patient.getGroup().stream().noneMatch(g -> g.getId().equals(form.getGroup())))) {
+      incidentService.endTreatments(patient, notify);
+      incidentService.createTreatment(patient, patadminService.getGroup(form.getGroup()), notify);
     }
 
     return patient;

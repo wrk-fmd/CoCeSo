@@ -1,7 +1,6 @@
 package at.wrk.coceso.service.hooks;
 
 import at.wrk.coceso.entity.Incident;
-import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.enums.LogEntryType;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entityevent.impl.NotifyList;
@@ -27,12 +26,12 @@ class IncidentRemoveUnits implements IncidentDoneHook {
   private LogService logService;
 
   @Override
-  public void call(final Incident incident, final User user, final NotifyList notify) {
+  public void call(final Incident incident, final NotifyList notify) {
     if (incident.getUnits() != null && !incident.getUnits().isEmpty()) {
       ImmutableSet.copyOf(incident.getUnits().keySet())
           .forEach(unit -> {
-            LOG.debug("{}: Auto-detach unit #{}, incident #{}", user, unit.getId(), incident.getId());
-            logService.logAuto(user, LogEntryType.UNIT_AUTO_DETACH, unit.getConcern(), unit, incident, TaskState.Detached);
+            LOG.debug("Auto-detach unit #{}, incident #{}", unit.getId(), incident.getId());
+            logService.logAuto(LogEntryType.UNIT_AUTO_DETACH, unit.getConcern(), unit, incident, TaskState.Detached);
             unit.removeIncident(incident);
             notify.add(unit);
           });

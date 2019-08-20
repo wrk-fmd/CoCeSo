@@ -1,21 +1,22 @@
 package at.wrk.coceso.service.impl;
 
 import at.wrk.coceso.entity.Concern;
-import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.enums.Errors;
 import at.wrk.coceso.entity.enums.LogEntryType;
 import at.wrk.coceso.exceptions.ErrorsException;
 import at.wrk.coceso.repository.ConcernRepository;
 import at.wrk.coceso.service.ConcernService;
 import at.wrk.coceso.service.LogService;
+import at.wrk.coceso.utils.AuthenicatedUserProvider;
 import at.wrk.coceso.validator.impl.BeanValidator;
-import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -31,6 +32,13 @@ class ConcernServiceImpl implements ConcernService {
 
   @Autowired
   private LogService logService;
+
+  private final AuthenicatedUserProvider authenicatedUserProvider;
+
+  @Autowired
+  ConcernServiceImpl(final AuthenicatedUserProvider authenicatedUserProvider) {
+    this.authenicatedUserProvider = authenicatedUserProvider;
+  }
 
   @Override
   public Concern getById(int id) {
@@ -48,15 +56,15 @@ class ConcernServiceImpl implements ConcernService {
   }
 
   @Override
-  public Concern update(Concern concern, User user) {
+  public Concern update(Concern concern) {
     Concern save = concern.getId() == null ? new Concern() : getById(concern.getId());
     if (save.isClosed()) {
       // Don't allow update of closed concern
-      LOG.error("{}: Tried to update closed concern {}", user, concern);
+      LOG.error("Tried to update an already closed concern {}", concern);
       throw new ErrorsException(Errors.ConcernClosed);
     }
 
-    LOG.debug("{}: Triggered update of concern {}", user, concern);
+    LOG.debug("{}: Triggered update of concern {}", authenicatedUserProvider.getAuthenticatedUser(), concern);
     save.setId(concern.getId());
     save.setName(concern.getName());
     save.setInfo(concern.getInfo());
@@ -66,14 +74,14 @@ class ConcernServiceImpl implements ConcernService {
     save = concernRepository.saveAndFlush(save);
 
     // TODO json
-    logService.logAuto(user, concern.getId() == null ? LogEntryType.CONCERN_CREATE : LogEntryType.CONCERN_UPDATE, save, null);
+    logService.logAuto(concern.getId() == null ? LogEntryType.CONCERN_CREATE : LogEntryType.CONCERN_UPDATE, save, null);
 
     return save;
   }
 
   @Override
-  public void setClosed(int concern_id, boolean close, User user) {
-    Concern concern = getById(concern_id);
+  public void setClosed(final int concernId, final boolean close) {
+    Concern concern = getById(concernId);
     if (concern == null) {
       throw new ErrorsException(Errors.ConcernMissing);
     }
@@ -88,11 +96,11 @@ class ConcernServiceImpl implements ConcernService {
     concernRepository.saveAndFlush(concern);
 
     if (close) {
-      LOG.info("{}: Closed concern {}", user, concern);
-      logService.logAuto(user, LogEntryType.CONCERN_CLOSE, concern, null);
+      LOG.info("{}: Closed concern {}", authenicatedUserProvider.getAuthenticatedUser(), concern);
+      logService.logAuto(LogEntryType.CONCERN_CLOSE, concern, null);
     } else {
-      LOG.info("{}: Reopened concern {}", user, concern);
-      logService.logAuto(user, LogEntryType.CONCERN_REOPEN, concern, null);
+      LOG.info("{}: Reopened concern {}", authenicatedUserProvider.getAuthenticatedUser(), concern);
+      logService.logAuto(LogEntryType.CONCERN_REOPEN, concern, null);
     }
   }
 
@@ -114,7 +122,7 @@ class ConcernServiceImpl implements ConcernService {
   }
 
   @Override
-  public void removeSection(String section, int concernId) {
+  public void removeSection(final String section, final int concernId) {
     // TODO: Update units and incidents!
 
     Concern concern = getById(concernId);

@@ -4,7 +4,6 @@ import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.Patient;
 import at.wrk.coceso.entity.Unit;
-import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.enums.Errors;
 import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.enums.IncidentType;
@@ -22,6 +21,7 @@ import at.wrk.coceso.service.hooks.HookService;
 import at.wrk.coceso.service.internal.IncidentServiceInternal;
 import at.wrk.coceso.service.internal.PatientServiceInternal;
 import at.wrk.coceso.service.internal.TaskServiceInternal;
+import at.wrk.coceso.utils.AuthenicatedUserProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +57,12 @@ class IncidentServiceImpl implements IncidentServiceInternal {
     @Autowired
     private UnitService unitService;
 
+    private final AuthenicatedUserProvider authenicatedUserProvider;
+
+    @Autowired
+    IncidentServiceImpl(final AuthenicatedUserProvider authenicatedUserProvider) {
+        this.authenicatedUserProvider = authenicatedUserProvider;
+    }
 
     @Override
     public Incident getById(int id) {
@@ -105,37 +111,37 @@ class IncidentServiceImpl implements IncidentServiceInternal {
     }
 
     @Override
-    public Incident update(final Incident incident, final Concern concern, final User user, final NotifyList notify) {
+    public Incident update(final Incident incident, final Concern concern, final NotifyList notify) {
         Incident updatedIncident;
 
         Changes changes = new Changes("incident");
         if (incident.getId() == null) {
-            updatedIncident = createIncident(incident, concern, user, notify, changes);
+            updatedIncident = createIncident(incident, concern, notify, changes);
         } else {
-            updatedIncident = updateIncident(incident, user, notify, changes);
+            updatedIncident = updateIncident(incident, notify, changes);
         }
 
         Map<Unit, TaskState> units = incident.getUnits();
-        postProcessUpdatedIncident(user, notify, updatedIncident, units);
+        postProcessUpdatedIncident(notify, updatedIncident, units);
 
         return updatedIncident;
     }
 
     @Override
-    public Incident createHoldPosition(final Point position, final Unit unit, final TaskState state, final User user, final NotifyList notify) {
+    public Incident createHoldPosition(final Point position, final Unit unit, final TaskState state, final NotifyList notify) {
         Incident hold = new Incident();
         hold.setState(IncidentState.InProgress);
         hold.setType(IncidentType.HoldPosition);
         hold.setAo(position);
 
-        hold = update(hold, unit.getConcern(), user, notify);
-        taskService.changeState(hold, unit, state, user, notify);
+        hold = update(hold, unit.getConcern(), notify);
+        taskService.changeState(hold, unit, state, notify);
 
         return hold;
     }
 
     @Override
-    public void endTreatments(final Patient patient, final User user, final NotifyList notify) {
+    public void endTreatments(final Patient patient, final NotifyList notify) {
         if (patient != null && patient.getIncidents() != null) {
             patient.getIncidents().stream()
                     .filter(i -> i.getType() == IncidentType.Treatment && !i.getState().isDone())
@@ -145,16 +151,16 @@ class IncidentServiceImpl implements IncidentServiceInternal {
                         i.setState(IncidentState.Done);
 
                         i = incidentRepository.saveAndFlush(i);
-                        logService.logAuto(user, LogEntryType.INCIDENT_AUTO_DONE, i.getConcern(), null, i, changes);
+                        logService.logAuto(LogEntryType.INCIDENT_AUTO_DONE, i.getConcern(), null, i, changes);
                         notify.add(i);
 
-                        hookService.callIncidentDone(i, user, notify);
+                        hookService.callIncidentDone(i, notify);
                     });
         }
     }
 
     @Override
-    public Incident createTreatment(final Patient patient, final Unit group, final User user, final NotifyList notify) {
+    public Incident createTreatment(final Patient patient, final Unit group, final NotifyList notify) {
         Changes changes = new Changes("incident");
 
         if (!patient.getConcern().equals(group.getConcern())) {
@@ -180,24 +186,24 @@ class IncidentServiceImpl implements IncidentServiceInternal {
         }
 
         incident = incidentRepository.saveAndFlush(incident);
-        logService.logAuto(user, LogEntryType.INCIDENT_CREATE, incident.getConcern(), null, incident, changes);
+        logService.logAuto(LogEntryType.INCIDENT_CREATE, incident.getConcern(), null, incident, changes);
         notify.add(incident);
 
-        taskService.uncheckedChangeState(incident, group, TaskState.AAO, user, notify);
-        logService.logAuto(user, LogEntryType.UNIT_ASSIGN, incident.getConcern(), group, incident, TaskState.AAO);
+        taskService.uncheckedChangeState(incident, group, TaskState.AAO, notify);
+        logService.logAuto(LogEntryType.UNIT_ASSIGN, incident.getConcern(), group, incident, TaskState.AAO);
 
         return incident;
     }
 
     @Override
-    public void assignPatient(final int incidentId, final int patientId, final User user, final NotifyList notify) {
+    public void assignPatient(final int incidentId, final int patientId, final NotifyList notify) {
         Incident incident = getById(incidentId);
         Patient patient = patientService.getByIdNoLog(patientId);
-        assignPatient(incident, patient, user, notify);
+        assignPatient(incident, patient, notify);
     }
 
     @Override
-    public void assignPatient(final Incident incident, final Patient patient, final User user, final NotifyList notify) {
+    public void assignPatient(final Incident incident, final Patient patient, final NotifyList notify) {
         if (incident == null || patient == null) {
             throw new ErrorsException(Errors.EntityMissing);
         }
@@ -212,30 +218,30 @@ class IncidentServiceImpl implements IncidentServiceInternal {
 
         incident.setPatient(patient);
         Incident updatedIncident = incidentRepository.saveAndFlush(incident);
-        logService.logAuto(user, LogEntryType.PATIENT_ASSIGN, updatedIncident.getConcern(), updatedIncident, patient);
+        logService.logAuto(LogEntryType.PATIENT_ASSIGN, updatedIncident.getConcern(), updatedIncident, patient);
         notify.add(updatedIncident);
     }
 
-    private void postProcessUpdatedIncident(final User user, final NotifyList notify, final Incident updatedIncident, final Map<Unit, TaskState> units) {
+    private void postProcessUpdatedIncident(final NotifyList notify, final Incident updatedIncident, final Map<Unit, TaskState> units) {
         if (updatedIncident.getState().isDone()) {
-            hookService.callIncidentDone(updatedIncident, user, notify);
+            hookService.callIncidentDone(updatedIncident, notify);
         } else if (units != null) {
-            units.forEach((unit, state) -> taskService.changeState(updatedIncident, unitService.getById(unit.getId()), state, user, notify));
+            units.forEach((unit, state) -> taskService.changeState(updatedIncident, unitService.getById(unit.getId()), state, notify));
         }
     }
 
-    private Incident createIncident(final Incident incident, final Concern concern, final User user, final NotifyList notify, final Changes changes) {
-        Incident createdIncident = incidentRepository.saveAndFlush(prepareForCreate(incident, concern, changes, user));
-        logService.logAuto(user, LogEntryType.INCIDENT_CREATE, createdIncident.getConcern(), null, createdIncident, changes);
+    private Incident createIncident(final Incident incident, final Concern concern, final NotifyList notify, final Changes changes) {
+        Incident createdIncident = incidentRepository.saveAndFlush(prepareForCreate(incident, concern, changes));
+        logService.logAuto(LogEntryType.INCIDENT_CREATE, createdIncident.getConcern(), null, createdIncident, changes);
         notify.add(createdIncident);
         return createdIncident;
     }
 
-    private Incident prepareForCreate(final Incident incident, final Concern concern, final Changes changes, final User user) {
-        LOG.info("{}: Triggered incident create", user);
+    private Incident prepareForCreate(final Incident incident, final Concern concern, final Changes changes) {
+        LOG.debug("{}: Triggered incident create with incident data: {}", authenicatedUserProvider.getAuthenticatedUser(), incident);
 
         if (Concern.isClosed(concern)) {
-            LOG.warn("{}: Tried to create incident without open concern", user);
+            LOG.warn("Tried to create incident without open concern");
             throw new ErrorsException(Errors.ConcernClosed);
         }
 
@@ -301,18 +307,18 @@ class IncidentServiceImpl implements IncidentServiceInternal {
         return save;
     }
 
-    private Incident updateIncident(final Incident incident, final User user, final NotifyList notify, final Changes changes) {
-        Incident updatedIncident = prepareForUpdate(incident, changes, user);
+    private Incident updateIncident(final Incident incident, final NotifyList notify, final Changes changes) {
+        Incident updatedIncident = prepareForUpdate(incident, changes);
         if (!changes.isEmpty()) {
             updatedIncident = incidentRepository.saveAndFlush(updatedIncident);
-            logService.logAuto(user, LogEntryType.INCIDENT_UPDATE, updatedIncident.getConcern(), null, updatedIncident, changes);
+            logService.logAuto(LogEntryType.INCIDENT_UPDATE, updatedIncident.getConcern(), null, updatedIncident, changes);
             notify.add(updatedIncident);
         }
         return updatedIncident;
     }
 
-    private Incident prepareForUpdate(Incident incident, Changes changes, User user) {
-        LOG.info("{}: Triggered update of incident {}", user, incident);
+    private Incident prepareForUpdate(final Incident incident, final Changes changes) {
+        LOG.info("{}: Triggered update of incident {}", authenicatedUserProvider.getAuthenticatedUser(), incident);
 
         Incident save = getById(incident.getId());
         if (save == null) {
@@ -322,7 +328,7 @@ class IncidentServiceImpl implements IncidentServiceInternal {
         }
 
         if (save.getConcern().isClosed()) {
-            LOG.warn("{}: Tried to update incident {} in closed concern", user, incident);
+            LOG.warn("Tried to update incident {} in closed concern", incident);
             throw new ErrorsException(Errors.ConcernClosed);
         }
 

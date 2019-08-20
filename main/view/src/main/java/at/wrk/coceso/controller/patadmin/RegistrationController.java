@@ -94,9 +94,8 @@ public class RegistrationController {
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
     public String showPatient(
             final ModelMap map,
-            @PathVariable final int id,
-            @AuthenticationPrincipal final User user) {
-        Patient patient = Initializer.initGroups(patientService.getById(id, user));
+            @PathVariable final int id) {
+        Patient patient = Initializer.initGroups(patientService.getById(id));
 
         patadminService.addAccessLevels(map, patient.getConcern());
         map.addAttribute("patient", patient);

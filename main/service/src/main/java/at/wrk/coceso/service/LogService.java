@@ -1,31 +1,36 @@
 package at.wrk.coceso.service;
 
-import at.wrk.coceso.entity.*;
+import at.wrk.coceso.entity.Concern;
+import at.wrk.coceso.entity.Incident;
+import at.wrk.coceso.entity.LogEntry;
+import at.wrk.coceso.entity.Patient;
+import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.enums.LogEntryType;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entity.helper.Changes;
-import java.sql.Timestamp;
-import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.sql.Timestamp;
+import java.util.List;
 
 @Service
 @Transactional
 public interface LogService {
 
-  void logAuto(User user, LogEntryType type, Concern concern, Changes changes);
+  void logAuto(LogEntryType type, Concern concern, Changes changes);
 
-  void logAuto(User user, LogEntryType type, Concern concern, Unit unit, Incident incident, Changes changes);
+  void logAuto(LogEntryType type, Concern concern, Unit unit, Incident incident, Changes changes);
 
-  void logAuto(User user, LogEntryType type, Concern concern, Unit unit, Incident incident, TaskState state);
+  void logAuto(LogEntryType type, Concern concern, Unit unit, Incident incident, TaskState state);
 
-  void logAuto(User user, LogEntryType type, Concern concern, Unit unit, Incident incident, TaskState state, Changes changes);
+  void logAuto(LogEntryType type, Concern concern, Unit unit, Incident incident, TaskState state, Changes changes);
 
-  void logAuto(User user, LogEntryType type, Concern concern, Patient patient, Changes changes);
+  void logAuto(LogEntryType type, Concern concern, Patient patient, Changes changes);
 
-  void logAuto(User user, LogEntryType type, Concern concern, Incident incident, Patient patient);
+  void logAuto(LogEntryType type, Concern concern, Incident incident, Patient patient);
 
-  void logCustom(User user, String text, Concern concern, Unit unit, Incident incident);
+  void logCustom(String text, Concern concern, Unit unit, Incident incident);
 
   List<LogEntry> getAll(Concern concern);
 

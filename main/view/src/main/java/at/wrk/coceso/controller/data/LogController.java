@@ -4,13 +4,11 @@ import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.LogEntry;
 import at.wrk.coceso.entity.Unit;
-import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.helper.RestResponse;
 import at.wrk.coceso.service.LogService;
 import at.wrk.coceso.utils.ActiveConcern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -61,13 +59,12 @@ public class LogController {
     public RestResponse addEntry(
             final @RequestBody LogEntry logEntry,
             final BindingResult result,
-            final @ActiveConcern Concern concern,
-            final @AuthenticationPrincipal User user) {
+            final @ActiveConcern Concern concern) {
         if (result.hasErrors()) {
             return new RestResponse(result);
         }
 
-        logService.logCustom(user, logEntry.getText(), concern, logEntry.getUnit(), logEntry.getIncident());
+        logService.logCustom(logEntry.getText(), concern, logEntry.getUnit(), logEntry.getIncident());
         return new RestResponse(true);
     }
 }

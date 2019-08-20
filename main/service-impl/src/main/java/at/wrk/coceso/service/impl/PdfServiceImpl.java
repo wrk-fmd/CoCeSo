@@ -4,13 +4,13 @@ import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.LogEntry;
 import at.wrk.coceso.entity.Unit;
-import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.service.IncidentService;
 import at.wrk.coceso.service.LogService;
 import at.wrk.coceso.service.PatientService;
 import at.wrk.coceso.service.PdfService;
 import at.wrk.coceso.service.UnitService;
+import at.wrk.coceso.utils.AuthenicatedUserProvider;
 import at.wrk.coceso.utils.impl.PdfDocument;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.PageSize;
@@ -49,25 +49,31 @@ class PdfServiceImpl implements PdfService {
     @Autowired
     private UnitService unitService;
 
+    private final AuthenicatedUserProvider authenicatedUserProvider;
+
+    @Autowired
+    PdfServiceImpl(final AuthenicatedUserProvider authenicatedUserProvider) {
+        this.authenicatedUserProvider = authenicatedUserProvider;
+    }
+
     @Override
     public void generateReport(
             final Concern concern,
             final boolean fullDate,
             final HttpServletResponse response,
-            final Locale locale,
-            final User user) {
+            final Locale locale) {
         try (PdfDocument doc = new PdfDocument(PageSize.A4.rotate(), fullDate, this, messageSource, locale)) {
             doc.start(response);
-            doc.addFrontPage("pdf.report.header", concern, user);
+            doc.addFrontPage("pdf.report.header", concern, authenicatedUserProvider.getAuthenticatedUser());
             doc.addStatistics(incidentService.getAll(concern));
             doc.addCustomLog(logService.getCustomAsc(concern));
             doc.addUnitsLog(unitService.getAllSorted(concern));
             doc.addIncidentsLog(incidentService.getAllForReport(concern));
             doc.addLastPage();
 
-            LOG.info("{}: PDF for concern {} completely written", user, concern);
+            LOG.info("PDF for concern {} completely written", concern);
         } catch (IOException | DocumentException e) {
-            LOG.error("{}: Error on printing pdf for concern {}", user, concern, e);
+            LOG.error("Error on printing pdf for concern {}", concern, e);
         }
     }
 
@@ -76,18 +82,17 @@ class PdfServiceImpl implements PdfService {
             final Concern concern,
             final boolean fullDate,
             final HttpServletResponse response,
-            final Locale locale,
-            final User user) {
+            final Locale locale) {
         try (PdfDocument doc = new PdfDocument(PageSize.A4.rotate(), fullDate, this, messageSource, locale)) {
             doc.start(response);
-            doc.addFrontPage("pdf.dump.header", concern, user);
+            doc.addFrontPage("pdf.dump.header", concern, authenicatedUserProvider.getAuthenticatedUser());
             doc.addUnitsCurrent(unitService.getAllSorted(concern));
             doc.addIncidentsCurrent(incidentService.getAllForDump(concern));
             doc.addLastPage();
 
-            LOG.info("{}: PDF for concern {} completely written", user, concern);
+            LOG.info("PDF for concern {} completely written", concern);
         } catch (IOException | DocumentException e) {
-            LOG.error("{}: Error on printing pdf for concern {}", user, concern, e);
+            LOG.error("Error on printing pdf for concern {}", concern, e);
         }
     }
 
@@ -96,17 +101,16 @@ class PdfServiceImpl implements PdfService {
             final Concern concern,
             final boolean fullDate,
             final HttpServletResponse response,
-            final Locale locale,
-            final User user) {
+            final Locale locale) {
         try (PdfDocument doc = new PdfDocument(PageSize.A4.rotate(), fullDate, this, messageSource, locale)) {
             doc.start(response);
-            doc.addFrontPage("pdf.transport.header", concern, user);
+            doc.addFrontPage("pdf.transport.header", concern, authenicatedUserProvider.getAuthenticatedUser());
             doc.addTransports(incidentService.getAllTransports(concern));
             doc.addLastPage();
 
-            LOG.info("{}: PDF for concern {} completely written", user, concern);
+            LOG.info("PDF for concern {} completely written", concern);
         } catch (IOException | DocumentException e) {
-            LOG.error("{}: Error on printing pdf for concern {}", user, concern, e);
+            LOG.error("Error on printing pdf for concern {}", concern, e);
         }
     }
 
@@ -114,17 +118,16 @@ class PdfServiceImpl implements PdfService {
     public void generatePatients(
             final Concern concern,
             final HttpServletResponse response,
-            final Locale locale,
-            final User user) {
+            final Locale locale) {
         try (final PdfDocument doc = new PdfDocument(PageSize.A4.rotate(), false, this, messageSource, locale)) {
             doc.start(response);
-            doc.addFrontPage("pdf.patients.header", concern, user);
-            doc.addPatients(patientService.getAllSorted(concern, user));
+            doc.addFrontPage("pdf.patients.header", concern, authenicatedUserProvider.getAuthenticatedUser());
+            doc.addPatients(patientService.getAllSorted(concern));
             doc.addLastPage();
 
-            LOG.info("{}: PDF for concern {} completely written", user, concern);
+            LOG.info("PDF for concern {} completely written", concern);
         } catch (IOException | DocumentException e) {
-            LOG.error("{}: Error on printing pdf for concern {}", user, concern, e);
+            LOG.error("Error on printing pdf for concern {}", concern, e);
         }
     }
 

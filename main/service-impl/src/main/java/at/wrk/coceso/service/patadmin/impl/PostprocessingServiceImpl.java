@@ -49,30 +49,30 @@ class PostprocessingServiceImpl implements PostprocessingServiceInternal {
 
   @Override
   public Patient getActivePatient(int patientId, User user) {
-    return checkActive(patientService.getById(patientId, user));
+    return checkActive(patientService.getById(patientId));
   }
 
   @Override
   public Patient getTransported(int patientId, User user) {
-    return checkTransported(patientService.getById(patientId, user));
+    return checkTransported(patientService.getById(patientId));
   }
 
   @Override
   public Patient update(PostprocessingForm form, User user, NotifyList notify) {
     Patient patient = prepareForUpdate(form, patientService.getByIdNoLog(form.getPatient()));
-    return patientService.update(patient, patient.getConcern(), user, notify);
+    return patientService.update(patient, patient.getConcern(), notify);
   }
 
   @Override
   public Patient discharge(PostprocessingForm form, User user, NotifyList notify) {
     Patient patient = prepareForUpdate(form, getActivePatientNoLog(form.getPatient()));
-    return patientService.updateAndDischarge(patient, user, notify);
+    return patientService.updateAndDischarge(patient, notify);
   }
 
   @Override
   public Patient transported(int patientId, User user, NotifyList notify) {
     Patient patient = checkTransported(patientService.getByIdNoLog(patientId));
-    incidentService.endTreatments(patient, user, notify);
+    incidentService.endTreatments(patient, notify);
     return patient;
   }
 
@@ -80,15 +80,15 @@ class PostprocessingServiceImpl implements PostprocessingServiceInternal {
   public Patient transport(TransportForm form, User user, NotifyList notify) {
     Patient patient = prepareForUpdate(form, getActivePatientNoLog(form.getPatient()));
     patient.setErtype(form.getErtype());
-    patient = patientService.update(patient, patient.getConcern(), user, notify);
+    patient = patientService.update(patient, patient.getConcern(), notify);
 
-    Incident incident = incidentService.update(createTransport(patient, form), patient.getConcern(), user, notify);
-    incidentService.assignPatient(incident, patient, user, notify);
+    Incident incident = incidentService.update(createTransport(patient, form), patient.getConcern(), notify);
+    incidentService.assignPatient(incident, patient, notify);
 
     return patient;
   }
 
-  private Patient prepareForUpdate(PostprocessingForm form, Patient old) {
+  private Patient prepareForUpdate(final PostprocessingForm form, final Patient old) {
     Patient p = new Patient();
 
     p.setErtype(old.getErtype());

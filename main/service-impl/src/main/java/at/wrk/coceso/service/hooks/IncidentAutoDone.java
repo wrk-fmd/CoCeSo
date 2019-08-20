@@ -2,7 +2,6 @@ package at.wrk.coceso.service.hooks;
 
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.Unit;
-import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.enums.LogEntryType;
 import at.wrk.coceso.entity.enums.TaskState;
@@ -34,7 +33,7 @@ class IncidentAutoDone implements TaskStateHook {
   private LogService logService;
 
   @Override
-  public TaskState call(final Incident incident, final Unit unit, final TaskState taskState, final User user, final NotifyList notify) {
+  public TaskState call(final Incident incident, final Unit unit, final TaskState taskState, final NotifyList notify) {
     if (taskState != TaskState.Detached || incident.getState().isDone()) {
       // Not detaching or already set to done
       return taskState;
@@ -50,14 +49,14 @@ class IncidentAutoDone implements TaskStateHook {
       return taskState;
     }
 
-    LOG.debug("{}: Autoclosing incident {}", user, incident);
+    LOG.debug("Autoclosing incident {}", incident);
 
     Changes changes = new Changes("incident");
     changes.put("state", incident.getState(), IncidentState.Done);
     incident.setState(IncidentState.Done);
 
     incidentRepository.saveAndFlush(incident);
-    logService.logAuto(user, LogEntryType.INCIDENT_AUTO_STATE, incident.getConcern(), unit, incident, taskState, changes);
+    logService.logAuto(LogEntryType.INCIDENT_AUTO_STATE, incident.getConcern(), unit, incident, taskState, changes);
 
     if (incident.getUnits() != null) {
       // Remove current unit, if present (otherwise IncidentRemoveUnits will be executed)
@@ -65,7 +64,7 @@ class IncidentAutoDone implements TaskStateHook {
     }
 
     notify.add(incident);
-    hookService.callIncidentDone(incident, user, notify);
+    hookService.callIncidentDone(incident, notify);
 
     return taskState;
   }

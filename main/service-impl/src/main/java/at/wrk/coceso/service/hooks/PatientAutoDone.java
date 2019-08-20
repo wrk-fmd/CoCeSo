@@ -1,7 +1,6 @@
 package at.wrk.coceso.service.hooks;
 
 import at.wrk.coceso.entity.Incident;
-import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entityevent.impl.NotifyList;
 import at.wrk.coceso.service.internal.PatientServiceInternal;
@@ -21,10 +20,10 @@ class PatientAutoDone implements IncidentDoneHook {
   private PatientServiceInternal patientService;
 
   @Override
-  public void call(final Incident incident, final User user, final NotifyList notify) {
+  public void call(final Incident incident, final NotifyList notify) {
     if (incident.getType() == IncidentType.Transport) {
-      LOG.debug("{}: Auto-discharging patient {} after transport", user, incident.getPatient());
-      patientService.discharge(incident.getPatient(), user, notify);
+      LOG.debug("Auto-discharging patient {} after transport of incident {}.", incident.getPatient(), incident);
+      patientService.discharge(incident.getPatient(), notify);
     }
   }
 

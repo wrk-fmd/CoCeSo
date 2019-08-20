@@ -71,9 +71,8 @@ public class PostprocessingController {
   @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
   public String showPatient(
           final ModelMap map,
-          @PathVariable final int id,
-          @AuthenticationPrincipal final User user) {
-    Patient patient = Initializer.initGroups(patientService.getById(id, user));
+          @PathVariable final int id) {
+    Patient patient = Initializer.initGroups(patientService.getById(id));
     map.addAttribute("patient", patient);
     patadminService.addAccessLevels(map, patient.getConcern());
     return "patadmin/postprocessing/view";
@@ -83,9 +82,8 @@ public class PostprocessingController {
   @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
   public ModelAndView showEdit(
           final ModelMap map,
-          @PathVariable final int id,
-          @AuthenticationPrincipal final User user) {
-    Patient patient = patientService.getById(id, user);
+          @PathVariable final int id) {
+    Patient patient = patientService.getById(id);
     patadminService.addAccessLevels(map, patient.getConcern());
     return new ModelAndView("patadmin/postprocessing/form", "command", new PostprocessingForm(patient));
   }

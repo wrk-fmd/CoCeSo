@@ -1,15 +1,14 @@
 package at.wrk.coceso.controller.pdf;
 
 import at.wrk.coceso.entity.Concern;
-import at.wrk.coceso.entity.User;
 import at.wrk.coceso.exceptions.ConcernException;
 import at.wrk.coceso.service.ConcernService;
 import at.wrk.coceso.service.PdfService;
+import at.wrk.coceso.utils.AuthenicatedUserProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,64 +30,69 @@ public class PdfController {
     @Autowired
     private ConcernService concernService;
 
+    private final AuthenicatedUserProvider authenicatedUserProvider;
+
+    @Autowired
+    public PdfController(final AuthenicatedUserProvider authenicatedUserProvider) {
+        this.authenicatedUserProvider = authenicatedUserProvider;
+    }
+
     @RequestMapping(value = "report", produces = "application/pdf", method = RequestMethod.GET)
     public void report(
             @RequestParam(value = "id") final int id,
             @RequestParam(value = "fullDate", defaultValue = "0") final boolean fullDate,
             final HttpServletResponse response,
-            @AuthenticationPrincipal final User user,
             final Locale locale) throws ConcernException {
         Concern concern = concernService.getById(id);
 
         if (concern == null) {
-            LOG.info("{}: Failed read concern during PDF creation.", user);
+            LOG.info("{}: Failed to read concern during PDF creation. Concern #{} does not exist in database.", authenicatedUserProvider.getAuthenticatedUser(), id);
             throw new ConcernException();
         }
 
-        LOG.info("{}: Requested final report for concern {}", user, concern);
+        LOG.info("{}: Requested final report for concern {}", authenicatedUserProvider.getAuthenticatedUser(), concern);
 
-        pdfService.generateReport(concern, fullDate, response, locale, user);
+        pdfService.generateReport(concern, fullDate, response, locale);
     }
 
     @RequestMapping(value = "dump", produces = "application/pdf", method = RequestMethod.GET)
     public void dump(@RequestParam(value = "id") int id, @RequestParam(value = "fullDate", defaultValue = "0") boolean fullDate,
-                     HttpServletResponse response, @AuthenticationPrincipal User user, Locale locale) throws ConcernException {
+                     HttpServletResponse response, Locale locale) throws ConcernException {
         Concern concern = concernService.getById(id);
         if (Concern.isClosed(concern)) {
             throw new ConcernException();
         }
 
-        LOG.info("{}: Requested pdf dump for concern {}", user, concern);
+        LOG.info("{}: Requested pdf dump for concern {}", authenicatedUserProvider.getAuthenticatedUser(), concern);
 
-        pdfService.generateDump(concern, fullDate, response, locale, user);
+        pdfService.generateDump(concern, fullDate, response, locale);
     }
 
     @RequestMapping(value = "transport", produces = "application/pdf", method = RequestMethod.GET)
     public void transport(@RequestParam(value = "id") int id, @RequestParam(value = "fullDate", defaultValue = "0") boolean fullDate,
-                          HttpServletResponse response, @AuthenticationPrincipal User user, Locale locale) throws ConcernException {
+                          HttpServletResponse response, Locale locale) throws ConcernException {
         Concern concern = concernService.getById(id);
         if (concern == null) {
             throw new ConcernException();
         }
 
-        LOG.info("{}: Requested transport list for concern {}", user, concern);
+        LOG.info("{}: Requested transport list for concern {}", authenicatedUserProvider.getAuthenticatedUser(), concern);
 
-        pdfService.generateTransport(concern, fullDate, response, locale, user);
+        pdfService.generateTransport(concern, fullDate, response, locale);
     }
 
     @RequestMapping(value = "patients", produces = "application/pdf", method = RequestMethod.GET)
     public void patients(@RequestParam(value = "id") int id,
                          HttpServletResponse response,
-                         @AuthenticationPrincipal User user,
                          Locale locale) throws ConcernException {
         Concern concern = concernService.getById(id);
         if (concern == null) {
             throw new ConcernException();
         }
 
-        LOG.info("{}: Requested patient list for concern {}", user, concern);
+        LOG.info("{}: Requested patient list for concern {}", authenicatedUserProvider.getAuthenticatedUser(), concern);
 
-        pdfService.generatePatients(concern, response, locale, user);
+        pdfService.generatePatients(concern, response, locale);
     }
 
 }

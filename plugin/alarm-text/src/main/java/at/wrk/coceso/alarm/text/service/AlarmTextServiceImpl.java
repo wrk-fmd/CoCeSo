@@ -51,8 +51,7 @@ public class AlarmTextServiceImpl implements AlarmTextService {
             final int incidentId,
             final String alarmText,
             final AlarmTextType alarmType,
-            final Locale locale,
-            final User user) {
+            final Locale locale) {
         Map<String, List<String>> alarmTargets = alarmTextTargetFactory.createTargetList(incidentId, alarmType);
 
         String sanitizedAlarmText = sanitizeString(alarmText);
@@ -63,7 +62,7 @@ public class AlarmTextServiceImpl implements AlarmTextService {
         SendAlarmTextResult overallResult = calculateOverallResult(resultMap);
 
         if (overallResult == SendAlarmTextResult.SUCCESS) {
-            alarmTextSendingListener.alarmTextSent(incidentId, alarmType, locale, user);
+            alarmTextSendingListener.alarmTextSent(incidentId, alarmType, locale);
         }
 
         return overallResult;

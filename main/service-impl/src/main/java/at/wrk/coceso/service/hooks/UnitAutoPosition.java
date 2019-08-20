@@ -2,7 +2,6 @@ package at.wrk.coceso.service.hooks;
 
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.Unit;
-import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.LogEntryType;
 import at.wrk.coceso.entity.enums.TaskState;
@@ -32,7 +31,7 @@ class UnitAutoPosition implements TaskStateHook {
   private LogService logService;
 
   @Override
-  public TaskState call(final Incident incident, final Unit unit, final TaskState state, final User user, final NotifyList notify) {
+  public TaskState call(final Incident incident, final Unit unit, final TaskState state, final NotifyList notify) {
     if (incident.getType() == IncidentType.Treatment) {
       return state;
     }
@@ -48,14 +47,14 @@ class UnitAutoPosition implements TaskStateHook {
       return state;
     }
 
-    LOG.debug("{}: Position autoset for unit {}", user, unit);
+    LOG.debug("Position auto-set for unit {}", unit);
 
     Changes changes = new Changes("unit");
     changes.put("position", Point.toStringOrNull(unit.getPosition()), Point.toStringOrNull(position));
     unit.setPosition(position);
 
     unitRepository.saveAndFlush(unit);
-    logService.logAuto(user, LogEntryType.UNIT_AUTOSET_POSITION, unit.getConcern(), unit, incident, state, changes);
+    logService.logAuto(LogEntryType.UNIT_AUTOSET_POSITION, unit.getConcern(), unit, incident, state, changes);
     notify.add(unit);
 
     return state;

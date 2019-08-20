@@ -2,12 +2,11 @@ package at.wrk.coceso.controller.patadmin;
 
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Patient;
-import at.wrk.coceso.entity.User;
 import at.wrk.coceso.service.LogService;
 import at.wrk.coceso.service.PatientService;
-import at.wrk.coceso.utils.ActiveConcern;
 import at.wrk.coceso.service.patadmin.InfoService;
 import at.wrk.coceso.service.patadmin.PatadminService;
+import at.wrk.coceso.utils.ActiveConcern;
 import at.wrk.coceso.utils.Initializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,7 +15,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
@@ -48,9 +46,8 @@ public class InfoController {
   public String showHome(
           final ModelMap map,
           @PageableDefault(sort = "id", size = 20, direction = Sort.Direction.DESC) final Pageable pageable,
-          @ActiveConcern final Concern concern,
-          @AuthenticationPrincipal final User user) {
-    Page<Patient> patients = Initializer.initGroups(infoService.getAll(concern, pageable, user));
+          @ActiveConcern final Concern concern) {
+    Page<Patient> patients = Initializer.initGroups(infoService.getAll(concern, pageable));
     map.addAttribute("patients", patients);
     patadminService.addAccessLevels(map, concern);
     return "patadmin/info/list";
@@ -63,9 +60,8 @@ public class InfoController {
           final ModelMap map,
           @PageableDefault(sort = "id", size = 20, direction = Sort.Direction.DESC) final Pageable pageable,
           @ActiveConcern final Concern concern,
-          @RequestParam("q") final String query,
-      @AuthenticationPrincipal User user) {
-    Page<Patient> patients = Initializer.initGroups(infoService.getByQuery(concern, query, pageable, user));
+          @RequestParam("q") final String query) {
+    Page<Patient> patients = Initializer.initGroups(infoService.getByQuery(concern, query, pageable));
     map.addAttribute("patients", patients);
     map.addAttribute("search", query);
     patadminService.addAccessLevels(map, concern);
@@ -75,8 +71,8 @@ public class InfoController {
   @PreAuthorize("@auth.hasPermission(#id, 'at.wrk.coceso.entity.Patient', 'PatadminInfo')")
   @Transactional
   @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
-  public String showPatient(final ModelMap map, @PathVariable final int id, @AuthenticationPrincipal final User user) {
-    Patient patient = Initializer.initGroups(patientService.getById(id, user));
+  public String showPatient(final ModelMap map, @PathVariable final int id) {
+    Patient patient = Initializer.initGroups(patientService.getById(id));
     map.addAttribute("patient", patient);
     map.addAttribute("logs", logService.getStatesByPatient(patient));
     patadminService.addAccessLevels(map, patient.getConcern());

@@ -2,7 +2,6 @@ package at.wrk.coceso.service.impl;
 
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Incident;
-import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.helper.JsonViews;
 import at.wrk.coceso.entityevent.EntityEventFactory;
 import at.wrk.coceso.entityevent.EntityEventHandler;
@@ -48,12 +47,12 @@ class IncidentWriteServiceImpl implements IncidentWriteService {
     }
 
     @Override
-    public Incident update(final Incident incident, final Concern concern, final User user) {
-        return NotifyList.execute(notifyList -> incidentService.update(incident, concern, user, notifyList), entityEventFactory);
+    public Incident update(final Incident incident, final Concern concern) {
+        return NotifyList.execute(notifyList -> incidentService.update(incident, concern, notifyList), entityEventFactory);
     }
 
     @Override
-    public void assignPatient(final int incidentId, final int patientId, final User user) {
-        NotifyList.executeVoid(notifyList -> incidentService.assignPatient(incidentId, patientId, user, notifyList), entityEventFactory);
+    public void assignPatient(final int incidentId, final int patientId) {
+        NotifyList.executeVoid(notifyList -> incidentService.assignPatient(incidentId, patientId, notifyList), entityEventFactory);
     }
 }

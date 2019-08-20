@@ -2,7 +2,6 @@ package at.wrk.coceso.controller.data;
 
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Incident;
-import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entity.helper.JsonViews;
 import at.wrk.coceso.entity.helper.RestProperty;
@@ -18,7 +17,6 @@ import at.wrk.coceso.utils.Initializer;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -69,14 +67,13 @@ public class IncidentController {
     public RestResponse update(
             @RequestBody Incident incident,
             final BindingResult result,
-            @ActiveConcern final Concern concern,
-            @AuthenticationPrincipal final User user) {
+            @ActiveConcern final Concern concern) {
         if (result.hasErrors()) {
             return new RestResponse(result);
         }
 
         boolean isNew = incident.getId() == null;
-        Incident updatedIncident = incidentWriteService.update(incident, concern, user);
+        Incident updatedIncident = incidentWriteService.update(incident, concern);
         return new RestResponse(true, new RestProperty("new", isNew), new RestProperty("incident_id", updatedIncident.getId()));
     }
 
@@ -84,18 +81,16 @@ public class IncidentController {
     public RestResponse setToState(
             @RequestParam("incident_id") final int incidentId,
             @RequestParam("unit_id") final int unitId,
-            @RequestParam("state") final TaskState state,
-            @AuthenticationPrincipal final User user) {
-        taskWriteService.changeState(incidentId, unitId, state, user);
+            @RequestParam("state") final TaskState state) {
+        taskWriteService.changeState(incidentId, unitId, state);
         return new RestResponse(true);
     }
 
     @RequestMapping(value = "assignPatient", produces = "application/json", method = RequestMethod.POST)
     public RestResponse assignPatient(
             @RequestParam("incident_id") int incidentId,
-            @RequestParam("patient_id") int patientId,
-            @AuthenticationPrincipal User user) {
-        incidentWriteService.assignPatient(incidentId, patientId, user);
+            @RequestParam("patient_id") int patientId) {
+        incidentWriteService.assignPatient(incidentId, patientId);
         return new RestResponse(true);
     }
 

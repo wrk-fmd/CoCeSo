@@ -2,7 +2,6 @@ package at.wrk.coceso.service.hooks;
 
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.Unit;
-import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.enums.LogEntryType;
 import at.wrk.coceso.entity.enums.TaskState;
@@ -29,18 +28,18 @@ class IncidentAutoState implements TaskStateHook {
   private LogService logService;
 
   @Override
-  public TaskState call(final Incident incident, final Unit unit, final TaskState taskState, final User user, final NotifyList notify) {
+  public TaskState call(final Incident incident, final Unit unit, final TaskState taskState, final NotifyList notify) {
     if (taskState != TaskState.Detached
             && incident.getState() != IncidentState.Demand
             && incident.getState() != IncidentState.InProgress) {
-      LOG.debug("{}: Auto-set state for incident {} to 'InProgress'", user, incident);
+      LOG.debug("Task state changed to not-Detached, and incident state is not in 'Demand' or 'InProgress'. Auto-set state for incident {} to 'InProgress'", incident);
 
       Changes changes = new Changes("incident");
       changes.put("state", incident.getState(), IncidentState.InProgress);
       incident.setState(IncidentState.InProgress);
 
       incidentRepository.saveAndFlush(incident);
-      logService.logAuto(user, LogEntryType.INCIDENT_AUTO_STATE, incident.getConcern(), unit, incident, taskState, changes);
+      logService.logAuto(LogEntryType.INCIDENT_AUTO_STATE, incident.getConcern(), unit, incident, taskState, changes);
       notify.add(incident);
     }
 

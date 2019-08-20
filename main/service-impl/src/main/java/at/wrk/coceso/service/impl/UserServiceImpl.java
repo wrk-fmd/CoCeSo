@@ -1,6 +1,7 @@
 package at.wrk.coceso.service.impl;
 
 import at.wrk.coceso.auth.AuthorizationProvider;
+import at.wrk.coceso.data.AuthenticatedUser;
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.User_;
@@ -13,15 +14,8 @@ import at.wrk.coceso.importer.ImportException;
 import at.wrk.coceso.importer.UserImporter;
 import at.wrk.coceso.repository.UserRepository;
 import at.wrk.coceso.service.UserService;
+import at.wrk.coceso.utils.AuthenicatedUserProvider;
 import at.wrk.coceso.utils.Initializer;
-
-import java.util.Collection;
-import java.util.List;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,8 +23,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.Collection;
+import java.util.List;
 
 @Service
 @Transactional
@@ -47,6 +49,15 @@ class UserServiceImpl implements UserService {
     @Autowired(required = false)
     private UserImporter userImporter;
 
+    private final BCryptPasswordEncoder passwordEncoder;
+    private final AuthenicatedUserProvider authenicatedUserProvider;
+
+    @Autowired
+    UserServiceImpl(final BCryptPasswordEncoder passwordEncoder, final AuthenicatedUserProvider authenicatedUserProvider) {
+        this.passwordEncoder = passwordEncoder;
+        this.authenicatedUserProvider = authenicatedUserProvider;
+    }
+
     @Override
     public User getById(int id) {
         return userRepository.findOne(id);
@@ -58,8 +69,8 @@ class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getByPersonnelId(int pid) {
-        return userRepository.findByPersonnelId(pid);
+    public User getByPersonnelId(int personnelId) {
+        return userRepository.findByPersonnelId(personnelId);
     }
 
     @Override
@@ -91,8 +102,8 @@ class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User update(User editedUser, User user) {
-        LOG.info("{}: Triggered update of user #{}", user, editedUser.getId());
+    public User update(final User editedUser) {
+        LOG.info("{}: Triggered update of user {} (userId #{})", authenicatedUserProvider.getAuthenticatedUser(), editedUser, editedUser.getId());
 
         if (editedUser.getId() != null) {
             User oldUser = getById(editedUser.getId());
@@ -120,7 +131,7 @@ class UserServiceImpl implements UserService {
                 // Only allow setting of person data
                 editedUser.setAllowLogin(false);
                 editedUser.setUsername(null);
-                editedUser.setAuthorities(null);
+                editedUser.setInternalAuthorities(null);
             }
             editedUser.setHashedPW(null);
             editedUser.setActiveConcern(null);
@@ -130,52 +141,56 @@ class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean setPassword(int user_id, String password, User user) {
-        User dbUser = getById(user_id);
+    public boolean setPassword(final int userId, final String password) {
+        final AuthenticatedUser user = authenicatedUserProvider.getAuthenticatedUser();
+
+        User dbUser = getById(userId);
         if (dbUser == null) {
             // User does not exists
-            LOG.warn("{}: Tried to change password of missing user #{}", user, user_id);
+            LOG.warn("{}: Tried to change password of missing user #{}", user, userId);
             return false;
         }
 
         if (dbUser.getUsername() == null) {
             // No active username, don't set a password
-            LOG.warn("{}: Tried to change password of user #{} without username", user, user_id);
+            LOG.warn("{}: Tried to change password of user #{} without username", user, userId);
             return false;
         }
 
         LOG.info("{}: Changed password of user {}", user, dbUser);
-        dbUser.setPassword(password);
+        String encodedPassword = passwordEncoder.encode(password);
+        dbUser.setHashedPW(encodedPassword);
         userRepository.saveAndFlush(dbUser);
         return true;
     }
 
     @Override
-    public boolean setPassword(PasswordForm form, User user) {
-        return setPassword(form.getId(), form.getPassword(), user);
+    public boolean setPassword(PasswordForm form) {
+        return setPassword(form.getId(), form.getPassword());
     }
 
     @Override
-    public boolean setActiveConcern(User user, Concern concern) {
-        User dbUser = getById(user.getId());
+    public boolean setActiveConcern(final AuthenticatedUser user, final Concern concern) {
+        User dbUser = getById(user.getUserId());
         if (dbUser == null) {
             // User does not exists
-            LOG.warn("Tried to change active concern of missing user #{}", user.getId());
+            LOG.warn("Tried to change active concern of missing user {} (userId {}).", user, user.getUserId());
             return false;
         }
+
         dbUser.setActiveConcern(concern);
         userRepository.saveAndFlush(dbUser);
         return true;
     }
 
     @Override
-    public int importUsers(String data, User user) {
+    public int importUsers(final String data) {
         if (userImporter == null) {
             LOG.warn("No user importer loaded!");
             return -1;
         }
 
-        LOG.info("{}: started import of users", user.getUsername());
+        LOG.info("{}: started import of users", authenicatedUserProvider.getAuthenticatedUser());
         try {
             Collection<User> updated = userImporter.updateUsers(data, getAll());
             userRepository.save(updated);

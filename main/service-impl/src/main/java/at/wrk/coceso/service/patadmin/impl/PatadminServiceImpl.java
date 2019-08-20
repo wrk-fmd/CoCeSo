@@ -52,6 +52,13 @@ class PatadminServiceImpl implements PatadminServiceInternal {
   @Autowired
   private LogService logService;
 
+  private final DataAccessLogger dataAccessLogger;
+
+  @Autowired
+  PatadminServiceImpl(final DataAccessLogger dataAccessLogger) {
+    this.dataAccessLogger = dataAccessLogger;
+  }
+
   @Override
   public boolean[] getAccessLevels(final Concern concern) {
     return new boolean[]{
@@ -70,7 +77,7 @@ class PatadminServiceImpl implements PatadminServiceInternal {
   @Override
   public List<Patient> getAllInTreatment(final Concern concern, final User user) {
     List<Patient> patients = patientRepository.findInTreatment(concern);
-    DataAccessLogger.logPatientAccess(patients, concern, user);
+    dataAccessLogger.logPatientAccess(patients, concern);
     return patients;
   }
 
@@ -82,7 +89,7 @@ class PatadminServiceImpl implements PatadminServiceInternal {
     }
 
     List<Patient> patients = patientRepository.findAll(new PatientSearchSpecification(query, concern, showDone));
-    DataAccessLogger.logPatientAccess(patients, concern, user);
+    dataAccessLogger.logPatientAccess(patients, concern);
     return patients;
   }
 
@@ -140,7 +147,7 @@ class PatadminServiceImpl implements PatadminServiceInternal {
           }
 
           if (!changes.isEmpty()) {
-            logService.logAuto(user, LogEntryType.UNIT_UPDATE, unit.getConcern(), unit, null, changes);
+            logService.logAuto(LogEntryType.UNIT_UPDATE, unit.getConcern(), unit, null, changes);
             notify.add(unit);
             return unit;
           }
@@ -154,5 +161,4 @@ class PatadminServiceImpl implements PatadminServiceInternal {
     unitRepository.flush();
     return saved;
   }
-
 }

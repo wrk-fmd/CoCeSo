@@ -2,7 +2,6 @@ package at.wrk.coceso.controller.data;
 
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Patient;
-import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.helper.JsonViews;
 import at.wrk.coceso.entity.helper.RestProperty;
 import at.wrk.coceso.entity.helper.RestResponse;
@@ -15,7 +14,6 @@ import at.wrk.coceso.utils.ActiveConcern;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,23 +43,21 @@ public class PatientController {
   @JsonView(JsonViews.Main.class)
   @RequestMapping(value = "main", produces = "application/json", method = RequestMethod.GET)
   public SequencedResponse<List<Patient>> getForMain(
-          @ActiveConcern final Concern concern,
-          @AuthenticationPrincipal final User user) {
-    return new SequencedResponse<>(entityEventHandler.getHver(), entityEventHandler.getSeq(concern.getId()), patientService.getAll(concern, user));
+          @ActiveConcern final Concern concern) {
+    return new SequencedResponse<>(entityEventHandler.getHver(), entityEventHandler.getSeq(concern.getId()), patientService.getAll(concern));
   }
 
   @RequestMapping(value = "update", produces = "application/json", method = RequestMethod.POST)
   public RestResponse update(
           @RequestBody final Patient patient,
           final BindingResult result,
-          @ActiveConcern final Concern concern,
-          @AuthenticationPrincipal final User user) {
+          @ActiveConcern final Concern concern) {
     if (result.hasErrors()) {
       return new RestResponse(result);
     }
 
     boolean isNew = patient.getId() == null;
-    Patient updatedPatient = patientWriteService.update(patient, concern, user);
+    Patient updatedPatient = patientWriteService.update(patient, concern);
     return new RestResponse(true, new RestProperty("new", isNew), new RestProperty("patient_id", updatedPatient.getId()));
   }
 

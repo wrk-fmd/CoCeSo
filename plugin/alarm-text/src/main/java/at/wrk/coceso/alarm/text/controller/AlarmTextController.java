@@ -6,12 +6,10 @@ import at.wrk.coceso.alarm.text.api.SendAlarmTextRequest;
 import at.wrk.coceso.alarm.text.api.SendAlarmTextResponse;
 import at.wrk.coceso.alarm.text.data.SendAlarmTextResult;
 import at.wrk.coceso.alarm.text.service.AlarmTextService;
-import at.wrk.coceso.entity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -53,13 +51,12 @@ public class AlarmTextController {
     @RequestMapping(value = "send", method = RequestMethod.POST, produces = "application/json")
     public SendAlarmTextResponse sendAlarmText(
             @RequestBody final SendAlarmTextRequest request,
-            final Locale locale,
-            @AuthenticationPrincipal final User user) {
+            final Locale locale) {
         SendAlarmTextResponse response;
         if (request.getIncidentId() == null || request.getType() == null || request.getAlarmText() == null) {
             response = SendAlarmTextResponse.createError("Invalid parameters to send an alarm text.", 10);
         } else {
-            SendAlarmTextResult result = alarmTextService.sendAlarmText(request.getIncidentId(), request.getAlarmText(), request.getType(), locale, user);
+            SendAlarmTextResult result = alarmTextService.sendAlarmText(request.getIncidentId(), request.getAlarmText(), request.getType(), locale);
             if (result == SendAlarmTextResult.SUCCESS) {
                 response = SendAlarmTextResponse.createSuccess();
             } else if (result == SendAlarmTextResult.NO_TARGETS_FOUND) {

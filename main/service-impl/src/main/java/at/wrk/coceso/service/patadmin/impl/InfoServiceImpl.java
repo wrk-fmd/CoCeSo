@@ -2,7 +2,6 @@ package at.wrk.coceso.service.patadmin.impl;
 
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Patient;
-import at.wrk.coceso.entity.User;
 import at.wrk.coceso.repository.PatientRepository;
 import at.wrk.coceso.service.patadmin.InfoService;
 import at.wrk.coceso.specification.PatientSearchSpecification;
@@ -20,17 +19,24 @@ class InfoServiceImpl implements InfoService {
   @Autowired
   private PatientRepository patientRepository;
 
+  private final DataAccessLogger dataAccessLogger;
+
+  @Autowired
+  InfoServiceImpl(final DataAccessLogger dataAccessLogger) {
+    this.dataAccessLogger = dataAccessLogger;
+  }
+
   @Override
-  public Page<Patient> getAll(Concern concern, Pageable pageable, User user) {
+  public Page<Patient> getAll(Concern concern, Pageable pageable) {
     Page<Patient> patients = patientRepository.findByConcern(concern, pageable);
-    DataAccessLogger.logPatientAccess(patients.getContent(), concern, user);
+    dataAccessLogger.logPatientAccess(patients.getContent(), concern);
     return patients;
   }
 
   @Override
-  public Page<Patient> getByQuery(Concern concern, String query, Pageable pageable, User user) {
+  public Page<Patient> getByQuery(Concern concern, String query, Pageable pageable) {
     Page<Patient> patients = patientRepository.findAll(new PatientSearchSpecification(query, concern, true), pageable);
-    DataAccessLogger.logPatientAccess(patients.getContent(), concern, query, user);
+    dataAccessLogger.logPatientAccess(patients.getContent(), concern, query);
     return patients;
   }
 

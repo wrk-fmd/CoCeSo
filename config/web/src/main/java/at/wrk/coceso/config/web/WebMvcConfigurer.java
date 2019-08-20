@@ -18,6 +18,7 @@ import org.springframework.http.CacheControl;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.method.annotation.AuthenticationPrincipalArgumentResolver;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -41,88 +42,92 @@ import java.util.concurrent.TimeUnit;
 @EnableLoadTimeWeaving
 class WebMvcConfigurer extends WebMvcConfigurerAdapter {
 
-  @Autowired
-  private ActiveConcernResolver activeConcernResolver;
+    @Autowired
+    private ActiveConcernResolver activeConcernResolver;
 
-  @Autowired
-  private ObjectMapper objectMapper;
+    @Autowired
+    private ObjectMapper objectMapper;
 
-  @Override
-  public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-    PageableHandlerMethodArgumentResolver pageable = new PageableHandlerMethodArgumentResolver();
-    pageable.setOneIndexedParameters(true);
-    argumentResolvers.add(pageable);
-    argumentResolvers.add(new AuthenticationPrincipalArgumentResolver());
-    argumentResolvers.add(activeConcernResolver);
-  }
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+        PageableHandlerMethodArgumentResolver pageable = new PageableHandlerMethodArgumentResolver();
+        pageable.setOneIndexedParameters(true);
+        argumentResolvers.add(pageable);
+        argumentResolvers.add(new AuthenticationPrincipalArgumentResolver());
+        argumentResolvers.add(activeConcernResolver);
+    }
 
-  @Override
-  public void addInterceptors(InterceptorRegistry registry) {
-    LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
-    localeChangeInterceptor.setParamName("lang");
-    registry.addInterceptor(localeChangeInterceptor);
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
+        localeChangeInterceptor.setParamName("lang");
+        registry.addInterceptor(localeChangeInterceptor);
 
-    WebContentInterceptor webContentInterceptor = new WebContentInterceptor();
-    webContentInterceptor.addCacheMapping(CacheControl.noStore(), "/data/**");
-    registry.addInterceptor(webContentInterceptor);
-  }
+        WebContentInterceptor webContentInterceptor = new WebContentInterceptor();
+        webContentInterceptor.addCacheMapping(CacheControl.noStore(), "/data/**");
+        registry.addInterceptor(webContentInterceptor);
+    }
 
-  @Override
-  public void addResourceHandlers(ResourceHandlerRegistry registry) {
-    registry.addResourceHandler("/static/i18n/**")
-            .addResourceLocations("classpath:i18n/");
-    registry.addResourceHandler("/static/**")
-            .addResourceLocations("/static/")
-            .setCacheControl(CacheControl.maxAge(7, TimeUnit.DAYS).cachePrivate());
-  }
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/static/i18n/**")
+                .addResourceLocations("classpath:i18n/");
+        registry.addResourceHandler("/static/**")
+                .addResourceLocations("/static/")
+                .setCacheControl(CacheControl.maxAge(7, TimeUnit.DAYS).cachePrivate());
+    }
 
-  @Override
-  public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-    StringHttpMessageConverter stringConverter = new StringHttpMessageConverter();
-    stringConverter.setWriteAcceptCharset(false);
-    converters.add(stringConverter);
+    @Override
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+        StringHttpMessageConverter stringConverter = new StringHttpMessageConverter();
+        stringConverter.setWriteAcceptCharset(false);
+        converters.add(stringConverter);
 
-    converters.add(new MappingJackson2HttpMessageConverter(objectMapper));
-    super.configureMessageConverters(converters);
-  }
+        converters.add(new MappingJackson2HttpMessageConverter(objectMapper));
+        super.configureMessageConverters(converters);
+    }
 
-  @Bean
-  public static InternalResourceViewResolver internalResourceViewResolver() {
-    InternalResourceViewResolver resolver = new InternalResourceViewResolver();
-    resolver.setPrefix("/WEB-INF/pages/");
-    resolver.setSuffix(".jsp");
-    resolver.setExposedContextBeanNames("cocesoConfig");
-    return resolver;
-  }
+    @Bean
+    public static InternalResourceViewResolver internalResourceViewResolver() {
+        InternalResourceViewResolver resolver = new InternalResourceViewResolver();
+        resolver.setPrefix("/WEB-INF/pages/");
+        resolver.setSuffix(".jsp");
+        resolver.setExposedContextBeanNames("cocesoConfig");
+        return resolver;
+    }
 
-  @Bean
-  public static LocaleResolver localeResolver(CocesoConfig config) {
-    CookieLocaleResolver localeResolver = new CookieLocaleResolver();
-    localeResolver.setDefaultLocale(config.getDefaultLocale());
-    localeResolver.setCookieName("lang");
-    return localeResolver;
-  }
+    @Bean
+    public static LocaleResolver localeResolver(CocesoConfig config) {
+        CookieLocaleResolver localeResolver = new CookieLocaleResolver();
+        localeResolver.setDefaultLocale(config.getDefaultLocale());
+        localeResolver.setCookieName("lang");
+        return localeResolver;
+    }
 
-  @Bean
-  public static MessageSource messageSource() {
-    ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-    messageSource.setBasename("classpath:i18n/messages");
-    messageSource.setDefaultEncoding("UTF-8");
-    return messageSource;
-  }
+    @Bean
+    public static MessageSource messageSource() {
+        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+        messageSource.setBasename("classpath:i18n/messages");
+        messageSource.setDefaultEncoding("UTF-8");
+        return messageSource;
+    }
 
-  @Bean
-  public static LocalValidatorFactoryBean validator() {
-    return new LocalValidatorFactoryBean();
-  }
+    @Bean
+    public static LocalValidatorFactoryBean validator() {
+        return new LocalValidatorFactoryBean();
+    }
 
-  @Bean
-  public static ObjectMapper objectMapper() {
-    ObjectMapper mapper = new ObjectMapper();
-    mapper.disable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS);
-    mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-    mapper.registerModule(new JavaTimeModule());
-    return mapper;
-  }
+    @Bean
+    public static ObjectMapper objectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.disable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS);
+        mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+        mapper.registerModule(new JavaTimeModule());
+        return mapper;
+    }
 
+    @Bean
+    public static BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }

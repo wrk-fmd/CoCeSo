@@ -35,7 +35,7 @@ public class AlarmTextConfirmationListener implements AlarmTextSendingListener {
 
     @Override
     @Transactional
-    public void alarmTextSent(final int incidentId, final AlarmTextType type, final Locale locale, final User user) {
+    public void alarmTextSent(final int incidentId, final AlarmTextType type, final Locale locale) {
         String confirmationMessage;
         if (type == AlarmTextType.INCIDENT_INFORMATION) {
             confirmationMessage = getConfirmationMessage("incident.alarm.sent.info", locale);
@@ -48,7 +48,7 @@ public class AlarmTextConfirmationListener implements AlarmTextSendingListener {
         if (incident != null) {
             String infoString = incident.getInfo();
             incident.setInfo(infoString + "\n" + confirmationMessage);
-            incidentWriteService.update(incident, incident.getConcern(), user);
+            incidentWriteService.update(incident, incident.getConcern());
         } else {
             LOG.warn("Failed to write sent-alarm confirmation to incident. Incident does not exist. incidentId={}", incidentId);
         }

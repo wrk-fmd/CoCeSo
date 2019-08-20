@@ -2,8 +2,8 @@ package at.wrk.coceso.controller.data;
 
 import at.wrk.coceso.contract.client.ClientLog;
 import at.wrk.coceso.controller.handler.ClientLogger;
+import at.wrk.coceso.data.AuthenticatedUser;
 import at.wrk.coceso.entity.Concern;
-import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.enums.Errors;
 import at.wrk.coceso.entity.helper.RestProperty;
 import at.wrk.coceso.entity.helper.RestResponse;
@@ -39,7 +39,8 @@ public class DataController {
             final TaskWriteService taskWriteService,
             final ConcernService concernService,
             final PointService pointService,
-            final UserService userService, final ClientLogger clientLogger) {
+            final UserService userService,
+            final ClientLogger clientLogger) {
         this.taskWriteService = taskWriteService;
         this.concernService = concernService;
         this.pointService = pointService;
@@ -51,9 +52,8 @@ public class DataController {
     @RequestMapping(value = "assignUnit", produces = "application/json", method = RequestMethod.POST)
     public RestResponse assignUnit(
             @RequestParam("incident_id") final int incidentId,
-            @RequestParam("unit_id") final int unitId,
-            @AuthenticationPrincipal final User user) {
-        taskWriteService.assignUnit(incidentId, unitId, user);
+            @RequestParam("unit_id") final int unitId) {
+        taskWriteService.assignUnit(incidentId, unitId);
         return new RestResponse(true);
     }
 
@@ -67,21 +67,22 @@ public class DataController {
     @RequestMapping(value = "clientLogger", produces = "application/json", method = RequestMethod.POST)
     public RestResponse clientLogger(
             @RequestBody final ClientLog clientLog,
-            @AuthenticationPrincipal final User user,
             final HttpServletRequest request) {
-        clientLogger.handleClientLog(clientLog, user, request.getRemoteHost());
+        clientLogger.handleClientLog(clientLog, request.getRemoteHost());
         return new RestResponse(true);
     }
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "setActiveConcern", produces = "application/json", method = RequestMethod.POST)
-    public RestResponse setActiveConcern(@RequestParam("concern_id") Integer concern_id, @AuthenticationPrincipal User user) {
+    public RestResponse setActiveConcern(
+            @RequestParam("concern_id") final Integer concernId,
+            @AuthenticationPrincipal final AuthenticatedUser user) {
         Concern concern;
 
-        if (concern_id == null) {
+        if (concernId == null) {
             concern = null;
         } else {
-            concern = concernService.getById(concern_id);
+            concern = concernService.getById(concernId);
             if (concern == null || concern.isClosed()) {
                 return new RestResponse(Errors.ConcernMissingOrClosed);
             }

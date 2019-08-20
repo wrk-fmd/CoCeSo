@@ -1,10 +1,10 @@
 package at.wrk.coceso.service;
 
 import at.wrk.coceso.entity.Concern;
-import at.wrk.coceso.entity.User;
-import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -16,9 +16,9 @@ public interface ConcernService {
 
   Concern getByName(String name);
 
-  Concern update(Concern concern, User user);
+  Concern update(Concern concern);
 
-  void setClosed(int concern_id, boolean close, User user);
+  void setClosed(int concern_id, boolean close);
 
   void addSection(String section, int concernId);
 

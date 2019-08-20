@@ -4,23 +4,28 @@ import at.wrk.coceso.entity.enums.Authority;
 import at.wrk.coceso.entity.helper.JsonViews;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Set;
-import java.util.stream.Collectors;
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
-public class User implements UserDetails, Serializable {
-
-  private final static PasswordEncoder encoder = new BCryptPasswordEncoder();
+public class User implements Serializable {
 
   @JsonView(JsonViews.Always.class)
   @Id
@@ -77,10 +82,6 @@ public class User implements UserDetails, Serializable {
   @Column(name = "urole", nullable = false)
   private Set<Authority> internalAuthorities;
 
-  @JsonIgnore
-  @Transient
-  private Collection<Authority> authorities;
-
   public User() {
   }
 
@@ -112,7 +113,6 @@ public class User implements UserDetails, Serializable {
       if (internalAuthorities != null) {
         internalAuthorities.clear();
       }
-      authorities = null;
     }
   }
 
@@ -181,35 +181,10 @@ public class User implements UserDetails, Serializable {
     return allowLogin;
   }
 
-  @Override
-  @JsonIgnore
-  public boolean isAccountNonExpired() {
-    return allowLogin;
-  }
-
-  @Override
-  @JsonIgnore
-  public boolean isAccountNonLocked() {
-    return allowLogin;
-  }
-
-  @Override
-  @JsonIgnore
-  public boolean isCredentialsNonExpired() {
-    return allowLogin;
-  }
-
-  @Override
-  @JsonIgnore
-  public boolean isEnabled() {
-    return allowLogin;
-  }
-
   public void setAllowLogin(boolean allowLogin) {
     this.allowLogin = allowLogin;
   }
 
-  @Override
   public String getUsername() {
     return username;
   }
@@ -218,25 +193,13 @@ public class User implements UserDetails, Serializable {
     this.username = username == null ? null : username.trim();
   }
 
-  @Override
   @JsonIgnore
   public String getPassword() {
     return hashedPW;
   }
 
-  public boolean validatePassword(String password) {
-    if (hashedPW == null || hashedPW.isEmpty()) {
-      return false;
-    }
-    return encoder.matches(password, hashedPW);
-  }
-
   public void setHashedPW(String hashedPW) {
     this.hashedPW = hashedPW;
-  }
-
-  public void setPassword(String password) {
-    hashedPW = encoder.encode(password);
   }
 
   public Set<Authority> getInternalAuthorities() {
@@ -245,21 +208,6 @@ public class User implements UserDetails, Serializable {
 
   public void setInternalAuthorities(Set<Authority> internalAuthorities) {
     this.internalAuthorities = internalAuthorities;
-    this.authorities = null;
-  }
-
-  @Override
-  public Collection<? extends GrantedAuthority> getAuthorities() {
-    if (authorities == null) {
-      authorities = internalAuthorities.stream()
-              .flatMap(a -> a.getAuthorities().stream())
-              .collect(Collectors.toSet());
-    }
-    return authorities;
-  }
-
-  public void setAuthorities(Set<Authority> authorities) {
-    this.authorities = authorities;
   }
 
   @Override
@@ -272,5 +220,4 @@ public class User implements UserDetails, Serializable {
   public int hashCode() {
     return this.id == null ? 0 : this.id;
   }
-
 }
