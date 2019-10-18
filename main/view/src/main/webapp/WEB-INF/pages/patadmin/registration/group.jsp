@@ -60,18 +60,28 @@
         </a>
       </p>
 
+      <h3><spring:message code="patadmin.incoming"/></h3>
       <c:if test="${not empty incoming}">
         <div>
-          <h3><spring:message code="patadmin.incoming"/></h3>
           <p:incoming incidents="${incoming}" hideGroup="true"/>
         </div>
       </c:if>
+      <c:if test="${empty incoming}">
+        <p>
+          <spring:message code="patadmin.incoming.no.transports"/>
+        </p>
+      </c:if>
 
+      <h3><spring:message code="patadmin.intreatment"/></h3>
       <c:if test="${not empty treatment}">
         <div>
-          <h3><spring:message code="patadmin.intreatment"/></h3>
           <p:patients patients="${treatment}" hideGroup="true"/>
         </div>
+      </c:if>
+      <c:if test="${empty treatment}">
+        <p>
+          <spring:message code="patadmin.intreatment.no.patients"/>
+        </p>
       </c:if>
     </div>
   </body>

@@ -11,7 +11,8 @@ import at.wrk.coceso.service.patadmin.RegistrationService;
 import at.wrk.coceso.service.patadmin.RegistrationWriteService;
 import at.wrk.coceso.utils.ActiveConcern;
 import at.wrk.coceso.utils.Initializer;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,25 +24,34 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(value = "/patadmin/registration", method = RequestMethod.GET)
 public class RegistrationController {
+    private static final Logger LOG = LoggerFactory.getLogger(RegistrationController.class);
 
-    @Autowired
-    private PatientService patientService;
+    private final PatientService patientService;
+    private final PatadminService patadminService;
+    private final RegistrationService registrationService;
+    private final RegistrationWriteService registrationWriteService;
+    public static final boolean SHOW_INCOMING_INCIDENTS_WITHOUT_PATIENT = true;
 
-    @Autowired
-    private PatadminService patadminService;
-
-    @Autowired
-    private RegistrationService registrationService;
-
-    @Autowired
-    private RegistrationWriteService registrationWriteService;
+    public RegistrationController(
+            final PatientService patientService,
+            final PatadminService patadminService,
+            final RegistrationService registrationService,
+            final RegistrationWriteService registrationWriteService) {
+        this.patientService = patientService;
+        this.patadminService = patadminService;
+        this.registrationService = registrationService;
+        this.registrationWriteService = registrationWriteService;
+    }
 
     @PreAuthorize("@auth.hasPermission(#concern, 'PatadminRegistration')")
     @Transactional
@@ -50,8 +60,9 @@ public class RegistrationController {
         patadminService.addAccessLevels(map, concern);
 
         List<Incident> incoming = registrationService.getIncoming(concern);
-        addIncidentsWithIncomingPatientsToMap(map, incoming);
-        map.addAttribute("treatment", Initializer.initGroups(patadminService.getAllInTreatment(concern)));
+        List<Patient> patientsInAllTreatments = patadminService.getAllInTreatment(concern);
+        addIncidentsWithIncomingPatientsAndNotYetTreatedToMap(map, incoming, patientsInAllTreatments);
+        map.addAttribute("treatment", Initializer.initGroups(patientsInAllTreatments));
 
         map.addAttribute("treatmentCount", registrationService.getTreatmentCount(concern));
         map.addAttribute("transportCount", registrationService.getTransportCount(concern));
@@ -69,11 +80,15 @@ public class RegistrationController {
         map.addAttribute("group", group);
 
         List<Incident> incoming = registrationService.getIncoming(group);
-        addIncidentsWithIncomingPatientsToMap(map, incoming);
-        map.addAttribute("treatment", Initializer.init(group.getIncidents().keySet().stream()
+        List<Patient> patientsInTreatment = group
+                .getIncidents()
+                .keySet()
+                .stream()
                 .map(Incident::getPatient)
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList()), Patient::getId));
+                .collect(Collectors.toList());
+        addIncidentsWithIncomingPatientsAndNotYetTreatedToMap(map, incoming, patientsInTreatment);
+        map.addAttribute("treatment", Initializer.init(patientsInTreatment, Patient::getId));
         return "patadmin/registration/group";
     }
 
@@ -150,10 +165,31 @@ public class RegistrationController {
     }
 
 
-    private void addIncidentsWithIncomingPatientsToMap(final ModelMap map, final List<Incident> incoming) {
-        Initializer.init(incoming, Incident::getUnits);
-        Initializer.init(incoming, Incident::getPatient);
+    private void addIncidentsWithIncomingPatientsAndNotYetTreatedToMap(
+            final ModelMap map,
+            final List<Incident> incoming,
+            final Collection<Patient> patientsInTreatment) {
+        Set<Integer> patientIdsInTreatment = patientsInTreatment.stream()
+                .map(Patient::getId)
+                .collect(Collectors.toSet());
+        List<Incident> filteredIncomingPatients = incoming
+                .stream()
+                .filter(Objects::nonNull)
+                .filter(incident -> Optional.ofNullable(incident.getPatient())
+                        .map(Patient::getId)
+                        .map(patientId -> !patientIdsInTreatment.contains(patientId))
+                        .orElse(SHOW_INCOMING_INCIDENTS_WITHOUT_PATIENT))
+                .collect(Collectors.toList());
+        LOG.trace(
+                "Filtering incoming incidents {} with patientsInTreatment {} and their IDs {} to filtered list {}.",
+                incoming,
+                patientsInTreatment,
+                patientIdsInTreatment,
+                filteredIncomingPatients);
 
-        map.addAttribute("incoming", incoming);
+        Initializer.init(filteredIncomingPatients, Incident::getUnits);
+        Initializer.init(filteredIncomingPatients, Incident::getPatient);
+
+        map.addAttribute("incoming", filteredIncomingPatients);
     }
 }
