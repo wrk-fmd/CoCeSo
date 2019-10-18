@@ -19,6 +19,8 @@ import at.wrk.coceso.service.patadmin.PatadminService;
 import at.wrk.coceso.service.patadmin.internal.RegistrationServiceInternal;
 import at.wrk.coceso.specification.PatientSearchSpecification;
 import at.wrk.coceso.utils.DataAccessLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +34,7 @@ import java.util.List;
 @Service
 @Transactional
 class RegistrationServiceImpl implements RegistrationServiceInternal {
+    private static final Logger LOG = LoggerFactory.getLogger(RegistrationServiceImpl.class);
 
     @Autowired
     private PatientRepository patientRepository;
@@ -122,16 +125,25 @@ class RegistrationServiceImpl implements RegistrationServiceInternal {
         }
 
         if (incident.getConcern().isClosed()) {
+            LOG.warn("Incident {} is already closed. Patient takeover is not allowed.", incident);
             throw new ErrorsException(Errors.ConcernClosed);
         }
 
         if ((incident.getType() != IncidentType.Task && incident.getType() != IncidentType.Transport)
-                || incident.getState().isDone() || !(incident.getAo() instanceof UnitPoint)) {
+                || !(incident.getAo() instanceof UnitPoint)) {
+            LOG.warn("Incident {} does not allow a takeover of a patient.", incident);
             throw new ErrorsException(Errors.IncidentNotAllowed);
+        }
+
+        if (incident.getState().isDone()) {
+            LOG.info(
+                    "Patient takeover of incident {} is performed on already closed incident. The client might used an outdated view on the data.",
+                    incident);
         }
 
         if (incident.getPatient() != null) {
             if (incident.getPatient().isDone()) {
+                LOG.warn("Patient {} of incident {} is already set to DONE. Takeover to treatment is not possible.", incident.getPatient(), incident);
                 throw new ErrorsException(Errors.PatientDone);
             }
 
