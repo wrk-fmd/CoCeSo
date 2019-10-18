@@ -47,7 +47,7 @@ public class PdfController {
 
         if (concern == null) {
             LOG.info("{}: Failed to read concern during PDF creation. Concern #{} does not exist in database.", authenicatedUserProvider.getAuthenticatedUser(), id);
-            throw new ConcernException();
+            throw new ConcernException("Concern does not exist.");
         }
 
         LOG.info("{}: Requested final report for concern {}", authenicatedUserProvider.getAuthenticatedUser(), concern);
@@ -56,11 +56,14 @@ public class PdfController {
     }
 
     @RequestMapping(value = "dump", produces = "application/pdf", method = RequestMethod.GET)
-    public void dump(@RequestParam(value = "id") int id, @RequestParam(value = "fullDate", defaultValue = "0") boolean fullDate,
-                     HttpServletResponse response, Locale locale) throws ConcernException {
+    public void dump(
+            @RequestParam(value = "id") final int id,
+            @RequestParam(value = "fullDate", defaultValue = "0") final boolean fullDate,
+            final HttpServletResponse response,
+            final Locale locale) throws ConcernException {
         Concern concern = concernService.getById(id);
         if (Concern.isClosed(concern)) {
-            throw new ConcernException();
+            throw new ConcernException("Concern is already closed.");
         }
 
         LOG.info("{}: Requested pdf dump for concern {}", authenicatedUserProvider.getAuthenticatedUser(), concern);
@@ -69,11 +72,14 @@ public class PdfController {
     }
 
     @RequestMapping(value = "transport", produces = "application/pdf", method = RequestMethod.GET)
-    public void transport(@RequestParam(value = "id") int id, @RequestParam(value = "fullDate", defaultValue = "0") boolean fullDate,
-                          HttpServletResponse response, Locale locale) throws ConcernException {
+    public void transport(
+            @RequestParam(value = "id") final int id,
+            @RequestParam(value = "fullDate", defaultValue = "0") final boolean fullDate,
+            final HttpServletResponse response,
+            final Locale locale) throws ConcernException {
         Concern concern = concernService.getById(id);
         if (concern == null) {
-            throw new ConcernException();
+            throw new ConcernException("Concern does not exist.");
         }
 
         LOG.info("{}: Requested transport list for concern {}", authenicatedUserProvider.getAuthenticatedUser(), concern);
@@ -82,12 +88,13 @@ public class PdfController {
     }
 
     @RequestMapping(value = "patients", produces = "application/pdf", method = RequestMethod.GET)
-    public void patients(@RequestParam(value = "id") int id,
-                         HttpServletResponse response,
-                         Locale locale) throws ConcernException {
-        Concern concern = concernService.getById(id);
+    public void patients(
+            @RequestParam(value = "id") final int concernId,
+            final HttpServletResponse response,
+            final Locale locale) throws ConcernException {
+        Concern concern = concernService.getById(concernId);
         if (concern == null) {
-            throw new ConcernException();
+            throw new ConcernException("Concern does not exist.");
         }
 
         LOG.info("{}: Requested patient list for concern {}", authenicatedUserProvider.getAuthenticatedUser(), concern);

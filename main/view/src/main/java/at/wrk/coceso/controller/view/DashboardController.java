@@ -68,7 +68,7 @@ public class DashboardController {
         concern = concernService.getById(concern_id);
       }
       if (concern == null) {
-        throw new ConcernException();
+        throw new ConcernException("Concern does not exist.");
       }
       map.addAttribute("concern", concern.getId());
 

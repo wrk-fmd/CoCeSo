@@ -80,6 +80,7 @@ public class WelcomeController {
 
         // Add Userdetails to Model
         map.addAttribute("user", Initializer.init(user, User::getInternalAuthorities));
+        map.addAttribute("authenticatedUser", authenticationUser);
 
         LOG.debug("{}: Started Home Screen", user);
 

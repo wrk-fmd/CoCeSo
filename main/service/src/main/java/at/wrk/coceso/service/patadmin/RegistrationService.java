@@ -4,10 +4,10 @@ import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.Patient;
 import at.wrk.coceso.entity.Unit;
-import at.wrk.coceso.entity.User;
-import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -21,8 +21,8 @@ public interface RegistrationService {
   
   long getTransportCount(Concern concern);
   
-  Patient getActivePatient(int patientId, User user);
+  Patient getActivePatient(int patientId);
 
-  List<Patient> getForAutocomplete(Concern concern, String query, String field, User user);
+  List<Patient> getForAutocomplete(Concern concern, String query, String field);
 
 }

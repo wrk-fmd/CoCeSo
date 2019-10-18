@@ -1,7 +1,6 @@
 package at.wrk.coceso.controller.patadmin;
 
 import at.wrk.coceso.entity.Concern;
-import at.wrk.coceso.entity.User;
 import at.wrk.coceso.form.GroupsForm;
 import at.wrk.coceso.service.patadmin.PatadminService;
 import at.wrk.coceso.service.patadmin.PatadminWriteService;
@@ -11,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -77,9 +75,8 @@ public class PatadminController {
   @RequestMapping(value = "/settings", method = RequestMethod.POST)
   public String saveSettings(
           @ModelAttribute final GroupsForm form,
-          @ActiveConcern final Concern concern,
-          @AuthenticationPrincipal final User user) {
-    patadminWriteService.update(form, concern, user);
+          @ActiveConcern final Concern concern) {
+    patadminWriteService.update(form, concern);
     return "redirect:settings";
   }
 

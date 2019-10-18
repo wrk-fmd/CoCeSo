@@ -6,6 +6,7 @@ import at.wrk.coceso.service.ConcernService;
 import at.wrk.coceso.utils.ActiveConcern;
 import at.wrk.coceso.utils.ActiveConcernResolver;
 import at.wrk.coceso.utils.Initializer;
+import com.google.common.collect.ImmutableSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
@@ -17,19 +18,20 @@ import org.springframework.web.util.WebUtils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Set;
 
+// TODO SMELL: This class returns different types based on the argument. This should be split into multiple classes, reading the concern from a common provider.
 @Component
 class ActiveConcernResolverImpl implements ActiveConcernResolver {
+
+    private static final Set<Class> SUPPORTED_PARAMETER_TYPES = ImmutableSet.of(Concern.class, Integer.class, int.class);
 
     @Autowired
     private ConcernService concernService;
 
     @Override
     public boolean supportsParameter(final MethodParameter parameter) {
-        return ((parameter.getParameterAnnotation(ActiveConcern.class) != null)
-                && (parameter.getParameterType() == Concern.class
-                || parameter.getParameterType() == Integer.class
-                || parameter.getParameterType() == int.class));
+        return parameter.getParameterAnnotation(ActiveConcern.class) != null && SUPPORTED_PARAMETER_TYPES.contains(parameter.getParameterType());
     }
 
     @Override
@@ -56,7 +58,7 @@ class ActiveConcernResolverImpl implements ActiveConcernResolver {
             concernId = Integer.parseInt(cookie.getValue());
         } catch (NumberFormatException e) {
             if (required) {
-                throw new ConcernException("Could not parse active concern cookie");
+                throw new ConcernException("Could not parse active concern cookie", e);
             }
 
             return null;
@@ -89,5 +91,4 @@ class ActiveConcernResolverImpl implements ActiveConcernResolver {
 
         return concern.getId();
     }
-
 }

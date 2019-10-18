@@ -2,7 +2,6 @@ package at.wrk.coceso.service.patadmin.impl;
 
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Unit;
-import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.helper.JsonViews;
 import at.wrk.coceso.entityevent.EntityEventFactory;
 import at.wrk.coceso.entityevent.EntityEventHandler;
@@ -51,13 +50,13 @@ class PatadminWriteServiceImpl implements PatadminWriteService {
     }
 
     @Override
-    public void update(GroupsForm form, Concern concern, User user) {
+    public void update(GroupsForm form, Concern concern) {
         List<Group> groups = form.getGroups();
 
         if (groups != null) {
-            NotifyList.executeVoid(n -> patadminService.update(groups, concern, user, n), entityEventFactory);
+            NotifyList.executeVoid(n -> patadminService.update(groups, concern, n), entityEventFactory);
         } else {
-            LOG.warn("{}: Tried to update empty group settings for patadmin.", user);
+            LOG.warn("Tried to update empty group settings for patadmin. Update is ignored.");
         }
     }
 }
