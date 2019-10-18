@@ -1,6 +1,5 @@
 package at.wrk.coceso.service;
 
-import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.enums.TaskState;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -13,10 +12,10 @@ public interface TaskWriteService {
     /**
      * Changes the state of the given incident and unit combination to the specified state.
      */
-    void changeState(int incidentId, int unitId, TaskState state, User user);
+    void changeState(int incidentId, int unitId, TaskState state);
 
     /**
      * Assigns the given unit to the incident. If the unit is already assigned, no operation is performed.
      */
-    void assignUnit(int incidentId, int unitId, User user);
+    void assignUnit(int incidentId, int unitId);
 }

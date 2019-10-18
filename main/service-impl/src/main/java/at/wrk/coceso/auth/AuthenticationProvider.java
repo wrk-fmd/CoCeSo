@@ -1,8 +1,12 @@
 package at.wrk.coceso.auth;
 
 import at.wrk.coceso.config.AuthConfig;
+import at.wrk.coceso.data.AuthenticatedUser;
 import at.wrk.coceso.entity.User;
+import at.wrk.coceso.entity.enums.Authority;
 import at.wrk.coceso.service.UserService;
+import com.google.common.collect.ImmutableSet;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,84 +16,110 @@ import org.springframework.security.authentication.dao.AbstractUserDetailsAuthen
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.codec.Base64;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.util.Base64;
+import java.util.Optional;
+import java.util.Set;
+
+import static java.util.stream.Collectors.toSet;
 
 @Component
 class AuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
 
-  private static final Logger LOG = LoggerFactory.getLogger(AuthenticationProvider.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AuthenticationProvider.class);
 
-  @Autowired
-  private AuthConfig config;
+    private final AuthConfig config;
+    private final UserService userService;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-  @Autowired
-  private UserService userService;
-
-  @Override
-  protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken upat) throws AuthenticationException {
-    User user = (User) userDetails;
-    String username = user.getUsername(), password = (String) upat.getCredentials();
-
-    if (user.validatePassword(password)) {
-      LOG.info("[ OK ] {}: Offline authentication", username);
-      return;
+    @Autowired
+    public AuthenticationProvider(final AuthConfig config, final UserService userService, final BCryptPasswordEncoder passwordEncoder) {
+        this.config = config;
+        this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
-    LOG.info("[failed] {}: Offline authentication", username);
 
-    boolean success = false;
-    if (config.useAuthUrl()) {
-      LOG.info("{}: Attempting online authentication", username);
-      try { // #################### THIRD PARTY AUTHENTICATION ####################
-        String phrase = username + ":" + password;
-        String encoded = new String(Base64.encode(phrase.getBytes()));
+    @Override
+    protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authenticationToken) throws AuthenticationException {
+      AuthenticatedUser user = (AuthenticatedUser) userDetails;
 
-        HttpURLConnection connection = (HttpURLConnection) config.getAuthUrl().openConnection();
-        connection.setRequestMethod("GET");
-        connection.setInstanceFollowRedirects(false);
-        connection.setRequestProperty("Authorization", "Basic " + encoded);
 
-        int returnCode = connection.getResponseCode();
-        connection.disconnect();
+        String username = user.getUsername();
+        String password = (String) authenticationToken.getCredentials();
 
-        switch (returnCode) {
-          case AuthConfig.SUCCESS_CODE:
-            LOG.info("[ OK ] {}: Online authentication", username);
-            success = true;
-            break;
-          case AuthConfig.FAILURE_CODE:
-            LOG.info("[failed] {}: Online authentication", username);
-            break;
-          default:
-            LOG.warn("[failed] {}: Online authentication, unexpected error code {}", username, returnCode);
-            break;
+        if (StringUtils.isNotBlank(user.getPassword()) && passwordEncoder.matches(password, user.getPassword())) {
+            LOG.info("[ OK ] {}: Offline authentication", username);
+            return;
         }
-      } catch (IOException e) {
-        LOG.warn("[failed] {}: Online authentication, failed with exception {}", username, e.getMessage());
-      }
-    } else if (config.isFirstUse()) {
-      LOG.warn("[ OK ] {}: 'First use' authentication is enabled. User is logged in without password check.", username);
-      success = true;
+
+        LOG.info("[failed] {}: Offline authentication", username);
+
+        boolean success = false;
+        if (config.useAuthUrl()) {
+            LOG.info("{}: Attempting online authentication", username);
+            try { // #################### THIRD PARTY AUTHENTICATION ####################
+                String basicAuthenticationString = createBasicAuthenticationString(username, password);
+
+                HttpURLConnection connection = (HttpURLConnection) config.getAuthUrl().openConnection();
+                connection.setRequestMethod("GET");
+                connection.setInstanceFollowRedirects(false);
+                connection.setRequestProperty("Authorization", basicAuthenticationString);
+
+                int returnCode = connection.getResponseCode();
+                connection.disconnect();
+
+                switch (returnCode) {
+                    case AuthConfig.SUCCESS_CODE:
+                        LOG.info("[ OK ] {}: Online authentication", username);
+                        success = true;
+                        break;
+                    case AuthConfig.FAILURE_CODE:
+                        LOG.info("[failed] {}: Online authentication", username);
+                        break;
+                    default:
+                        LOG.warn("[failed] {}: Online authentication, unexpected error code {}", username, returnCode);
+                        break;
+                }
+            } catch (IOException e) {
+                LOG.warn("[failed] {}: Online authentication, failed with exception {}", username, e.getMessage());
+            }
+        } else if (config.isFirstUse()) {
+            LOG.warn("[ OK ] {}: 'First use' authentication is enabled. User is logged in without password check.", username);
+            success = true;
+        }
+
+        if (success) {
+            userService.setPassword(user.getUserId(), password);
+            LOG.info("User {}: PW hash for offline authentication was written to DB.", username);
+        } else {
+            throw new BadCredentialsException("Bad credentials");
+        }
     }
 
-    if (success) {
-      userService.setPassword(user.getId(), password, user);
-      LOG.info("User {}: PW hash for offline authentication was written to DB.", username);
-    } else {
-      throw new BadCredentialsException("Bad credentials");
+    private String createBasicAuthenticationString(final String username, final String password) {
+        String phrase = username + ":" + password;
+        String encoded = Base64.getEncoder().encodeToString(phrase.getBytes());
+        return "Basic " + encoded;
     }
-  }
 
-  @Override
-  protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken userPasswordAuthenticationToken) throws AuthenticationException {
-    User user = userService.getByUsername(username);
-    if (user == null) {
-      LOG.info("[failed] {}: User not found", username);
-      throw new UsernameNotFoundException(String.format("User '%s' not found", username));
+    @Override
+    protected AuthenticatedUser retrieveUser(String username, UsernamePasswordAuthenticationToken userPasswordAuthenticationToken) throws AuthenticationException {
+        User user = userService.getByUsername(username);
+        if (user == null) {
+            LOG.info("[failed] {}: User not found", username);
+            throw new UsernameNotFoundException(String.format("User '%s' not found", username));
+        }
+
+        Set<Authority> authorities = Optional.ofNullable(user.getInternalAuthorities())
+                .orElse(ImmutableSet.of())
+                .stream()
+                .flatMap(authority -> authority.getAuthorities().stream())
+                .collect(toSet());
+        String displayName = user.getFirstname() + " " + user.getLastname();
+        return new AuthenticatedUser(user.getId(), user.getUsername(), displayName, user.getPassword(), user.isAllowLogin(), authorities);
     }
-    return user;
-  }
 }

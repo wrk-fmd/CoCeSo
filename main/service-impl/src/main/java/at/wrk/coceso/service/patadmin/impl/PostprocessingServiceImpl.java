@@ -3,7 +3,6 @@ package at.wrk.coceso.service.patadmin.impl;
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.Patient;
 import at.wrk.coceso.entity.Unit;
-import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.enums.Errors;
 import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.enums.IncidentType;
@@ -40,6 +39,7 @@ class PostprocessingServiceImpl implements PostprocessingServiceInternal {
     if (patient.isDone() || !patient.isTransport()) {
       throw new ErrorsException(Errors.PatientDone);
     }
+
     return patient;
   }
 
@@ -48,47 +48,47 @@ class PostprocessingServiceImpl implements PostprocessingServiceInternal {
   }
 
   @Override
-  public Patient getActivePatient(int patientId, User user) {
-    return checkActive(patientService.getById(patientId, user));
+  public Patient getActivePatient(final int patientId) {
+    return checkActive(patientService.getById(patientId));
   }
 
   @Override
-  public Patient getTransported(int patientId, User user) {
-    return checkTransported(patientService.getById(patientId, user));
+  public Patient getTransported(final int patientId) {
+    return checkTransported(patientService.getById(patientId));
   }
 
   @Override
-  public Patient update(PostprocessingForm form, User user, NotifyList notify) {
+  public Patient update(final PostprocessingForm form, final NotifyList notify) {
     Patient patient = prepareForUpdate(form, patientService.getByIdNoLog(form.getPatient()));
-    return patientService.update(patient, patient.getConcern(), user, notify);
+    return patientService.update(patient, patient.getConcern(), notify);
   }
 
   @Override
-  public Patient discharge(PostprocessingForm form, User user, NotifyList notify) {
+  public Patient discharge(final PostprocessingForm form, final NotifyList notify) {
     Patient patient = prepareForUpdate(form, getActivePatientNoLog(form.getPatient()));
-    return patientService.updateAndDischarge(patient, user, notify);
+    return patientService.updateAndDischarge(patient, notify);
   }
 
   @Override
-  public Patient transported(int patientId, User user, NotifyList notify) {
+  public Patient transported(final int patientId, final NotifyList notify) {
     Patient patient = checkTransported(patientService.getByIdNoLog(patientId));
-    incidentService.endTreatments(patient, user, notify);
+    incidentService.endTreatments(patient, notify);
     return patient;
   }
 
   @Override
-  public Patient transport(TransportForm form, User user, NotifyList notify) {
+  public Patient transport(final TransportForm form, final NotifyList notify) {
     Patient patient = prepareForUpdate(form, getActivePatientNoLog(form.getPatient()));
     patient.setErtype(form.getErtype());
-    patient = patientService.update(patient, patient.getConcern(), user, notify);
+    patient = patientService.update(patient, patient.getConcern(), notify);
 
-    Incident incident = incidentService.update(createTransport(patient, form), patient.getConcern(), user, notify);
-    incidentService.assignPatient(incident, patient, user, notify);
+    Incident incident = incidentService.update(createTransport(patient, form), patient.getConcern(), notify);
+    incidentService.assignPatient(incident, patient, notify);
 
     return patient;
   }
 
-  private Patient prepareForUpdate(PostprocessingForm form, Patient old) {
+  private Patient prepareForUpdate(final PostprocessingForm form, final Patient old) {
     Patient p = new Patient();
 
     p.setErtype(old.getErtype());
@@ -106,7 +106,7 @@ class PostprocessingServiceImpl implements PostprocessingServiceInternal {
     return p;
   }
 
-  private Incident createTransport(Patient patient, TransportForm form) {
+  private Incident createTransport(final Patient patient, final TransportForm form) {
     Incident incident = new Incident();
 
     incident.setState(IncidentState.Open);
@@ -130,5 +130,4 @@ class PostprocessingServiceImpl implements PostprocessingServiceInternal {
 
     return incident;
   }
-
 }

@@ -41,8 +41,8 @@
         <p><strong><spring:message code="user"/>:</strong> <c:out value="${user.firstname} ${user.lastname} (${user.username})"/></p>
         <p><spring:message code="user.roles"/>:</p>
         <ul>
-          <c:forEach items="${user.authorities}" var="role">
-            <li><c:out value="${role}"/></li>
+          <c:forEach items="${authenticatedUser.authorities}" var="grantedAuthority">
+            <li><c:out value="${grantedAuthority}"/></li>
             </c:forEach>
         </ul>
       </div>

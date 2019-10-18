@@ -4,7 +4,6 @@ import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.Patient;
 import at.wrk.coceso.entity.Unit;
-import at.wrk.coceso.entity.User;
 import at.wrk.coceso.exceptions.ConcernException;
 import at.wrk.coceso.exceptions.NotFoundException;
 import at.wrk.coceso.service.ConcernService;
@@ -14,17 +13,16 @@ import at.wrk.coceso.service.PatientService;
 import at.wrk.coceso.service.UnitService;
 import at.wrk.coceso.utils.ActiveConcern;
 import at.wrk.coceso.utils.Initializer;
-import java.util.Objects;
-import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.Objects;
 
 @Controller
 @PreAuthorize("@auth.hasAccessLevel('Dashboard')")
@@ -47,15 +45,14 @@ public class DashboardController {
 
   @Transactional
   @RequestMapping(value = "/dashboard", method = RequestMethod.GET)
-  public String showDashboard(ModelMap map, HttpServletResponse response,
+  public String showDashboard(ModelMap map,
       @RequestParam(value = "view", defaultValue = "") String view,
       @RequestParam(value = "uid", required = false) Integer uid,
       @RequestParam(value = "iid", required = false) Integer iid,
       @RequestParam(value = "pid", required = false) Integer pid,
       @RequestParam(value = "active", defaultValue = "0") boolean active,
       @RequestParam(value = "concern", required = false) Integer concern_id,
-      @ActiveConcern(required = false) Concern concern,
-      @AuthenticationPrincipal User user) throws NotFoundException, ConcernException {
+      @ActiveConcern(required = false) Concern concern) throws NotFoundException, ConcernException {
     map.addAttribute("concerns", concernService.getAll());
 
     if (iid != null && uid != null) {
@@ -65,13 +62,13 @@ public class DashboardController {
     } else if (uid != null) {
       unitDetail(map, uid);
     } else if (pid != null) {
-      patientDetail(map, pid, user);
+      patientDetail(map, pid);
     } else {
       if (concern_id != null) {
         concern = concernService.getById(concern_id);
       }
       if (concern == null) {
-        throw new ConcernException();
+        throw new ConcernException("Concern does not exist.");
       }
       map.addAttribute("concern", concern.getId());
 
@@ -83,7 +80,7 @@ public class DashboardController {
           this.incidentList(map, concern, active);
           break;
         case "patient":
-          this.patientList(map, concern, user);
+          this.patientList(map, concern);
           break;
         default:
           this.logList(map, concern);
@@ -112,10 +109,10 @@ public class DashboardController {
     map.addAttribute("units", Initializer.init(unitService.getAllSorted(concern), Unit::getIncidents));
   }
 
-  private void patientList(ModelMap map, Concern concern, User user) {
+  private void patientList(ModelMap map, Concern concern) {
     map.addAttribute("template", "patient_list");
     map.addAttribute("patient_menu", "active");
-    map.addAttribute("patients", Initializer.init(patientService.getAllSorted(concern, user), Patient::getIncidents));
+    map.addAttribute("patients", Initializer.init(patientService.getAllSorted(concern), Patient::getIncidents));
   }
 
   private void crossDetail(ModelMap map, int incident_id, int unit_id) throws NotFoundException {
@@ -160,8 +157,8 @@ public class DashboardController {
     map.addAttribute("logs", logService.getByUnit(unit));
   }
 
-  private void patientDetail(ModelMap map, int patient_id, User user) throws NotFoundException {
-    Patient patient = patientService.getById(patient_id, user);
+  private void patientDetail(final ModelMap map, final int patientId) throws NotFoundException {
+    Patient patient = patientService.getById(patientId);
     if (patient == null) {
       throw new NotFoundException();
     }

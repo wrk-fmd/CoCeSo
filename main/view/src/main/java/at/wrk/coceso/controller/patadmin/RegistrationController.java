@@ -4,7 +4,6 @@ import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.Patient;
 import at.wrk.coceso.entity.Unit;
-import at.wrk.coceso.entity.User;
 import at.wrk.coceso.form.RegistrationForm;
 import at.wrk.coceso.service.PatientService;
 import at.wrk.coceso.service.patadmin.PatadminService;
@@ -14,7 +13,6 @@ import at.wrk.coceso.utils.ActiveConcern;
 import at.wrk.coceso.utils.Initializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
@@ -48,12 +46,12 @@ public class RegistrationController {
     @PreAuthorize("@auth.hasPermission(#concern, 'PatadminRegistration')")
     @Transactional
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public String showHome(final ModelMap map, @ActiveConcern final Concern concern, @AuthenticationPrincipal final User user) {
+    public String showHome(final ModelMap map, @ActiveConcern final Concern concern) {
         patadminService.addAccessLevels(map, concern);
 
         List<Incident> incoming = registrationService.getIncoming(concern);
         addIncidentsWithIncomingPatientsToMap(map, incoming);
-        map.addAttribute("treatment", Initializer.initGroups(patadminService.getAllInTreatment(concern, user)));
+        map.addAttribute("treatment", Initializer.initGroups(patadminService.getAllInTreatment(concern)));
 
         map.addAttribute("treatmentCount", registrationService.getTreatmentCount(concern));
         map.addAttribute("transportCount", registrationService.getTransportCount(concern));
@@ -82,9 +80,12 @@ public class RegistrationController {
     @PreAuthorize("@auth.hasPermission(#concern, 'PatadminRegistration')")
     @Transactional
     @RequestMapping(value = "/search", method = RequestMethod.GET)
-    public String showSearch(ModelMap map, @ActiveConcern Concern concern, @RequestParam("q") String query, @AuthenticationPrincipal User user) {
+    public String showSearch(
+            final ModelMap map,
+            @ActiveConcern final Concern concern,
+            @RequestParam("q") final String query) {
         patadminService.addAccessLevels(map, concern);
-        map.addAttribute("patients", Initializer.initGroups(patadminService.getPatientsByQuery(concern, query, false, user)));
+        map.addAttribute("patients", Initializer.initGroups(patadminService.getPatientsByQuery(concern, query, false)));
         map.addAttribute("search", query);
         return "patadmin/registration/search";
     }
@@ -94,9 +95,8 @@ public class RegistrationController {
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
     public String showPatient(
             final ModelMap map,
-            @PathVariable final int id,
-            @AuthenticationPrincipal final User user) {
-        Patient patient = Initializer.initGroups(patientService.getById(id, user));
+            @PathVariable final int id) {
+        Patient patient = Initializer.initGroups(patientService.getById(id));
 
         patadminService.addAccessLevels(map, patient.getConcern());
         map.addAttribute("patient", patient);
@@ -108,9 +108,8 @@ public class RegistrationController {
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
     public ModelAndView showEdit(
             final ModelMap map,
-            @PathVariable final int id,
-            @AuthenticationPrincipal final User user) {
-        Patient patient = registrationService.getActivePatient(id, user);
+            @PathVariable final int id) {
+        Patient patient = registrationService.getActivePatient(id);
 
         patadminService.addAccessLevels(map, patient.getConcern());
         map.addAttribute("groups", patadminService.getGroups(patient.getConcern()));
@@ -119,10 +118,8 @@ public class RegistrationController {
 
     @PreAuthorize("@auth.hasPermission(#id, 'at.wrk.coceso.entity.Incident', 'PatadminRegistration')")
     @RequestMapping(value = "/takeover/{id}", method = RequestMethod.GET)
-    public String showTakeover(
-            @PathVariable final int id,
-            @AuthenticationPrincipal final User user) {
-        Patient patient = registrationWriteService.takeover(id, user);
+    public String showTakeover(@PathVariable final int id) {
+        Patient patient = registrationWriteService.takeover(id);
         return String.format("redirect:/patadmin/registration/edit/%d", patient.getId());
     }
 
@@ -131,11 +128,9 @@ public class RegistrationController {
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public String save(
             @ModelAttribute final RegistrationForm form,
-            @ActiveConcern final Concern concern,
-            @AuthenticationPrincipal final User user) {
-        Patient patient = registrationWriteService.update(form, concern, user);
+            @ActiveConcern final Concern concern) {
+        Patient patient = registrationWriteService.update(form, concern);
         return "redirect:/patadmin/registration/add?successfullyCreated=true";
-        //return String.format("redirect:/patadmin/registration/view/%d", patient.getId());
     }
 
     @PreAuthorize("@auth.hasPermission(#concern, 'PatadminRegistration')")
@@ -144,8 +139,7 @@ public class RegistrationController {
             final ModelMap map,
             @RequestParam(value = "group", required = false) final Integer group,
             @RequestParam(value = "successfullyCreated", defaultValue = "false") final boolean successfullyCreated,
-            @ActiveConcern final Concern concern,
-            @AuthenticationPrincipal final User user) {
+            @ActiveConcern final Concern concern) {
         RegistrationForm form = new RegistrationForm();
         form.setGroup(group);
 

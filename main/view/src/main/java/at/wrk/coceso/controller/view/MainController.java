@@ -1,8 +1,8 @@
 package at.wrk.coceso.controller.view;
 
 import at.wrk.coceso.controller.config.DeploymentStatusProvider;
+import at.wrk.coceso.data.AuthenticatedUser;
 import at.wrk.coceso.entity.Concern;
-import at.wrk.coceso.entity.User;
 import at.wrk.coceso.utils.ActiveConcern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,8 +31,8 @@ public class MainController {
     public String showMain(
             final ModelMap map,
             final @ActiveConcern Concern concern,
-            final @AuthenticationPrincipal User user) {
-        LOG.debug("{}: Started main program with concern {}", user, concern);
+            final @AuthenticationPrincipal AuthenticatedUser user) {
+        LOG.debug("User {} started main program with concern {}.", user, concern);
         map.addAttribute("concern", concern);
         return "main";
     }

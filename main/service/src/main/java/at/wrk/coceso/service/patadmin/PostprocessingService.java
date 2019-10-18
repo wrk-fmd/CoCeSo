@@ -1,7 +1,6 @@
 package at.wrk.coceso.service.patadmin;
 
 import at.wrk.coceso.entity.Patient;
-import at.wrk.coceso.entity.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,8 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public interface PostprocessingService {
 
-  Patient getActivePatient(int patientId, User user);
+    Patient getActivePatient(int patientId);
 
-  Patient getTransported(int patientId, User user);
-
+    Patient getTransported(int patientId);
 }

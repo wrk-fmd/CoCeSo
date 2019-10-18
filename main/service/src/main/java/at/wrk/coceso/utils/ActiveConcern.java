@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface ActiveConcern {
-  public boolean required() default true;
+  boolean required() default true;
 
-  public boolean sections() default false;
+  boolean sections() default false;
 }

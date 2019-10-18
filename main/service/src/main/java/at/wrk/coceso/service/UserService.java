@@ -1,34 +1,36 @@
 package at.wrk.coceso.service;
 
+import at.wrk.coceso.data.AuthenticatedUser;
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.helper.PasswordForm;
-import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public interface UserService {
 
-  public User getById(int id);
+  User getById(int id);
 
-  public User getByUsername(String username);
+  User getByUsername(String username);
 
-  public User getByPersonnelId(int pid);
+  User getByPersonnelId(int personnelId);
 
-  public List<User> getAll();
+  List<User> getAll();
 
-  public Page<User> getAll(Pageable pageable, final String filter);
+  Page<User> getAll(Pageable pageable, String filter);
 
-  public User update(User editedUser, User user);
+  User update(User editedUser);
 
-  public boolean setPassword(int user_id, String password, User user);
+  boolean setPassword(int userId, String password);
 
-  public boolean setPassword(PasswordForm form, User user);
+  boolean setPassword(PasswordForm form);
 
-  public boolean setActiveConcern(User user, Concern concern);
+  boolean setActiveConcern(AuthenticatedUser user, Concern concern);
 
-  public int importUsers(String data, User user);
+  int importUsers(String data);
 
 }

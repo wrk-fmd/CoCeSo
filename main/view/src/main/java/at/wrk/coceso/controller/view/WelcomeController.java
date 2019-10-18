@@ -1,5 +1,6 @@
 package at.wrk.coceso.controller.view;
 
+import at.wrk.coceso.data.AuthenticatedUser;
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.User;
 import at.wrk.coceso.service.UserService;
@@ -57,12 +58,12 @@ public class WelcomeController {
     @RequestMapping(value = "/home", method = RequestMethod.GET)
     public String showHome(
             final ModelMap map,
-            @AuthenticationPrincipal final User authenticationUser,
+            @AuthenticationPrincipal final AuthenticatedUser authenticationUser,
             final HttpServletResponse response,
             @RequestParam(value = "error", required = false) final Integer error) {
         map.addAttribute("error", error != null && ALLOWED_ERRORS.contains(error) ? error : 0);
 
-        User user = userService.getById(authenticationUser.getId());
+        User user = userService.getById(authenticationUser.getUserId());
 
         // Read last active Concern
         Concern active = user.getActiveConcern();
@@ -72,13 +73,14 @@ public class WelcomeController {
             response.addCookie(new Cookie("concern", active.getId() + ""));
         } else {
             // Delete Cookie and active concern reference
-            LOG.info("{}: Active concern already closed, clean up", user);
+            LOG.info("{}: Active concern is already closed, clean up", authenticationUser);
             response.addCookie(new Cookie("concern", null));
-            userService.setActiveConcern(user, null);
+            userService.setActiveConcern(authenticationUser, null);
         }
 
         // Add Userdetails to Model
         map.addAttribute("user", Initializer.init(user, User::getInternalAuthorities));
+        map.addAttribute("authenticatedUser", authenticationUser);
 
         LOG.debug("{}: Started Home Screen", user);
 

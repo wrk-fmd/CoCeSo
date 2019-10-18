@@ -2,7 +2,6 @@ package at.wrk.coceso.service.hooks;
 
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.Unit;
-import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entity.point.Point;
@@ -24,13 +23,13 @@ class CreateHoldPosition implements TaskStateHook {
     private IncidentServiceInternal incidentService;
 
     @Override
-    public TaskState call(final Incident incident, final Unit unit, final TaskState taskState, final User user, final NotifyList notify) {
+    public TaskState call(final Incident incident, final Unit unit, final TaskState taskState, final NotifyList notify) {
         if (taskState != TaskState.AAO) {
             return taskState;
         }
 
         if (incident.getType() == IncidentType.ToHome) {
-            LOG.debug("{}: Autodetaching ToHome {} of unit {} on AAO", user, incident, unit);
+            LOG.debug("Autodetaching ToHome {} of unit {} on AAO", incident, unit);
             // ToHome: Just detach, unit is marked as 'at home'
             return TaskState.Detached;
         }
@@ -41,10 +40,10 @@ class CreateHoldPosition implements TaskStateHook {
 
         // If Relocation goes to unit.home -> just detach, so unit is marked as 'at Home'
         if (incident.hasAo() && !Point.infoEquals(incident.getAo(), unit.getHome())) {
-            LOG.debug("{}: Creating HoldPosition for unit {} on AAO. Relocation {} will be detached.", user, unit, incident);
-            incidentService.createHoldPosition(incident.getAo(), unit, TaskState.AAO, user, notify);
+            LOG.debug("Creating HoldPosition for unit {} on AAO. Relocation {} will be detached.", unit, incident);
+            incidentService.createHoldPosition(incident.getAo(), unit, TaskState.AAO, notify);
         } else {
-            LOG.debug("{}: Relocation task '{}' of unit '{}' had 'Home' as target. Unit is automatically detached to set it to 'at home'.", user, incident, unit);
+            LOG.debug("Relocation task '{}' of unit '{}' had 'Home' as target. Unit is automatically detached to set it to 'at home'.", incident, unit);
         }
 
         return TaskState.Detached;

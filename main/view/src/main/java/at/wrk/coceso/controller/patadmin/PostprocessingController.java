@@ -2,7 +2,6 @@ package at.wrk.coceso.controller.patadmin;
 
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Patient;
-import at.wrk.coceso.entity.User;
 import at.wrk.coceso.form.PostprocessingForm;
 import at.wrk.coceso.form.TransportForm;
 import at.wrk.coceso.service.PatientService;
@@ -13,7 +12,6 @@ import at.wrk.coceso.utils.ActiveConcern;
 import at.wrk.coceso.utils.Initializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
@@ -45,9 +43,8 @@ public class PostprocessingController {
   @RequestMapping(value = "", method = RequestMethod.GET)
   public String showHome(
           final ModelMap map,
-          @ActiveConcern final Concern concern,
-          @AuthenticationPrincipal final User user) {
-    map.addAttribute("patients", Initializer.initGroups(patadminService.getAllInTreatment(concern, user)));
+          @ActiveConcern final Concern concern) {
+    map.addAttribute("patients", Initializer.initGroups(patadminService.getAllInTreatment(concern)));
     patadminService.addAccessLevels(map, concern);
     return "patadmin/postprocessing/list";
   }
@@ -58,9 +55,8 @@ public class PostprocessingController {
   public String showSearch(
           final ModelMap map,
           @ActiveConcern final Concern concern,
-          @RequestParam("q") final String query,
-          @AuthenticationPrincipal final User user) {
-    map.addAttribute("patients", Initializer.initGroups(patadminService.getPatientsByQuery(concern, query, true, user)));
+          @RequestParam("q") final String query) {
+    map.addAttribute("patients", Initializer.initGroups(patadminService.getPatientsByQuery(concern, query, true)));
     map.addAttribute("search", query);
     patadminService.addAccessLevels(map, concern);
     return "patadmin/postprocessing/list";
@@ -71,9 +67,8 @@ public class PostprocessingController {
   @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
   public String showPatient(
           final ModelMap map,
-          @PathVariable final int id,
-          @AuthenticationPrincipal final User user) {
-    Patient patient = Initializer.initGroups(patientService.getById(id, user));
+          @PathVariable final int id) {
+    Patient patient = Initializer.initGroups(patientService.getById(id));
     map.addAttribute("patient", patient);
     patadminService.addAccessLevels(map, patient.getConcern());
     return "patadmin/postprocessing/view";
@@ -83,9 +78,8 @@ public class PostprocessingController {
   @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
   public ModelAndView showEdit(
           final ModelMap map,
-          @PathVariable final int id,
-          @AuthenticationPrincipal final User user) {
-    Patient patient = patientService.getById(id, user);
+          @PathVariable final int id) {
+    Patient patient = patientService.getById(id);
     patadminService.addAccessLevels(map, patient.getConcern());
     return new ModelAndView("patadmin/postprocessing/form", "command", new PostprocessingForm(patient));
   }
@@ -93,9 +87,8 @@ public class PostprocessingController {
   @PreAuthorize("@auth.hasPermission(#form.patient, 'at.wrk.coceso.entity.Patient', 'PatadminPostprocessing')")
   @RequestMapping(value = "/save", method = RequestMethod.POST)
   public String save(
-          @ModelAttribute final PostprocessingForm form,
-          @AuthenticationPrincipal final User user) {
-    Patient patient = postprocessingWriteService.update(form, user);
+          @ModelAttribute final PostprocessingForm form) {
+    Patient patient = postprocessingWriteService.update(form);
     return String.format("redirect:/patadmin/postprocessing/view/%d", patient.getId());
   }
 
@@ -103,9 +96,8 @@ public class PostprocessingController {
   @RequestMapping(value = "/discharge/{id}", method = RequestMethod.GET)
   public ModelAndView showDischarge(
           final ModelMap map,
-          @PathVariable final int id,
-          @AuthenticationPrincipal final User user) {
-    Patient patient = postprocessingService.getActivePatient(id, user);
+          @PathVariable final int id) {
+    Patient patient = postprocessingService.getActivePatient(id);
     patadminService.addAccessLevels(map, patient.getConcern());
     return new ModelAndView("patadmin/postprocessing/discharge", "command", new PostprocessingForm(patient));
   }
@@ -113,9 +105,8 @@ public class PostprocessingController {
   @PreAuthorize("@auth.hasPermission(#form.patient, 'at.wrk.coceso.entity.Patient', 'PatadminPostprocessing')")
   @RequestMapping(value = "/discharge", method = RequestMethod.POST)
   public String saveDischarge(
-          @ModelAttribute final PostprocessingForm form,
-          @AuthenticationPrincipal final User user) {
-    Patient patient = postprocessingWriteService.discharge(form, user);
+          @ModelAttribute final PostprocessingForm form) {
+    Patient patient = postprocessingWriteService.discharge(form);
     return String.format("redirect:/patadmin/postprocessing/view/%d", patient.getId());
   }
 
@@ -123,9 +114,8 @@ public class PostprocessingController {
   @RequestMapping(value = "/transport/{id}", method = RequestMethod.GET)
   public ModelAndView showTransport(
           final ModelMap map,
-          @PathVariable final int id,
-          @AuthenticationPrincipal final User user) {
-    Patient patient = postprocessingService.getActivePatient(id, user);
+          @PathVariable final int id) {
+    Patient patient = postprocessingService.getActivePatient(id);
     patadminService.addAccessLevels(map, patient.getConcern());
     return new ModelAndView("patadmin/postprocessing/transport", "command", new TransportForm(patient));
   }
@@ -133,9 +123,8 @@ public class PostprocessingController {
   @PreAuthorize("@auth.hasPermission(#form.patient, 'at.wrk.coceso.entity.Patient', 'PatadminPostprocessing')")
   @RequestMapping(value = "/transport", method = RequestMethod.POST)
   public String requestTransport(
-          @ModelAttribute final TransportForm form,
-          @AuthenticationPrincipal final User user) {
-    Patient patient = postprocessingWriteService.transport(form, user);
+          @ModelAttribute final TransportForm form) {
+    Patient patient = postprocessingWriteService.transport(form);
     return String.format("redirect:/patadmin/postprocessing/view/%d", patient.getId());
   }
 
@@ -143,9 +132,8 @@ public class PostprocessingController {
   @RequestMapping(value = "/transported/{id}", method = RequestMethod.GET)
   public String showTransported(
           final ModelMap map,
-          @PathVariable final int id,
-          @AuthenticationPrincipal final User user) {
-    Patient patient = postprocessingService.getTransported(id, user);
+          @PathVariable final int id) {
+    Patient patient = postprocessingService.getTransported(id);
     map.addAttribute("patient", patient);
     patadminService.addAccessLevels(map, patient.getConcern());
     return "patadmin/postprocessing/transported";
@@ -154,9 +142,8 @@ public class PostprocessingController {
   @PreAuthorize("@auth.hasPermission(#patientId, 'at.wrk.coceso.entity.Patient', 'PatadminPostprocessing')")
   @RequestMapping(value = "/transported", method = RequestMethod.POST)
   public String saveTransported(
-          @RequestParam("patient") final int patientId,
-          @AuthenticationPrincipal final User user) {
-    Patient patient = postprocessingWriteService.transported(patientId, user);
+          @RequestParam("patient") final int patientId) {
+    Patient patient = postprocessingWriteService.transported(patientId);
     return String.format("redirect:/patadmin/postprocessing/view/%d", patient.getId());
   }
 }

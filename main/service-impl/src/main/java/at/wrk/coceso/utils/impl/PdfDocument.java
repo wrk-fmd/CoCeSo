@@ -1,11 +1,11 @@
 package at.wrk.coceso.utils.impl;
 
+import at.wrk.coceso.data.AuthenticatedUser;
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.LogEntry;
 import at.wrk.coceso.entity.Patient;
 import at.wrk.coceso.entity.Unit;
-import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.LogEntryType;
 import at.wrk.coceso.entity.enums.TaskState;
@@ -71,12 +71,12 @@ public class PdfDocument extends Document implements AutoCloseable {
         this.open();
     }
 
-    public void addFrontPage(final String titleMessageCode, final Concern concern, final User user) throws DocumentException {
+    public void addFrontPage(final String titleMessageCode, final Concern concern, final AuthenticatedUser user) throws DocumentException {
         String title = getMessage(titleMessageCode, new String[]{concern.getName()}, titleMessageCode);
 
         this.addTitle(title);
         this.addAuthor(getMessage("coceso", null));
-        this.addCreator(String.format("%s - %s", getMessage("coceso", null), user.getUsername()));
+        this.addCreator(String.format("%s - %s", getMessage("coceso", null), user == null ? "N/A" : user.getUsername()));
 
         Paragraph p = new Paragraph();
         addEmptyLine(p, 1);
@@ -87,7 +87,7 @@ public class PdfDocument extends Document implements AutoCloseable {
         addEmptyLine(p, 1);
 
         Paragraph p1 = new Paragraph(getMessage("pdf.created",
-                new String[]{user.getFirstname(), user.getLastname(), new java.text.SimpleDateFormat(DATE_TIME_FORMAT).format(new Date())}), SUB_TITLE_FONT);
+                new String[]{user == null ? "N/A" : user.getDisplayName(), new java.text.SimpleDateFormat(DATE_TIME_FORMAT).format(new Date())}), SUB_TITLE_FONT);
         p1.setAlignment(Element.ALIGN_CENTER);
         p.add(p1);
 

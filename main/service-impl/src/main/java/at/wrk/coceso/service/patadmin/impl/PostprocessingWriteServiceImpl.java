@@ -1,7 +1,6 @@
 package at.wrk.coceso.service.patadmin.impl;
 
 import at.wrk.coceso.entity.Patient;
-import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entityevent.EntityEventFactory;
 import at.wrk.coceso.entityevent.impl.NotifyList;
 import at.wrk.coceso.form.PostprocessingForm;
@@ -21,26 +20,26 @@ class PostprocessingWriteServiceImpl implements PostprocessingWriteService {
   private PostprocessingServiceInternal postprocessingService;
 
   @Autowired
-  private EntityEventFactory eef;
+  private EntityEventFactory entityEventFactory;
 
   @Override
-  public Patient update(PostprocessingForm form, User user) {
-    return NotifyList.execute(n -> postprocessingService.update(form, user, n), eef);
+  public Patient update(final PostprocessingForm form) {
+    return NotifyList.execute(n -> postprocessingService.update(form, n), entityEventFactory);
   }
 
   @Override
-  public Patient discharge(PostprocessingForm form, User user) {
-    return NotifyList.execute(n -> postprocessingService.discharge(form, user, n), eef);
+  public Patient discharge(final PostprocessingForm form) {
+    return NotifyList.execute(n -> postprocessingService.discharge(form, n), entityEventFactory);
   }
 
   @Override
-  public Patient transported(int patientId, User user) {
-    return NotifyList.execute(n -> postprocessingService.transported(patientId, user, n), eef);
+  public Patient transported(final int patientId) {
+    return NotifyList.execute(n -> postprocessingService.transported(patientId, n), entityEventFactory);
   }
 
   @Override
-  public Patient transport(TransportForm form, User user) {
-    return NotifyList.execute(n -> postprocessingService.transport(form, user, n), eef);
+  public Patient transport(final TransportForm form) {
+    return NotifyList.execute(n -> postprocessingService.transport(form, n), entityEventFactory);
   }
 
 }

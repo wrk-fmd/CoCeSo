@@ -2,9 +2,10 @@ package at.wrk.coceso.controller.handler;
 
 import at.wrk.coceso.contract.client.ClientLog;
 import at.wrk.coceso.contract.client.ClientLogLevel;
-import at.wrk.coceso.entity.User;
+import at.wrk.coceso.utils.AuthenicatedUserProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -13,21 +14,28 @@ import java.util.Optional;
 public class ClientLogger {
     private static final Logger LOG = LoggerFactory.getLogger(ClientLogger.class);
 
-    public void handleClientLog(final ClientLog clientLog, final User user, final String remoteHost) {
+    private final AuthenicatedUserProvider authenicatedUserProvider;
+
+    @Autowired
+    public ClientLogger(final AuthenicatedUserProvider authenicatedUserProvider) {
+        this.authenicatedUserProvider = authenicatedUserProvider;
+    }
+
+    public void handleClientLog(final ClientLog clientLog, final String remoteHost) {
         ClientLogLevel level = Optional.ofNullable(clientLog.getLogLevel()).orElse(ClientLogLevel.INFO);
 
         switch (level) {
             case DEBUG:
-                if (LOG.isDebugEnabled()) LOG.debug(buildLogLine(clientLog, user, remoteHost));
+                if (LOG.isDebugEnabled()) LOG.debug(buildLogLine(clientLog, remoteHost));
                 break;
             case INFO:
-                if (LOG.isInfoEnabled()) LOG.info(buildLogLine(clientLog, user, remoteHost));
+                if (LOG.isInfoEnabled()) LOG.info(buildLogLine(clientLog, remoteHost));
                 break;
             case WARNING:
-                if (LOG.isWarnEnabled()) LOG.warn(buildLogLine(clientLog, user, remoteHost));
+                if (LOG.isWarnEnabled()) LOG.warn(buildLogLine(clientLog, remoteHost));
                 break;
             case ERROR:
-                if (LOG.isErrorEnabled()) LOG.error(buildLogLine(clientLog, user, remoteHost));
+                if (LOG.isErrorEnabled()) LOG.error(buildLogLine(clientLog, remoteHost));
                 break;
             default:
                 LOG.warn("Received unknown log level: {}", level);
@@ -35,10 +43,10 @@ public class ClientLogger {
         }
     }
 
-    private String buildLogLine(final ClientLog clientLog, final User user, final String remoteHost) {
+    private String buildLogLine(final ClientLog clientLog, final String remoteHost) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("User '");
-        stringBuilder.append(user.getUsername());
+        stringBuilder.append(authenicatedUserProvider.getAuthenticatedUser());
         stringBuilder.append("' on remote host '");
         stringBuilder.append(remoteHost);
         stringBuilder.append("' reported:");

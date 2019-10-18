@@ -1,40 +1,44 @@
 package at.wrk.coceso.entity.enums;
 
-import java.util.Collection;
-import java.util.EnumSet;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import org.springframework.security.core.GrantedAuthority;
+
+import java.util.Set;
 
 public enum Authority implements GrantedAuthority {
 
-  Dashboard,
-  MLS(Dashboard),
-  Kdt(MLS),
-  Root(Kdt);
+    Dashboard,
+    MLS(Dashboard),
+    Kdt(MLS),
+    Root(Kdt);
 
-  private Collection<Authority> authorities;
-  private final Authority[] children;
+    private final Set<Authority> authorities;
 
-  Authority() {
-    this.children = new Authority[]{};
-  }
-
-  Authority(Authority... children) {
-    this.children = children;
-  }
-
-  public Collection<Authority> getAuthorities() {
-    if (authorities == null) {
-      authorities = EnumSet.of(this);
-      for (Authority a : children) {
-        authorities.addAll(a.getAuthorities());
-      }
+    Authority() {
+        this(new Authority[]{});
     }
-    return authorities;
-  }
 
-  @Override
-  public String getAuthority() {
-    return this.name();
-  }
+    Authority(Authority... children) {
+        this.authorities = resolveGrantedAuthorities(this, ImmutableSet.copyOf(children));
+    }
 
+    public Set<Authority> getAuthorities() {
+        return authorities;
+    }
+
+    @Override
+    public String getAuthority() {
+        return this.name();
+    }
+
+    private static Set<Authority> resolveGrantedAuthorities(final Authority startingPoint, final Set<Authority> children) {
+
+        Set<Authority> resolvedAuthorities = Sets.newHashSet(startingPoint);
+        for (Authority child : children) {
+            resolvedAuthorities.addAll(child.getAuthorities());
+        }
+
+        return ImmutableSet.copyOf(resolvedAuthorities);
+    }
 }

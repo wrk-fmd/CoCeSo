@@ -2,7 +2,6 @@ package at.wrk.coceso.controller.data;
 
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Unit;
-import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.helper.BatchUnits;
 import at.wrk.coceso.entity.helper.JsonViews;
 import at.wrk.coceso.entity.helper.RestProperty;
@@ -17,7 +16,6 @@ import at.wrk.coceso.utils.Initializer;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -67,23 +65,20 @@ public class UnitController {
     @RequestMapping(value = "createBatch", produces = "application/json", method = RequestMethod.POST)
     public RestResponse createBatch(
             final @RequestBody BatchUnits batch,
-            final BindingResult result,
-            final @ActiveConcern Concern concern,
-            final @AuthenticationPrincipal User user) {
-        return new RestResponse(true, new RestProperty("ids", unitWriteService.batchCreate(batch, concern, user)));
+            final @ActiveConcern Concern concern) {
+        return new RestResponse(true, new RestProperty("ids", unitWriteService.batchCreate(batch, concern)));
     }
 
     @PreAuthorize("@auth.hasAccessLevel('Main')")
     @RequestMapping(value = "update", produces = "application/json", method = RequestMethod.POST)
     public RestResponse updateMain(
             final @RequestBody Unit unit,
-            final BindingResult result,
-            final @AuthenticationPrincipal User user) {
+            final BindingResult result) {
         if (result.hasErrors()) {
             return new RestResponse(result);
         }
 
-        unitWriteService.updateMain(unit, user);
+        unitWriteService.updateMain(unit);
         return new RestResponse(true, new RestProperty("new", false));
     }
 
@@ -92,49 +87,48 @@ public class UnitController {
     public RestResponse updateEdit(
             final @RequestBody Unit unit,
             final BindingResult result,
-            final @ActiveConcern Concern concern,
-            final @AuthenticationPrincipal User user) {
+            final @ActiveConcern Concern concern) {
         if (result.hasErrors()) {
             return new RestResponse(result);
         }
 
         boolean isNew = unit.getId() == null;
-        Unit updatedUnit = unitWriteService.updateEdit(unit, concern, user);
+        Unit updatedUnit = unitWriteService.updateEdit(unit, concern);
         return new RestResponse(true, new RestProperty("new", isNew), new RestProperty("unit_id", updatedUnit.getId()));
     }
 
     @PreAuthorize("@auth.hasAccessLevel('Main')")
     @RequestMapping(value = "sendHome", produces = "application/json", method = RequestMethod.POST)
-    public RestResponse sendHome(@RequestParam("id") int unitId, @AuthenticationPrincipal User user) {
-        unitWriteService.sendHome(unitId, user);
+    public RestResponse sendHome(@RequestParam("id") final int unitId) {
+        unitWriteService.sendHome(unitId);
         return new RestResponse(true);
     }
 
     @PreAuthorize("@auth.hasAccessLevel('Main')")
     @RequestMapping(value = "holdPosition", produces = "application/json", method = RequestMethod.POST)
-    public RestResponse holdPosition(@RequestParam("id") int unit_id, @AuthenticationPrincipal User user) {
-        unitWriteService.holdPosition(unit_id, user);
+    public RestResponse holdPosition(@RequestParam("id") final int unitId) {
+        unitWriteService.holdPosition(unitId);
         return new RestResponse(true);
     }
 
     @PreAuthorize("@auth.hasAccessLevel('Main')")
     @RequestMapping(value = "standby", produces = "application/json", method = RequestMethod.POST)
-    public RestResponse standby(@RequestParam("id") int unit_id, @AuthenticationPrincipal User user) {
-        unitWriteService.standby(unit_id, user);
+    public RestResponse standby(@RequestParam("id") final int unitId) {
+        unitWriteService.standby(unitId);
         return new RestResponse(true);
     }
 
     @PreAuthorize("@auth.hasAccessLevel('Edit')")
     @RequestMapping(value = "remove", produces = "application/json", method = RequestMethod.POST)
-    public RestResponse remove(@RequestParam("id") int unit_id, @AuthenticationPrincipal User user) {
-        unitWriteService.remove(unit_id, user);
+    public RestResponse remove(@RequestParam("id") final int unitId) {
+        unitWriteService.remove(unitId);
         return new RestResponse(true);
     }
 
     @PreAuthorize("@auth.hasAccessLevel('Edit')")
     @RequestMapping(value = "assignPerson", produces = "application/json", method = RequestMethod.POST)
-    public RestResponse assignPerson(@RequestParam("unit_id") int unit_id, @RequestParam("person_id") int person_id) {
-        unitWriteService.addCrew(unit_id, person_id);
+    public RestResponse assignPerson(@RequestParam("unit_id") int unitId, @RequestParam("person_id") int personId) {
+        unitWriteService.addCrew(unitId, personId);
         return new RestResponse(true);
     }
 
@@ -147,8 +141,8 @@ public class UnitController {
 
     @PreAuthorize("@auth.hasAccessLevel('Edit')")
     @RequestMapping(value = "upload", produces = "application/json", consumes = "text/csv", method = RequestMethod.POST)
-    public RestResponse upload(@RequestBody String body, @ActiveConcern Concern concern, @AuthenticationPrincipal User user) {
-        return new RestResponse(true, new RestProperty("counter", unitWriteService.importUnits(body, concern, user)));
+    public RestResponse upload(@RequestBody String body, @ActiveConcern Concern concern) {
+        return new RestResponse(true, new RestProperty("counter", unitWriteService.importUnits(body, concern)));
     }
 
 }

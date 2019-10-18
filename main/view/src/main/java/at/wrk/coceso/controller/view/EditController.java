@@ -1,7 +1,7 @@
 package at.wrk.coceso.controller.view;
 
+import at.wrk.coceso.data.AuthenticatedUser;
 import at.wrk.coceso.entity.Concern;
-import at.wrk.coceso.entity.User;
 import at.wrk.coceso.utils.ActiveConcern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,17 +16,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping("/edit")
 public class EditController {
 
-  private final static Logger LOG = LoggerFactory.getLogger(EditController.class);
+    private final static Logger LOG = LoggerFactory.getLogger(EditController.class);
 
-  @RequestMapping(value = "", method = RequestMethod.GET)
-  public String editConcern(@ActiveConcern Concern concern, @AuthenticationPrincipal User user) {
-    LOG.info("{}: Started editing of concern {}", user, concern);
-    return "edit_concern";
-  }
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public String editConcern(@ActiveConcern final Concern concern, @AuthenticationPrincipal final AuthenticatedUser user) {
+        LOG.info("User {} started editing of concern {}.", user, concern);
+        return "edit_concern";
+    }
 
-  @RequestMapping(value = "user", method = RequestMethod.GET)
-  public String editUser() {
-    return "edit_user";
-  }
-
+    @RequestMapping(value = "user", method = RequestMethod.GET)
+    public String editUser() {
+        return "edit_user";
+    }
 }

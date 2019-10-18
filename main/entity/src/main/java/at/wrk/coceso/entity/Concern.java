@@ -128,18 +128,18 @@ public class Concern implements Serializable {
     return sections;
   }
 
-  public boolean containsSection(String section) {
+  public boolean containsSection(final String section) {
     return sections != null && sections.contains(section);
   }
 
-  public void addSection(String section) {
+  public void addSection(final String section) {
     if (sections == null) {
       sections = new HashSet<>();
     }
     sections.add(section);
   }
 
-  public void removeSection(String section) {
+  public void removeSection(final String section) {
     if (sections != null) {
       sections.remove(section);
     }

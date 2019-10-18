@@ -1,15 +1,16 @@
 package at.wrk.coceso.entity.types;
 
+import org.hibernate.HibernateException;
+import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.usertype.ParameterizedType;
+import org.hibernate.usertype.UserType;
+
 import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Properties;
-import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SessionImplementor;
-import org.hibernate.usertype.ParameterizedType;
-import org.hibernate.usertype.UserType;
 
 public class EnumUserType implements UserType, ParameterizedType {
 
@@ -20,8 +21,8 @@ public class EnumUserType implements UserType, ParameterizedType {
     String enumClassName = parameters.getProperty("enumClass");
     try {
       enumClass = Class.forName(enumClassName).asSubclass(Enum.class);
-    } catch (ClassNotFoundException cfne) {
-      throw new HibernateException("Enum class not found", cfne);
+    } catch (ClassNotFoundException e) {
+      throw new HibernateException("Enum class not found", e);
     }
   }
 

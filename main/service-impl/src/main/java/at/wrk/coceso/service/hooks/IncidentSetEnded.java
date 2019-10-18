@@ -1,7 +1,6 @@
 package at.wrk.coceso.service.hooks;
 
 import at.wrk.coceso.entity.Incident;
-import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entityevent.impl.NotifyList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,9 +13,8 @@ public class IncidentSetEnded implements IncidentDoneHook {
   private static final Logger LOG = LoggerFactory.getLogger(IncidentSetEnded.class);
 
   @Override
-  public void call(final Incident incident, final User user, final NotifyList notify) {
-    LOG.debug("{}: Incident state changed to 'done'. Ended-timestamp ist set.", user);
+  public void call(final Incident incident, final NotifyList notify) {
+    LOG.debug("Incident state changed to 'done'. Ended-timestamp ist set.");
     incident.setEnded();
   }
-
 }
