@@ -59,7 +59,7 @@ public class PatadminController {
   @RequestMapping(value = "/settings", method = RequestMethod.GET)
   public ModelAndView showSettings(final ModelMap map, @ActiveConcern final Concern concern) {
     try {
-      File[] images = new ClassPathResource("../../static/imgs/groups").getFile().listFiles();
+      File[] images = new ClassPathResource("../../static/imgs/groups", getClass().getClassLoader()).getFile().listFiles();
       Arrays.sort(images);
       map.addAttribute("images", images);
     } catch (IOException ex) {
