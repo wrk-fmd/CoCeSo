@@ -45,6 +45,7 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
@@ -66,9 +67,20 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
             <artifactId>hibernate-jpa-2.1-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
         </dependency>
 
         <!-- Apache Commons -->
@@ -94,29 +106,32 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.bsc.maven</groupId>
-                <artifactId>maven-processor-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <id>process</id>
-                        <goals>
-                            <goal>process</goal>
-                        </goals>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <processors>
-                                <processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
-                            </processors>
-                        </configuration>
-                    </execution>
-                </executions>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <compilerArguments>
+                        <processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
+                    </compilerArguments>
+                    <annotationProcessorPaths>
+                        <annotationProcessorPath>
+                            <groupId>org.hibernate</groupId>
+                            <artifactId>hibernate-jpamodelgen</artifactId>
+                            <version>${hibernate.version}</version>
+                        </annotationProcessorPath>
+                        <path>
+                            <groupId>javax.xml.bind</groupId>
+                            <artifactId>jaxb-api</artifactId>
+                            <version>${jaxb.api.version}</version>
+                        </path>
+                        <path>
+                            <groupId>javax.annotation</groupId>
+                            <artifactId>javax.annotation-api</artifactId>
+                            <version>${javax.annotation.api}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
                 <dependencies>
-                    <dependency>
-                        <groupId>org.hibernate</groupId>
-                        <artifactId>hibernate-jpamodelgen</artifactId>
-                        <version>${hibernate.version}</version>
-                    </dependency>
                 </dependencies>
             </plugin>
         </plugins>

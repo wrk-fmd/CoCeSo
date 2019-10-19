@@ -19,7 +19,7 @@ public class WflwrJsonPoi extends JsonPoi {
 
     @Autowired
     public WflwrJsonPoi(ObjectMapper mapper) {
-        super(mapper, new ClassPathResource("wflwr.json"));
+        super(mapper, new ClassPathResource("wflwr.json", WflwrJsonPoi.class.getClassLoader()));
     }
 
     @PostConstruct

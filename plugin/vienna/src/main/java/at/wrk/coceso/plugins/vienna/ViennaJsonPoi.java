@@ -19,7 +19,11 @@ public class ViennaJsonPoi extends JsonPoi {
 
     @Autowired
     public ViennaJsonPoi(final ObjectMapper mapper) {
-        super(mapper, new ClassPathResource("ehs.json"), new ClassPathResource("hospitals.json"), new ClassPathResource("wrk.json"));
+        super(
+                mapper,
+                new ClassPathResource("ehs.json", ViennaJsonPoi.class.getClassLoader()),
+                new ClassPathResource("hospitals.json", ViennaJsonPoi.class.getClassLoader()),
+                new ClassPathResource("wrk.json", ViennaJsonPoi.class.getClassLoader()));
     }
 
     @PostConstruct

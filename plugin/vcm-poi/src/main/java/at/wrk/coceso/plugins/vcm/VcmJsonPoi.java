@@ -19,7 +19,7 @@ public class VcmJsonPoi extends JsonPoi {
 
     @Autowired
     public VcmJsonPoi(final ObjectMapper mapper) {
-        super(mapper, new ClassPathResource("vcm.json"));
+        super(mapper, new ClassPathResource("vcm.json", VcmJsonPoi.class.getClassLoader()));
     }
 
     @PostConstruct

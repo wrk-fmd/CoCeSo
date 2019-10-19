@@ -20,6 +20,9 @@
         <hibernate.version>5.1.17.Final</hibernate.version>
         <hibernate.validator.version>5.2.5.Final</hibernate.validator.version>
         <hibernate.persistence.version>1.0.0.Final</hibernate.persistence.version>
+        <jaxb.api.version>2.3.1</jaxb.api.version>
+        <javax.annotation.api>1.3.2</javax.annotation.api>
+        <javax.activation.version>1.2.0</javax.activation.version>
 
         <itextpdf.version>5.5.13.1</itextpdf.version>
 
@@ -218,6 +221,12 @@
             </dependency>
 
             <dependency>
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                <version>${jaxb.api.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-entitymanager</artifactId>
                 <version>${hibernate.version}</version>
@@ -233,6 +242,18 @@
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-validator</artifactId>
                 <version>${hibernate.validator.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.annotation</groupId>
+                <artifactId>javax.annotation-api</artifactId>
+                <version>${javax.annotation.api}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.sun.activation</groupId>
+                <artifactId>javax.activation</artifactId>
+                <version>${javax.activation.version}</version>
             </dependency>
 
             <dependency>
