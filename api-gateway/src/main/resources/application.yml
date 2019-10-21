@@ -1,0 +1,13 @@
+server:
+  port: 8091
+  servlet:
+    context-path: /api
+application:
+  cors:
+    origins: http://localhost:4200
+  services:
+    radio: http://localhost:8092/api
+  broker:
+    host: localhost
+    username: coceso-rabbitmq-user
+    password: coceso-rabbitmq-pass

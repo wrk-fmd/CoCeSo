@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <title>STOMP test</title>
+</head>
+<body>
+<script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@5.0.0/bundles/stomp.umd.min.js"></script>
+<script type="text/javascript">
+  const stompConfig = {
+    brokerURL: "ws://localhost:8091/api/notifications",
+    debug: function (str) {
+      console.log(`STOMP: ${str}`);
+    },
+    reconnectDelay: 200,
+    onConnect: function (frame) {
+      const subscription = stompClient.subscribe("/exchange/radio.calls", function (message) {
+        document.write(`${message.body}<br>`);
+      });
+    }
+  };
+
+  const stompClient = new StompJs.Client(stompConfig);
+  stompClient.activate();
+</script>
+</body>
+</html>
