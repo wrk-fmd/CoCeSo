@@ -1,54 +1,39 @@
 package at.wrk.coceso.radio.entity;
 
-import at.wrk.coceso.entity.types.EnumUserType;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.validator.constraints.NotEmpty;
+import java.io.Serializable;
+import java.time.Instant;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.io.Serializable;
-import java.time.OffsetDateTime;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @Entity
-@TypeDef(typeClass = EnumUserType.class,
-        parameters = @org.hibernate.annotations.Parameter(name = "enumClass", value = "at.wrk.coceso.radio.RadioCall$Direction"),
-        defaultForType = RadioCall.Direction.class)
+// TODO Check how this should be implemented
+//@TypeDef(typeClass = EnumUserType.class,
+//        parameters = @org.hibernate.annotations.Parameter(name = "enumClass", value = "at.wrk.coceso.radio.entity.RadioCall$Direction"),
+//        defaultForType = RadioCall.Direction.class)
 public class RadioCall implements Serializable, Comparable<RadioCall> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Size(max = 10)
-    @NotEmpty
-    @Column(nullable = false, length = 10)
+    @Column(nullable = false, length = 7)
     private String ani;
 
-    @NotNull
-    @Column(name = "ts")
-    private OffsetDateTime timestamp;
+    @Column(nullable = false)
+    private Instant timestamp;
 
-    @NotNull
     @Column(nullable = false)
     private Direction direction;
 
-    @Size(max = 20)
     @Column(length = 20)
     private String port;
 
     public RadioCall() {
-    }
-
-    public RadioCall(String port, String ani, Direction direction) {
-        this.port = port;
-        this.ani = ani;
-        this.direction = direction;
-        this.timestamp = OffsetDateTime.now();
     }
 
     @Override
@@ -57,7 +42,7 @@ public class RadioCall implements Serializable, Comparable<RadioCall> {
     }
 
     public enum Direction {
-        RX, RX_ACK, RX_EMG, TX, TX_FAILED
+        RX, RX_EMG, TX
     }
 
     public Integer getId() {
@@ -76,11 +61,11 @@ public class RadioCall implements Serializable, Comparable<RadioCall> {
         this.ani = ani;
     }
 
-    public OffsetDateTime getTimestamp() {
+    public Instant getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(OffsetDateTime timestamp) {
+    public void setTimestamp(Instant timestamp) {
         this.timestamp = timestamp;
     }
 
@@ -102,12 +87,12 @@ public class RadioCall implements Serializable, Comparable<RadioCall> {
 
     @Override
     public String toString() {
-        return "Selcall{" +
-                "id=" + id +
-                ", ani='" + ani + '\'' +
-                ", timestamp=" + timestamp +
-                ", direction=" + direction +
-                ", port='" + port + '\'' +
-                '}';
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("ani", ani)
+                .append("timestamp", timestamp)
+                .append("direction", direction)
+                .append("port", port)
+                .toString();
     }
 }

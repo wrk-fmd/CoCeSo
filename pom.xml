@@ -72,6 +72,7 @@
         <module>geocode</module>
         <module>main</module>
         <module>plugin</module>
+        <module>radio</module>
     </modules>
 
     <dependencyManagement>
