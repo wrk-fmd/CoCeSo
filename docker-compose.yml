@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  coceso-amqp:
+    image: coceso-amqp
+    build: ./rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+      - 61613:61613
+    environment:
+      RABBITMQ_DEFAULT_USER: coceso-rabbitmq-user
+      RABBITMQ_DEFAULT_PASS: coceso-rabbitmq-pass
