@@ -25,16 +25,4 @@
     <module>geobroker</module>
     <module>alarm-text</module>
   </modules>
-
-  <profiles>
-    <profile>
-      <id>radio</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <modules>
-        <module>radio</module>
-      </modules>
-    </profile>
-  </profiles>
 </project>

@@ -17,21 +17,6 @@
 
     <profiles>
         <profile>
-            <id>radio</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>at.wrk.coceso-plugins</groupId>
-                    <artifactId>coceso-radio</artifactId>
-                    <version>${project.version}</version>
-                    <scope>runtime</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-
-        <profile>
             <id>geobroker</id>
             <activation>
                 <activeByDefault>false</activeByDefault>

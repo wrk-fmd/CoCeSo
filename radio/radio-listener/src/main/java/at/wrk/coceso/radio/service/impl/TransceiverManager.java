@@ -1,6 +1,9 @@
-package at.wrk.coceso.radio;
+package at.wrk.coceso.radio.service.impl;
 
 import at.wrk.coceso.entityevent.EntityEventHandler;
+import at.wrk.coceso.radio.SelcallListener;
+import at.wrk.coceso.radio.entity.Port;
+import at.wrk.coceso.radio.entity.RadioCall;
 import gnu.io.CommPortIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,9 +30,9 @@ public class TransceiverManager {
     private final Set<SelcallListener> listeners;
     private final Environment properties;
 
-    private final EntityEventHandler<Selcall> entityEventHandler;
+    private final EntityEventHandler<RadioCall> entityEventHandler;
 
-    private TransceiverManager(Environment properties, EntityEventHandler<Selcall> entityEventHandler) {
+    private TransceiverManager(Environment properties, EntityEventHandler<RadioCall> entityEventHandler) {
         this.properties = properties;
         this.entityEventHandler = entityEventHandler;
         transceivers = new HashMap<>();
@@ -37,7 +40,7 @@ public class TransceiverManager {
         reloadPorts();
     }
 
-    public static synchronized TransceiverManager getInstance(Environment properties, EntityEventHandler<Selcall> entityEventHandler) {
+    public static synchronized TransceiverManager getInstance(Environment properties, EntityEventHandler<RadioCall> entityEventHandler) {
         if (instance == null) {
             instance = new TransceiverManager(properties, entityEventHandler);
         }
@@ -55,7 +58,7 @@ public class TransceiverManager {
         }
     }
 
-    public void handleCall(Selcall call) {
+    public void handleCall(RadioCall call) {
         LOG.info("Call received from '{}'", call.getAni());
         entityEventHandler.entityChanged(call, 0);
         listeners.stream().findAny().ifPresent(l -> l.saveCall(call));

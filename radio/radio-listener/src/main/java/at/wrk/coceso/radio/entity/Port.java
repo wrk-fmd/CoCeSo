@@ -1,4 +1,4 @@
-package at.wrk.coceso.radio;
+package at.wrk.coceso.radio.entity;
 
 public class Port {
 

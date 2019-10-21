@@ -1,5 +1,8 @@
-package at.wrk.coceso.radio;
+package at.wrk.coceso.radio.service.impl;
 
+import at.wrk.coceso.radio.entity.Port;
+import at.wrk.coceso.radio.entity.RadioCall;
+import at.wrk.coceso.radio.exception.IllegalMessageException;
 import gnu.io.CommPortIdentifier;
 import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
@@ -221,10 +224,10 @@ public class Transceiver {
 
       if (message.substring(0, 2).equals("I1") && message.length() >= MESSAGE_LENGTH + 2) {
         LOG.info("Decoded Message: '{}'", message);
-        listener.handleCall(new Selcall(port.getPath(), message.substring(2, MESSAGE_LENGTH + 2), Selcall.Direction.RX));
+        listener.handleCall(new RadioCall(port.getPath(), message.substring(2, MESSAGE_LENGTH + 2), RadioCall.Direction.RX));
       } else if (message.substring(0, 1).equals("E") && message.length() >= MESSAGE_LENGTH + 1) {
         LOG.info("Decoded Message: '{}'", message);
-        listener.handleCall(new Selcall(port.getPath(), message.substring(1, MESSAGE_LENGTH + 1), Selcall.Direction.RX_EMG));
+        listener.handleCall(new RadioCall(port.getPath(), message.substring(1, MESSAGE_LENGTH + 1), RadioCall.Direction.RX_EMG));
       } else {
         LOG.debug("unknown message (length: {}): '{}'", message.length(), message);
       }

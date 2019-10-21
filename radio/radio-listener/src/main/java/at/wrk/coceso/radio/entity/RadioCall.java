@@ -1,4 +1,4 @@
-package at.wrk.coceso.radio;
+package at.wrk.coceso.radio.entity;
 
 import at.wrk.coceso.entity.types.EnumUserType;
 import org.hibernate.annotations.TypeDef;
@@ -16,9 +16,9 @@ import java.time.OffsetDateTime;
 
 @Entity
 @TypeDef(typeClass = EnumUserType.class,
-        parameters = @org.hibernate.annotations.Parameter(name = "enumClass", value = "at.wrk.coceso.radio.Selcall$Direction"),
-        defaultForType = Selcall.Direction.class)
-public class Selcall implements Serializable, Comparable<Selcall> {
+        parameters = @org.hibernate.annotations.Parameter(name = "enumClass", value = "at.wrk.coceso.radio.RadioCall$Direction"),
+        defaultForType = RadioCall.Direction.class)
+public class RadioCall implements Serializable, Comparable<RadioCall> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,10 +41,10 @@ public class Selcall implements Serializable, Comparable<Selcall> {
     @Column(length = 20)
     private String port;
 
-    public Selcall() {
+    public RadioCall() {
     }
 
-    public Selcall(String port, String ani, Direction direction) {
+    public RadioCall(String port, String ani, Direction direction) {
         this.port = port;
         this.ani = ani;
         this.direction = direction;
@@ -52,7 +52,7 @@ public class Selcall implements Serializable, Comparable<Selcall> {
     }
 
     @Override
-    public int compareTo(Selcall that) {
+    public int compareTo(RadioCall that) {
         return this.timestamp.compareTo(that.timestamp);
     }
 

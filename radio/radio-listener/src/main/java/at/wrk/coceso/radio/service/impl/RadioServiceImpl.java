@@ -1,4 +1,4 @@
-package at.wrk.coceso.radio;
+package at.wrk.coceso.radio.service.impl;
 
 import at.wrk.coceso.entityevent.EntityEventFactory;
 import at.wrk.coceso.entityevent.EntityEventHandler;
@@ -6,6 +6,12 @@ import at.wrk.coceso.entityevent.EntityEventListener;
 import java.time.OffsetDateTime;
 import java.util.EnumSet;
 import java.util.List;
+
+import at.wrk.coceso.radio.SelcallListener;
+import at.wrk.coceso.radio.entity.Port;
+import at.wrk.coceso.radio.entity.RadioCall;
+import at.wrk.coceso.radio.repository.RadioRepository;
+import at.wrk.coceso.radio.service.RadioService;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import org.slf4j.Logger;
@@ -17,22 +23,22 @@ import org.springframework.stereotype.Service;
 
 @Service
 @PropertySource(value = "classpath:ports.properties", ignoreResourceNotFound = true)
-public class RadioService implements SelcallListener {
+class RadioServiceImpl implements RadioService, SelcallListener {
 
-  private static final Logger LOG = LoggerFactory.getLogger(RadioService.class);
+  private static final Logger LOG = LoggerFactory.getLogger(RadioServiceImpl.class);
 
   @Autowired
-  private SelcallRepository selcallRepository;
+  private RadioRepository selcallRepository;
 
   private final TransceiverManager transceivers;
 
-  private final EntityEventListener<Selcall> webSocketWriter;
+  private final EntityEventListener<RadioCall> webSocketWriter;
 
-  private final EntityEventHandler<Selcall> entityEventHandler;
+  private final EntityEventHandler<RadioCall> entityEventHandler;
 
   @Autowired
-  public RadioService(Environment env, EntityEventFactory eef) {
-    entityEventHandler = eef.getEntityEventHandler(Selcall.class);
+  public RadioServiceImpl(Environment env, EntityEventFactory eef) {
+    entityEventHandler = eef.getEntityEventHandler(RadioCall.class);
     webSocketWriter = eef.getWebSocketWriter("/topic/radio/incoming", null, null);
     entityEventHandler.addListener(webSocketWriter);
     transceivers = TransceiverManager.getInstance(env, entityEventHandler);
@@ -55,16 +61,18 @@ public class RadioService implements SelcallListener {
   }
 
   @Override
-  public void saveCall(Selcall call) {
+  public void saveCall(RadioCall call) {
     selcallRepository.save(call);
   }
 
-  public List<Selcall> getLastMinutes(int minutes) {
+  @Override
+  public List<RadioCall> getLastMinutes(int minutes) {
     return selcallRepository.findByTimestampGreaterThanAndDirectionIn(
-        OffsetDateTime.now().minusMinutes(minutes), EnumSet.of(Selcall.Direction.RX, Selcall.Direction.RX_EMG));
+        OffsetDateTime.now().minusMinutes(minutes), EnumSet.of(RadioCall.Direction.RX, RadioCall.Direction.RX_EMG));
   }
 
-  public boolean sendSelcall(Selcall selcall) {
+  @Override
+  public boolean sendCall(RadioCall selcall) {
     if (selcall == null || selcall.getAni() == null) {
       LOG.info("Selcall or ANI is null");
       return false;
@@ -85,7 +93,7 @@ public class RadioService implements SelcallListener {
     }
 
     selcall.setTimestamp(OffsetDateTime.now());
-    selcall.setDirection(success ? Selcall.Direction.TX : Selcall.Direction.TX_FAILED);
+    selcall.setDirection(success ? RadioCall.Direction.TX : RadioCall.Direction.TX_FAILED);
     selcallRepository.save(selcall);
 
     return success;
