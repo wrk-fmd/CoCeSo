@@ -15,6 +15,7 @@ import at.wrk.coceso.radio.api.dto.Port;
 import at.wrk.coceso.radio.api.dto.ReceivedCallDto;
 import at.wrk.coceso.radio.api.dto.SendCallDto;
 import at.wrk.coceso.radio.api.exception.UnknownPortException;
+import at.wrk.coceso.radio.api.queues.RadioQueueNames;
 import at.wrk.coceso.radio.entity.RadioCall;
 import at.wrk.coceso.radio.entity.RadioCall.Direction;
 import at.wrk.coceso.radio.exception.PortException;
@@ -35,8 +36,6 @@ import org.springframework.stereotype.Service;
 public class RadioServiceImpl implements RadioService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-
-    private final static String MESSAGE_EXCHANGE = "radio.calls";
 
     private final Environment properties;
     private final RadioCallRepository repository;
@@ -62,7 +61,7 @@ public class RadioServiceImpl implements RadioService {
     private void receiveCall(ReceivedCallDto call) {
         LOG.info("Call received from '{}'", call.getAni());
         repository.save(mapper.receivedCallToRadioCall(call));
-        this.amqp.convertAndSend(MESSAGE_EXCHANGE, null, call);
+        this.amqp.convertAndSend(RadioQueueNames.CALLS_RECEIVED, null, call);
     }
 
     public List<ReceivedCallDto> getLast(TemporalAmount timespan) {
