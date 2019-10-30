@@ -1,5 +1,17 @@
 package at.wrk.coceso.radio.service.impl;
 
+import at.wrk.coceso.radio.api.dto.Port;
+import at.wrk.coceso.radio.api.dto.ReceivedCallDto;
+import at.wrk.coceso.radio.exception.IllegalMessageException;
+import at.wrk.coceso.radio.exception.PortException;
+import gnu.io.CommPortIdentifier;
+import gnu.io.PortInUseException;
+import gnu.io.SerialPort;
+import gnu.io.SerialPortEvent;
+import gnu.io.UnsupportedCommOperationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -13,18 +25,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import at.wrk.coceso.radio.api.dto.Port;
-import at.wrk.coceso.radio.api.dto.ReceivedCallDto;
-import at.wrk.coceso.radio.exception.IllegalMessageException;
-import at.wrk.coceso.radio.exception.PortException;
-import gnu.io.CommPortIdentifier;
-import gnu.io.PortInUseException;
-import gnu.io.SerialPort;
-import gnu.io.SerialPortEvent;
-import gnu.io.UnsupportedCommOperationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Represents a physical Transceiver connected via serial port
@@ -110,7 +110,6 @@ class Transceiver implements AutoCloseable {
         // TODO update to new hello message
         sendMessage("TE");
     }
-
 
     public Port getPort() {
         return port;
@@ -258,5 +257,4 @@ class Transceiver implements AutoCloseable {
             LOG.error("Error sending data to port '{}'", port);
         }
     }
-
 }

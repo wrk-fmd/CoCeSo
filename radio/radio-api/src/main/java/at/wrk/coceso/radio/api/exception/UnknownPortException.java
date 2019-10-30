@@ -9,5 +9,4 @@ public class UnknownPortException extends Exception {
     public UnknownPortException(String message) {
         super(message);
     }
-
 }

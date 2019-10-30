@@ -1,14 +1,14 @@
 package at.wrk.coceso.radio.entity;
 
-import java.io.Serializable;
-import java.time.Instant;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import java.io.Serializable;
+import java.time.Instant;
 
 @Entity
 // TODO Check how this should be implemented

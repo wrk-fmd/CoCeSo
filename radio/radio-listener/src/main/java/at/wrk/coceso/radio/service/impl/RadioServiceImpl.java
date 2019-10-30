@@ -1,16 +1,5 @@
 package at.wrk.coceso.radio.service.impl;
 
-import java.lang.invoke.MethodHandles;
-import java.time.Instant;
-import java.time.temporal.TemporalAmount;
-import java.util.EnumSet;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.stream.Collectors;
-
 import at.wrk.coceso.radio.api.dto.Port;
 import at.wrk.coceso.radio.api.dto.ReceivedCallDto;
 import at.wrk.coceso.radio.api.dto.SendCallDto;
@@ -31,6 +20,17 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import java.lang.invoke.MethodHandles;
+import java.time.Instant;
+import java.time.temporal.TemporalAmount;
+import java.util.EnumSet;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
+
 @Service
 @PropertySource(value = "classpath:ports.properties", ignoreResourceNotFound = true)
 public class RadioServiceImpl implements RadioService {
@@ -47,8 +47,7 @@ public class RadioServiceImpl implements RadioService {
     private List<Port> ports;
 
     @Autowired
-    public RadioServiceImpl(Environment properties, RadioCallRepository repository, RadioCallMapper mapper,
-            AmqpTemplate amqp) {
+    public RadioServiceImpl(Environment properties, RadioCallRepository repository, RadioCallMapper mapper, AmqpTemplate amqp) {
         this.properties = Objects.requireNonNull(properties, "Properties must not be null");
         this.repository = Objects.requireNonNull(repository, "RadioCallRepository must not be null");
         this.mapper = Objects.requireNonNull(mapper, "RadioCallMapper must not be null");
@@ -64,6 +63,7 @@ public class RadioServiceImpl implements RadioService {
         this.amqp.convertAndSend(RadioQueueNames.CALLS_RECEIVED, null, call);
     }
 
+    @Override
     public List<ReceivedCallDto> getLast(TemporalAmount timespan) {
         return mapper.radioCallToReceivedCall(
                 repository.findReceivedAfter(Instant.now().minus(timespan), EnumSet.of(Direction.RX, Direction.RX_EMG))
@@ -97,6 +97,7 @@ public class RadioServiceImpl implements RadioService {
         repository.save(radioCall);
     }
 
+    @Override
     public List<Port> getPorts() {
         if (ports == null) {
             ports = transceivers.values().stream().map(Transceiver::getPort).collect(Collectors.toList());
@@ -104,6 +105,7 @@ public class RadioServiceImpl implements RadioService {
         return ports;
     }
 
+    @Override
     public final synchronized void reloadPorts() {
         shutdown();
 

@@ -15,5 +15,4 @@ public interface RadioCallRepository extends JpaRepository<RadioCall, Integer> {
 
     @Query("SELECT r FROM RadioCall r WHERE timestamp >= ?1 AND direction IN ?2")
     List<RadioCall> findReceivedAfter(Instant timestamp, Collection<Direction> directions);
-
 }

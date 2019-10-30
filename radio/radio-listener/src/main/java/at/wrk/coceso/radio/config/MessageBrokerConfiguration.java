@@ -25,5 +25,4 @@ public class MessageBrokerConfiguration {
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         return new Jackson2JsonMessageConverter(mapper);
     }
-
 }

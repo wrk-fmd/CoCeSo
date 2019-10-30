@@ -1,7 +1,5 @@
 package at.wrk.coceso.radio.api.endpoint;
 
-import java.util.List;
-
 import at.wrk.coceso.radio.api.dto.Port;
 import at.wrk.coceso.radio.api.dto.ReceivedCallDto;
 import at.wrk.coceso.radio.api.dto.SendCallDto;
@@ -10,6 +8,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.util.List;
 
 @RequestMapping("/")
 public interface RadioEndpoint {
@@ -25,5 +25,4 @@ public interface RadioEndpoint {
 
     @RequestMapping(value = "/ports/reload", method = RequestMethod.POST)
     void reloadPorts();
-
 }

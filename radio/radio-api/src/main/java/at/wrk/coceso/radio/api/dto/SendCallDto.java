@@ -1,11 +1,11 @@
 package at.wrk.coceso.radio.api.dto;
 
-import java.io.Serializable;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import java.io.Serializable;
 
 public class SendCallDto implements Serializable {
 

@@ -1,7 +1,5 @@
 package at.wrk.coceso.radio.mapper;
 
-import java.util.List;
-
 import at.wrk.coceso.radio.api.dto.ReceivedCallDto;
 import at.wrk.coceso.radio.api.dto.SendCallDto;
 import at.wrk.coceso.radio.entity.RadioCall;
@@ -9,6 +7,8 @@ import at.wrk.coceso.radio.entity.RadioCall.Direction;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
+
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface RadioCallMapper {

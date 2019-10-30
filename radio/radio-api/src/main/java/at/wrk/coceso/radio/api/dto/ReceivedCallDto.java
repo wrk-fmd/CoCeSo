@@ -1,9 +1,9 @@
 package at.wrk.coceso.radio.api.dto;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.io.Serializable;
 import java.time.Instant;
-
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class ReceivedCallDto implements Serializable, Comparable<ReceivedCallDto> {
 
