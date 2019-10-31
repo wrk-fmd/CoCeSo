@@ -13,6 +13,6 @@ import java.util.List;
 @Repository
 public interface RadioCallRepository extends JpaRepository<RadioCall, Integer> {
 
-    @Query("SELECT r FROM RadioCall r WHERE timestamp >= ?1 AND direction IN ?2")
+    @Query("SELECT r FROM RadioCall r WHERE timestamp >= ?1 AND direction IN ?2 ORDER BY timestamp ASC")
     List<RadioCall> findReceivedAfter(Instant timestamp, Collection<Direction> directions);
 }

@@ -7,6 +7,8 @@ import java.time.Instant;
 
 public class ReceivedCallDto implements Serializable, Comparable<ReceivedCallDto> {
 
+    private Integer id;
+
     private String port;
 
     private String ani;
@@ -28,6 +30,14 @@ public class ReceivedCallDto implements Serializable, Comparable<ReceivedCallDto
     @Override
     public int compareTo(ReceivedCallDto that) {
         return this.timestamp.compareTo(that.timestamp);
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getPort() {

@@ -5,19 +5,74 @@
   <title>STOMP test</title>
 </head>
 <body>
-<script type="text/javascript"
-        src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@5.0.0/bundles/stomp.umd.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@5.4.2/bundles/stomp.umd.js"></script>
 <script type="text/javascript">
+  function generateRandomId() {
+    return Math.floor(Math.random() * 0xFFFFFFFF).toString(16).padStart(8, "0");
+  }
+
+  // Generate a random client id, which will be used for this session
+  const clientId = generateRandomId();
+
+  // Connection related stuff
+  let subscription = null;
+  let disconnectedTimestamp = null;
+
+  // Track if every id was received
+  let last = null;
+  const missing = {};
+
+  window.onunload = () => {
+    // Try to actively unsubscribe when leaving the page
+    // The broker is configured to clean up after a while anyway, but make it happen immediately
+    if (subscription) {
+      subscription.unsubscribe();
+    }
+  };
+
   const stompConfig = {
     brokerURL: "ws://localhost:8091/api/notifications",
-    debug: function (str) {
-      console.log(`STOMP: ${str}`);
-    },
-    reconnectDelay: 200,
-    onConnect: function (frame) {
-      const subscription = stompClient.subscribe("/exchange/radio.calls", function (message) {
-        document.write(`${message.body}<br>`);
+    // debug: str => console.debug("STOMP: ", str),
+    reconnectDelay: 1000,
+    onConnect: () => {
+      let receipt = generateRandomId();
+
+      // Reset the timestamp of the last disconnect if subscription happened successfully
+      stompClient.watchForReceipt(receipt, () => disconnectedTimestamp = null);
+
+      subscription = stompClient.subscribe("/exchange/radio.calls", message => {
+        const data = JSON.parse(message.body), id = data.id;
+
+        if (!last) {
+          last = id;
+        } else if (id < last) {
+          if (missing[id]) {
+            console.warn(`Wrong order: Received ${id} after ${last}`);
+            delete missing[id];
+          } else {
+            console.warn(`Received unexpected: ${id} after ${last}`);
+          }
+        } else if (id === last) {
+          console.log(`Received ${id} twice`);
+        } else {
+          for (let i = last + 1; i < id; i++) {
+            missing[i] = true;
+          }
+          last = id;
+        }
+        //document.write(`${message.body}<br>`);
+      }, {
+        "id": `sub0-${clientId}`,
+        "receipt": receipt,
+        "last-connection": disconnectedTimestamp
       });
+    },
+    onWebSocketClose: frame => {
+      console.log("WebSocket closed: ", frame);
+      if (!disconnectedTimestamp) {
+        // Set disconnected timestamp if not already set
+        disconnectedTimestamp = Math.floor(Date.now() / 1000);
+      }
     }
   };
 

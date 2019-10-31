@@ -59,8 +59,8 @@ public class RadioServiceImpl implements RadioService {
 
     private void receiveCall(ReceivedCallDto call) {
         LOG.info("Call received from '{}'", call.getAni());
-        repository.save(mapper.receivedCallToRadioCall(call));
-        this.amqp.convertAndSend(RadioQueueNames.CALLS_RECEIVED, null, call);
+        RadioCall stored = repository.save(mapper.receivedCallToRadioCall(call));
+        this.amqp.convertAndSend(RadioQueueNames.CALLS_RECEIVED, null, mapper.radioCallToReceivedCall(stored));
     }
 
     @Override
