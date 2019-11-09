@@ -1,0 +1,5 @@
+COCESO_TAG=production
+COCESO_LOG=/var/log/coceso
+
+COCESO_GATEWAY_CONFIG=/etc/coceso/config/gateway
+COCESO_RADIO_CONFIG=/etc/coceso/config/radio

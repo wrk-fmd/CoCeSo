@@ -4,7 +4,6 @@ server:
 spring:
   profiles:
     active: dev
-  rabbitmq:
-    host: dse-rabbitmq
-    username: coceso-rabbitmq-user
-    password: coceso-rabbitmq-pass
+logging:
+  level:
+    root: warn

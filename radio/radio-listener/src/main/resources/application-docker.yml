@@ -1,8 +1,8 @@
-server:
-  port: 8092
+# This profile uses the docker-compose DNS names and is activated for the default docker-compose build
+
 spring:
   rabbitmq:
-    host: localhost
+    host: coceso-amqp
     username: coceso-rabbitmq-user
     password: coceso-rabbitmq-pass
   jpa:
@@ -18,6 +18,7 @@ spring:
     console:
       enabled: true
 logging:
+  config: /config/log-docker.xml
   level:
     root: info
     at.wrk.coceso: debug

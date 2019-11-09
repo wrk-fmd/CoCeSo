@@ -1,0 +1,14 @@
+[Unit]
+Description=CoCeSo Container
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart=always
+WorkingDirectory=/etc/coceso
+EnvironmentFile=/etc/coceso/environment
+ExecStart=/usr/local/bin/docker-compose -p systemd_coceso up --remove-orphans --no-build
+ExecStop=/usr/local/bin/docker-compose -p systemd_coceso down --remove-orphans
+
+[Install]
+WantedBy=multi-user.target

@@ -1,4 +1,4 @@
-version: '3'
+version: '3.7'
 
 services:
   coceso-amqp:
@@ -11,3 +11,46 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: coceso-rabbitmq-user
       RABBITMQ_DEFAULT_PASS: coceso-rabbitmq-pass
+
+  coceso-api-gateway:
+    image: coceso-api-gateway:${COCESO_TAG:-latest}
+    build:
+      context: .
+      args:
+        MODULE: api-gateway
+        APP: api-gateway
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - 127.0.0.1:8090:8080
+    volumes:
+      - type: bind
+        source: ${COCESO_GATEWAY_CONFIG:-./api-gateway/src/main/resources}
+        target: /config
+        read_only: true
+      - type: bind
+        source: ${COCESO_LOG:-./log}
+        target: /log
+
+  coceso-radio:
+    image: coceso-radio:${COCESO_TAG:-latest}
+    build:
+      context: .
+      args:
+        MODULE: radio/radio-listener
+        APP: radio-listener
+        INSTALL: librxtx-java
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    volumes:
+      - type: bind
+        source: ${COCESO_RADIO_CONFIG:-./radio/radio-listener/src/main/resources}
+        target: /config
+        read_only: true
+      - type: bind
+        source: ${COCESO_LOG:-./log}
+        target: /log
+      - type: bind
+        source: /dev
+        target: /dev
+        read_only: true

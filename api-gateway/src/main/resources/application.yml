@@ -1,21 +1,9 @@
 server:
-  port: 8091
   servlet:
     context-path: /api
 spring:
-  rabbitmq:
-    host: localhost
-    username: coceso-rabbitmq-user
-    password: coceso-rabbitmq-pass
-application:
-  cors:
-    origins: http://localhost:4200
-  services:
-    radio: http://localhost:8092/api
-  broker:
-    host: localhost
-    username: coceso-rabbitmq-user
-    password: coceso-rabbitmq-pass
+  profiles:
+    active: dev
 logging:
   level:
-    at.wrk.coceso: debug
+    root: warn

@@ -1,0 +1,18 @@
+server:
+  port: 8091
+spring:
+  rabbitmq:
+    host: localhost
+    username: coceso-rabbitmq-user
+    password: coceso-rabbitmq-pass
+application:
+  services:
+    radio: http://localhost:8092/api
+  broker:
+    host: localhost
+    username: coceso-rabbitmq-user
+    password: coceso-rabbitmq-pass
+logging:
+  level:
+    root: info
+    at.wrk.coceso: debug

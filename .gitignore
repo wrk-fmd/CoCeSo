@@ -19,6 +19,10 @@ build.xml
 *.iml
 .idea
 
+# ignore development database and log directories
+database
+log
+
 # ignore database configuration
 coceso.properties
 ports.properties

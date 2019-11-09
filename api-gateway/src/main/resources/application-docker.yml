@@ -1,0 +1,19 @@
+# This profile uses the docker-compose DNS names and is activated for the default docker-compose build
+
+spring:
+  rabbitmq:
+    host: coceso-amqp
+    username: coceso-rabbitmq-user
+    password: coceso-rabbitmq-pass
+application:
+  services:
+    radio: http://coceso-radio:8080/api
+  broker:
+    host: coceso-amqp
+    username: coceso-rabbitmq-user
+    password: coceso-rabbitmq-pass
+logging:
+  config: /config/log-docker.xml
+  level:
+    root: info
+    at.wrk.coceso: debug
