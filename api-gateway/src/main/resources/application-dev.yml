@@ -1,17 +1,24 @@
 server:
-  port: 8091
+  port: 8090
 spring:
-  rabbitmq:
-    host: localhost
-    username: coceso-rabbitmq-user
-    password: coceso-rabbitmq-pass
-application:
-  services:
-    radio: http://localhost:8092/api
-  broker:
-    host: localhost
-    username: coceso-rabbitmq-user
-    password: coceso-rabbitmq-pass
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          "[/**]":
+            allowedOrigins: "*"
+            allowedMethods: "*"
+      routes:
+        - id: stomp
+          uri: ws://localhost:8091
+          predicates:
+            - Path=/notifications
+        - id: radio
+          uri: http://localhost:8092
+          predicates:
+            - Path=/radio/**
+          filters:
+            - StripPrefix=1
 logging:
   level:
     root: info

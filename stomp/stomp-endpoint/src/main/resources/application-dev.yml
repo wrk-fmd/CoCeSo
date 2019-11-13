@@ -2,7 +2,7 @@ server:
   port: 8091
 application:
   services:
-    radio: http://localhost:8092/api
+    radio: http://localhost:8092
   broker:
     host: localhost
     username: coceso-rabbitmq-user

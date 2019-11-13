@@ -2,7 +2,7 @@
 
 application:
   services:
-    radio: http://coceso-radio:8080/api
+    radio: http://coceso-radio:8080
   broker:
     host: coceso-amqp
     username: coceso-rabbitmq-user
