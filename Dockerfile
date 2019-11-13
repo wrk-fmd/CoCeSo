@@ -39,12 +39,15 @@ COPY  ./plugin/wflwr-poi/pom.xml      ./plugin/wflwr-poi/
 COPY  ./radio/pom.xml                 ./radio/
 COPY  ./radio/radio-api/pom.xml       ./radio/radio-api/
 COPY  ./radio/radio-listener/pom.xml  ./radio/radio-listener/
+COPY  ./stomp/pom.xml                 ./stomp/
+COPY  ./stomp/stomp-endpoint/pom.xml  ./stomp/stomp-endpoint/
+COPY  ./stomp/stomp-replay/pom.xml    ./stomp/stomp-replay/
 
 # Resolve all dependencies, don't fail on missing (internal) dependencies
 #RUN mvn -fn -B dependency:go-offline > /dev/null
 
 # TODO Only pull dependencies of updated components for now
-RUN mvn -fn -B dependency:go-offline -pl api-gateway,radio/radio-listener -am > /dev/null
+RUN mvn -fn -B dependency:go-offline -pl api-gateway,radio/radio-listener,stomp/stomp-endpoint -am > /dev/null
 
 # Specify the required module
 ARG MODULE

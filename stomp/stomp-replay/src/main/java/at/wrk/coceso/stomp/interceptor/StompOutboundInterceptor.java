@@ -1,9 +1,9 @@
-package at.wrk.coceso.gateway.stomp;
+package at.wrk.coceso.stomp.interceptor;
 
 import static java.util.Objects.requireNonNull;
 
-import at.wrk.coceso.gateway.replay.ReplayProvider;
-import at.wrk.coceso.gateway.replay.ReplayProviderHandler;
+import at.wrk.coceso.stomp.replay.ReplayProvider;
+import at.wrk.coceso.stomp.replay.ReplayProviderHandler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  * This class intercepts outgoing STOMP frames and modifies them before forwarding them to the client
  */
 @Component
-public class StompOutboundInterceptor extends AbstractInterceptor {
+public class StompOutboundInterceptor extends AbstractStompInterceptor {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static final String INITIAL_PREFIX = "initial-";

@@ -1,0 +1,9 @@
+server:
+  servlet:
+    context-path: /api
+spring:
+  profiles:
+    active: dev
+logging:
+  level:
+    root: warn

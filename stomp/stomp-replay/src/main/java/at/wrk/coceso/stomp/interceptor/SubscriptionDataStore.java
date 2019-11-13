@@ -1,4 +1,4 @@
-package at.wrk.coceso.gateway.stomp;
+package at.wrk.coceso.stomp.interceptor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,10 +1,9 @@
-package at.wrk.coceso.gateway.config;
+package at.wrk.coceso.stomp.config;
 
 import static java.util.Objects.requireNonNull;
 
-import at.wrk.coceso.gateway.config.properties.BrokerProperties;
-import at.wrk.coceso.gateway.stomp.StompInboundInterceptor;
-import at.wrk.coceso.gateway.stomp.StompOutboundInterceptor;
+import at.wrk.coceso.stomp.interceptor.StompInboundInterceptor;
+import at.wrk.coceso.stomp.interceptor.StompOutboundInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;

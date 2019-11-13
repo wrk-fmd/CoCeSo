@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--    <parent>-->
+    <!--    <groupId>at.wrk.coceso</groupId>-->
+    <!--        <artifactId>base</artifactId>-->
+    <version>2.6.1-SNAPSHOT</version>
+    <!--    </parent>-->
+
+    <!-- TODO Temporary -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.1.9.RELEASE</version>
+        <relativePath/>
+    </parent>
+    <!-- END Temporary -->
+
+    <groupId>at.wrk.coceso</groupId>
+    <artifactId>stomp-base</artifactId>
+    <packaging>pom</packaging>
+    <name>CoCeSo STOMP handler base module</name>
+
+    <properties>
+        <!-- TODO This should move to the base project -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>11</java.version>
+        <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
+        <maven.compiler.release>11</maven.compiler.release>
+    </properties>
+
+    <modules>
+        <module>stomp-replay</module>
+        <module>stomp-endpoint</module>
+    </modules>
+</project>

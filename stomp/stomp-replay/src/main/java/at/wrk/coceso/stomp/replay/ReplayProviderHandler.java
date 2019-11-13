@@ -1,4 +1,4 @@
-package at.wrk.coceso.gateway.replay;
+package at.wrk.coceso.stomp.replay;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

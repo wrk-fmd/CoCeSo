@@ -1,4 +1,4 @@
-package at.wrk.coceso.gateway.replay;
+package at.wrk.coceso.stomp.replay;
 
 import java.util.List;
 

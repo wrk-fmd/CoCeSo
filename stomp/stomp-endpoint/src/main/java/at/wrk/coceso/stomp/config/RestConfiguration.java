@@ -1,8 +1,7 @@
-package at.wrk.coceso.gateway.config;
+package at.wrk.coceso.stomp.config;
 
 import static java.util.Objects.requireNonNull;
 
-import at.wrk.coceso.gateway.config.properties.ServiceProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;

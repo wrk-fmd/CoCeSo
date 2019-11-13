@@ -1,4 +1,4 @@
-package at.wrk.coceso.gateway.stomp;
+package at.wrk.coceso.stomp.interceptor;
 
 import static java.util.Objects.requireNonNull;
 
@@ -18,7 +18,7 @@ import java.time.Instant;
  * This class intercepts incoming STOMP frames and modifies them before forwarding them to the broker
  */
 @Component
-public class StompInboundInterceptor extends AbstractInterceptor {
+public class StompInboundInterceptor extends AbstractStompInterceptor {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static final int EXPIRES_MINUTES = 5;

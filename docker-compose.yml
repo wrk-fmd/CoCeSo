@@ -32,6 +32,24 @@ services:
         source: ${COCESO_LOG:-./log}
         target: /log
 
+  coceso-stomp:
+    image: coceso-stomp:${COCESO_TAG:-latest}
+    build:
+      context: .
+      args:
+        MODULE: stomp/stomp-endpoint
+        APP: stomp-endpoint
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    volumes:
+      - type: bind
+        source: ${COCESO_STOMP_CONFIG:-./stomp/stomp-endpoint/src/main/resources}
+        target: /config
+        read_only: true
+      - type: bind
+        source: ${COCESO_LOG:-./log}
+        target: /log
+
   coceso-radio:
     image: coceso-radio:${COCESO_TAG:-latest}
     build:

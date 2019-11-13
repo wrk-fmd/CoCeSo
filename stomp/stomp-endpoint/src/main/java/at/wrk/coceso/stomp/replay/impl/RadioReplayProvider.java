@@ -1,16 +1,19 @@
-package at.wrk.coceso.gateway.replay.impl;
+package at.wrk.coceso.stomp.replay.impl;
 
-import at.wrk.coceso.gateway.replay.ReplayProvider;
-import at.wrk.coceso.gateway.restclient.RadioClient;
+import static java.util.Objects.requireNonNull;
+import static org.springframework.http.HttpMethod.GET;
+
 import at.wrk.coceso.radio.api.dto.ReceivedCallDto;
 import at.wrk.coceso.radio.api.queues.RadioQueueNames;
+import at.wrk.coceso.stomp.replay.ReplayProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import java.lang.invoke.MethodHandles;
 import java.util.List;
-import java.util.Objects;
 
 @Component
 public class RadioReplayProvider implements ReplayProvider<ReceivedCallDto> {
@@ -19,16 +22,21 @@ public class RadioReplayProvider implements ReplayProvider<ReceivedCallDto> {
 
     private static final int MINUTES = 5;
 
-    private final RadioClient client;
+    private final RestTemplate radioTemplate;
 
-    public RadioReplayProvider(RadioClient client) {
-        this.client = Objects.requireNonNull(client, "RadioClient must not be null");
+    public RadioReplayProvider(RestTemplate radioTemplate) {
+        this.radioTemplate = requireNonNull(radioTemplate, "Radio RestTemplate must not be null");
     }
 
     @Override
     public List<ReceivedCallDto> getMessages(String routingKey) {
         LOG.debug("Loading received radio calls for last {} minutes", MINUTES);
-        return client.getLast(MINUTES);
+        return radioTemplate.exchange("/calls/last/{minutes}", GET, null, receivedListType(), MINUTES).getBody();
+    }
+
+    private ParameterizedTypeReference<List<ReceivedCallDto>> receivedListType() {
+        return new ParameterizedTypeReference<>() {
+        };
     }
 
     @Override

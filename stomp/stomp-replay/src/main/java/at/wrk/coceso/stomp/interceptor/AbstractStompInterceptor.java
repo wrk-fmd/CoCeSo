@@ -1,4 +1,4 @@
-package at.wrk.coceso.gateway.stomp;
+package at.wrk.coceso.stomp.interceptor;
 
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -7,7 +7,7 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 
-abstract class AbstractInterceptor implements ChannelInterceptor {
+abstract class AbstractStompInterceptor implements ChannelInterceptor {
 
     /**
      * Intercepts messages before they are forwarded

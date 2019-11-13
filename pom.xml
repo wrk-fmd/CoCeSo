@@ -74,6 +74,7 @@
         <module>main</module>
         <module>plugin</module>
         <module>radio</module>
+        <module>stomp</module>
     </modules>
 
     <dependencyManagement>
