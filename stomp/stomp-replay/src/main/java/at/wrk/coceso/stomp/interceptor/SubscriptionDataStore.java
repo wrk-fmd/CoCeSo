@@ -2,6 +2,7 @@ package at.wrk.coceso.stomp.interceptor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -9,8 +10,6 @@ import java.lang.invoke.MethodHandles;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.UUID;
 
@@ -36,10 +35,10 @@ public class SubscriptionDataStore {
      * @param receipt The receipt requested by the client
      * @return An internal unique id to access the data
      */
-    public String create(String sessionId, String subscriptionId, String destination, String receipt) {
+    public String create(String sessionId, String subscriptionId, String destination, String queueName, String receipt) {
         synchronized (internalLock) {
             // Check if an id for this session/subscription/destination already exists
-            String reverseKey = buildReverseKey(sessionId, subscriptionId, destination);
+            String reverseKey = buildReverseKey(sessionId, subscriptionId);
             String previousId = ids.get(reverseKey);
             if (previousId != null) {
                 LOG.warn("Subscription already existed for {}, {}, {}", sessionId, subscriptionId, destination);
@@ -48,7 +47,7 @@ public class SubscriptionDataStore {
 
             LOG.debug("Adding subscription information for {}", subscriptionId);
             String generatedId = generateId();
-            subscriptions.put(generatedId, new SubscriptionData(sessionId, subscriptionId, destination, receipt));
+            subscriptions.put(generatedId, new SubscriptionData(sessionId, subscriptionId, destination, queueName, receipt));
             ids.put(reverseKey, generatedId);
             return generatedId;
         }
@@ -65,6 +64,17 @@ public class SubscriptionDataStore {
     }
 
     /**
+     * Get the internal id for a given session and subscription
+     *
+     * @param sessionId The session id of the subscription
+     * @param subscriptionId The subscription id of the subscription
+     * @return The internal id, or null iff it doesn't exist
+     */
+    public String getId(String sessionId, String subscriptionId) {
+        return ids.get(buildReverseKey(sessionId, subscriptionId));
+    }
+
+    /**
      * Get the session id for a given id
      *
      * @param id The internal id of the subscription
@@ -76,17 +86,6 @@ public class SubscriptionDataStore {
     }
 
     /**
-     * Get the subscription id for a given id
-     *
-     * @param id The internal id of the subscription
-     * @return The subscription id, or null iff it doesn't exist
-     */
-    public String getSubscriptionId(String id) {
-        SubscriptionData data = subscriptions.get(id);
-        return data != null ? data.subscriptionId : null;
-    }
-
-    /**
      * Get the destination for a given id
      *
      * @param id The internal id of the subscription
@@ -95,6 +94,17 @@ public class SubscriptionDataStore {
     public String getDestination(String id) {
         SubscriptionData data = subscriptions.get(id);
         return data != null ? data.destination : null;
+    }
+
+    /**
+     * Get the queue name for a given id
+     *
+     * @param id The internal id of the subscription
+     * @return The queue name, or null iff it doesn't exist
+     */
+    public String getQueueName(String id) {
+        SubscriptionData data = subscriptions.get(id);
+        return data != null ? data.queueName : null;
     }
 
     /**
@@ -112,9 +122,9 @@ public class SubscriptionDataStore {
      * Remove an element from a queue, and remove the queue when it is empty
      *
      * @param id The internal id of the subscription
-     * @return The removed message payload, or null if the queue was empty and has been removed
+     * @return The removed message, or null if the queue was empty and has been removed
      */
-    public Object remove(String id) {
+    public Message<?> remove(String id) {
         synchronized (internalLock) {
             SubscriptionData data = subscriptions.get(id);
             if (data == null) {
@@ -126,7 +136,7 @@ public class SubscriptionDataStore {
             if (data.queue.isEmpty()) {
                 LOG.debug("Removing subscription data for {}", id);
                 subscriptions.remove(id);
-                ids.remove(buildReverseKey(data.sessionId, data.subscriptionId, data.destination));
+                ids.remove(buildReverseKey(data.sessionId, data.subscriptionId));
                 return null;
             }
 
@@ -136,42 +146,20 @@ public class SubscriptionDataStore {
     }
 
     /**
-     * Add the initial data to the start of the queue if it exists
-     *
-     * @param id The internal id of the subscription
-     * @param initialData A list of payload items (encoded for transport, e.g. byte[] using JSON)
-     */
-    public void addInitialData(String id, List<Object> initialData) {
-        synchronized (internalLock) {
-            SubscriptionData data = subscriptions.get(id);
-            if (data == null) {
-                LOG.warn("No queue found for {}, not adding initial data", id);
-                return;
-            }
-
-            // Prepend each element to the queue
-            LOG.debug("Adding initial data for {}", id);
-            ListIterator<Object> it = initialData.listIterator(initialData.size());
-            while (it.hasPrevious()) {
-                data.queue.addFirst(it.previous());
-            }
-        }
-    }
-
-    /**
      * Add a message to a queue if it exists
      *
      * @param sessionId The session id for the subscription
      * @param subscriptionId The subscription id (passed by the client)
-     * @param destination The destination for the subscription (passed by the client)
-     * @param payload The payload of the message (encoded for transport, e.g. byte[] using JSON)
+     * @param message The message
      * @return true iff the message has been queued
      */
-    public boolean queue(String sessionId, String subscriptionId, String destination, Object payload) {
+    public boolean queue(String sessionId, String subscriptionId, Message<?> message) {
         synchronized (internalLock) {
-            String id = ids.get(sessionId + subscriptionId + destination);
+            String reverseKey = buildReverseKey(sessionId, subscriptionId);
+
+            String id = ids.get(reverseKey);
             if (id == null) {
-                LOG.trace("No queue for {}/{}/{} set", sessionId, subscriptionId, destination);
+                LOG.trace("No queue for {}/{} set", sessionId, subscriptionId);
                 return false;
             }
 
@@ -179,7 +167,7 @@ public class SubscriptionDataStore {
             Assert.state(data != null, "Internal id found, but no subscription data exists");
 
             LOG.debug("Queuing message for {}", id);
-            data.queue.add(payload);
+            data.queue.add(message);
             return true;
         }
     }
@@ -193,19 +181,20 @@ public class SubscriptionDataStore {
         return uuid;
     }
 
-    private String buildReverseKey(String sessionId, String subscriptionId, String destination) {
-        return sessionId + subscriptionId + destination;
+    private String buildReverseKey(String sessionId, String subscriptionId) {
+        return sessionId + subscriptionId;
     }
 
     private static class SubscriptionData {
 
-        private final String sessionId, subscriptionId, destination, receipt;
-        private final Deque<Object> queue;
+        private final String sessionId, subscriptionId, destination, queueName, receipt;
+        private final Deque<Message<?>> queue;
 
-        private SubscriptionData(String sessionId, String subscriptionId, String destination, String receipt) {
+        private SubscriptionData(String sessionId, String subscriptionId, String destination, String queueName, String receipt) {
             this.sessionId = sessionId;
             this.subscriptionId = subscriptionId;
             this.destination = destination;
+            this.queueName = queueName;
             this.receipt = receipt;
             this.queue = new LinkedList<>();
         }

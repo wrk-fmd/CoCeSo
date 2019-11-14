@@ -71,7 +71,7 @@ abstract class AbstractStompInterceptor implements ChannelInterceptor {
         return message;
     }
 
-    private StompHeaderAccessor getHeaders(Message<?> message) {
+    protected StompHeaderAccessor getHeaders(Message<?> message) {
         StompHeaderAccessor headers = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
         if (headers == null) {
             throw new IllegalArgumentException("Not a STOMP message (could not extract headers)");

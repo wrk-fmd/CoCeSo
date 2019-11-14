@@ -1,31 +1,32 @@
 package at.wrk.coceso.stomp.interceptor;
 
+import static at.wrk.coceso.replay.ReplayHeaders.REPLAY_HEADER;
+import static at.wrk.coceso.replay.ReplayHeaders.REPLAY_HEADER_ACTIVE;
+import static at.wrk.coceso.replay.ReplayHeaders.REPLAY_HEADER_DONE;
+import static at.wrk.coceso.replay.ReplayHeaders.ROUTING_KEY_HEADER;
 import static java.util.Objects.requireNonNull;
 
-import at.wrk.coceso.stomp.replay.ReplayProvider;
-import at.wrk.coceso.stomp.replay.ReplayProviderHandler;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.core.MessageProperties;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
-import org.springframework.messaging.converter.MessageConversionException;
-import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ExecutorChannelInterceptor;
 import org.springframework.messaging.support.ExecutorSubscribableChannel;
-import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
-import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 /**
  * This class intercepts outgoing STOMP frames and modifies them before forwarding them to the client
@@ -34,17 +35,18 @@ import java.util.stream.Collectors;
 public class StompOutboundInterceptor extends AbstractStompInterceptor {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    private static final String INITIAL_PREFIX = "initial-";
 
-    private final ReplayProviderHandler replayProviders;
     private final SubscriptionDataStore subscriptions;
-    private final ObjectMapper mapper;
+    private final Map<String, Queue> triggerQueues;
+    private final RabbitTemplate template;
+
+    private final ExecutorService threadPool = Executors.newCachedThreadPool();
 
     @Autowired
-    public StompOutboundInterceptor(ReplayProviderHandler replayProviders, SubscriptionDataStore subscriptions, ObjectMapper mapper) {
-        this.replayProviders = requireNonNull(replayProviders, "ReplayProviderHandler must not be null");
+    public StompOutboundInterceptor(SubscriptionDataStore subscriptions, Map<String, Queue> triggerQueues, RabbitTemplate rabbitTemplate) {
         this.subscriptions = requireNonNull(subscriptions, "SubscriptionDataStore must not be null");
-        this.mapper = requireNonNull(mapper, "MessageConverter must not be null");
+        this.triggerQueues = requireNonNull(triggerQueues, "Queues map must not be null");
+        this.template = requireNonNull(rabbitTemplate, "RabbitTemplate must not be null");
     }
 
     @Override
@@ -52,29 +54,40 @@ public class StompOutboundInterceptor extends AbstractStompInterceptor {
         // Intercept MESSAGE frames
         String sessionId = headers.getSessionId();
         String subscriptionId = headers.getSubscriptionId();
-        String destination = headers.getDestination();
-        LOG.trace("Intercepted message to {} for session {}", destination, sessionId);
+        LOG.trace("Intercepted message to {} for session {}", subscriptionId, sessionId);
 
-        String messageId = headers.getMessageId();
-        if (messageId != null && messageId.startsWith(INITIAL_PREFIX)) {
+        // Check if this message comes from the service's replay logic
+        String replayHeader = headers.getFirstNativeHeader(REPLAY_HEADER);
+        if (REPLAY_HEADER_DONE.equals(replayHeader)) {
+            // Initial replay done, resend all queued updates
+            finishReplay(channel, subscriptions.getId(sessionId, subscriptionId));
+            return null;
+        }
+
+        if (REPLAY_HEADER_ACTIVE.equals(replayHeader)) {
             // Directly forward messages sent through the initial replay logic
+            cleanupHeaders(headers);
             return message;
         }
 
-        if (subscriptions.queue(sessionId, subscriptionId, destination, message.getPayload())) {
+        if (subscriptions.queue(sessionId, subscriptionId, message)) {
             // Message has been queued, don't send it out immediately
             return null;
         }
 
+        cleanupHeaders(headers);
+        return message;
+    }
+
+    private void cleanupHeaders(StompHeaderAccessor headers) {
         if (headers.isMutable()) {
             // Remove some Spring/AMQP headers to decrease message size
             headers.removeNativeHeader("__TypeId__");
             headers.removeNativeHeader("redelivered");
             headers.removeNativeHeader("priority");
             headers.removeNativeHeader("persistent");
+            headers.removeNativeHeader(REPLAY_HEADER);
         }
-
-        return message;
     }
 
     @Override
@@ -97,21 +110,21 @@ public class StompOutboundInterceptor extends AbstractStompInterceptor {
 
         // Load subscription data (might have been deleted since the last if statement, but that doesn't matter)
         String sessionId = subscriptions.getSessionId(id);
-        String subscriptionId = subscriptions.getSubscriptionId(id);
         String destination = subscriptions.getDestination(id);
+        String queueName = subscriptions.getQueueName(id);
         String requestedReceipt = subscriptions.getRequestedReceipt(id);
 
         // Check if subscription data is complete
-        if (sessionId == null || subscriptionId == null || destination == null || !sessionId.equals(receiptSessionId)) {
+        if (sessionId == null || destination == null || queueName == null || !sessionId.equals(receiptSessionId)) {
             // Invalid subscription data: Do nothing
-            LOG.warn("Data for {} in {} invalid: {}, {}, {}", id, receiptSessionId, sessionId, subscriptionId, destination);
+            LOG.warn("Data for {} in {} invalid: {}, {}, {}", id, receiptSessionId, sessionId, destination, queueName);
             return null;
         }
 
-        // This has to be done asynchronously, because otherwise the (ordered) channel would block
-        // TODO use thread pool
-        ReplaySender sender = new ReplaySender(channel, id, sessionId, subscriptionId, destination);
-        new Thread(sender).start();
+        if (!triggerReplay(destination, queueName)) {
+            // No replay triggered, finish immediately
+            finishReplay(channel, id);
+        }
 
         if (requestedReceipt != null) {
             // Send receipt to client if requested
@@ -122,45 +135,60 @@ public class StompOutboundInterceptor extends AbstractStompInterceptor {
         return null;
     }
 
-    private class ReplaySender implements Runnable, ExecutorChannelInterceptor {
+    private boolean triggerReplay(String destination, String queueName) {
+        // Destinations are in the format "/exchanges/topic/[routingKey]"
+        String[] parts = destination.split("/");
+        if (parts.length < 3) {
+            // No destination given, don't start replay
+            return false;
+        }
 
-        private static final String REPLAY_SENDER_HEADER = "replay-sender-id";
+        // Load trigger queue
+        Queue triggerQueue = triggerQueues.get(parts[2]);
+        if (triggerQueue == null) {
+            return false;
+        }
+
+        try {
+            // Send a null-message (as JSON), using headers for the real information
+            template.convertAndSend(triggerQueue.getName(), "null", m -> {
+                MessageProperties p = m.getMessageProperties();
+                p.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                p.setReplyTo(queueName);
+                p.setHeader(ROUTING_KEY_HEADER, parts.length >= 4 ? parts[3] : null);
+                return m;
+            });
+        } catch (AmqpException e) {
+            LOG.error("Error triggering initial data replay for {}, {}", destination, queueName, e);
+            return false;
+        }
+
+        return true;
+    }
+
+    private void finishReplay(MessageChannel channel, String id) {
+        // This has to be done asynchronously, because otherwise the (ordered) channel would block
+        if (id != null) {
+            threadPool.submit(new QueuedMessagesSender(channel, id));
+        }
+    }
+
+    private class QueuedMessagesSender implements Runnable, ExecutorChannelInterceptor {
+
+        private static final String QUEUED_SENDER_HEADER = "x-queued-sender";
 
         private final MessageChannel channel;
-        private final String id, sessionId, subscriptionId, destination;
-        private final AtomicInteger index = new AtomicInteger();
+        private final String id;
         private Semaphore lock;
 
-        public ReplaySender(MessageChannel channel, String id, String sessionId, String subscriptionId, String destination) {
+        public QueuedMessagesSender(MessageChannel channel, String id) {
             this.channel = channel;
             this.id = id;
-            this.sessionId = sessionId;
-            this.subscriptionId = subscriptionId;
-            this.destination = destination;
         }
 
         @Override
         public void run() {
-            LOG.debug("Replaying messages in {} for session {}", destination, sessionId);
-
-            // Destinations are in the format "/exchanges/topic/[routingKey]"
-            String[] parts = destination.split("/");
-            if (parts.length >= 3) {
-                // Get the provider for loading the initial status
-                ReplayProvider<?> replayProvider = replayProviders.getProvider(parts[2]);
-                if (replayProvider != null) {
-                    try {
-                        // Send messages for the initial status
-                        List<Object> initialData = replayProvider.getMessages(parts.length >= 4 ? parts[3] : null).stream()
-                                .map(this::toJson)
-                                .collect(Collectors.toList());
-                        subscriptions.addInitialData(id, initialData);
-                    } catch (Exception e) {
-                        // TODO Proper error handling
-                        LOG.error("Exception on loading initial data for {}", destination, e);
-                    }
-                }
-            }
+            LOG.debug("Sending queued messages for {}", id);
 
             if (channel instanceof ExecutorSubscribableChannel) {
                 // If channel provides a callback after message has been handled lock between messages to ensure the order of messages
@@ -173,7 +201,7 @@ public class StompOutboundInterceptor extends AbstractStompInterceptor {
                 // Lock if using the interceptor to achieve ordered output
                 acquireLock();
 
-                Object queuedMessage = subscriptions.remove(id);
+                Message<?> queuedMessage = subscriptions.remove(id);
                 if (queuedMessage == null) {
                     // No more queued messages
                     break;
@@ -192,8 +220,8 @@ public class StompOutboundInterceptor extends AbstractStompInterceptor {
 
         @Override
         public void afterMessageHandled(Message<?> message, MessageChannel channel, MessageHandler handler, Exception ex) {
-            Object replaySenderHeader = message.getHeaders().get(REPLAY_SENDER_HEADER);
-            if (replaySenderHeader != null && replaySenderHeader.equals(id)) {
+            Object replaySenderHeader = message.getHeaders().get(QUEUED_SENDER_HEADER);
+            if (replaySenderHeader == this) {
                 releaseLock();
             }
         }
@@ -219,24 +247,12 @@ public class StompOutboundInterceptor extends AbstractStompInterceptor {
             }
         }
 
-        private byte[] toJson(Object item) {
-            try {
-                return mapper.writeValueAsBytes(item);
-            } catch (JsonProcessingException e) {
-                throw new MessageConversionException("Could not write JSON: " + e.getMessage(), e);
-            }
-        }
-
-        private boolean sendMessage(Object payload) {
-            StompHeaderAccessor headers = StompHeaderAccessor.create(StompCommand.MESSAGE);
-            headers.setHeader(REPLAY_SENDER_HEADER, id);
-            headers.setMessageId(INITIAL_PREFIX + id + index.incrementAndGet());
-            headers.setSessionId(sessionId);
-            headers.setSubscriptionId(subscriptionId);
-            headers.setDestination(destination);
-            headers.setContentType(MediaType.APPLICATION_JSON);
+        private boolean sendMessage(Message<?> message) {
+            StompHeaderAccessor headers = getHeaders(message);
+            headers.setHeader(QUEUED_SENDER_HEADER, this);
+            headers.setNativeHeader(REPLAY_HEADER, REPLAY_HEADER_ACTIVE);
             headers.setLeaveMutable(true);
-            return channel.send(MessageBuilder.createMessage(payload, headers.getMessageHeaders()));
+            return channel.send(message);
         }
     }
 }

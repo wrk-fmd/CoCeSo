@@ -2,8 +2,13 @@
 
 application:
   services:
-    radio: http://coceso-radio:8080
+    radio.calls: radio.calls.replay
   broker:
+    host: coceso-amqp
+    username: coceso-rabbitmq-user
+    password: coceso-rabbitmq-pass
+spring:
+  rabbitmq:
     host: coceso-amqp
     username: coceso-rabbitmq-user
     password: coceso-rabbitmq-pass

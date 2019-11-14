@@ -32,6 +32,7 @@
     </properties>
 
     <modules>
+        <module>replay-common</module>
         <module>stomp-replay</module>
         <module>stomp-endpoint</module>
     </modules>

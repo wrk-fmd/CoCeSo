@@ -11,8 +11,11 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Base64;
 
 /**
  * This class intercepts incoming STOMP frames and modifies them before forwarding them to the broker
@@ -24,10 +27,12 @@ public class StompInboundInterceptor extends AbstractStompInterceptor {
     private static final int EXPIRES_MINUTES = 5;
 
     private final SubscriptionDataStore subscriptions;
+    private final MessageDigest queueNameHash;
 
     @Autowired
-    public StompInboundInterceptor(SubscriptionDataStore subscriptions) {
+    public StompInboundInterceptor(SubscriptionDataStore subscriptions) throws NoSuchAlgorithmException {
         this.subscriptions = requireNonNull(subscriptions, "SubscriptionDataStore must not be null");
+        this.queueNameHash = MessageDigest.getInstance("MD5");
     }
 
     @Override
@@ -43,6 +48,10 @@ public class StompInboundInterceptor extends AbstractStompInterceptor {
         // TODO Make sure the subscription id is unique among all clients, authentication, ...
         // TODO Should incoming headers be filtered?
 
+        // Generate a queue name for the subscription
+        String queueName = generateQueueName(destination, subscriptionId);
+        headers.setNativeHeader("x-queue-name", queueName);
+
         // Make sure the old subscription is picked up again on reconnect
         headers.setNativeHeader("durable", "true");
         headers.setNativeHeader("auto-delete", "false");
@@ -52,13 +61,19 @@ public class StompInboundInterceptor extends AbstractStompInterceptor {
 
         if (shouldSendInitial(headers)) {
             // Store the subscription information
-            String internalId = subscriptions.create(sessionId, subscriptionId, destination, requestedReceipt);
+            String internalId = subscriptions.create(sessionId, subscriptionId, destination, queueName, requestedReceipt);
 
             // Request a receipt from the broker (using the unique internal id) which will trigger the replay
             headers.setReceipt(internalId);
         }
 
         return message;
+    }
+
+    private String generateQueueName(String destination, String subscriptionId) {
+        String name = destination + subscriptionId;
+        String hashed = Base64.getUrlEncoder().encodeToString(queueNameHash.digest(name.getBytes()));
+        return "coceso-stomp-" + hashed;
     }
 
     private boolean shouldSendInitial(StompHeaderAccessor headers) {
