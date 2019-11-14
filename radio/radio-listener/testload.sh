@@ -5,7 +5,7 @@
 sleep 3
 chmod 666 /dev/ttyUSB60
 
-curl -X POST http://localhost:8092/api/ports/reload
+curl -X POST http://localhost:8090/radio/ports/reload
 
 for i in $(seq -w 9999999); do
   echo -ne "\x02I1$i\x03" > /dev/ttyIN60
