@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>at.wrk.coceso</groupId>
+        <artifactId>stomp-base</artifactId>
+        <version>2.6.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>stomp-service</artifactId>
+    <name>CoCeSo STOMP replay service implementation</name>
+    <description>This module provides the service implementation for sending and replaying initial data on STOMP topics</description>
+
+    <dependencies>
+        <!-- Replay commons -->
+        <dependency>
+            <groupId>at.wrk.coceso</groupId>
+            <artifactId>replay-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Spring Boot -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+
+        <!-- Saga -->
+        <dependency>
+            <groupId>com.codebullets.saga-lib</groupId>
+            <artifactId>saga-lib</artifactId>
+            <version>${saga.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

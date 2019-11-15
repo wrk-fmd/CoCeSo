@@ -11,19 +11,5 @@
 
     <artifactId>replay-common</artifactId>
     <name>CoCeSo STOMP replay common</name>
-    <description>This module provides a common classes for replaying initial data on STOMP topics</description>
-
-    <dependencies>
-        <!-- Spring Boot -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-amqp</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+    <description>This module provides common data for replaying initial data on STOMP topics</description>
 </project>

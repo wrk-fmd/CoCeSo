@@ -28,11 +28,11 @@ abstract class AbstractStompInterceptor implements ChannelInterceptor {
 
         switch (command) {
             case SUBSCRIBE:
-                return preSubscribe(message, channel, headers);
+                return preSubscribe(message, headers);
             case MESSAGE:
-                return preMessage(message, channel, headers);
+                return preMessage(message, headers);
             case RECEIPT:
-                return preReceipt(message, channel, headers);
+                return preReceipt(message, headers);
             default:
                 return message;
         }
@@ -45,7 +45,7 @@ abstract class AbstractStompInterceptor implements ChannelInterceptor {
      * @param headers The headers accessor
      * @return The modified message, or null if it should not be sent
      */
-    protected Message<?> preSubscribe(Message<?> message, MessageChannel channel, StompHeaderAccessor headers) {
+    protected Message<?> preSubscribe(Message<?> message, StompHeaderAccessor headers) {
         return message;
     }
 
@@ -56,7 +56,7 @@ abstract class AbstractStompInterceptor implements ChannelInterceptor {
      * @param headers The headers accessor
      * @return The modified message, or null if it should not be sent
      */
-    protected Message<?> preMessage(Message<?> message, MessageChannel channel, StompHeaderAccessor headers) {
+    protected Message<?> preMessage(Message<?> message, StompHeaderAccessor headers) {
         return message;
     }
 
@@ -67,11 +67,11 @@ abstract class AbstractStompInterceptor implements ChannelInterceptor {
      * @param headers The headers accessor
      * @return The modified message, or null if it should not be sent
      */
-    protected Message<?> preReceipt(Message<?> message, MessageChannel channel, StompHeaderAccessor headers) {
+    protected Message<?> preReceipt(Message<?> message, StompHeaderAccessor headers) {
         return message;
     }
 
-    protected StompHeaderAccessor getHeaders(Message<?> message) {
+    private StompHeaderAccessor getHeaders(Message<?> message) {
         StompHeaderAccessor headers = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
         if (headers == null) {
             throw new IllegalArgumentException("Not a STOMP message (could not extract headers)");

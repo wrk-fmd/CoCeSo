@@ -25,6 +25,8 @@
 
     <properties>
         <!-- TODO This should move to the base project -->
+        <saga.version>3.3.0</saga.version>
+
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>11</java.version>
         <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
@@ -34,5 +36,6 @@
     <modules>
         <module>replay-common</module>
         <module>stomp-endpoint</module>
+        <module>stomp-service</module>
     </modules>
 </project>

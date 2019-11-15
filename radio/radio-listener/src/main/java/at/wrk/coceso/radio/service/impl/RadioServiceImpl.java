@@ -11,10 +11,11 @@ import at.wrk.coceso.radio.exception.PortException;
 import at.wrk.coceso.radio.mapper.RadioCallMapper;
 import at.wrk.coceso.radio.repository.RadioCallRepository;
 import at.wrk.coceso.radio.service.RadioService;
+import at.wrk.coceso.stomp.saga.message.DefaultNotificationMessage;
+import com.codebullets.sagalib.MessageStream;
 import gnu.io.CommPortIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
@@ -40,18 +41,18 @@ public class RadioServiceImpl implements RadioService {
     private final Environment properties;
     private final RadioCallRepository repository;
     private final RadioCallMapper mapper;
-    private final AmqpTemplate amqp;
+    private final MessageStream messageStream;
 
     private final ConcurrentMap<String, Transceiver> transceivers;
 
     private List<Port> ports;
 
     @Autowired
-    public RadioServiceImpl(Environment properties, RadioCallRepository repository, RadioCallMapper mapper, AmqpTemplate amqp) {
+    public RadioServiceImpl(Environment properties, RadioCallRepository repository, RadioCallMapper mapper, MessageStream messageStream) {
         this.properties = Objects.requireNonNull(properties, "Properties must not be null");
         this.repository = Objects.requireNonNull(repository, "RadioCallRepository must not be null");
         this.mapper = Objects.requireNonNull(mapper, "RadioCallMapper must not be null");
-        this.amqp = Objects.requireNonNull(amqp, "AmqpTemplate must not be null");
+        this.messageStream = Objects.requireNonNull(messageStream, "MessageStream must not be null");
 
         transceivers = new ConcurrentHashMap<>();
         reloadPorts();
@@ -60,7 +61,7 @@ public class RadioServiceImpl implements RadioService {
     private void receiveCall(ReceivedCallDto call) {
         LOG.info("Call received from '{}'", call.getAni());
         RadioCall stored = repository.save(mapper.receivedCallToRadioCall(call));
-        this.amqp.convertAndSend(RadioQueueNames.CALLS_RECEIVED, null, mapper.radioCallToReceivedCall(stored));
+        this.messageStream.add(new DefaultNotificationMessage(RadioQueueNames.CALLS_RECEIVED, mapper.radioCallToReceivedCall(stored)));
     }
 
     @Override

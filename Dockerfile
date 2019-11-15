@@ -42,6 +42,7 @@ COPY  ./radio/radio-listener/pom.xml  ./radio/radio-listener/
 COPY  ./stomp/pom.xml                 ./stomp/
 COPY  ./stomp/replay-common/pom.xml   ./stomp/replay-common/
 COPY  ./stomp/stomp-endpoint/pom.xml  ./stomp/stomp-endpoint/
+COPY  ./stomp/stomp-service/pom.xml   ./stomp/stomp-service/
 
 # Resolve all dependencies, don't fail on missing (internal) dependencies
 #RUN mvn -fn -B dependency:go-offline > /dev/null

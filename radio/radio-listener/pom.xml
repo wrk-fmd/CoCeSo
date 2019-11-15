@@ -21,10 +21,10 @@
             <version>${project.version}</version>
         </dependency>
 
-        <!-- Replay sender -->
+        <!-- STOMP and replay sender -->
         <dependency>
             <groupId>at.wrk.coceso</groupId>
-            <artifactId>replay-common</artifactId>
+            <artifactId>stomp-service</artifactId>
             <version>${project.version}</version>
         </dependency>
 

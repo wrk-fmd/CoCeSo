@@ -44,6 +44,7 @@
         const data = JSON.parse(message.body), id = data.id;
 
         if (!last) {
+          console.log(`Started with ${id}`);
           last = id;
         } else if (id < last) {
           if (missing[id]) {
@@ -51,6 +52,7 @@
             delete missing[id];
           } else {
             console.warn(`Received unexpected: ${id} after ${last}`);
+            last = id;
           }
         } else if (id === last) {
           console.log(`Received ${id} twice`);
