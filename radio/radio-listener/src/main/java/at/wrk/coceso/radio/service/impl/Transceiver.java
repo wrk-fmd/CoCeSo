@@ -146,7 +146,7 @@ class Transceiver implements AutoCloseable {
         }
 
         try {
-            LOG.info("Reading from input stream ({} bytes available)", inputStream.available());
+            LOG.debug("Reading from input stream ({} bytes available)", inputStream.available());
             while (inputStream.available() > 0) {
                 queue.add((byte) inputStream.read());
             }
@@ -175,7 +175,7 @@ class Transceiver implements AutoCloseable {
                         LOG.warn("{}: Previous message did not end, dropping '{}'", port.getName(), message.toString());
                     }
 
-                    LOG.debug("{}: Starting new message", port.getName());
+                    LOG.trace("{}: Starting new message", port.getName());
                     message = new StringBuilder();
                     continue;
                 }
@@ -187,7 +187,7 @@ class Transceiver implements AutoCloseable {
 
                 if (read == ETX) {
                     // End of message
-                    LOG.debug("{}: Ending message", port.getName());
+                    LOG.trace("{}: Ending message", port.getName());
 
                     try {
                         handleMessage(message.toString());
@@ -200,7 +200,7 @@ class Transceiver implements AutoCloseable {
                     continue;
                 }
 
-                LOG.debug("{}: Appending '{}' to message", (char) read, port.getName());
+                LOG.trace("{}: Appending '{}' to message", (char) read, port.getName());
                 message.append((char) read);
             } catch (InterruptedException e) {
                 LOG.warn("{}: Caught interrupt while waiting for data", port.getName());
