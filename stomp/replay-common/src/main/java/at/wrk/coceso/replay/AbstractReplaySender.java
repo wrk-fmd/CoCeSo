@@ -1,9 +1,9 @@
 package at.wrk.coceso.replay;
 
-import static at.wrk.coceso.replay.ReplayHeaders.REPLAY_HEADER;
-import static at.wrk.coceso.replay.ReplayHeaders.REPLAY_HEADER_ACTIVE;
-import static at.wrk.coceso.replay.ReplayHeaders.REPLAY_HEADER_DONE;
-import static at.wrk.coceso.replay.ReplayHeaders.ROUTING_KEY_HEADER;
+import static at.wrk.coceso.replay.ReplayConstants.REPLAY_HEADER;
+import static at.wrk.coceso.replay.ReplayConstants.REPLAY_HEADER_ACTIVE;
+import static at.wrk.coceso.replay.ReplayConstants.REPLAY_HEADER_DONE;
+import static at.wrk.coceso.replay.ReplayConstants.ROUTING_KEY_HEADER;
 import static java.util.Objects.requireNonNull;
 
 import org.slf4j.Logger;

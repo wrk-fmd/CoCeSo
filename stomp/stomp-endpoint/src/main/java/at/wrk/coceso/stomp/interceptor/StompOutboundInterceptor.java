@@ -1,16 +1,16 @@
 package at.wrk.coceso.stomp.interceptor;
 
-import static at.wrk.coceso.replay.ReplayHeaders.REPLAY_HEADER;
-import static at.wrk.coceso.replay.ReplayHeaders.REPLAY_HEADER_ACTIVE;
-import static at.wrk.coceso.replay.ReplayHeaders.REPLAY_HEADER_DONE;
-import static at.wrk.coceso.replay.ReplayHeaders.ROUTING_KEY_HEADER;
+import static at.wrk.coceso.replay.ReplayConstants.REPLAY_HEADER;
+import static at.wrk.coceso.replay.ReplayConstants.REPLAY_HEADER_ACTIVE;
+import static at.wrk.coceso.replay.ReplayConstants.REPLAY_HEADER_DONE;
+import static at.wrk.coceso.replay.ReplayConstants.REPLAY_TRIGGER_EXCHANGE;
+import static at.wrk.coceso.replay.ReplayConstants.ROUTING_KEY_HEADER;
 import static java.util.Objects.requireNonNull;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.core.MessageProperties;
-import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -23,7 +23,6 @@ import org.springframework.messaging.support.ExecutorSubscribableChannel;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
@@ -37,15 +36,13 @@ public class StompOutboundInterceptor extends AbstractStompInterceptor {
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private final SubscriptionDataStore subscriptions;
-    private final Map<String, Queue> triggerQueues;
     private final RabbitTemplate template;
 
     private final ExecutorService threadPool = Executors.newCachedThreadPool();
 
     @Autowired
-    public StompOutboundInterceptor(SubscriptionDataStore subscriptions, Map<String, Queue> triggerQueues, RabbitTemplate rabbitTemplate) {
+    public StompOutboundInterceptor(SubscriptionDataStore subscriptions, RabbitTemplate rabbitTemplate) {
         this.subscriptions = requireNonNull(subscriptions, "SubscriptionDataStore must not be null");
-        this.triggerQueues = requireNonNull(triggerQueues, "Queues map must not be null");
         this.template = requireNonNull(rabbitTemplate, "RabbitTemplate must not be null");
     }
 
@@ -143,15 +140,9 @@ public class StompOutboundInterceptor extends AbstractStompInterceptor {
             return false;
         }
 
-        // Load trigger queue
-        Queue triggerQueue = triggerQueues.get(parts[2]);
-        if (triggerQueue == null) {
-            return false;
-        }
-
         try {
             // Send a null-message (as JSON), using headers for the real information
-            template.convertAndSend(triggerQueue.getName(), "null", m -> {
+            template.convertAndSend(REPLAY_TRIGGER_EXCHANGE, parts[2], "null", m -> {
                 MessageProperties p = m.getMessageProperties();
                 p.setContentType(MediaType.APPLICATION_JSON_VALUE);
                 p.setReplyTo(queueName);

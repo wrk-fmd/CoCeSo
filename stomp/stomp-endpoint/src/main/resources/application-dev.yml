@@ -1,8 +1,6 @@
 server:
   port: 8091
 application:
-  services:
-    radio.calls: radio.calls.replay
   broker:
     host: localhost
     username: coceso-rabbitmq-user

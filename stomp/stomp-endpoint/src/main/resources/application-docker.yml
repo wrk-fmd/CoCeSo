@@ -1,8 +1,6 @@
 # This profile uses the docker-compose DNS names and is activated for the default docker-compose build
 
 application:
-  services:
-    radio.calls: radio.calls.replay
   broker:
     host: coceso-amqp
     username: coceso-rabbitmq-user
