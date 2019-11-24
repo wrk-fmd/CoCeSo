@@ -1,5 +1,7 @@
 package at.wrk.coceso.stomp.saga;
 
+import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
+
 import at.wrk.coceso.stomp.saga.message.AddWorkerMessage;
 import at.wrk.coceso.stomp.saga.message.NotificationMessage;
 import at.wrk.coceso.stomp.saga.message.ReplayRequest;
@@ -8,6 +10,8 @@ import com.codebullets.sagalib.EventHandler;
 import com.codebullets.sagalib.KeyReader;
 import com.codebullets.sagalib.KeyReaders;
 import com.codebullets.sagalib.StartsSaga;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -15,6 +19,8 @@ import java.util.Collection;
 /**
  * This Saga is used for sending updates and replays using a worker
  */
+@Component
+@Scope(SCOPE_PROTOTYPE)
 public class UpdateReplaySaga extends AbstractSaga<UpdateReplayState> {
 
     /**
@@ -23,7 +29,7 @@ public class UpdateReplaySaga extends AbstractSaga<UpdateReplayState> {
      * @param message The information about the added worker
      */
     @StartsSaga
-    public void addWorker(AddWorkerMessage message) {
+    public void addWorker(final AddWorkerMessage message) {
         state().addInstanceKey(message.getTarget());
         state().worker(message.getWorker());
     }
@@ -34,7 +40,7 @@ public class UpdateReplaySaga extends AbstractSaga<UpdateReplayState> {
      * @param message The message information
      */
     @EventHandler
-    public void notificationMessage(NotificationMessage message) {
+    public void notificationMessage(final NotificationMessage message) {
         state().getWorker().addUpdate(message.getPayload(), message.getRoutingKey());
     }
 
