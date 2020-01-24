@@ -281,19 +281,8 @@ define([
        * @type ko.computed
        * @returns {boolean}
        */
-      this.disableTask = ko.computed(function () {
-        return (this.idObs() && !this.isTask() && !this.isTransport());
-      }, this);
-
-      /**
-       * Disable the "Relocation" type button
-       *
-       * @function
-       * @type ko.computed
-       * @returns {boolean}
-       */
-      this.disableRelocation = ko.computed(function () {
-        return (this.idObs() && !this.isRelocation());
+      this.isTaskOrTransport = ko.computed(function () {
+        return this.isTask() || this.isTransport();
       }, this);
 
       /**

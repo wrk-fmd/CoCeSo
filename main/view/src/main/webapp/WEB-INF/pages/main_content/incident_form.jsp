@@ -31,13 +31,13 @@
         <div class="form-group col-md-7">
           <label class="sr-only"><spring:message code="incident.type"/>:</label>
           <div class="btn-group btn-group-sm">
-            <button type="button" class="btn btn-default" data-bind="disable: disableTask, click: isTask.set, css: isTask.state">
+            <button type="button" class="btn btn-default" data-bind="visible: isTaskOrTransport, click: isTask.set, css: isTask.state">
               <spring:message code="incident.type.task"/>
             </button>
-            <button type="button" class="btn btn-default" data-bind="disable: disableTask, click: isTransport.set, css: isTransport.state">
+            <button type="button" class="btn btn-default" data-bind="visible: isTaskOrTransport, click: isTransport.set, css: isTransport.state">
               <spring:message code="incident.type.transport"/>
             </button>
-            <button type="button" class="btn btn-default" data-bind="disable: disableRelocation, click: isRelocation.set, css: isRelocation.state">
+            <button type="button" class="btn btn-default" data-bind="visible: isRelocation, css: isRelocation.state">
               <spring:message code="incident.type.relocation"/>
             </button>
           </div>
@@ -53,7 +53,7 @@
         </div>
       </div>
 
-      <div class="clearfix">
+      <div class="clearfix" data-bind="visible: isTaskOrTransport">
         <div class="form-group col-md-12" data-bind="css: bo.formcss">
           <label for="bo" class=""><spring:message code="incident.bo"/>:</label>
           <textarea id="bo" name="bo" rows="3" class="form-control" placeholder="<spring:message code="incident.bo"/>" autofocus
@@ -89,7 +89,7 @@
         </div>
       </div>
 
-      <!-- ko if: idObs -->
+      <!-- ko if: idObs && isTaskOrTransport -->
       <div class="clearfix">
         <!-- ko if: patient -->
         <div class="col-md-7">
