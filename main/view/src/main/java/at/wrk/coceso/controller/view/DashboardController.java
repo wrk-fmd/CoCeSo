@@ -28,6 +28,8 @@ import java.util.Objects;
 @PreAuthorize("@auth.hasAccessLevel('Dashboard')")
 public class DashboardController {
 
+  private static final int MAXIMUM_LOG_LINES_TO_LOAD = 500;
+
   @Autowired
   private ConcernService concernService;
 
@@ -53,7 +55,7 @@ public class DashboardController {
       @RequestParam(value = "active", defaultValue = "0") boolean active,
       @RequestParam(value = "concern", required = false) Integer concern_id,
       @ActiveConcern(required = false) Concern concern) throws NotFoundException, ConcernException {
-    map.addAttribute("concerns", concernService.getAll());
+    map.addAttribute("concerns", concernService.getAllOpen());
 
     if (iid != null && uid != null) {
       crossDetail(map, iid, uid);
@@ -94,7 +96,7 @@ public class DashboardController {
   private void logList(ModelMap map, Concern concern) {
     map.addAttribute("template", "log_table");
     map.addAttribute("log_menu", "active");
-    map.addAttribute("logs", logService.getAll(concern));
+    map.addAttribute("logs", logService.getLast(concern, MAXIMUM_LOG_LINES_TO_LOAD));
   }
 
   private void incidentList(ModelMap map, Concern concern, boolean active) {

@@ -14,6 +14,8 @@ public interface ConcernService {
 
   List<Concern> getAll();
 
+  List<Concern> getAllOpen();
+
   Concern getByName(String name);
 
   Concern update(Concern concern);

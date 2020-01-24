@@ -51,6 +51,11 @@ class ConcernServiceImpl implements ConcernService {
   }
 
   @Override
+  public List<Concern> getAllOpen() {
+    return concernRepository.findAllOpen();
+  }
+
+  @Override
   public Concern getByName(String name) {
     return concernRepository.findByName(name);
   }
