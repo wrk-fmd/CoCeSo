@@ -158,7 +158,7 @@ define(["knockout", "data/save", "data/store/incidents", "data/store/units",
         const incidentRef = this.incident();
 
         if ((incidentRef.isTask() || incidentRef.isTransport()) && (this.isZAO || this.isAAO)) {
-          return incidentRef.ao.isEmpty() ? incidentRef.assignedTitle() : incidentRef.ao.info();
+          return incidentRef.ao.isEmpty() ? incidentRef.assignedTitle() : incidentRef.typeChar() + ": " + incidentRef.ao.info();
         } else {
           return incidentRef.assignedTitle();
         }
