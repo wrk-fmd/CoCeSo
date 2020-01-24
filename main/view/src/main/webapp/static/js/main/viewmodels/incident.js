@@ -371,7 +371,7 @@ define([
           }
         }
 
-        clientLogger.debugLog("#userInput Duplicating incident '" + self.id + "'.");
+        clientLogger.debugLog("#userInput #createIncident Duplicating incident '" + self.id + "'.");
         navigation.openIncident(data);
       };
 

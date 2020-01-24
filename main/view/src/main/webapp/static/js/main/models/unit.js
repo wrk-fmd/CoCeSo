@@ -32,8 +32,9 @@ define([
     "utils/constants",
     "utils/destroy",
     "utils/i18n",
+    "utils/client-logger",
     "ko/extenders/isvalue"],
-  function(ko, Point, Task, navigation, save, sectionsStore, constants, destroy, _) {
+  function(ko, Point, Task, navigation, save, sectionsStore, constants, destroy, _, clientLogger) {
     "use strict";
 
     /**
@@ -386,6 +387,25 @@ define([
           section: sectionsStore.filter()
         };
         data.units[self.id] = constants.TaskState.assigned;
+
+        clientLogger.debugLog("#userInput #createIncident Creating a new task/transport for unit from #contextmenu.");
+        navigation.openIncident(data);
+      };
+
+      /**
+       * Open incident form with new relocation and current Unit attached.
+       *
+       * @returns {void}
+       */
+      this.addRelocation = function() {
+        var data = {
+          units: {},
+          section: sectionsStore.filter(),
+          type: constants.Incident.type.relocation
+        };
+        data.units[self.id] = constants.TaskState.assigned;
+
+        clientLogger.debugLog("#userInput #createIncident Creating a new relocation for unit from #contextmenu.");
         navigation.openIncident(data);
       };
 
@@ -407,6 +427,7 @@ define([
           data.section = sectionsStore.filter();
         }
 
+        clientLogger.debugLog("#userInput #createIncident Creating a new reported task for unit from #contextmenu.");
         navigation.openIncident(data);
       };
     };
