@@ -263,7 +263,7 @@
               </a>
               <ul class="dropdown-menu">
                 <li data-bind="css: {active: !filter()}">
-                  <a href="#" data-bind="click: showAll"><span class="glyphicon glyphicon-ban-circle"></span> <spring:message code="main.section.filter.reset"/></a>
+                  <a href="#" data-bind="click: showAll"><span class="glyphicon glyphicon-ban-circle"></span> <spring:message code="main.section.nofilter"/></a>
                 </li>
                 <li class="divider"></li>
                 <!-- ko foreach: sections -->
