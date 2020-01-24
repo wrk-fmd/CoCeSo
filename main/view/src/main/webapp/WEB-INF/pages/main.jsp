@@ -283,7 +283,7 @@
               </li>
               <li>
                 <a href="#" title="<spring:message code="incident.relocation.add"/>" data-bind="click: function() {openIncident({section: sections.filter(), type: 'Relocation'})}"
-                   data-toggle="tooltip" data-placement="bottom" class="quicklink quicklink_incident tooltipped notification-icon">
+                   data-toggle="tooltip" data-placement="bottom" class="quicklink quicklink_relocation tooltipped notification-icon">
                   <span class="glyphicon glyphicon-share-alt" title="<spring:message code="incident.relocation.add.title"/>"></span>
                 </a>
               </li>
