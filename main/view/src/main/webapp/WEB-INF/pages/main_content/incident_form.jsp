@@ -30,15 +30,17 @@
       <div class="clearfix">
         <div class="form-group col-md-7">
           <label class="sr-only"><spring:message code="incident.type"/>:</label>
-          <div class="btn-group btn-group-sm">
-            <button type="button" class="btn btn-default" data-bind="visible: isTaskOrTransport, click: isTask.set, css: isTask.state">
+          <div class="btn-group btn-group-sm" data-bind="visible: isTaskOrTransport">
+            <button type="button" class="btn btn-default" data-bind="click: isTask.set, css: isTask.state">
               <spring:message code="incident.type.task"/>
             </button>
-            <button type="button" class="btn btn-default" data-bind="visible: isTaskOrTransport, click: isTransport.set, css: isTransport.state">
+            <button type="button" class="btn btn-default" data-bind="click: isTransport.set, css: isTransport.state">
               <spring:message code="incident.type.transport"/>
             </button>
+          </div>
+          <div class="btn-group btn-group-sm" data-bind="visible: isRelocation">
             <!-- Button is simulated as 'active' by type 'btn-primary'. Since there is no change possible, it is disabled, but only visible if active. -->
-            <button type="button" class="btn btn-primary active" data-bind="visible: isRelocation" disabled>
+            <button type="button" class="btn btn-primary active" disabled>
               <spring:message code="incident.type.relocation"/>
             </button>
           </div>
