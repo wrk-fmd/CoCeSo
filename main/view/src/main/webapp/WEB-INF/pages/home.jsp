@@ -162,13 +162,15 @@
     </div>
 
     <script type="text/javascript">
-      if (/msie\ [0-9]/i.test(navigator.userAgent)) {
-        console.error("Internet Explorer is not supported!");
-        $('#msie-detection-error').hidden = false;
-      } else if (/Trident\/[0-9]/i.test(navigator.userAgent)) {
-        console.error("Internet Explorer (Trident) is not supported!");
-        $('#msie-detection-error').hidden = false;
-      }
+      (function () {
+        if (/msie\ [0-9]/i.test(navigator.userAgent)) {
+          console.error("Internet Explorer is not supported!");
+          document.getElementById('msie-detection-error').hidden = false;
+        } else if (/Trident\/[0-9]/i.test(navigator.userAgent)) {
+          console.error("Internet Explorer (Trident) is not supported!");
+          document.getElementById('msie-detection-error').hidden = false;
+        }
+      })();
     </script>
   </body>
 </html>
