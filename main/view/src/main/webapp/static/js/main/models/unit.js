@@ -345,13 +345,17 @@ define([
        */
       this.popover = ko.pureComputed(function() {
         // Bugfix orphaned Popovers (Ticket #17)
-        var content = "<div onmouseout=\"$('.popover').remove();\"><dl class='dl-horizontal list-narrower'>";
-        if (this.ani) {
-          content += "<dt>" + _("unit.ani") + "</dt><dd>" + this.ani.escapeHTML() + "</dd>";
-        }
-        if (this.hasHome()) {
-          content += "<dt><span class='glyphicon glyphicon-home'></span></dt><dd><span class='pre'>" + this.home.info().escapeHTML() + "</span></dd>";
-        }
+        let content = "<div onmouseout=\"$('.popover').remove();\"><dl class='dl-horizontal list-narrower'>";
+        // The ANI brings no operational benefit in the popover.
+        // if (this.ani) {
+        //   content += "<dt>" + _("unit.ani") + "</dt><dd>" + this.ani.escapeHTML() + "</dd>";
+        // }
+
+        // Having two different positions in the popover is quite confusing. The home location is no longer shown, in order to read the current position faster.
+        // if (this.hasHome()) {
+        //   content += "<dt><span class='glyphicon glyphicon-home'></span></dt><dd><span class='pre'>" + this.home.info().escapeHTML() + "</span></dd>";
+        // }
+
         content += "<dt><span class='glyphicon glyphicon-map-marker'></span></dt><dd><span class='pre'>" +
           (this.position.isEmpty() ? "N/A" : this.position.info().escapeHTML()) + "</span></dd>";
 

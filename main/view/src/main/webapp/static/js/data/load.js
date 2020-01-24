@@ -20,8 +20,8 @@
  * @param {module:data/stomp} stomp
  * @param {module:utils/conf} conf
  */
-define(["jquery", "knockout", "./stomp", "utils/conf"],
-  function($, ko, stomp, conf) {
+define(["jquery", "knockout", "./stomp", "utils/conf", "utils/client-logger"],
+  function($, ko, stomp, conf, clientLogger) {
     "use strict";
 
     /**
@@ -49,20 +49,13 @@ define(["jquery", "knockout", "./stomp", "utils/conf"],
      * @property {cbDelete} [cbDelete] The callback called on deleting an item
      * @property {cbFull} [cbFull] The callback called on loading all items
      */
-
-    /**
-     * Load the specified data
-     *
-     * @alias module:data/load
-     * @param {LoadOptions} options
-     */
-    var load = function(options) {
+    return function (options) {
       var cbSet, cbDelete;
 
       if (options.cbSet instanceof Function) {
         cbSet = options.cbSet;
       } else {
-        cbSet = function(data) {
+        cbSet = function (data) {
           if (!data.id) {
             return false;
           }
@@ -78,7 +71,7 @@ define(["jquery", "knockout", "./stomp", "utils/conf"],
       if (options.cbDelete instanceof Function) {
         cbDelete = options.cbDelete;
       } else {
-        cbDelete = function(id) {
+        cbDelete = function (id) {
           var item = options.store()[id];
           delete options.store()[id];
           return item;
@@ -89,18 +82,19 @@ define(["jquery", "knockout", "./stomp", "utils/conf"],
         $.ajax({
           dataType: "json",
           url: conf.get("jsonBase") + options.url,
-          success: function(result) {
-            var mutated = false, found = {};
+          success: function (result) {
+            let mutated = false;
+            const deleted = [];
             if (options.cbFull instanceof Function) {
               mutated = options.cbFull(result.data);
             } else {
-              ko.utils.arrayForEach(result.data, function(item) {
+              const found = {};
+              ko.utils.arrayForEach(result.data, function (item) {
                 if (item.id) {
                   found[item.id] = true;
                 }
                 mutated = cbSet(item) || mutated;
               });
-              var deleted = [];
               for (var i in options.store()) {
                 if (!found[i]) {
                   deleted.push(cbDelete(i));
@@ -113,7 +107,7 @@ define(["jquery", "knockout", "./stomp", "utils/conf"],
             options.seq = result.seq;
 
             if (options.queue) {
-              ko.utils.arrayForEach(options.queue, function(item) {
+              ko.utils.arrayForEach(options.queue, function (item) {
                 if (item.hver === options.hver && item.seq === options.seq + 1) {
                   options.seq = item.seq;
                   mutated = cbSet(item.data) || mutated;
@@ -127,16 +121,17 @@ define(["jquery", "knockout", "./stomp", "utils/conf"],
             }
 
             if (deleted) {
-              ko.utils.arrayForEach(deleted, function(item) {
+              ko.utils.arrayForEach(deleted, function (item) {
                 if (item) {
                   item.destroy();
                 }
               });
             }
 
+            clientLogger.warnLog("Got a working websocket connection to the backend.");
             conf.get("error")(false);
           },
-          error: function(xhr) {
+          error: function (xhr) {
             console.debug("Loading '%s' failed with status %d", options.url, xhr.status);
             conf.get("error")(true);
           }
@@ -146,8 +141,8 @@ define(["jquery", "knockout", "./stomp", "utils/conf"],
       options.hver = 0;
       options.seq = 0;
       options.queue = [];
-      stomp.subscribe(options.stomp.replace(/{c}/, localStorage.concern), function(data) {
-        var body = JSON.parse(data.body);
+      stomp.subscribe(options.stomp.replace(/{c}/, localStorage.concern), function (data) {
+        const body = JSON.parse(data.body);
         if (options.hver === 0) {
           // Full load not yet done
           options.queue.push(body);
@@ -157,6 +152,7 @@ define(["jquery", "knockout", "./stomp", "utils/conf"],
           options.seq = 0;
           options.queue = [];
 
+          clientLogger.warnLog("#fullreload Received data with wrong sequence number or hver! Performing full reload of client data.");
           fullLoad();
         } else if (body["delete"]) {
           options.seq = body.seq;
@@ -173,8 +169,7 @@ define(["jquery", "knockout", "./stomp", "utils/conf"],
         }
       });
 
+      clientLogger.infoLog("#fullreload Performing full load of data on startup.");
       fullLoad();
     };
-
-    return load;
   });
