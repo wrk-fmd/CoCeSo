@@ -379,9 +379,9 @@ public class Incident implements Serializable, Comparable<Incident>, ConcernBoun
 
   @JsonIgnore
   public boolean isRelevant() {
-    return type != IncidentType.Treatment
-        && (!state.isDone() || (type != IncidentType.HoldPosition
-        && type != IncidentType.ToHome && type != IncidentType.Standby));
+    return type == IncidentType.Task
+            || type == IncidentType.Transport
+            || type == IncidentType.Relocation
+            || !state.isDone();
   }
-
 }
