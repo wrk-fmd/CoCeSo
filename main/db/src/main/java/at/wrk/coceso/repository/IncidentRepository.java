@@ -26,7 +26,7 @@ public interface IncidentRepository extends JpaRepository<Incident, Integer> {
      * Returns the incidents relevant for the initial loading. This functions corresponds to {@link Incident#isRelevant()} except that 'done'
      * relocations are NOT loaded on initial loading, but they are not removed during live operation from screen.
      */
-    @Query("SELECT i FROM Incident i WHERE concern = :concern AND type IN ('Task', 'Transport') OR state <> 'Done'")
+    @Query("SELECT i FROM Incident i WHERE concern = :concern AND (type IN ('Task', 'Transport') OR state <> 'Done')")
     List<Incident> findRelevant(@Param("concern") Concern concern);
 
     @Query("SELECT i FROM Incident i WHERE concern = :concern AND state <> 'Done'")
