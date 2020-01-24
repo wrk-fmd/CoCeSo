@@ -80,12 +80,15 @@ define([
 
       this.dialogTitle = ko.computed(function () {
         if (!this.idObs()) {
-          return _("incident.add");
+          return this.type === constants.Incident.type.relocation ? _("incident.relocation.add") : _("incident.add");
         }
+
+        const dialogTitlePrefix = this.type === constants.Incident.type.relocation ? _("incident.relocation.edit") : _("incident.edit");
         if (!this.model()) {
-          return _("incident.edit");
+          return dialogTitlePrefix;
         }
-        return {dialog: _("incident.edit") + ": " + this.model().title(), button: this.model().assignedTitle()};
+
+        return {dialog: dialogTitlePrefix + ": " + this.model().title(), button: this.model().assignedTitle()};
       }, this);
 
       //Call parent constructors
@@ -281,19 +284,8 @@ define([
        * @type ko.computed
        * @returns {boolean}
        */
-      this.disableTask = ko.computed(function () {
-        return (this.idObs() && !this.isTask() && !this.isTransport());
-      }, this);
-
-      /**
-       * Disable the "Relocation" type button
-       *
-       * @function
-       * @type ko.computed
-       * @returns {boolean}
-       */
-      this.disableRelocation = ko.computed(function () {
-        return (this.idObs() && !this.isRelocation());
+      this.isTaskOrTransport = ko.computed(function () {
+        return this.isTask() || this.isTransport();
       }, this);
 
       /**
@@ -379,7 +371,7 @@ define([
           }
         }
 
-        clientLogger.debugLog("#userInput Duplicating incident '" + self.id + "'.");
+        clientLogger.debugLog("#userInput #createIncident Duplicating incident '" + self.id + "'.");
         navigation.openIncident(data);
       };
 

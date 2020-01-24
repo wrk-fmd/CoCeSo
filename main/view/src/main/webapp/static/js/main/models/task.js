@@ -250,7 +250,7 @@ define(["knockout", "data/save", "data/store/incidents", "data/store/units",
           }
 
           if (needAO && !incident.hasAO() && (nextState === s.zao || nextState === s.aao)) {
-            console.info("No AO set, opening Incident Window");
+            clientLogger.debugLog("#userInput #editIncident Open incident form because no destination address is set for incident " + incident.id + ".");
             navigation.openIncident({id: incident.id});
             return;
           }

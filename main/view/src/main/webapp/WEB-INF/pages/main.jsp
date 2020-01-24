@@ -115,8 +115,7 @@
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><spring:message code="units"/> <b class="caret"></b></a>
               <ul class="dropdown-menu">
                 <li>
-                  <a href="#" title="<spring:message code="units"/>"
-                     data-bind="click: function() {openUnits()}">
+                  <a href="#" title="<spring:message code="units"/>" data-bind="click: function() {openUnits()}">
                     <span class="glyphicon glyphicon-tasks"></span> <spring:message code="main.unit.overview"/>
                   </a>
                 </li>
@@ -154,9 +153,15 @@
               <ul class="dropdown-menu">
                 <li>
                   <a href="#" title="<spring:message code="incident.add"/>" data-bind="click: function() {openIncident({section: sections.filter()})}">
-                    <span class="glyphicon glyphicon-plus"></span> <spring:message code="incident.add"/></a>
+                    <span class="glyphicon glyphicon-plus"></span> <spring:message code="incident.add"/>...</a>
                 </li>
+                <li>
+                  <a href="#" title="<spring:message code="incident.relocation.add"/>" data-bind="click: function() {openIncident({section: sections.filter(), type: 'Relocation'})}">
+                    <span class="glyphicon glyphicon-share-alt"></span> <spring:message code="incident.relocation.add"/>...</a>
+                </li>
+
                 <li class="divider"></li>
+
                 <li>
                   <a href="#" title="<spring:message code="main.incident.overview"/>"
                      data-bind="click: function() {openIncidents({filter: ['overview'], title: '<spring:message code="main.incident.overview"/>'})}">
@@ -189,7 +194,7 @@
                 </li>
                 <li>
                   <a href="#" title="<spring:message code="log.add"/>" data-bind="click: function() {openLogAdd()}">
-                    <span class="glyphicon glyphicon-book"></span> <spring:message code="log.add"/>
+                    <span class="glyphicon glyphicon-book"></span> <spring:message code="log.add"/>...
                   </a>
                 </li>
                 <li>
@@ -212,12 +217,12 @@
                 <li class="divider"></li>
                 <li>
                   <a href="<c:url value="/edit/"/>" target="_blank">
-                    <span class="glyphicon glyphicon-link"></span> <spring:message code="nav.edit_concern"/>
+                    <span class="glyphicon glyphicon-new-window"></span> <spring:message code="nav.edit_concern"/>
                   </a>
                 </li>
                 <li>
                   <a href="<c:url value="/dashboard"/>" target="_blank">
-                    <span class="glyphicon glyphicon-link"></span> <spring:message code="nav.dashboard"/>
+                    <span class="glyphicon glyphicon-new-window"></span> <spring:message code="nav.dashboard"/>
                   </a>
                 </li>
                 <%-- Low Priority Links --%>
@@ -258,11 +263,12 @@
               </a>
               <ul class="dropdown-menu">
                 <li data-bind="css: {active: !filter()}">
-                  <a href="#" data-bind="click: showAll">Kein Filter</a>
+                  <a href="#" data-bind="click: showAll"><span class="glyphicon glyphicon-ban-circle"></span> <spring:message code="main.section.nofilter"/></a>
                 </li>
+                <li class="divider"></li>
                 <!-- ko foreach: sections -->
                 <li data-bind="css: {active: active}">
-                  <a href="#" data-bind="click: select, text: name"></a>
+                  <a href="#" data-bind="click: select"><span class="glyphicon glyphicon-filter"></span> <span data-bind="text: name"></span></a>
                 </li>
                 <!-- /ko -->
               </ul>
@@ -279,6 +285,12 @@
                 <a href="#" title="<spring:message code="incident.add"/>" data-bind="click: function() {openIncident({section: sections.filter()})}"
                    data-toggle="tooltip" data-placement="bottom" class="quicklink quicklink_incident tooltipped notification-icon">
                   <span class="glyphicon glyphicon-plus" title="<spring:message code="incident.add.title"/>"></span>
+                </a>
+              </li>
+              <li>
+                <a href="#" title="<spring:message code="incident.relocation.add"/>" data-bind="click: function() {openIncident({section: sections.filter(), type: 'Relocation'})}"
+                   data-toggle="tooltip" data-placement="bottom" class="quicklink quicklink_relocation tooltipped notification-icon">
+                  <span class="glyphicon glyphicon-share-alt" title="<spring:message code="incident.relocation.add.title"/>"></span>
                 </a>
               </li>
               <li>

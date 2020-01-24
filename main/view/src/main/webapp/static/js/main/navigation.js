@@ -430,7 +430,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
       var keyMapping = conf.get("keyMapping");
       $("#next-state-confirm").keyup(function(event) {
         if (event.which === keyMapping.noKey) {
-          clientLogger.debugLog("#userInput Declining confirmation popup by keyboard shortcut..");
+          clientLogger.debugLog("#userInput Declining confirmation popup by keyboard shortcut.");
           $("#next-state-confirm-no").click();
         }
         if (event.which === keyMapping.yesKey) {
@@ -445,7 +445,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
         }
 
         if (event.which === keyMapping.openIncidentKey) {
-          clientLogger.debugLog("#userInput Opening a new incident by keyboard shortcut.");
+          clientLogger.debugLog("#userInput #createIncident Opening a new incident by keyboard shortcut.");
           nav.openIncident({section: sections.filter()});
         }
       });

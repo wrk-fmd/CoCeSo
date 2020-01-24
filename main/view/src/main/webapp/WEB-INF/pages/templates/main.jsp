@@ -80,15 +80,21 @@
 
       <li class="divider"></li>
       <!-- ko if: portable -->
-      <li><a href="#" title="<spring:message code="unit.incident.new"/>" data-bind="click: addIncident"><spring:message code="unit.incident.new"/></a></li>
+      <li><a href="#" title="<spring:message code="unit.incident.new"/>" data-bind="click: addIncident"><spring:message code="unit.incident.new"/>...</a></li>
+      <li><a href="#" title="<spring:message code="unit.relocation.new"/>" data-bind="click: addRelocation"><spring:message code="unit.relocation.new"/>...</a></li>
       <!-- /ko -->
-      <li><a href="#" title="<spring:message code="unit.incident.report"/>" data-bind="click: reportIncident"><spring:message code="unit.incident.report"/></a>
+      <li><a href="#" title="<spring:message code="unit.incident.report"/>" data-bind="click: reportIncident"><spring:message code="unit.incident.report"/>...</a></li>
+      <li><a href="#" title="<spring:message code="log.add"/>" data-bind="click: addLog"><spring:message code="log.add"/>...</a></li>
+
+      <li class="divider"></li>
+      <li><a href="#" title="<spring:message code="unit.details"/>" data-bind="click: openDetails"><spring:message code="unit.details"/>...</a></li>
+      <li><a href="#" title="<spring:message code="unit.edit"/>" data-bind="click: openForm"><spring:message code="unit.edit"/>...</a></li>
+      <li>
+        <a href="#" target="_blank" title="<spring:message code="log.view"/>"
+             data-bind="attr: {href: '<c:url value="/dashboard?uid="/>' + id}">
+          <spring:message code="log.view"/> <span class="glyphicon glyphicon-new-window"></span>
+        </a>
       </li>
-      <li><a href="#" title="<spring:message code="unit.details"/>" data-bind="click: openDetails"><spring:message code="unit.details"/></a></li>
-      <li><a href="#" title="<spring:message code="unit.edit"/>" data-bind="click: openForm"><spring:message code="unit.edit"/></a></li>
-      <li><a href="#" target="_blank" title="<spring:message code="log.view"/>"
-             data-bind="attr: {href: '<c:url value="/dashboard?uid="/>' + id}"><spring:message code="log.view"/></a></li>
-      <li><a href="#" title="<spring:message code="log.add"/>" data-bind="click: addLog"><spring:message code="log.add"/></a></li>
     </ul>
   </li>
 </script>
