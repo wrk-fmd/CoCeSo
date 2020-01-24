@@ -128,7 +128,7 @@ define(["jquery", "knockout", "./stomp", "utils/conf", "utils/client-logger"],
               });
             }
 
-            clientLogger.warnLog("Got a working websocket connection to the backend.");
+            clientLogger.debugLog("Got a working websocket connection to the backend.");
             conf.get("error")(false);
           },
           error: function (xhr) {
@@ -169,7 +169,7 @@ define(["jquery", "knockout", "./stomp", "utils/conf", "utils/client-logger"],
         }
       });
 
-      clientLogger.infoLog("#fullreload Performing full load of data on startup.");
+      clientLogger.debugLog("#fullreload Performing full load of data on startup.");
       fullLoad();
     };
   });
