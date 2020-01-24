@@ -37,7 +37,8 @@
             <button type="button" class="btn btn-default" data-bind="visible: isTaskOrTransport, click: isTransport.set, css: isTransport.state">
               <spring:message code="incident.type.transport"/>
             </button>
-            <button type="button" class="btn btn-default" data-bind="visible: isRelocation, css: isRelocation.state">
+            <!-- Button is simulated as 'active' by type 'btn-primary'. Since there is no change possible, it is disabled, but only visible if active. -->
+            <button type="button" class="btn btn-primary active" data-bind="visible: isRelocation" disabled>
               <spring:message code="incident.type.relocation"/>
             </button>
           </div>
