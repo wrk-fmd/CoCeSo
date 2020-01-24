@@ -35,6 +35,14 @@
       <c:set value="active" var="nav_home"/>
       <%@include file="parts/navbar.jsp"%>
 
+      <div class="alert alert-danger" id="msie-detection-error" hidden>
+        <p>
+          <strong><spring:message code="error.msie.detected"/></strong>
+        </p>
+
+        <spring:message code="error.msie.detected.explanation"/>
+      </div>
+
       <%-- Userdetails -- DEBUG --%>
       <div class="alert alert-info alert-dismissable">
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
@@ -152,5 +160,15 @@
 
       <div class="page-header"></div>
     </div>
+
+    <script type="text/javascript">
+      if (/msie\ [0-9]/i.test(navigator.userAgent)) {
+        console.error("Internet Explorer is not supported!");
+        $('#msie-detection-error').hidden = false;
+      } else if (/Trident\/[0-9]/i.test(navigator.userAgent)) {
+        console.error("Internet Explorer (Trident) is not supported!");
+        $('#msie-detection-error').hidden = false;
+      }
+    </script>
   </body>
 </html>
