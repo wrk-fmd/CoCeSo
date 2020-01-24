@@ -481,7 +481,7 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
           + "'>" + this.typeChar() + "</span>: " + titleVal.split("\n")[0].escapeHTML();
       }, this);
 
-      /**
+      /*
        * Title for unit form
        *
        * @function

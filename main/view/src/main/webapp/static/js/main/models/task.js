@@ -154,6 +154,16 @@ define(["knockout", "data/save", "data/store/incidents", "data/store/units",
         return "";
       }, this);
 
+      this.taskStateDependentTitle = ko.pureComputed(function() {
+        const incidentRef = this.incident();
+
+        if ((incidentRef.isTask() || incidentRef.isTransport()) && (this.isZAO || this.isAAO)) {
+          return incidentRef.ao.isEmpty() ? incidentRef.assignedTitle() : incidentRef.ao.info();
+        } else {
+          return incidentRef.assignedTitle();
+        }
+      }, this);
+
       /**
        * Text based on the incident's type
        *
@@ -162,7 +172,7 @@ define(["knockout", "data/save", "data/store/incidents", "data/store/units",
        * @returns {string} The text
        */
       this.taskText = ko.pureComputed(function() {
-        var i = this.incident();
+        const i = this.incident();
         if (i === null) {
           return this.localizedTaskState();
         }

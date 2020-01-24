@@ -364,7 +364,7 @@ define([
         if (this.incidentCount() > 0) {
           ko.utils.arrayForEach(this.incidents(), function(task) {
             if (task.incident() !== null) {
-              content += "<dt>" + task.incident().assignedTitle() + "</dt><dd>" + task.localizedTaskState() + "</dd>";
+              content += "<dt>" + task.taskStateDependentTitle() + "</dt><dd>" + task.localizedTaskState() + "</dd>";
             }
           });
         }
