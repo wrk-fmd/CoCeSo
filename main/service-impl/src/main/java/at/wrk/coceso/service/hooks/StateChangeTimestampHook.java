@@ -12,17 +12,16 @@ import org.springframework.stereotype.Component;
 @Component
 @Order(6)
 class StateChangeTimestampHook implements TaskStateHook {
-  private static final Logger LOG = LoggerFactory.getLogger(StateChangeTimestampHook.class);
+    private static final Logger LOG = LoggerFactory.getLogger(StateChangeTimestampHook.class);
 
-  @Override
-  public TaskState call(final Incident incident, final Unit unit, final TaskState taskState, final NotifyList notify) {
-    incident.setStateChange();
-    if (incident.getArrival() == null && taskState.isWorking()) {
-      LOG.debug("Arrival timestamp of incident {} is not yet set and state changed to 'working'. Setting arrival timestamp.", incident);
-      incident.setArrival();
+    @Override
+    public TaskState call(final Incident incident, final Unit unit, final TaskState taskState, final NotifyList notify) {
+        incident.setStateChange();
+        if (incident.getArrival() == null && taskState.isWorking()) {
+            LOG.debug("Arrival timestamp of incident {} is not yet set and state changed to 'working'. Setting arrival timestamp.", incident);
+            incident.setArrival();
+        }
+
+        return taskState;
     }
-
-    return taskState;
-  }
-
 }

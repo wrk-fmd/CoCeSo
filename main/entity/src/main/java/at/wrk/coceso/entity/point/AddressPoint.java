@@ -150,7 +150,7 @@ class AddressPoint implements Point, Address {
     public void tryToResolveExternalData() {
         if (!filled && coordinates == null && !isEmpty()) {
             filled = true;
-            LOG.debug("Address point was not resolved yet. Adress geocoder is called for: {}", this);
+            LOG.debug("Address point was not resolved yet. Address geocoder is called for: {}", this);
 
             ImmutableAddress addressToSearch = ImmutableAddress.createFromAddress(this);
             coordinates = addressGeocoder.geocode(addressToSearch);

@@ -118,7 +118,6 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
       throw new ErrorsException(Errors.UnitCreateNotAllowed);
     }
 
-
     Map<Incident, TaskState> incidents = unit.getIncidents();
 
     Unit save = getById(unit.getId());

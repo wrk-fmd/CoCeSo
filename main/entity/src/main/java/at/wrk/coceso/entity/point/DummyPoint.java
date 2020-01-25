@@ -72,8 +72,8 @@ public class DummyPoint implements Point {
 
   @Override
   public void tryToResolveExternalData() {
-    // Yes, this is needed, because of the WTF-implementation of this Point contract...
-    LOG.info("Trying to resolve a dummy point! Please check workflow on data validation.");
+    // This should not happen, because a dummy point is always resolved in service code.
+    LOG.warn("Trying to resolve a dummy point! Please check workflow on data validation.");
   }
 
   @Override
