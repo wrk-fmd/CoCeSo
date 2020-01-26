@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -17,7 +18,11 @@ public class ChainedAutocompleteSupplier implements AutocompleteSupplier<String>
 
     @Autowired(required = false)
     public ChainedAutocompleteSupplier(final List<AutocompleteSupplier<?>> autocomplete) {
-        this.autocomplete = autocomplete;
+        // Exclude the chained streetname supplier here. To get rid of the hardcoded exclusion, the chained suppliers should implement a marker interface.
+        this.autocomplete = autocomplete
+                .stream()
+                .filter(supplier -> !(supplier instanceof ChainedStreetnameAutocompleteSupplier))
+                .collect(Collectors.toList());
     }
 
     @Override
