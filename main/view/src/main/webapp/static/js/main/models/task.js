@@ -24,8 +24,8 @@
  * @param {module:utils/i18n} _
  */
 define(["knockout", "data/save", "data/store/incidents", "data/store/units",
-  "main/confirm", "main/navigation", "utils/constants", "utils/destroy", "utils/i18n", "utils/client-logger", "ko/extenders/isvalue"],
-  function(ko, save, incidents, units, confirm, navigation, constants, destroy, _, clientLogger) {
+    "main/confirm", "main/navigation", "utils/constants", "utils/destroy", "utils/i18n", "utils/client-logger", "ko/extenders/isvalue", "ko/extenders/timeinterval"],
+  function (ko, save, incidents, units, confirm, navigation, constants, destroy, _, clientLogger) {
     "use strict";
 
     /**
@@ -36,8 +36,9 @@ define(["knockout", "data/save", "data/store/incidents", "data/store/units",
      * @param {String} taskState The TaskState
      * @param {Integer} incident The incident to use
      * @param {Integer} unit The use to use
+     * @param lastStateChangedAt the timestamp of the last state change
      */
-    var Task = function(taskState, incident, unit) {
+    var Task = function (taskState, incident, unit, lastStateChangedAt) {
       incident = parseInt(incident);
       unit = parseInt(unit);
 
@@ -64,6 +65,8 @@ define(["knockout", "data/save", "data/store/incidents", "data/store/units",
        */
       this.unit_id = (unit && !isNaN(unit)) ? unit : null;
 
+      this.stateChangedAt = ko.observable(lastStateChangedAt).extend({timeinterval: true});
+
       /**
        * Get the associated incident
        *
@@ -71,7 +74,7 @@ define(["knockout", "data/save", "data/store/incidents", "data/store/units",
        * @type ko.pureComputed
        * @returns {module:main/models/incident}
        */
-      this.incident = ko.pureComputed(function() {
+      this.incident = ko.pureComputed(function () {
         return incidents.get(this.incident_id);
       }, this);
 
@@ -82,7 +85,7 @@ define(["knockout", "data/save", "data/store/incidents", "data/store/units",
        * @type ko.pureComputed
        * @returns {module:main/models/unit}
        */
-      this.unit = ko.pureComputed(function() {
+      this.unit = ko.pureComputed(function () {
         return units.get(this.unit_id);
       }, this);
 
@@ -147,15 +150,15 @@ define(["knockout", "data/save", "data/store/incidents", "data/store/units",
        * @type ko.pureComputed
        * @returns {String}
        */
-      this.localizedTaskState = ko.pureComputed(function() {
+      this.localizedTaskState = ko.pureComputed(function () {
         if (this.taskState()) {
           return _("task.state." + this.taskState().toLowerCase().escapeHTML());
         }
         return "";
       }, this);
 
-      this.taskStateDependentTitle = ko.pureComputed(function() {
-        const incidentRef = this.incident();
+      this.taskStateDependentTitle = ko.pureComputed(function () {
+        var incidentRef = this.incident();
 
         if ((incidentRef.isTask() || incidentRef.isTransport()) && (this.isZAO || this.isAAO)) {
           return incidentRef.ao.isEmpty() ? incidentRef.assignedTitle() : incidentRef.typeChar() + ": " + incidentRef.ao.info();
@@ -171,17 +174,17 @@ define(["knockout", "data/save", "data/store/incidents", "data/store/units",
        * @type ko.pureComputed
        * @returns {string} The text
        */
-      this.taskText = ko.pureComputed(function() {
-        const i = this.incident();
+      this.taskText = ko.pureComputed(function () {
+        var i = this.incident();
         if (i === null) {
           return this.localizedTaskState();
         }
         if (i.isTask() || i.isTransport() || i.isRelocation() || i.isToHome()) {
-          return i.typeChar() + ": " + this.localizedTaskState() + " (" + i.stateChange.interval() + "')";
+          return i.typeChar() + ": " + this.localizedTaskState() + " (" + this.stateChangedAt.interval() + "')";
         }
 
         if (i.isStandby() || i.isHoldPosition()) {
-          return i.typeChar() + (this.isAssigned() ? ": " + this.localizedTaskState() : "") + " (" + i.stateChange.interval() + "')";
+          return i.typeChar() + (this.isAssigned() ? ": " + this.localizedTaskState() : "") + " (" + this.stateChangedAt.interval() + "')";
         }
 
         return "";
@@ -195,7 +198,7 @@ define(["knockout", "data/save", "data/store/incidents", "data/store/units",
        * @returns {void}
        */
       nextState: {
-        value: function() {
+        value: function () {
           var incident = this.incident(), unit = this.unit();
 
           if (!incident || !unit) {
@@ -325,7 +328,7 @@ define(["knockout", "data/save", "data/store/incidents", "data/store/units",
           confirm.show({
             title: "<strong>" + unit.call.escapeHTML() + "</strong>" + " - " + incident.typeString(),
             info_text: info, button_text: button, elements: elements,
-            save: function() {
+            save: function () {
               clientLogger.debugLog("#userInput Confirming task state transition for new state '" + nextState + "'.");
               save({incident_id: incident.id, unit_id: unit.id, state: nextState}, "incident/setToState.json");
             }
@@ -339,7 +342,7 @@ define(["knockout", "data/save", "data/store/incidents", "data/store/units",
        * @returns {void}
        */
       destroy: {
-        value: function() {
+        value: function () {
           destroy(this);
         }
       }

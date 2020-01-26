@@ -22,7 +22,7 @@ class PatientAutoDone implements IncidentDoneHook {
   @Override
   public void call(final Incident incident, final NotifyList notify) {
     if (incident.getType() == IncidentType.Transport) {
-      LOG.debug("Auto-discharging patient {} after transport of incident {}.", incident.getPatient(), incident);
+      LOG.debug("Auto-discharging patient '{}' after transport of incident '{}'.", incident.getPatient(), incident);
       patientService.discharge(incident.getPatient(), notify);
     }
   }

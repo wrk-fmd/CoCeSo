@@ -83,7 +83,7 @@ define([
           return this.type === constants.Incident.type.relocation ? _("incident.relocation.add") : _("incident.add");
         }
 
-        const dialogTitlePrefix = this.type === constants.Incident.type.relocation ? _("incident.relocation.edit") : _("incident.edit");
+        var dialogTitlePrefix = this.type === constants.Incident.type.relocation ? _("incident.relocation.edit") : _("incident.edit");
         if (!this.model()) {
           return dialogTitlePrefix;
         }

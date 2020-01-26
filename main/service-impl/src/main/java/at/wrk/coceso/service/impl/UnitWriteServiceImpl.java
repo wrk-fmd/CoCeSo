@@ -8,7 +8,7 @@ import at.wrk.coceso.entity.point.Point;
 import at.wrk.coceso.entityevent.EntityEventFactory;
 import at.wrk.coceso.entityevent.EntityEventHandler;
 import at.wrk.coceso.entityevent.EntityEventListener;
-import at.wrk.coceso.entityevent.impl.NotifyList;
+import at.wrk.coceso.entityevent.impl.NotifyListExecutor;
 import at.wrk.coceso.service.ContainerWriteService;
 import at.wrk.coceso.service.UnitWriteService;
 import at.wrk.coceso.service.internal.UnitServiceInternal;
@@ -31,18 +31,18 @@ class UnitWriteServiceImpl implements UnitWriteService {
   @Autowired
   private ContainerWriteService containerWriteService;
 
-  private final EntityEventFactory eef;
   private final EntityEventHandler<Unit> entityEventHandler;
   private final EntityEventListener<Unit> mainEventListener;
   private final EntityEventListener<Unit> editEventListener;
+  private final NotifyListExecutor notifyListExecutor;
 
   @Autowired
-  public UnitWriteServiceImpl(EntityEventFactory eef) {
-    this.eef = eef;
+  public UnitWriteServiceImpl(final EntityEventFactory eef, final NotifyListExecutor notifyListExecutor) {
     entityEventHandler = eef.getEntityEventHandler(Unit.class);
 
     mainEventListener = eef.getWebSocketWriter("/topic/unit/main/%d", JsonViews.Main.class, null);
     editEventListener = eef.getWebSocketWriter("/topic/unit/edit/%d", JsonViews.Edit.class, null);
+    this.notifyListExecutor = notifyListExecutor;
     entityEventHandler.addListener(mainEventListener);
     entityEventHandler.addListener(editEventListener);
   }
@@ -55,13 +55,13 @@ class UnitWriteServiceImpl implements UnitWriteService {
 
   @Override
   public Unit updateMain(final Unit unit) {
-    return NotifyList.execute(n -> unitService.updateMain(unit, n), eef);
+    return notifyListExecutor.execute(n -> unitService.updateMain(unit, n));
   }
 
   @Override
   public Unit updateEdit(final Unit unit, final Concern concern) {
     boolean isNew = unit.getId() == null;
-    Unit u = NotifyList.execute(n -> unitService.updateEdit(unit, concern, n), eef);
+    Unit u = notifyListExecutor.execute(n -> unitService.updateEdit(unit, concern, n));
     if (isNew) {
       containerWriteService.notifyRoot(concern);
     }
@@ -72,7 +72,7 @@ class UnitWriteServiceImpl implements UnitWriteService {
   public List<Integer> batchCreate(final BatchUnits batch, final Concern concern) {
     Optional.ofNullable(batch.getHome())
             .ifPresent(Point::tryToResolveExternalData);
-    List<Integer> created = NotifyList.execute(n -> unitService.batchCreate(batch, concern, n), eef);
+    List<Integer> created = notifyListExecutor.execute(n -> unitService.batchCreate(batch, concern, n));
     containerWriteService.notifyRoot(concern);
     return created;
   }
@@ -85,32 +85,32 @@ class UnitWriteServiceImpl implements UnitWriteService {
 
   @Override
   public void sendHome(final int unitId) {
-    NotifyList.executeVoid(n -> unitService.sendHome(unitId, n), eef);
+    notifyListExecutor.executeVoid(n -> unitService.sendHome(unitId, n));
   }
 
   @Override
   public void holdPosition(final int unitId) {
-    NotifyList.executeVoid(n -> unitService.holdPosition(unitId, n), eef);
+    notifyListExecutor.executeVoid(n -> unitService.holdPosition(unitId, n));
   }
 
   @Override
   public void standby(final int unitId) {
-    NotifyList.executeVoid(n -> unitService.standby(unitId, n), eef);
+    notifyListExecutor.executeVoid(n -> unitService.standby(unitId, n));
   }
 
   @Override
   public void removeCrew(final int unitId, final int userId) {
-    NotifyList.executeVoid(n -> unitService.removeCrew(unitId, userId, n), eef);
+    notifyListExecutor.executeVoid(n -> unitService.removeCrew(unitId, userId, n));
   }
 
   @Override
   public void addCrew(final int unitId, final int userId) {
-    NotifyList.executeVoid(n -> unitService.addCrew(unitId, userId, n), eef);
+    notifyListExecutor.executeVoid(n -> unitService.addCrew(unitId, userId, n));
   }
 
   @Override
   public int importUnits(final String data, final Concern concern) {
-    int imported = NotifyList.execute(n -> unitService.importUnits(data, concern, n), eef);
+    int imported = notifyListExecutor.execute(n -> unitService.importUnits(data, concern, n));
     containerWriteService.notifyRoot(concern);
     return imported;
   }

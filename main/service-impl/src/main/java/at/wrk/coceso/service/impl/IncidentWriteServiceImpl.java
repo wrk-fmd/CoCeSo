@@ -6,7 +6,7 @@ import at.wrk.coceso.entity.helper.JsonViews;
 import at.wrk.coceso.entityevent.EntityEventFactory;
 import at.wrk.coceso.entityevent.EntityEventHandler;
 import at.wrk.coceso.entityevent.EntityEventListener;
-import at.wrk.coceso.entityevent.impl.NotifyList;
+import at.wrk.coceso.entityevent.impl.NotifyListExecutor;
 import at.wrk.coceso.service.IncidentWriteService;
 import at.wrk.coceso.service.internal.IncidentServiceInternal;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,19 +24,20 @@ class IncidentWriteServiceImpl implements IncidentWriteService {
     private static final Function<Incident, Integer> INCIDENT_DELETE_FUNCTION = incident -> (incident.isRelevant() ? null : incident.getId());
 
     private final IncidentServiceInternal incidentService;
-    private final EntityEventFactory entityEventFactory;
     private final EntityEventHandler<Incident> entityEventHandler;
     private final EntityEventListener<Incident> entityEventListener;
+    private final NotifyListExecutor notifyListExecutor;
 
     @Autowired
     public IncidentWriteServiceImpl(
             final EntityEventFactory entityEventFactory,
-            final IncidentServiceInternal incidentService) {
-        this.entityEventFactory = entityEventFactory;
+            final IncidentServiceInternal incidentService,
+            final NotifyListExecutor notifyListExecutor) {
         this.incidentService = incidentService;
 
         this.entityEventHandler = entityEventFactory.getEntityEventHandler(Incident.class);
         this.entityEventListener = entityEventFactory.getWebSocketWriter("/topic/incident/main/%d", JsonViews.Main.class, INCIDENT_DELETE_FUNCTION);
+        this.notifyListExecutor = notifyListExecutor;
 
         this.entityEventHandler.addListener(entityEventListener);
     }
@@ -48,11 +49,11 @@ class IncidentWriteServiceImpl implements IncidentWriteService {
 
     @Override
     public Incident update(final Incident incident, final Concern concern) {
-        return NotifyList.execute(notifyList -> incidentService.update(incident, concern, notifyList), entityEventFactory);
+        return notifyListExecutor.execute(notifyList -> incidentService.update(incident, concern, notifyList));
     }
 
     @Override
     public void assignPatient(final int incidentId, final int patientId) {
-        NotifyList.executeVoid(notifyList -> incidentService.assignPatient(incidentId, patientId, notifyList), entityEventFactory);
+        notifyListExecutor.executeVoid(notifyList -> incidentService.assignPatient(incidentId, patientId, notifyList));
     }
 }

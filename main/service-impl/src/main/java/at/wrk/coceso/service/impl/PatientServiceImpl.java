@@ -5,10 +5,6 @@ import at.wrk.coceso.entity.Patient;
 import at.wrk.coceso.entity.enums.Errors;
 import at.wrk.coceso.entity.enums.LogEntryType;
 import at.wrk.coceso.entity.helper.Changes;
-import at.wrk.coceso.entity.helper.JsonViews;
-import at.wrk.coceso.entityevent.EntityEventFactory;
-import at.wrk.coceso.entityevent.EntityEventHandler;
-import at.wrk.coceso.entityevent.EntityEventListener;
 import at.wrk.coceso.entityevent.impl.NotifyList;
 import at.wrk.coceso.exceptions.ErrorsException;
 import at.wrk.coceso.repository.PatientRepository;
@@ -25,7 +21,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PreDestroy;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
@@ -45,26 +40,15 @@ class PatientServiceImpl implements PatientServiceInternal {
   @Autowired
   private HookService hookService;
 
-  private final EntityEventHandler<Patient> patientEventHandler;
-  private final EntityEventListener<Patient> entityEventListener;
   private final DataAccessLogger dataAccessLogger;
   private final AuthenicatedUserProvider authenicatedUserProvider;
 
   @Autowired
   public PatientServiceImpl(
-          final EntityEventFactory entityEventFactory,
           final DataAccessLogger dataAccessLogger,
           final AuthenicatedUserProvider authenicatedUserProvider) {
-    patientEventHandler = entityEventFactory.getEntityEventHandler(Patient.class);
-    entityEventListener = entityEventFactory.getWebSocketWriter("/topic/patient/main/%d", JsonViews.Main.class, null);
     this.dataAccessLogger = dataAccessLogger;
     this.authenicatedUserProvider = authenicatedUserProvider;
-    patientEventHandler.addListener(entityEventListener);
-  }
-
-  @PreDestroy
-  public void destroy() {
-    patientEventHandler.removeListener(entityEventListener);
   }
 
   @Override
@@ -108,13 +92,13 @@ class PatientServiceImpl implements PatientServiceInternal {
       patient = prepareForCreate(patient, concern, changes);
       patient = patientRepository.saveAndFlush(patient);
       logService.logAuto(LogEntryType.PATIENT_CREATE, patient.getConcern(), patient, changes);
-      notify.add(patient);
+      notify.addPatient(patient);
     } else {
       patient = prepareForUpdate(patient, changes);
       if (!changes.isEmpty()) {
         patient = patientRepository.saveAndFlush(patient);
         logService.logAuto(LogEntryType.PATIENT_UPDATE, patient.getConcern(), patient, changes);
-        notify.add(patient);
+        notify.addPatient(patient);
       }
     }
 
@@ -139,7 +123,7 @@ class PatientServiceImpl implements PatientServiceInternal {
     if (!changes.isEmpty()) {
       patient = patientRepository.saveAndFlush(patient);
       logService.logAuto(LogEntryType.PATIENT_UPDATE, patient.getConcern(), patient, changes);
-      notify.add(patient);
+      notify.addPatient(patient);
     }
 
     hookService.callPatientDone(patient, notify);
@@ -161,7 +145,7 @@ class PatientServiceImpl implements PatientServiceInternal {
       // Save and notify
       patient = patientRepository.saveAndFlush(patient);
       logService.logAuto(LogEntryType.PATIENT_UPDATE, patient.getConcern(), patient, changes);
-      notify.add(patient);
+      notify.addPatient(patient);
     }
 
     hookService.callPatientDone(patient, notify);
@@ -169,7 +153,7 @@ class PatientServiceImpl implements PatientServiceInternal {
   }
 
   private Patient prepareForCreate(final Patient patient, final Concern concern, final Changes changes) {
-    LOG.debug("{}: Creating patient: {}", authenicatedUserProvider.getAuthenticatedUser(), patient);
+    LOG.debug("{}: Creating patient: '{}'", authenicatedUserProvider.getAuthenticatedUser(), patient);
 
     if (Concern.isClosed(concern)) {
       LOG.warn("Patient cannot be created without open concern!");

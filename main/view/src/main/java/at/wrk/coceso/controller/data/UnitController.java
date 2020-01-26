@@ -49,7 +49,7 @@ public class UnitController {
     @RequestMapping(value = "main", produces = "application/json", method = RequestMethod.GET)
     public SequencedResponse<List<Unit>> getForMain(final @ActiveConcern Concern concern) {
         return new SequencedResponse<>(entityEventHandler.getHver(), entityEventHandler.getSeq(concern.getId()),
-                Initializer.init(unitService.getAll(concern), Unit::getIncidents));
+                Initializer.init(unitService.getAll(concern), Unit::getIncidents, Unit::getIncidentStateChangedAtMap));
     }
 
     @PreAuthorize("@auth.hasAccessLevel('Edit')")

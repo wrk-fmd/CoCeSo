@@ -32,7 +32,7 @@ define(["jquery", "utils/conf"], function ($, conf) {
     });
   }
 
-  const utilFunctions = {};
+  var utilFunctions = {};
 
   utilFunctions.debugLog = function (message) {
     sendLogMessage(message, "debug")

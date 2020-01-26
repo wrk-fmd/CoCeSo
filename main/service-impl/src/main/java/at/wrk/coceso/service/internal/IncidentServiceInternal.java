@@ -8,11 +8,7 @@ import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entity.point.Point;
 import at.wrk.coceso.entityevent.impl.NotifyList;
 import at.wrk.coceso.service.IncidentService;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-@Service
-@Transactional
 public interface IncidentServiceInternal extends IncidentService {
 
   Incident update(Incident incident, Concern concern, NotifyList notify);

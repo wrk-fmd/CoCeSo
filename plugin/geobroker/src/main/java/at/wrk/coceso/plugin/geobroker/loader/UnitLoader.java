@@ -27,7 +27,7 @@ public class UnitLoader {
         return openConcerns.stream()
                 .map(unitRepository::findByConcern)
                 .flatMap(Collection::stream)
-                .map(unit -> Initializer.init(unit, Unit::getIncidents, Unit::getConcern))
+                .map(unit -> Initializer.init(unit, Unit::getIncidents, Unit::getConcern, Unit::getIncidentStateChangedAtMap))
                 .collect(toList());
     }
 }

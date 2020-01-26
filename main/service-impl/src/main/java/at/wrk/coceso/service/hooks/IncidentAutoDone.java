@@ -63,7 +63,7 @@ class IncidentAutoDone implements TaskStateHook {
       incident.getUnits().clear();
     }
 
-    notify.add(incident);
+    notify.addIncident(incident);
     hookService.callIncidentDone(incident, notify);
 
     return taskState;

@@ -101,10 +101,10 @@ class TaskServiceImpl implements TaskServiceInternal {
         }
 
         if (updatedUnit != null) {
-            updatedUnit = unitRepository.saveAndFlush(updatedUnit);
+            unitRepository.saveAndFlush(updatedUnit);
 
-            notify.add(incident);
-            notify.add(updatedUnit);
+            notify.addIncident(incident);
+            notify.addUnit(updatedUnit.getId());
         }
     }
 
@@ -117,8 +117,8 @@ class TaskServiceImpl implements TaskServiceInternal {
         }
 
         Unit updatedUnit = unitRepository.saveAndFlush(unit);
-        notify.add(incident);
-        notify.add(updatedUnit);
+        notify.addIncident(incident);
+        notify.addUnit(updatedUnit.getId());
     }
 
     private Unit assign(final Incident incident, final Unit unit, TaskState state, final NotifyList notify) {
@@ -152,7 +152,7 @@ class TaskServiceImpl implements TaskServiceInternal {
         hookService.callTaskStateChanged(incident, unit, TaskState.Detached, notify);
         unit.removeIncident(incident);
 
-        notify.add(incident);
+        notify.addIncident(incident);
     }
 
     private boolean isAutoDetachApplicable(final Incident inc) {

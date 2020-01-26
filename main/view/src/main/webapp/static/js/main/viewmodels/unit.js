@@ -142,6 +142,7 @@ define(["knockout", "./form", "../models/task", "../models/unit",
           var local = ko.utils.arrayFirst(self.incidents.peek(), function(item) {
             return (item.incident_id === task.incident_id);
           });
+
           if (local) {
             if (local.taskState.server !== task.taskState) {
               //Local element exists, but does not match global model: Recreate local taskState observable
@@ -151,7 +152,7 @@ define(["knockout", "./form", "../models/task", "../models/unit",
             }
           } else {
             //Local task does not exist at all: Create complete Task model
-            local = new Task(task.taskState.peek(), task.incident_id, task.unit_id);
+            local = new Task(task.taskState.peek(), task.incident_id, task.unit_id, task.stateChangedAt.peek());
             local.taskState.extend({observeChanges: {server: task.taskState}});
             local.changed = local.taskState.changed;
             local.reset = local.taskState.reset;

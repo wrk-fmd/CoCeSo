@@ -55,8 +55,7 @@ class UnitAutoPosition implements TaskStateHook {
 
     unitRepository.saveAndFlush(unit);
     logService.logAuto(LogEntryType.UNIT_AUTOSET_POSITION, unit.getConcern(), unit, incident, state, changes);
-    notify.add(unit);
-
+    notify.addUnit(unit.getId());
     return state;
   }
 

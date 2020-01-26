@@ -5,81 +5,83 @@ import at.wrk.coceso.entity.Patient;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entityevent.EntityEventFactory;
 import at.wrk.coceso.entityevent.EntityEventHandler;
+import at.wrk.coceso.repository.UnitRepository;
 import at.wrk.coceso.utils.Initializer;
+import com.google.common.collect.ImmutableList;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
+@Component
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class NotifyList {
 
-  private final EntityEventFactory eef;
+  private final EntityEventFactory entityEventFactory;
+  private final UnitRepository unitRepository;
 
   private final Set<Incident> incidents;
   private final Set<Patient> patients;
-  private final Set<Unit> units;
+  private final Set<Integer> unitIds;
 
-  public NotifyList(EntityEventFactory eef) {
-    this.eef = eef;
+  @Autowired
+  public NotifyList(
+          final EntityEventFactory entityEventFactory,
+          final UnitRepository unitRepository) {
+    this.entityEventFactory = entityEventFactory;
+    this.unitRepository = unitRepository;
     incidents = new HashSet<>();
     patients = new HashSet<>();
-    units = new HashSet<>();
+    unitIds = new HashSet<>();
   }
 
-  public void add(Incident incident) {
+  public void addIncident(final Incident incident) {
     Initializer.init(incident, Incident::getConcern, Incident::getUnits, Incident::getPatient);
     incidents.add(incident);
   }
 
-  public void add(Patient patient) {
+  public void addPatient(final Patient patient) {
     Initializer.init(patient, Patient::getConcern, Patient::getIncidents);
     patients.add(patient);
   }
 
-  public void add(Unit unit) {
-    Initializer.init(unit, Unit::getConcern, Unit::getIncidents);
-    units.add(unit);
-  }
-
-  public void addAllIncidents(Collection<Incident> incidents) {
-    Initializer.init(incidents, Incident::getConcern, Incident::getUnits, Incident::getPatient);
-    incidents.addAll(incidents);
-  }
-
-  public void addAllPatients(Collection<Patient> patients) {
-    Initializer.init(patients, Patient::getConcern, Patient::getIncidents);
-    patients.addAll(patients);
-  }
-
-  public void addAllUnits(Collection<Unit> units) {
-    Initializer.init(units, Unit::getConcern, Unit::getIncidents);
-    units.addAll(units);
+  public void addUnit(final int unitId) {
+    unitIds.add(unitId);
   }
 
   public synchronized void sendNotifications() {
-    sendNotifications(incidents, Incident.class);
-    sendNotifications(patients, Patient.class);
-    sendNotifications(units, Unit.class);
+    List<Incident> incidentsToSend = copyCollectionAndClear(this.incidents);
+    sendNotifications(incidentsToSend, Incident.class);
+
+    List<Patient> patientsToSend = copyCollectionAndClear(this.patients);
+    sendNotifications(patientsToSend, Patient.class);
+
+    List<Integer> unitIdsToSend = copyCollectionAndClear(unitIds);
+    List<Unit> unitsToSend = loadUnitsByIdList(unitIdsToSend);
+    sendNotifications(unitsToSend, Unit.class);
   }
 
-  private synchronized <T> void sendNotifications(Set<T> entities, Class<T> type) {
-    EntityEventHandler<T> entityEventHandler = eef.getEntityEventHandler(type);
-    entities.forEach(e -> entityEventHandler.entityChanged(e));
-    entities.clear();
+  @Transactional
+  public List<Unit> loadUnitsByIdList(final List<Integer> unitIdsToSend) {
+    List<Unit> units = unitRepository.findByIdIn(unitIdsToSend);
+    units.forEach(unit -> Initializer.init(unit, Unit::getConcern, Unit::getIncidents, Unit::getIncidentStateChangedAtMap));
+    return units;
   }
 
-  public static <T> T execute(Function<NotifyList, T> function, EntityEventFactory eef) {
-    NotifyList notify = new NotifyList(eef);
-    T ret = function.apply(notify);
-    notify.sendNotifications();
-    return ret;
+  private synchronized <T> void sendNotifications(final Collection<T> entities, final Class<T> type) {
+    EntityEventHandler<T> entityEventHandler = entityEventFactory.getEntityEventHandler(type);
+    entities.forEach(entityEventHandler::entityChanged);
   }
 
-  public static void executeVoid(Consumer<NotifyList> function, EntityEventFactory eef) {
-    NotifyList notify = new NotifyList(eef);
-    function.accept(notify);
-    notify.sendNotifications();
+  private static <T> List<T> copyCollectionAndClear(final Collection<T> sourceCollection) {
+    List<T> immutableList = ImmutableList.copyOf(sourceCollection);
+    sourceCollection.clear();
+    return immutableList;
   }
-
 }

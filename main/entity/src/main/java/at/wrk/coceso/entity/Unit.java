@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.Immutable;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -121,8 +122,9 @@ public class Unit implements Serializable, Comparable<Unit>, ConcernBoundEntity 
     @Column(name = "state")
     private Map<Incident, TaskState> incidents;
 
+    @Immutable
     @JsonView({JsonViews.Main.class, JsonViews.ClientDetail.class})
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection
     @CollectionTable(name = "task", joinColumns = {@JoinColumn(name = "unit_fk")})
     @MapKeyColumn(name = "incident_fk")
     @Column(name = "lastStateChangeAt")
@@ -343,22 +345,13 @@ public class Unit implements Serializable, Comparable<Unit>, ConcernBoundEntity 
             incidents = new HashMap<>();
         }
 
-        if (incidentStateChangedAtMap == null) {
-            incidentStateChangedAtMap = new HashMap<>();
-        }
-
         incidents.put(incident, state);
-        incidentStateChangedAtMap.put(incident.getId(), OffsetDateTime.now());
         incident.addUnit(this, state);
     }
 
     public void removeIncident(Incident incident) {
         if (incidents != null) {
             incidents.remove(incident);
-        }
-
-        if (incidentStateChangedAtMap != null) {
-            incidentStateChangedAtMap.remove(incident.getId());
         }
 
         incident.removeUnit(this);

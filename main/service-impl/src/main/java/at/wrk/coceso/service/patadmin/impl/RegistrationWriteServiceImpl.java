@@ -2,8 +2,7 @@ package at.wrk.coceso.service.patadmin.impl;
 
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Patient;
-import at.wrk.coceso.entityevent.EntityEventFactory;
-import at.wrk.coceso.entityevent.impl.NotifyList;
+import at.wrk.coceso.entityevent.impl.NotifyListExecutor;
 import at.wrk.coceso.form.RegistrationForm;
 import at.wrk.coceso.service.patadmin.RegistrationWriteService;
 import at.wrk.coceso.service.patadmin.internal.RegistrationServiceInternal;
@@ -16,19 +15,22 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(propagation = Propagation.NOT_SUPPORTED)
 class RegistrationWriteServiceImpl implements RegistrationWriteService {
 
-    @Autowired
-    private RegistrationServiceInternal registrationService;
+    private final RegistrationServiceInternal registrationService;
+    private final NotifyListExecutor notifyListExecutor;
 
     @Autowired
-    private EntityEventFactory entityEventFactory;
+    public RegistrationWriteServiceImpl(final NotifyListExecutor notifyListExecutor, final RegistrationServiceInternal registrationService) {
+        this.notifyListExecutor = notifyListExecutor;
+        this.registrationService = registrationService;
+    }
 
     @Override
     public Patient takeover(final int incidentId) {
-        return NotifyList.execute(n -> registrationService.takeover(incidentId, n), entityEventFactory);
+        return notifyListExecutor.execute(n -> registrationService.takeover(incidentId, n));
     }
 
     @Override
     public Patient update(final RegistrationForm form, final Concern concern) {
-        return NotifyList.execute(n -> registrationService.update(form, concern, n), entityEventFactory);
+        return notifyListExecutor.execute(n -> registrationService.update(form, concern, n));
     }
 }

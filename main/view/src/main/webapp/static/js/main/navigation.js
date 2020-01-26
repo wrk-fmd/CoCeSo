@@ -39,7 +39,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
        * Open the incidents overview
        *
        * @param {Object} options
-       * @param {String} position
+       * @param {String} [position]
        */
       openIncidents: function(options, position) {
         clientLogger.debugLog("#userInput Opening window 'incident list'.");
@@ -55,7 +55,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
        * Open a specific incident
        *
        * @param {Object} data Additional incident data
-       * @param {String} position
+       * @param {String} [position]
        */
       openIncident: function(data, position) {
         clientLogger.debugLog("#userInput Opening window 'incident form'.");
@@ -70,7 +70,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
        * Open the units overview
        *
        * @param {Object} options Viewmodel options
-       * @param {String} position
+       * @param {String} [position]
        */
       openUnits: function(options, position) {
         clientLogger.debugLog("#userInput Opening window 'unit list'.");
@@ -85,7 +85,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
       /**
        * Open the units overview with hierarchical View
        *
-       * @param {String} position
+       * @param {String} [position]
        */
       openHierarchyUnits: function(position) {
         clientLogger.debugLog("#userInput Opening window 'unit hierarchy'.");
@@ -99,8 +99,8 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
       /**
        * Open the unit edit Window
        *
-       * @param {Object} data Additional unit data
-       * @param {String} position
+       * @param {Object} [data] Additional unit data
+       * @param {String} [position]
        */
       openUnit: function(data, position) {
         clientLogger.debugLog("#userInput Opening window 'unit form'.");
@@ -115,7 +115,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
        * Open the unit edit Window
        *
        * @param {integer} id Unit id
-       * @param {String} position
+       * @param {String} [position]
        */
       openUnitDetail: function(id, position) {
         clientLogger.debugLog("#userInput Opening window 'unit detail'.");
@@ -131,8 +131,8 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
       /**
        * Open Add-Log Window
        *
-       * @param {Object} data Additional log data
-       * @param {String} position
+       * @param {Object} [data] Additional log data
+       * @param {String} [position]
        */
       openLogAdd: function(data, position) {
         clientLogger.debugLog("#userInput Opening window 'add new log entry'.");
@@ -146,8 +146,8 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
       /**
        * Open a list of log entries
        *
-       * @param {Object} options Viewmodel options
-       * @param {String} position
+       * @param {Object} [options] Viewmodel options
+       * @param {String} [position]
        */
       openLogs: function(options, position) {
         clientLogger.debugLog("#userInput Opening window 'concern log'.");
@@ -163,7 +163,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
        * Open the patient list Window
        *
        * @param {Object} options Additional options
-       * @param {String} position
+       * @param {String} [position]
        */
       openPatients: function(options, position) {
         clientLogger.debugLog("#userInput Opening window 'patient list'.");
@@ -179,7 +179,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
        * Open the patient edit Window
        *
        * @param {Object} data Additional patient data
-       * @param {String} position
+       * @param {String} [position]
        */
       openPatient: function(data, position) {
         clientLogger.debugLog("#userInput Opening window 'patient details'.");
@@ -204,7 +204,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
       /**
        * Open the radio Window
        *
-       * @param {String} position
+       * @param {String} [position]
        */
       openRadio: function(position) {
         clientLogger.debugLog("#userInput Opening window 'radio history'.");
@@ -219,7 +219,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
        * Open the map window
        *
        * @param {Object} options Viewmodel options
-       * @param {String} position
+       * @param {String} [position]
        */
       openMap: function(options, position) {
         clientLogger.debugLog("#userInput Opening window 'situation map'.");
@@ -236,7 +236,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
        *
        * @param {string} title
        * @param {string} src
-       * @param {String} position
+       * @param {String} [position]
        */
       openStatic: function(title, src, position) {
         taskbar.winman("addWindow", {
@@ -251,7 +251,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
        *
        * @param {string} title
        * @param {string} src Full URL to content
-       * @param {String} position
+       * @param {String} [position]
        */
       openExternalStatic: function(title, src, position) {
         taskbar.winman("addWindow", {

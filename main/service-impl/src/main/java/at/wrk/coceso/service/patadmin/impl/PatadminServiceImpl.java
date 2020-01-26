@@ -163,11 +163,11 @@ class PatadminServiceImpl implements PatadminServiceInternal {
             if (!changes.isEmpty()) {
                 LOG.debug("{}: Triggered update of unit #{} with changes {}.", authenicatedUserProvider.getAuthenticatedUser(), unit.getId(), changes);
                 logService.logAuto(LogEntryType.UNIT_UPDATE, unit.getConcern(), unit, null, changes);
-                notify.add(unit);
+                notify.addUnit(unit.getId());
                 unitAfterUpdate = unit;
             } else {
                 LOG.debug(
-                        "{}: Triggered update of unit #{} without any effective changes. Update is skipped.",
+                        "{}: Triggered update of unit #{} (Treatment group) without any effective changes. Update is skipped.",
                         authenicatedUserProvider.getAuthenticatedUser(),
                         unit.getId());
                 unitAfterUpdate = null;

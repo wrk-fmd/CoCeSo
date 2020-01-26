@@ -152,7 +152,7 @@ class IncidentServiceImpl implements IncidentServiceInternal {
 
                         i = incidentRepository.saveAndFlush(i);
                         logService.logAuto(LogEntryType.INCIDENT_AUTO_DONE, i.getConcern(), null, i, changes);
-                        notify.add(i);
+                        notify.addIncident(i);
 
                         hookService.callIncidentDone(i, notify);
                     });
@@ -187,7 +187,7 @@ class IncidentServiceImpl implements IncidentServiceInternal {
 
         incident = incidentRepository.saveAndFlush(incident);
         logService.logAuto(LogEntryType.INCIDENT_CREATE, incident.getConcern(), null, incident, changes);
-        notify.add(incident);
+        notify.addIncident(incident);
 
         taskService.uncheckedChangeState(incident, group, TaskState.AAO, notify);
         logService.logAuto(LogEntryType.UNIT_ASSIGN, incident.getConcern(), group, incident, TaskState.AAO);
@@ -219,7 +219,7 @@ class IncidentServiceImpl implements IncidentServiceInternal {
         incident.setPatient(patient);
         Incident updatedIncident = incidentRepository.saveAndFlush(incident);
         logService.logAuto(LogEntryType.PATIENT_ASSIGN, updatedIncident.getConcern(), updatedIncident, patient);
-        notify.add(updatedIncident);
+        notify.addIncident(updatedIncident);
     }
 
     private void postProcessUpdatedIncident(final NotifyList notify, final Incident updatedIncident, final Map<Unit, TaskState> units) {
@@ -233,7 +233,7 @@ class IncidentServiceImpl implements IncidentServiceInternal {
     private Incident createIncident(final Incident incident, final Concern concern, final NotifyList notify, final Changes changes) {
         Incident createdIncident = incidentRepository.saveAndFlush(prepareForCreate(incident, concern, changes));
         logService.logAuto(LogEntryType.INCIDENT_CREATE, createdIncident.getConcern(), null, createdIncident, changes);
-        notify.add(createdIncident);
+        notify.addIncident(createdIncident);
         return createdIncident;
     }
 
@@ -312,7 +312,7 @@ class IncidentServiceImpl implements IncidentServiceInternal {
         if (!changes.isEmpty()) {
             updatedIncident = incidentRepository.saveAndFlush(updatedIncident);
             logService.logAuto(LogEntryType.INCIDENT_UPDATE, updatedIncident.getConcern(), null, updatedIncident, changes);
-            notify.add(updatedIncident);
+            notify.addIncident(updatedIncident);
         }
         return updatedIncident;
     }
