@@ -108,7 +108,7 @@ public class DashboardController {
   private void unitList(ModelMap map, Concern concern) {
     map.addAttribute("template", "unit_list");
     map.addAttribute("unit_menu", "active");
-    map.addAttribute("units", Initializer.init(unitService.getAllSorted(concern), Unit::getIncidents));
+    map.addAttribute("units", Initializer.init(unitService.getAllSorted(concern), Unit::getIncidents, Unit::getIncidentStateChangedAtMap));
   }
 
   private void patientList(ModelMap map, Concern concern) {

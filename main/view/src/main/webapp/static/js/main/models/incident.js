@@ -83,7 +83,7 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
               //Item exists, just set the new TaskState
               task.taskState(taskState);
             } else {
-              //Create new Task model
+              //Create new Task model. lastStateChangedAt is not needed here.
               self.units.push(new Task(taskState, self.id, unit));
             }
           });

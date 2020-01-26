@@ -30,14 +30,14 @@ class IncidentRemoveUnits implements IncidentDoneHook {
     if (incident.getUnits() != null && !incident.getUnits().isEmpty()) {
       ImmutableSet.copyOf(incident.getUnits().keySet())
           .forEach(unit -> {
-            LOG.debug("Auto-detach unit #{}, incident #{}", unit.getId(), incident.getId());
+            LOG.debug("Auto-detach unit #{} from incident #{}", unit.getId(), incident.getId());
             logService.logAuto(LogEntryType.UNIT_AUTO_DETACH, unit.getConcern(), unit, incident, TaskState.Detached);
             unit.removeIncident(incident);
-            notify.add(unit);
+            notify.addUnit(unit.getId());
           });
 
       incidentRepository.saveAndFlush(incident);
-      notify.add(incident);
+      notify.addIncident(incident);
     }
   }
 

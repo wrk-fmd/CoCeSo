@@ -26,6 +26,7 @@ import at.wrk.coceso.service.internal.TaskServiceInternal;
 import at.wrk.coceso.service.internal.UnitServiceInternal;
 import at.wrk.coceso.utils.AuthenicatedUserProvider;
 import at.wrk.coceso.utils.Initializer;
+import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,7 +77,8 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
 
   @Override
   public Unit getById(int id) {
-    return unitRepository.findOne(id);
+    // See https://stackoverflow.com/a/53852146. 'findOne()' uses cached entities with outdated data.
+    return unitRepository.findByIdIn(ImmutableList.of(id)).stream().findFirst().orElse(null);
   }
 
   @Override
@@ -118,7 +120,6 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
       throw new ErrorsException(Errors.UnitCreateNotAllowed);
     }
 
-
     Map<Incident, TaskState> incidents = unit.getIncidents();
 
     Unit save = getById(unit.getId());
@@ -152,7 +153,7 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
 
     final Unit updatedUnit = unitRepository.saveAndFlush(save);
     logService.logAuto(LogEntryType.UNIT_UPDATE, updatedUnit.getConcern(), updatedUnit, null, changes);
-    notify.add(updatedUnit);
+    notify.addUnit(updatedUnit.getId());
 
     if (incidents != null) {
       incidents.forEach((incident, state) -> taskService.changeState(incidentService.getById(incident.getId()), updatedUnit, state, notify));
@@ -279,7 +280,7 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
     Unit updatedUnit = unitRepository.saveAndFlush(save);
     logService.logAuto(LogEntryType.UNIT_CREATE, updatedUnit.getConcern(), updatedUnit, null, changes);
 
-    notify.add(updatedUnit);
+    notify.addUnit(updatedUnit.getId());
 
     return updatedUnit;
   }
@@ -391,7 +392,7 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
 
     unit.removeCrew(user);
     unitRepository.saveAndFlush(unit);
-    notify.add(unit);
+    notify.addUnit(unit.getId());
   }
 
   @Override
@@ -407,7 +408,7 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
 
     unit.addCrew(user);
     unitRepository.saveAndFlush(unit);
-    notify.add(unit);
+    notify.addUnit(unit.getId());
   }
 
   @Override
@@ -418,7 +419,7 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
     units.forEach((unit, changes) -> {
       Unit savedUnit = unitRepository.saveAndFlush(unit);
       logService.logAuto(LogEntryType.UNIT_CREATE, savedUnit.getConcern(), savedUnit, null, changes);
-      notify.add(savedUnit);
+      notify.addUnit(savedUnit.getId());
     });
     return units.size();
   }

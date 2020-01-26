@@ -41,16 +41,13 @@ class EntityEventHandlerImpl<T> implements EntityEventHandler<T> {
 
   @Override
   public synchronized void entityChanged(T entity, int concern) {
-    int cseq = seq.getOrDefault(concern, 0) + 1;
-
-    seq.put(concern, cseq);
+    int cseq = getNextCSeq(concern);
     listeners.parallelStream().forEach(l -> l.entityChanged(entity, concern, hver, cseq));
   }
 
   @Override
   public synchronized void entityDeleted(int id, int concern) {
-    int cseq = seq.getOrDefault(concern, 0) + 1;
-    seq.put(concern, cseq);
+    int cseq = getNextCSeq(concern);
     listeners.parallelStream().forEach(l -> l.entityDeleted(id, concern, hver, cseq));
   }
 
@@ -73,6 +70,12 @@ class EntityEventHandlerImpl<T> implements EntityEventHandler<T> {
   @Override
   public int getSeq(int concern) {
     return seq.getOrDefault(concern, 0);
+  }
+
+  private synchronized int getNextCSeq(final int concern) {
+    int cseq = seq.getOrDefault(concern, 0) + 1;
+    seq.put(concern, cseq);
+    return cseq;
   }
 
 }

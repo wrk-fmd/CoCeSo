@@ -4,11 +4,7 @@ import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entityevent.impl.NotifyList;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-@Service
-@Transactional
 public interface TaskServiceInternal {
 
   void assignUnit(int incidentId, int unitId, NotifyList notify);

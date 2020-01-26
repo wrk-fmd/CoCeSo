@@ -5,11 +5,9 @@ import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.helper.BatchUnits;
 import at.wrk.coceso.entityevent.impl.NotifyList;
 import at.wrk.coceso.service.UnitService;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Transactional
 public interface UnitServiceInternal extends UnitService {
 
     Unit updateMain(Unit unit, NotifyList notify);

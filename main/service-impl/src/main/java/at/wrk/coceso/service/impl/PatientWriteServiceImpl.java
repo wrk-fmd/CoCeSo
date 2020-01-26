@@ -6,7 +6,7 @@ import at.wrk.coceso.entity.helper.JsonViews;
 import at.wrk.coceso.entityevent.EntityEventFactory;
 import at.wrk.coceso.entityevent.EntityEventHandler;
 import at.wrk.coceso.entityevent.EntityEventListener;
-import at.wrk.coceso.entityevent.impl.NotifyList;
+import at.wrk.coceso.entityevent.impl.NotifyListExecutor;
 import at.wrk.coceso.service.PatientWriteService;
 import at.wrk.coceso.service.internal.PatientServiceInternal;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,15 +23,15 @@ class PatientWriteServiceImpl implements PatientWriteService {
   @Autowired
   private PatientServiceInternal patientService;
 
-  private final EntityEventFactory eef;
   private final EntityEventHandler<Patient> patientEventHandler;
   private final EntityEventListener<Patient> entityEventListener;
+  private final NotifyListExecutor notifyListExecutor;
 
   @Autowired
-  public PatientWriteServiceImpl(EntityEventFactory eef) {
-    this.eef = eef;
-    patientEventHandler = eef.getEntityEventHandler(Patient.class);
-    entityEventListener = eef.getWebSocketWriter("/topic/patient/main/%d", JsonViews.Main.class, null);
+  public PatientWriteServiceImpl(final EntityEventFactory entityEventFactory, final NotifyListExecutor notifyListExecutor) {
+    patientEventHandler = entityEventFactory.getEntityEventHandler(Patient.class);
+    entityEventListener = entityEventFactory.getWebSocketWriter("/topic/patient/main/%d", JsonViews.Main.class, null);
+    this.notifyListExecutor = notifyListExecutor;
     patientEventHandler.addListener(entityEventListener);
   }
 
@@ -42,7 +42,6 @@ class PatientWriteServiceImpl implements PatientWriteService {
 
   @Override
   public Patient update(final Patient patient, final Concern concern) {
-    return NotifyList.execute(n -> patientService.update(patient, concern, n), eef);
+    return notifyListExecutor.execute(n -> patientService.update(patient, concern, n));
   }
-
 }

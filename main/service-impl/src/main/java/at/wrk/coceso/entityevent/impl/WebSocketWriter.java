@@ -16,7 +16,11 @@ class WebSocketWriter<T> implements EntityEventListener<T> {
     private final Class<?> jsonView;
     private final Function<T, Integer> delete;
 
-    public WebSocketWriter(SocketMessagingTemplate messagingTemplate, String url, Class<?> jsonView, Function<T, Integer> delete) {
+    public WebSocketWriter(
+            final SocketMessagingTemplate messagingTemplate,
+            final String url,
+            final Class<?> jsonView,
+            final Function<T, Integer> delete) {
         this.messagingTemplate = messagingTemplate;
         this.url = url;
         this.jsonView = jsonView;
@@ -36,14 +40,14 @@ class WebSocketWriter<T> implements EntityEventListener<T> {
         }
 
         String formattedUrl = String.format(url, concern);
-        LOG.debug("Publishing changed entity on WebSocket. URL={}, Entity={}", formattedUrl, entity);
+        LOG.debug("Publishing changed entity on WebSocket. URL: '{}', Entity: '{}', hver: '{}', cseq: '{}'", formattedUrl, entity, hver, seq);
         messagingTemplate.send(formattedUrl, new SequencedResponse<>(hver, seq, entity), jsonView);
     }
 
     @Override
     public void entityDeleted(int id, int concern, int hver, int seq) {
         String formattedUrl = String.format(url, concern);
-        LOG.debug("Publishing deleted entity on WebSocket. URL={}, id={}", formattedUrl, id);
+        LOG.debug("Publishing deleted entity on WebSocket. URL: '{}', ID: '{}', hver: '{}', cseq: '{}'", formattedUrl, id, hver, seq);
         messagingTemplate.send(formattedUrl, new SequencedDeleted(hver, seq, id), null);
     }
 

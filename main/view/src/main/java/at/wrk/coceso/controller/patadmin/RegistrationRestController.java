@@ -56,7 +56,7 @@ public class RegistrationRestController {
   @RequestMapping(value = "groups", produces = "application/json", method = RequestMethod.GET)
   public SequencedResponse<List<Unit>> getGroups(@ActiveConcern final Concern concern) {
     return new SequencedResponse<>(entityEventHandler.getHver(), entityEventHandler.getSeq(concern.getId()),
-        Initializer.init(patadminService.getGroups(concern), Unit::getIncidents));
+        Initializer.init(patadminService.getGroups(concern), Unit::getIncidents, Unit::getIncidentStateChangedAtMap));
   }
 
 }

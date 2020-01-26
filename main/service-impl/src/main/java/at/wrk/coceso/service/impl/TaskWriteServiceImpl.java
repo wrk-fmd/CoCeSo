@@ -1,8 +1,7 @@
 package at.wrk.coceso.service.impl;
 
 import at.wrk.coceso.entity.enums.TaskState;
-import at.wrk.coceso.entityevent.EntityEventFactory;
-import at.wrk.coceso.entityevent.impl.NotifyList;
+import at.wrk.coceso.entityevent.impl.NotifyListExecutor;
 import at.wrk.coceso.service.TaskWriteService;
 import at.wrk.coceso.service.internal.TaskServiceInternal;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,19 +13,22 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(propagation = Propagation.NOT_SUPPORTED)
 class TaskWriteServiceImpl implements TaskWriteService {
 
-  @Autowired
-  private TaskServiceInternal taskService;
+  private final TaskServiceInternal taskService;
+  private final NotifyListExecutor notifyListExecutor;
 
   @Autowired
-  private EntityEventFactory entityEventFactory;
+  public TaskWriteServiceImpl(final TaskServiceInternal taskService, final NotifyListExecutor notifyListExecutor) {
+    this.taskService = taskService;
+    this.notifyListExecutor = notifyListExecutor;
+  }
 
   @Override
   public synchronized void changeState(int incidentId, int unitId, TaskState state) {
-    NotifyList.executeVoid(n -> taskService.changeState(incidentId, unitId, state, n), entityEventFactory);
+    notifyListExecutor.executeVoid(n -> taskService.changeState(incidentId, unitId, state, n));
   }
 
   @Override
   public void assignUnit(final int incidentId, final int unitId) {
-    NotifyList.executeVoid(notifyList -> taskService.assignUnit(incidentId, unitId, notifyList), entityEventFactory);
+    notifyListExecutor.executeVoid(notifyList -> taskService.assignUnit(incidentId, unitId, notifyList));
   }
 }

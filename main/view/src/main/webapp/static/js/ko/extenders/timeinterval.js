@@ -24,7 +24,7 @@ define(["knockout", "utils/clock"], function(ko, clock) {
    *
    * @param {ko.observable} target
    * @param {boolean} minutes Get interval in minutes if true
-   * @returns {ko.pureComputed}
+   * @returns {ko.observable}
    */
   ko.extenders.timeinterval = function(target, minutes) {
     var intervalDiv = minutes ? 60000 : 1000;

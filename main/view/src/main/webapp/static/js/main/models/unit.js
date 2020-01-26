@@ -74,22 +74,26 @@ define([
         self.home.setData(data.home);
         self.position.setData(data.position);
         if (data.incidents) {
-          ko.utils.objectForEach(data.incidents, function(incident, taskState) {
-            incident = parseInt(incident);
-            if (!incident || isNaN(incident)) {
+          ko.utils.objectForEach(data.incidents, function(incidentId, taskState) {
+            incidentId = parseInt(incidentId);
+            if (!incidentId || isNaN(incidentId)) {
               return;
             }
             var task = ko.utils.arrayFirst(self.incidents(), function(item) {
-              return (item.incident_id === incident);
+              return (item.incident_id === incidentId);
             });
+
+            var stateChangedAt = data.incidentStateChangeTimestamps[incidentId];
             if (task) {
               //Item exists, just set the new TaskState
               task.taskState(taskState);
+              task.stateChangedAt(stateChangedAt);
             } else {
               //Create new Task model
-              self.incidents.push(new Task(taskState, incident, self.id));
+              self.incidents.push(new Task(taskState, incidentId, self.id, stateChangedAt));
             }
           });
+
           //Remove detached units
           self.incidents.remove(function(task) {
             return (!data.incidents[task.incident_id]);
@@ -345,7 +349,7 @@ define([
        */
       this.popover = ko.pureComputed(function() {
         // Bugfix orphaned Popovers (Ticket #17)
-        let content = "<div onmouseout=\"$('.popover').remove();\"><dl class='dl-horizontal list-narrower'>";
+        var content = "<div onmouseout=\"$('.popover').remove();\"><dl class='dl-horizontal list-narrower'>";
         // The ANI brings no operational benefit in the popover.
         // if (this.ani) {
         //   content += "<dt>" + _("unit.ani") + "</dt><dd>" + this.ani.escapeHTML() + "</dd>";

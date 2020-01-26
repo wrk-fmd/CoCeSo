@@ -40,7 +40,7 @@ class IncidentAutoState implements TaskStateHook {
 
       incidentRepository.saveAndFlush(incident);
       logService.logAuto(LogEntryType.INCIDENT_AUTO_STATE, incident.getConcern(), unit, incident, taskState, changes);
-      notify.add(incident);
+      notify.addIncident(incident);
     }
 
     return taskState;

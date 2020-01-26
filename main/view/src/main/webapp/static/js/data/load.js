@@ -83,12 +83,12 @@ define(["jquery", "knockout", "./stomp", "utils/conf", "utils/client-logger"],
           dataType: "json",
           url: conf.get("jsonBase") + options.url,
           success: function (result) {
-            let mutated = false;
-            const deleted = [];
+            var mutated = false;
+            var deleted = [];
             if (options.cbFull instanceof Function) {
               mutated = options.cbFull(result.data);
             } else {
-              const found = {};
+              var found = {};
               ko.utils.arrayForEach(result.data, function (item) {
                 if (item.id) {
                   found[item.id] = true;
@@ -142,7 +142,7 @@ define(["jquery", "knockout", "./stomp", "utils/conf", "utils/client-logger"],
       options.seq = 0;
       options.queue = [];
       stomp.subscribe(options.stomp.replace(/{c}/, localStorage.concern), function (data) {
-        const body = JSON.parse(data.body);
+        var body = JSON.parse(data.body);
         if (options.hver === 0) {
           // Full load not yet done
           options.queue.push(body);
@@ -152,7 +152,7 @@ define(["jquery", "knockout", "./stomp", "utils/conf", "utils/client-logger"],
           options.seq = 0;
           options.queue = [];
 
-          clientLogger.warnLog("#fullreload Received data with wrong sequence number or hver! Performing full reload of client data.");
+          clientLogger.warnLog("#fullreload Received data with wrong sequence number or hver! Performing full reload of client data from URL: " + options.url);
           fullLoad();
         } else if (body["delete"]) {
           options.seq = body.seq;

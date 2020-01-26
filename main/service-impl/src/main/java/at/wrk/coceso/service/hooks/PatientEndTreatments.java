@@ -3,7 +3,6 @@ package at.wrk.coceso.service.hooks;
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.Patient;
 import at.wrk.coceso.entity.Unit;
-import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entityevent.impl.NotifyList;
@@ -28,7 +27,7 @@ class PatientEndTreatments implements TaskStateHook, PatientDoneHook {
   @Override
   public TaskState call(final Incident incident, final Unit unit, final TaskState state, final NotifyList notify) {
     if (incident.getType() == IncidentType.Transport && (state == TaskState.ZAO || state == TaskState.AAO)) {
-      LOG.debug("Ending treatments of patient {} due to starting transport by unit {}.", incident.getPatient(), unit);
+      LOG.debug("Ending treatments of patient '{}' due to starting transport by unit '{}'.", incident.getPatient(), unit);
       incidentService.endTreatments(incident.getPatient(), notify);
     }
 
@@ -37,7 +36,7 @@ class PatientEndTreatments implements TaskStateHook, PatientDoneHook {
 
   @Override
   public void call(final Patient patient, final NotifyList notify) {
-    LOG.debug("Ending treatments of patient {} on discharge", patient);
+    LOG.debug("Ending treatments of patient '{}' on discharge", patient);
     incidentService.endTreatments(patient, notify);
   }
 

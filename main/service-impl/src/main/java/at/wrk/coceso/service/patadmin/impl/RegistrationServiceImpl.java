@@ -147,9 +147,11 @@ class RegistrationServiceImpl implements RegistrationServiceInternal {
                 throw new ErrorsException(Errors.PatientDone);
             }
 
+            LOG.debug("Incident {} has already a patient assigned. Patient is taken-over to treatment.", incident);
             return incident.getPatient();
         }
 
+        LOG.debug("Creating new patient for incident {} in order to takeover to treatment.", incident);
         Patient patient = patientService.update(new Patient(), incident.getConcern(), notify);
 
         incident.setPatient(patient);

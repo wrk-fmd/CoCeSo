@@ -9,11 +9,13 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.Objects;
 
-// TODO: this class is the mapping towards data.wien.gv.at, the business logic to map it to internal represantation,
-// TODO:     and also the data object for further processing... Clean up this mess!
+// TODO: this class is the mapping towards data.wien.gv.at, the business logic to map it to internal representation,
+// TODO:     and also the data object for further processing. Clean up required!
 class AddressInfoEntry implements Comparable<AddressInfoEntry> {
 
     private final LatLng coordinates;
@@ -115,5 +117,14 @@ class AddressInfoEntry implements Comparable<AddressInfoEntry> {
         public String toString() {
             return getInfo(", ");
         }
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("coordinates", coordinates)
+                .append("address", address)
+                .append("ranking", ranking)
+                .toString();
     }
 }

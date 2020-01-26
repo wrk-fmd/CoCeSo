@@ -6,7 +6,7 @@ import at.wrk.coceso.entity.helper.JsonViews;
 import at.wrk.coceso.entityevent.EntityEventFactory;
 import at.wrk.coceso.entityevent.EntityEventHandler;
 import at.wrk.coceso.entityevent.EntityEventListener;
-import at.wrk.coceso.entityevent.impl.NotifyList;
+import at.wrk.coceso.entityevent.impl.NotifyListExecutor;
 import at.wrk.coceso.form.Group;
 import at.wrk.coceso.form.GroupsForm;
 import at.wrk.coceso.service.patadmin.PatadminWriteService;
@@ -29,18 +29,18 @@ class PatadminWriteServiceImpl implements PatadminWriteService {
     @Autowired
     private PatadminServiceInternal patadminService;
 
-    private final EntityEventFactory entityEventFactory;
     private final EntityEventHandler<Unit> unitEventHandler;
     private final EntityEventListener<Unit> entityEventListener;
+    private final NotifyListExecutor notifyListExecutor;
 
     @Autowired
-    public PatadminWriteServiceImpl(final EntityEventFactory entityEventFactory) {
-        this.entityEventFactory = entityEventFactory;
+    public PatadminWriteServiceImpl(final EntityEventFactory entityEventFactory, final NotifyListExecutor notifyListExecutor) {
         unitEventHandler = entityEventFactory.getEntityEventHandler(Unit.class);
         entityEventListener = entityEventFactory.getWebSocketWriter(
                 "/topic/patadmin/groups/%d",
                 JsonViews.Patadmin.class,
                 u -> (u.getType() != null && u.getType().isTreatment() ? null : u.getId()));
+        this.notifyListExecutor = notifyListExecutor;
         unitEventHandler.addListener(entityEventListener);
     }
 
@@ -54,7 +54,7 @@ class PatadminWriteServiceImpl implements PatadminWriteService {
         List<Group> groups = form.getGroups();
 
         if (groups != null) {
-            NotifyList.executeVoid(n -> patadminService.update(groups, concern, n), entityEventFactory);
+            notifyListExecutor.executeVoid(n -> patadminService.update(groups, concern, n));
         } else {
             LOG.warn("Tried to update empty group settings for patadmin. Update is ignored.");
         }

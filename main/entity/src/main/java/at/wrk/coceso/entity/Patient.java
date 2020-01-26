@@ -8,11 +8,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
-import java.io.Serializable;
-import java.time.LocalDate;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -24,7 +21,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
-import org.apache.commons.lang3.StringUtils;
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 public class Patient implements Serializable, ConcernBoundEntity {
@@ -302,7 +303,7 @@ public class Patient implements Serializable, ConcernBoundEntity {
 
   @Override
   public String toString() {
-    return String.format("#%d: %s", id, getFullName());
+    return String.format("#%d: %s (%s)", id, getFullName(), externalId);
   }
 
 }
