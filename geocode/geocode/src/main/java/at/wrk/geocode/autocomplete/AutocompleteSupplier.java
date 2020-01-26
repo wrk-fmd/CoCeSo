@@ -1,7 +1,5 @@
 package at.wrk.geocode.autocomplete;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.Collection;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -101,14 +99,4 @@ public interface AutocompleteSupplier<T> {
     return getContainingString(filter, max).collect(Collectors.toList());
   }
 
-  /**
-   * Convert the given filter value to the format as it is used as key
-   *
-   * @param value
-   * @return The value converted to lower case and newlines replaced; null if value is null or blank
-   */
-  static String getKey(String value) {
-    value = StringUtils.trimToNull(value);
-    return value == null ? null : value.toLowerCase().replaceAll("\n", ", ");
-  }
 }

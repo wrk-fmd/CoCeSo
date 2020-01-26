@@ -62,7 +62,7 @@ public class PdfController {
             final HttpServletResponse response,
             final Locale locale) throws ConcernException {
         Concern concern = concernService.getById(id);
-        if (Concern.isClosed(concern)) {
+        if (Concern.isClosedOrNull(concern)) {
             throw new ConcernException("Concern is already closed.");
         }
 

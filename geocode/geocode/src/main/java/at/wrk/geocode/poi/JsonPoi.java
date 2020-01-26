@@ -3,7 +3,7 @@ package at.wrk.geocode.poi;
 import at.wrk.geocode.Bounds;
 import at.wrk.geocode.LatLng;
 import at.wrk.geocode.ReverseResult;
-import at.wrk.geocode.autocomplete.AutocompleteSupplier;
+import at.wrk.geocode.autocomplete.AutocompleteKeyParser;
 import at.wrk.geocode.autocomplete.PreloadedAutocomplete;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
@@ -69,7 +69,7 @@ public abstract class JsonPoi extends PreloadedAutocomplete<Poi> implements PoiS
                 .flatMap(this::readResource)
                 .filter(poi -> poi.getText() != null)
                 .collect(Collectors.toMap(
-                        poi -> AutocompleteSupplier.getKey(poi.getText()),
+                        poi -> AutocompleteKeyParser.formatAutocompleteKey(poi.getText()),
                         Function.identity(),
                         (a, b) -> a, TreeMap::new));
     }

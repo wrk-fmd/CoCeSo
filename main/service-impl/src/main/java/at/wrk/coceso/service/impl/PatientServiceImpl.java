@@ -155,7 +155,7 @@ class PatientServiceImpl implements PatientServiceInternal {
   private Patient prepareForCreate(final Patient patient, final Concern concern, final Changes changes) {
     LOG.debug("{}: Creating patient: '{}'", authenicatedUserProvider.getAuthenticatedUser(), patient);
 
-    if (Concern.isClosed(concern)) {
+    if (Concern.isClosedOrNull(concern)) {
       LOG.warn("Patient cannot be created without open concern!");
       throw new ErrorsException(Errors.ConcernClosed);
     }

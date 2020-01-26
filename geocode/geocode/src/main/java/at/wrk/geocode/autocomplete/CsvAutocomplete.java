@@ -72,7 +72,7 @@ public abstract class CsvAutocomplete<T> extends PreloadedAutocomplete<T> {
                 .map(parser::parseCsvRecord)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toMap(
-                        keyExtractorFunction.andThen(AutocompleteSupplier::getKey),
+                        keyExtractorFunction.andThen(AutocompleteKeyParser::formatAutocompleteKey),
                         Function.identity(),
                         (a, b) -> a, TreeMap::new));
     }

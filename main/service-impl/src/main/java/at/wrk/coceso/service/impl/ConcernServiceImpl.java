@@ -112,7 +112,7 @@ class ConcernServiceImpl implements ConcernService {
   @Override
   public void addSection(String section, int concernId) {
     Concern concern = getById(concernId);
-    if (Concern.isClosed(concern)) {
+    if (Concern.isClosedOrNull(concern)) {
       throw new ErrorsException(Errors.ConcernMissingOrClosed);
     }
     if (StringUtils.isBlank(section)) {
@@ -131,7 +131,7 @@ class ConcernServiceImpl implements ConcernService {
     // TODO: Update units and incidents!
 
     Concern concern = getById(concernId);
-    if (Concern.isClosed(concern)) {
+    if (Concern.isClosedOrNull(concern)) {
       throw new ErrorsException(Errors.ConcernMissingOrClosed);
     }
     concern.removeSection(section);
@@ -140,7 +140,7 @@ class ConcernServiceImpl implements ConcernService {
 
   @Override
   public boolean isClosed(Integer concernId) {
-    return concernId == null || Concern.isClosed(getById(concernId));
+    return concernId == null || Concern.isClosedOrNull(getById(concernId));
   }
 
   @Override

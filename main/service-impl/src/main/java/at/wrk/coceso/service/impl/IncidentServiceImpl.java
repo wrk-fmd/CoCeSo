@@ -212,7 +212,7 @@ class IncidentServiceImpl implements IncidentServiceInternal {
             throw new ErrorsException(Errors.ConcernMismatch);
         }
 
-        if (Concern.isClosed(incident.getConcern())) {
+        if (Concern.isClosedOrNull(incident.getConcern())) {
             throw new ErrorsException(Errors.ConcernMissingOrClosed);
         }
 
@@ -240,7 +240,7 @@ class IncidentServiceImpl implements IncidentServiceInternal {
     private Incident prepareForCreate(final Incident incident, final Concern concern, final Changes changes) {
         LOG.debug("{}: Triggered incident create with incident data: {}", authenicatedUserProvider.getAuthenticatedUser(), incident);
 
-        if (Concern.isClosed(concern)) {
+        if (Concern.isClosedOrNull(concern)) {
             LOG.warn("Tried to create incident without open concern");
             throw new ErrorsException(Errors.ConcernClosed);
         }

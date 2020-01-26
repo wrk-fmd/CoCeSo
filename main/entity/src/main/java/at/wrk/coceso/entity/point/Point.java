@@ -3,7 +3,7 @@ package at.wrk.coceso.entity.point;
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.geocode.LatLng;
-import at.wrk.geocode.autocomplete.AutocompleteSupplier;
+import at.wrk.geocode.autocomplete.AutocompleteKeyParser;
 import at.wrk.geocode.poi.Poi;
 import at.wrk.geocode.poi.PoiSupplier;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -120,7 +120,7 @@ public interface Point extends Serializable {
             }
         }
 
-        Poi poi = poiSupplier.getPoi(AutocompleteSupplier.getKey(info));
+        Poi poi = poiSupplier.getPoi(AutocompleteKeyParser.formatAutocompleteKey(info));
         return poi == null ? AddressPointParser.parseFromString(info) : new PoiPoint(poi, info);
     }
 

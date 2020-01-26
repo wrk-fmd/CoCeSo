@@ -2,7 +2,7 @@ package at.wrk.geocode.poi;
 
 import at.wrk.geocode.LatLng;
 import at.wrk.geocode.ReverseResult;
-import at.wrk.geocode.autocomplete.AutocompleteSupplier;
+import at.wrk.geocode.autocomplete.AutocompleteKeyParser;
 import at.wrk.geocode.autocomplete.PreloadedAutocomplete;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,7 +39,7 @@ public abstract class GridSquarePoi extends PreloadedAutocomplete<Poi> implement
     for (char x = start.x; x <= xMax; x++) {
       for (int y = start.y; y <= yMax; y++) {
         String val = name + x + y;
-        values.put(AutocompleteSupplier.getKey(val), new PoiImpl(val, start.calculate(x, xStep, y, yStep)));
+        values.put(AutocompleteKeyParser.formatAutocompleteKey(val), new PoiImpl(val, start.calculate(x, xStep, y, yStep)));
       }
     }
   }

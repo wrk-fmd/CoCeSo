@@ -169,7 +169,7 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
     if (unit.getId() == null) {
       LOG.info("{}: Triggered unit create: {}", authenicatedUserProvider.getAuthenticatedUser(), unit);
 
-      if (Concern.isClosed(concern)) {
+      if (Concern.isClosedOrNull(concern)) {
         LOG.warn("{}: Tried to create unit {} in closed concern.", authenicatedUserProvider.getAuthenticatedUser(), unit);
         throw new ErrorsException(Errors.ConcernClosed);
       }

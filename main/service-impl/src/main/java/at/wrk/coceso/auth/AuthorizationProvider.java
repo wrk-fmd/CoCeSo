@@ -140,7 +140,7 @@ public class AuthorizationProvider {
     }
 
     User user = getUser();
-    if (user == null || !user.isAllowLogin() || Concern.isClosed(concern)) {
+    if (user == null || !user.isAllowLogin() || Concern.isClosedOrNull(concern)) {
       return false;
     }
 

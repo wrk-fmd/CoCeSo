@@ -120,7 +120,7 @@ public class Concern implements Serializable {
     this.closed = closed;
   }
 
-  public static boolean isClosed(Concern concern) {
+  public static boolean isClosedOrNull(Concern concern) {
     return concern == null || concern.getId() == null || concern.isClosed();
   }
 

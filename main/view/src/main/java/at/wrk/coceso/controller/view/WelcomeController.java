@@ -69,7 +69,7 @@ public class WelcomeController {
         Concern active = user.getActiveConcern();
 
         // Check if still active and valid
-        if (!Concern.isClosed(active)) {
+        if (!Concern.isClosedOrNull(active)) {
             response.addCookie(new Cookie("concern", active.getId() + ""));
         } else {
             // Delete Cookie and active concern reference
