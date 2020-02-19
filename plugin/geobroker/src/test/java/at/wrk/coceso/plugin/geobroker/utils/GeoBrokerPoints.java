@@ -1,6 +1,6 @@
 package at.wrk.coceso.plugin.geobroker.utils;
 
-import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerPoint;
+import at.wrk.coceso.plugin.geobroker.contract.broker.GeoBrokerPoint;
 import org.apache.commons.lang3.RandomUtils;
 
 public class GeoBrokerPoints {

@@ -2,8 +2,11 @@ package at.wrk.coceso.plugin.geobroker.manager;
 
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entity.enums.UnitType;
-import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerPoint;
-import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerUnit;
+import at.wrk.coceso.plugin.geobroker.action.UnitAction;
+import at.wrk.coceso.plugin.geobroker.action.factory.UnitActionFactory;
+import at.wrk.coceso.plugin.geobroker.contract.broker.GeoBrokerPoint;
+import at.wrk.coceso.plugin.geobroker.contract.broker.GeoBrokerUnit;
+import at.wrk.coceso.plugin.geobroker.contract.broker.OneTimeAction;
 import at.wrk.coceso.plugin.geobroker.data.CachedIncident;
 import at.wrk.coceso.plugin.geobroker.data.CachedUnit;
 import at.wrk.coceso.plugin.geobroker.external.TargetPointExtractor;
@@ -46,7 +49,9 @@ public class ConcurrentGeoBrokerManager implements GeoBrokerManager {
     private final GeoBrokerIncidentPublisher incidentPublisher;
     private final TargetPointExtractor targetPointExtractor;
     private final boolean showAllUnitsForOfficers;
-    private IncidentFilter incidentFilter;
+    private final IncidentFilter incidentFilter;
+    private final UnitActionFactory unitActionFactory;
+    private final OneTimeActionManager oneTimeActionManager;
 
     @Autowired
     public ConcurrentGeoBrokerManager(
@@ -54,12 +59,16 @@ public class ConcurrentGeoBrokerManager implements GeoBrokerManager {
             final GeoBrokerIncidentPublisher incidentPublisher,
             final TargetPointExtractor targetPointExtractor,
             @Value("${geobroker.all.units.for.officers:false}") final boolean showAllUnitsForOfficers,
-            final IncidentFilter incidentFilter) {
+            final IncidentFilter incidentFilter,
+            final UnitActionFactory unitActionFactory,
+            final OneTimeActionManager oneTimeActionManager) {
         this.unitPublisher = unitPublisher;
         this.incidentPublisher = incidentPublisher;
         this.targetPointExtractor = targetPointExtractor;
         this.showAllUnitsForOfficers = showAllUnitsForOfficers;
         this.incidentFilter = incidentFilter;
+        this.unitActionFactory = unitActionFactory;
+        this.oneTimeActionManager = oneTimeActionManager;
 
         this.updateLock = new Object();
         this.unitCache = new ConcurrentHashMap<>();
@@ -73,12 +82,13 @@ public class ConcurrentGeoBrokerManager implements GeoBrokerManager {
         CachedUnit updatedUnit;
         synchronized (updateLock) {
             updatedUnit = updateCachedUnit(unit);
-            CachedUnit previousValue = unitCache.put(updatedUnit.getId(), updatedUnit);
+            CachedUnit previousValue = unitCache.put(updatedUnit.getGeoBrokerUnitId(), updatedUnit);
             wasAdded = previousValue == null;
         }
 
         unitPublisher.unitUpdated(updatedUnit.getUnit());
         if (wasAdded) {
+            LOG.debug("A new unit was added to concern {}. Updating visibility matrix of all 'officer' units.", unit.getConcernId());
             updateAllOfficerUnits(unit.getConcernId());
         }
     }
@@ -93,7 +103,7 @@ public class ConcurrentGeoBrokerManager implements GeoBrokerManager {
     public void incidentUpdated(final CachedIncident incident) {
         Map<String, CachedUnit> updatedUnits;
         synchronized (updateLock) {
-            incidentCache.put(incident.getId(), incident);
+            incidentCache.put(incident.getGeoBrokerIncidentId(), incident);
             updatedUnits = getUpdatedUnitEntitiesForAllReferencedUnits(incident);
             unitCache.putAll(updatedUnits);
         }
@@ -108,8 +118,8 @@ public class ConcurrentGeoBrokerManager implements GeoBrokerManager {
         if (incidentFilter.isIncidentRelevantForGeoBroker(incident)) {
             incidentPublisher.incidentUpdated(incident.getIncident());
         } else {
-            LOG.debug("Incident is not supported for publishing: {} of type {}", incident.getId(), incident.getIncidentType());
-            incidentPublisher.incidentDeleted(incident.getId());
+            LOG.debug("Incident is not supported for publishing: {} of type {}", incident.getGeoBrokerIncidentId(), incident.getIncidentType());
+            incidentPublisher.incidentDeleted(incident.getGeoBrokerIncidentId());
         }
     }
 
@@ -150,34 +160,54 @@ public class ConcurrentGeoBrokerManager implements GeoBrokerManager {
                 .filter(Objects::nonNull)
                 .distinct()
                 .map(this::updateCachedUnit)
-                .collect(Collectors.toMap(CachedUnit::getId, Function.identity()));
+                .collect(Collectors.toMap(CachedUnit::getGeoBrokerUnitId, Function.identity()));
     }
 
     private CachedUnit updateCachedUnit(final CachedUnit unit) {
-        List<String> assignedUnits;
-        List<String> assignedIncidents;
+        List<String> assignedGeoBrokerUnitIds;
+        List<String> assignedGeoBrokerIncidentIds;
+        List<String> directlyAssignedIncidentIds = ImmutableList.copyOf(unit.getIncidentsWithState().keySet());
 
         if (showAllUnitsForOfficers && Objects.equals(unit.getUnitType(), UnitType.Officer)) {
             // Providing all units and incidents of the same concern for Officer-Unit.
-            assignedUnits = getAllExternalUnitIdsForConcernId(unit.getConcernId());
-            assignedIncidents = getAllExternalIncidentIdsForConcernId(unit.getConcernId());
+            assignedGeoBrokerUnitIds = getAllExternalUnitIdsForConcernId(unit.getConcernId());
+            assignedGeoBrokerIncidentIds = getAllExternalIncidentIdsForConcernId(unit.getConcernId());
         } else {
             // Providing only assigned units and incidents to standard unit.
-            assignedUnits = getAssignedUnitsForStandardUnit(unit);
-            assignedIncidents = ImmutableList.copyOf(unit.getIncidentsWithState().keySet());
+            assignedGeoBrokerUnitIds = getAssignedUnitsForStandardUnit(unit);
+            assignedGeoBrokerIncidentIds = directlyAssignedIncidentIds;
         }
 
         GeoBrokerPoint targetPoint = getTargetPointForUnit(unit);
 
-        GeoBrokerUnit updatedGeoBrokerUnit = updateGeoBrokerUnit(unit, assignedUnits, assignedIncidents, targetPoint);
-        return new CachedUnit(updatedGeoBrokerUnit, unit.getIncidentsWithState(), unit.getUnitType(), unit.getConcernId());
+        List<CachedIncident> assignedIncidents = directlyAssignedIncidentIds
+                .stream()
+                .map(incidentCache::get)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        List<UnitAction> availableUnitActions = unitActionFactory.buildUnitActions(unit, assignedIncidents);
+        List<OneTimeAction> oneTimeActions = oneTimeActionManager.registerActions(unit.getGeoBrokerUnitId(), availableUnitActions);
+
+        GeoBrokerUnit updatedGeoBrokerUnit = createUpdatedGeoBrokerUnit(
+                unit,
+                assignedGeoBrokerUnitIds,
+                assignedGeoBrokerIncidentIds,
+                targetPoint,
+                oneTimeActions);
+        return new CachedUnit(
+                updatedGeoBrokerUnit,
+                unit.getIncidentsWithState(),
+                unit.getUnitId(),
+                unit.getUnitType(),
+                unit.getConcernId());
     }
 
-    private GeoBrokerUnit updateGeoBrokerUnit(
+    private static GeoBrokerUnit createUpdatedGeoBrokerUnit(
             final CachedUnit existingUnit,
             final List<String> assignedUnits,
             final List<String> incidents,
-            final GeoBrokerPoint targetPoint) {
+            final GeoBrokerPoint targetPoint,
+            final List<OneTimeAction> oneTimeActions) {
         GeoBrokerUnit geoBrokerUnit = existingUnit.getUnit();
         return new GeoBrokerUnit(
                 geoBrokerUnit.getId(),
@@ -187,15 +217,17 @@ public class ConcurrentGeoBrokerManager implements GeoBrokerManager {
                 incidents,
                 geoBrokerUnit.getLastPoint(),
                 targetPoint,
-                geoBrokerUnit.getAvailableForDispatching());
+                geoBrokerUnit.getAvailableForDispatching(),
+                oneTimeActions);
     }
 
     private List<String> getAllExternalUnitIdsForConcernId(final int concernId) {
         return unitCache.values()
                 .stream()
                 .filter(cachedUnit -> cachedUnit.getConcernId() == concernId)
-                .map(CachedUnit::getId)
+                .map(CachedUnit::getGeoBrokerUnitId)
                 .distinct()
+                .sorted()
                 .collect(Collectors.toList());
     }
 
@@ -203,8 +235,10 @@ public class ConcurrentGeoBrokerManager implements GeoBrokerManager {
         return incidentCache.values()
                 .stream()
                 .filter(cachedIncident -> cachedIncident.getConcernId() == concernId)
-                .map(CachedIncident::getId)
+                .map(CachedIncident::getGeoBrokerIncidentId)
                 .distinct()
+                // optimization to reduce not-needed updates towards geobroker
+                .sorted()
                 .collect(Collectors.toList());
     }
 

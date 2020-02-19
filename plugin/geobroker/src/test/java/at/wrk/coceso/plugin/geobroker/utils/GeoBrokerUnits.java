@@ -1,6 +1,7 @@
 package at.wrk.coceso.plugin.geobroker.utils;
 
-import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerUnit;
+import at.wrk.coceso.plugin.geobroker.contract.broker.GeoBrokerUnit;
+import at.wrk.coceso.plugin.geobroker.contract.broker.OneTimeAction;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.RandomUtils;
 
@@ -24,6 +25,9 @@ public final class GeoBrokerUnits {
                 ImmutableList.of(randomString()),
                 randomPoint(),
                 randomPoint(),
-                RandomUtils.nextBoolean());
+                RandomUtils.nextBoolean(),
+                ImmutableList.of(
+                        new OneTimeAction("testingAction", "https://invalid.server.local/foobar", null, null)
+                ));
     }
 }

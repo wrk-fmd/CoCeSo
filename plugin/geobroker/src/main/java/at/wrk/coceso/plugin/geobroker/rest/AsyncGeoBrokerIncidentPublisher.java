@@ -1,6 +1,6 @@
 package at.wrk.coceso.plugin.geobroker.rest;
 
-import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerIncident;
+import at.wrk.coceso.plugin.geobroker.contract.broker.GeoBrokerIncident;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

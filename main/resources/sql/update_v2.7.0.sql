@@ -18,4 +18,8 @@ CREATE TRIGGER set_update_timestamp_of_task
     FOR EACH ROW
 EXECUTE PROCEDURE update_lastStateChangeAt_column();
 
+-- remove not-null constraint of user_fk in log entries. This is needed to enable state changes by units via one-time-actions.
+ALTER TABLE log
+    ALTER COLUMN user_fk DROP NOT NULL;
+
 COMMIT;

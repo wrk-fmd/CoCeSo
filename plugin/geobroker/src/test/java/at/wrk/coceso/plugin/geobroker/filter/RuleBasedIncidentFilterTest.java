@@ -33,6 +33,7 @@ public class RuleBasedIncidentFilterTest {
                 ImmutableMap.of("unit1", TaskState.ZBO, "unit2", TaskState.ABO),
                 GeoBrokerPoints.randomPoint(),
                 42,
+                7,
                 incidentType,
                 IncidentState.InProgress
         );
@@ -50,6 +51,7 @@ public class RuleBasedIncidentFilterTest {
                 ImmutableMap.of("unit1", TaskState.ZBO, "unit2", TaskState.ABO),
                 GeoBrokerPoints.randomPoint(),
                 42,
+                7,
                 incidentType,
                 IncidentState.InProgress
         );
@@ -67,6 +69,7 @@ public class RuleBasedIncidentFilterTest {
                 ImmutableMap.of("unit1", TaskState.ZBO, "unit2", TaskState.ABO),
                 GeoBrokerPoints.randomPoint(),
                 42,
+                7,
                 IncidentType.Task,
                 incidentState
         );
@@ -83,6 +86,7 @@ public class RuleBasedIncidentFilterTest {
                 ImmutableMap.of("unit1", TaskState.ZBO, "unit2", TaskState.ABO),
                 GeoBrokerPoints.randomPoint(),
                 42,
+                7,
                 IncidentType.Task,
                 IncidentState.Done
         );
@@ -99,6 +103,7 @@ public class RuleBasedIncidentFilterTest {
                 ImmutableMap.of(),
                 GeoBrokerPoints.randomPoint(),
                 42,
+                7,
                 IncidentType.Task,
                 IncidentState.Open
         );
@@ -115,6 +120,7 @@ public class RuleBasedIncidentFilterTest {
                 ImmutableMap.of(),
                 GeoBrokerPoints.randomPoint(),
                 42,
+                7,
                 IncidentType.Task,
                 IncidentState.InProgress
         );
@@ -132,6 +138,7 @@ public class RuleBasedIncidentFilterTest {
                 ImmutableMap.of("unit1", taskState),
                 GeoBrokerPoints.randomPoint(),
                 42,
+                7,
                 IncidentType.Task,
                 IncidentState.InProgress
         );
@@ -149,6 +156,7 @@ public class RuleBasedIncidentFilterTest {
                 ImmutableMap.of("unit1", taskState),
                 GeoBrokerPoints.randomPoint(),
                 42,
+                7,
                 IncidentType.Task,
                 IncidentState.InProgress
         );

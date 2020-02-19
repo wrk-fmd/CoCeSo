@@ -3,10 +3,10 @@ package at.wrk.coceso.plugin.geobroker.data;
 import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.TaskState;
-import at.wrk.coceso.plugin.geobroker.GeoBrokerToStringStyle;
-import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerIncident;
-import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerPoint;
+import at.wrk.coceso.plugin.geobroker.contract.broker.GeoBrokerIncident;
+import at.wrk.coceso.plugin.geobroker.contract.broker.GeoBrokerPoint;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -19,6 +19,7 @@ public class CachedIncident implements Serializable {
     private final Map<String, TaskState> assignedExternalUnitIds;
     private final GeoBrokerPoint destination;
     private final int concernId;
+    private final int incidentId;
     private final IncidentType incidentType;
     private final IncidentState incidentState;
 
@@ -27,17 +28,18 @@ public class CachedIncident implements Serializable {
             final Map<String, TaskState> assignedExternalUnitIds,
             final GeoBrokerPoint destination,
             final int concernId,
-            final IncidentType incidentType,
+            final int incidentId, final IncidentType incidentType,
             final IncidentState incidentState) {
         this.incident = Objects.requireNonNull(incident);
         this.assignedExternalUnitIds = assignedExternalUnitIds;
         this.destination = destination;
         this.concernId = concernId;
+        this.incidentId = incidentId;
         this.incidentType = incidentType;
         this.incidentState = incidentState;
     }
 
-    public String getId() {
+    public String getGeoBrokerIncidentId() {
         return incident.getId();
     }
 
@@ -57,6 +59,10 @@ public class CachedIncident implements Serializable {
         return concernId;
     }
 
+    public int getIncidentId() {
+        return incidentId;
+    }
+
     public IncidentType getIncidentType() {
         return incidentType;
     }
@@ -74,22 +80,24 @@ public class CachedIncident implements Serializable {
                 Objects.equals(incident, that.incident) &&
                 Objects.equals(assignedExternalUnitIds, that.assignedExternalUnitIds) &&
                 Objects.equals(destination, that.destination) &&
+                incidentId == that.incidentId &&
                 incidentType == that.incidentType &&
                 incidentState == that.incidentState;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(incident, assignedExternalUnitIds, destination, concernId, incidentType, incidentState);
+        return Objects.hash(incident, assignedExternalUnitIds, destination, concernId, incidentType, incidentState, incidentId);
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, GeoBrokerToStringStyle.STYLE)
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
                 .append("incident", incident)
                 .append("assignedExternalUnitIds", assignedExternalUnitIds)
                 .append("destination", destination)
                 .append("concernId", concernId)
+                .append("incidentId", incidentId)
                 .append("incidentType", incidentType)
                 .toString();
     }

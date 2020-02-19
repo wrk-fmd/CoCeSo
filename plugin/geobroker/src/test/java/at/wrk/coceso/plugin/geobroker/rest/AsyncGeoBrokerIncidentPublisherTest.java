@@ -1,6 +1,6 @@
 package at.wrk.coceso.plugin.geobroker.rest;
 
-import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerIncident;
+import at.wrk.coceso.plugin.geobroker.contract.broker.GeoBrokerIncident;
 import at.wrk.coceso.plugin.geobroker.utils.GeoBrokerIncidents;
 import com.fatboyindustrial.gsonjavatime.Converters;
 import com.google.gson.GsonBuilder;

@@ -38,9 +38,10 @@ public class ExternalUnitFactoryTest {
 
     @Test
     public void createExternalUnit_returnExternalUnit() {
-        String externalUnitId = unitIdGeneratorReturns(5, 42);
+        int unitId = 5;
+        String externalUnitId = unitIdGeneratorReturns(unitId, 42);
 
-        Unit unit = new Unit(5);
+        Unit unit = new Unit(unitId);
         unit.setConcern(new Concern(42));
         boolean isAvailableForDispatching = RandomUtils.nextBoolean();
         when(availableForDispatchingCalculator.isAvailableForDispatching(unit)).thenReturn(isAvailableForDispatching);
@@ -49,6 +50,7 @@ public class ExternalUnitFactoryTest {
 
         CachedUnit externalUnit = sut.createExternalUnit(unit);
 
+        assertThat(externalUnit.getUnitId(), equalTo(unitId));
         assertThat(externalUnit.getUnitType(), equalTo(unit.getType()));
         assertThat(externalUnit.getUnit().getId(), equalTo(externalUnitId));
         assertThat(externalUnit.getUnit().getToken(), equalTo(externalToken));

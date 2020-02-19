@@ -3,7 +3,7 @@ package at.wrk.coceso.plugin.geobroker.external;
 import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.TaskState;
-import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerPoint;
+import at.wrk.coceso.plugin.geobroker.contract.broker.GeoBrokerPoint;
 import at.wrk.coceso.plugin.geobroker.data.CachedIncident;
 import at.wrk.coceso.plugin.geobroker.utils.GeoBrokerIncidents;
 import com.google.common.collect.ImmutableMap;
@@ -102,6 +102,7 @@ public class TargetPointExtractorTest {
                 ImmutableMap.of(),
                 randomPoint(),
                 1,
+                7,
                 incidentType,
                 IncidentState.InProgress);
     }
