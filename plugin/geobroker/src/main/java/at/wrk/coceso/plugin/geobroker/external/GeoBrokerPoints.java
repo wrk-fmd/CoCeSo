@@ -1,7 +1,7 @@
 package at.wrk.coceso.plugin.geobroker.external;
 
 import at.wrk.coceso.entity.point.Point;
-import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerPoint;
+import at.wrk.coceso.plugin.geobroker.contract.broker.GeoBrokerPoint;
 import at.wrk.geocode.LatLng;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

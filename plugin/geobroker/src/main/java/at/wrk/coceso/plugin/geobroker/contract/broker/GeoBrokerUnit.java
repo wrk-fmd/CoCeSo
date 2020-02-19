@@ -4,7 +4,7 @@
  * This software may be modified and distributed under the terms of the MIT license. See the LICENSE file for details.
  */
 
-package at.wrk.coceso.plugin.geobroker.contract;
+package at.wrk.coceso.plugin.geobroker.contract.broker;
 
 import at.wrk.coceso.plugin.geobroker.GeoBrokerToStringStyle;
 import com.google.common.collect.ImmutableList;
@@ -29,6 +29,7 @@ public class GeoBrokerUnit implements Serializable {
     private final GeoBrokerPoint lastPoint;
     private final GeoBrokerPoint targetPoint;
     private final Boolean isAvailableForDispatching;
+    private final List<OneTimeAction> availableOneTimeActions;
 
     public GeoBrokerUnit(
             final String id,
@@ -36,7 +37,7 @@ public class GeoBrokerUnit implements Serializable {
             final String token,
             final GeoBrokerPoint lastPoint,
             final boolean isAvailableForDispatching) {
-        this(id, name, token, null, null, lastPoint, null, isAvailableForDispatching);
+        this(id, name, token, null, null, lastPoint, null, isAvailableForDispatching, null);
     }
 
     public GeoBrokerUnit(
@@ -47,7 +48,8 @@ public class GeoBrokerUnit implements Serializable {
             final List<String> incidents,
             final GeoBrokerPoint lastPoint,
             final GeoBrokerPoint targetPoint,
-            final boolean isAvailableForDispatching) {
+            final boolean isAvailableForDispatching,
+            final List<OneTimeAction> availableOneTimeActions) {
         this.id = Objects.requireNonNull(id, "Unit identifier must not be null.");
         this.name = Objects.requireNonNull(name, "Display name of unit must not be null.");
         this.token = Objects.requireNonNull(token, "Token of unit must not be null.");
@@ -56,6 +58,7 @@ public class GeoBrokerUnit implements Serializable {
         this.lastPoint = lastPoint;
         this.targetPoint = targetPoint;
         this.isAvailableForDispatching = isAvailableForDispatching;
+        this.availableOneTimeActions = availableOneTimeActions == null ? ImmutableList.of() : ImmutableList.copyOf(availableOneTimeActions);
     }
 
     public String getId() {
@@ -92,6 +95,10 @@ public class GeoBrokerUnit implements Serializable {
         return isAvailableForDispatching;
     }
 
+    public List<OneTimeAction> getAvailableOneTimeActions() {
+        return availableOneTimeActions;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -107,7 +114,7 @@ public class GeoBrokerUnit implements Serializable {
                 Objects.equals(units, that.units) &&
                 Objects.equals(incidents, that.incidents) &&
                 Objects.equals(lastPoint, that.lastPoint) &&
-                Objects.equals(targetPoint, that.targetPoint)&&
+                Objects.equals(targetPoint, that.targetPoint) &&
                 Objects.equals(isAvailableForDispatching, that.isAvailableForDispatching);
     }
 

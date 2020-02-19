@@ -2,7 +2,8 @@ package at.wrk.coceso.plugin.geobroker.manager;
 
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entity.enums.UnitType;
-import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerUnit;
+import at.wrk.coceso.plugin.geobroker.action.factory.UnitActionFactory;
+import at.wrk.coceso.plugin.geobroker.contract.broker.GeoBrokerUnit;
 import at.wrk.coceso.plugin.geobroker.data.CachedIncident;
 import at.wrk.coceso.plugin.geobroker.data.CachedUnit;
 import at.wrk.coceso.plugin.geobroker.external.TargetPointExtractor;
@@ -35,14 +36,21 @@ public class ConcurrentGeoBrokerManagerTest {
         unitPublisher = mock(GeoBrokerUnitPublisher.class);
         incidentPublisher = mock(GeoBrokerIncidentPublisher.class);
         incidentFilter = mock(IncidentFilter.class);
-        sut = new ConcurrentGeoBrokerManager(unitPublisher, incidentPublisher, mock(TargetPointExtractor.class), true, incidentFilter);
+        sut = new ConcurrentGeoBrokerManager(
+                unitPublisher,
+                incidentPublisher,
+                mock(TargetPointExtractor.class),
+                true,
+                incidentFilter,
+                mock(UnitActionFactory.class),
+                mock(OneTimeActionManager.class));
     }
 
     @Test
     public void updateUnit_publishUpdate() {
         GeoBrokerUnit updatedUnit = GeoBrokerUnits.random();
 
-        sut.unitUpdated(new CachedUnit(updatedUnit, ImmutableMap.of(), UnitType.Portable, 1));
+        sut.unitUpdated(new CachedUnit(updatedUnit, ImmutableMap.of(), 21, UnitType.Portable, 1));
 
         verify(unitPublisher).unitUpdated(any(GeoBrokerUnit.class));
     }
@@ -73,7 +81,7 @@ public class ConcurrentGeoBrokerManagerTest {
 
         sut.incidentUpdated(incident);
 
-        verify(incidentPublisher).incidentDeleted(incident.getId());
+        verify(incidentPublisher).incidentDeleted(incident.getGeoBrokerIncidentId());
     }
 
     @Test
@@ -90,7 +98,7 @@ public class ConcurrentGeoBrokerManagerTest {
         String externalUnitId = randomString();
         GeoBrokerUnit unit = GeoBrokerUnits.random(externalUnitId);
 
-        sut.unitUpdated(new CachedUnit(unit, ImmutableMap.of(), UnitType.Portable, 1));
+        sut.unitUpdated(new CachedUnit(unit, ImmutableMap.of(), 21, UnitType.Portable, 1));
         reset(unitPublisher);
 
         sut.incidentUpdated(CachedIncidents.random(ImmutableMap.of(externalUnitId, TaskState.ZBO)));

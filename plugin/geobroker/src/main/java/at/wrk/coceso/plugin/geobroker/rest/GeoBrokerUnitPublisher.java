@@ -1,6 +1,6 @@
 package at.wrk.coceso.plugin.geobroker.rest;
 
-import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerUnit;
+import at.wrk.coceso.plugin.geobroker.contract.broker.GeoBrokerUnit;
 
 /**
  * Publishes the provided updates to the external REST interface.

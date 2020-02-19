@@ -1,4 +1,4 @@
-package at.wrk.coceso.plugin.geobroker.contract;
+package at.wrk.coceso.plugin.geobroker.contract.broker;
 
 import at.wrk.coceso.plugin.geobroker.GeoBrokerToStringStyle;
 import com.google.common.collect.ImmutableMap;

@@ -53,7 +53,7 @@ public class ExternalIncidentFactoryTest {
         CachedIncident externalIncident = sut.createExternalIncident(incident);
 
         assertThat(externalIncident.getConcernId(), equalTo(concernId));
-        assertThat(externalIncident.getId(), equalTo(externalId));
+        assertThat(externalIncident.getGeoBrokerIncidentId(), equalTo(externalId));
         assertThat(externalIncident.getIncidentType(), equalTo(incident.getType()));
         assertThat(externalIncident.getIncidentState(), equalTo(incident.getState()));
         assertThat(externalIncident.getAssignedExternalUnitIds(), hasEntry(externalUnitId1, TaskState.ABO));

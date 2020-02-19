@@ -1,4 +1,4 @@
-package at.wrk.coceso.plugin.geobroker.contract;
+package at.wrk.coceso.plugin.geobroker.contract.broker;
 
 import java.io.Serializable;
 import java.util.Objects;

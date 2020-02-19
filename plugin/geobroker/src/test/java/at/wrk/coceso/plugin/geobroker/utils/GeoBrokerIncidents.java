@@ -1,6 +1,6 @@
 package at.wrk.coceso.plugin.geobroker.utils;
 
-import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerIncident;
+import at.wrk.coceso.plugin.geobroker.contract.broker.GeoBrokerIncident;
 import com.google.common.collect.ImmutableMap;
 
 import static at.wrk.coceso.plugin.geobroker.utils.GeoBrokerPoints.randomPoint;

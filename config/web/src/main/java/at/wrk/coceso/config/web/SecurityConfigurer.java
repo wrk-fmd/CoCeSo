@@ -20,86 +20,95 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 class SecurityConfigurer {
 
-  @Autowired
-  public void configureGlobal(AuthenticationManagerBuilder auth, AuthenticationProvider authenticationProvider) {
-    auth.authenticationProvider(authenticationProvider);
-  }
-
-  @Configuration
-  @Order(1)
-  public static class ClientSecurityConfigurer extends WebSecurityConfigurerAdapter {
-
     @Autowired
-    private AccessDeniedHandler adh;
-
-    @Autowired
-    private AuthenticationEntryPoint aep;
-
-    @Autowired
-    private AuthenticationSuccessHandler ash;
-
-    @Autowired
-    private AuthenticationFailureHandler afh;
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-      http.antMatcher("/client/**")
-          .exceptionHandling().accessDeniedHandler(adh).authenticationEntryPoint(aep).and()
-          .csrf().disable()
-          .headers().disable()
-          .logout().logoutUrl("/client/logout").and()
-          .formLogin().loginProcessingUrl("/client/login").successHandler(ash).failureHandler(afh).and()
-          .authorizeRequests()
-          .antMatchers("/client/login").permitAll()
-          .antMatchers("/client/**").authenticated();
+    public void configureGlobal(final AuthenticationManagerBuilder auth, final AuthenticationProvider authenticationProvider) {
+        auth.authenticationProvider(authenticationProvider);
     }
-  }
 
-  @Configuration
-  @Order(2)
-  public static class DataSecurityConfigurer extends WebSecurityConfigurerAdapter {
+    @Configuration
+    @Order(1)
+    public static class ClientSecurityConfigurer extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private AccessDeniedHandler adh;
+        private final AccessDeniedHandler accessDeniedHandler;
+        private final AuthenticationEntryPoint authenticationEntryPoint;
+        private final AuthenticationSuccessHandler authenticationSuccessHandler;
+        private final AuthenticationFailureHandler authenticationFailureHandler;
 
-    @Autowired
-    private AuthenticationEntryPoint aep;
+        @Autowired
+        public ClientSecurityConfigurer(
+                final AccessDeniedHandler accessDeniedHandler,
+                final AuthenticationEntryPoint authenticationEntryPoint,
+                final AuthenticationSuccessHandler authenticationSuccessHandler,
+                final AuthenticationFailureHandler authenticationFailureHandler) {
+            this.accessDeniedHandler = accessDeniedHandler;
+            this.authenticationEntryPoint = authenticationEntryPoint;
+            this.authenticationSuccessHandler = authenticationSuccessHandler;
+            this.authenticationFailureHandler = authenticationFailureHandler;
+        }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-      http.antMatcher("/data/**")
-          .exceptionHandling().accessDeniedHandler(adh).authenticationEntryPoint(aep).and()
-          .csrf().disable()
-          .headers().disable()
-          .authorizeRequests()
-          .antMatchers("/data/socket").authenticated();
+        @Override
+        protected void configure(final HttpSecurity http) throws Exception {
+            http.antMatcher("/client/**").exceptionHandling().accessDeniedHandler(accessDeniedHandler).authenticationEntryPoint(authenticationEntryPoint).and()
+                    .csrf().disable()
+                    .headers().disable()
+                    .logout().logoutUrl("/client/logout").and()
+                    .formLogin().loginProcessingUrl("/client/login").successHandler(authenticationSuccessHandler).failureHandler(authenticationFailureHandler)
+                    .and()
+                    .authorizeRequests().antMatchers("/client/login").permitAll()
+                    .antMatchers("/client/**").authenticated();
+        }
     }
-  }
 
-  @Configuration
-  @Order(3)
-  public static class ViewSecurityConfigurer extends WebSecurityConfigurerAdapter {
+    @Configuration
+    @Order(2)
+    public static class DataSecurityConfigurer extends WebSecurityConfigurerAdapter {
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-      http.antMatcher("/**")
-          .csrf().disable()
-          .headers().disable()
-          .authorizeRequests()
-          .antMatchers("/logout").authenticated()
-          .and().logout().logoutSuccessUrl("/")
-          .and().formLogin().loginPage("/login").defaultSuccessUrl("/home", true).failureUrl("/login");
+        private final AccessDeniedHandler accessDeniedHandler;
+        private final AuthenticationEntryPoint authenticationEntryPoint;
+
+        @Autowired
+        public DataSecurityConfigurer(
+                final AccessDeniedHandler accessDeniedHandler,
+                final AuthenticationEntryPoint authenticationEntryPoint) {
+            this.accessDeniedHandler = accessDeniedHandler;
+            this.authenticationEntryPoint = authenticationEntryPoint;
+        }
+
+        @Override
+        protected void configure(final HttpSecurity http) throws Exception {
+            http.antMatcher("/data/**")
+                    .exceptionHandling().accessDeniedHandler(accessDeniedHandler).authenticationEntryPoint(authenticationEntryPoint).and()
+                    .csrf().disable()
+                    .headers().disable()
+                    .authorizeRequests()
+                    .antMatchers("/data/socket").authenticated();
+        }
     }
-  }
 
-  @Configuration
-  @Order(4)
-  public static class NoneSecurityConfigurer extends WebSecurityConfigurerAdapter {
+    @Configuration
+    @Order(3)
+    public static class ViewSecurityConfigurer extends WebSecurityConfigurerAdapter {
 
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-      web.ignoring().antMatchers("/static/**");
+        @Override
+        protected void configure(final HttpSecurity http) throws Exception {
+            http.antMatcher("/**")
+                    .csrf().disable()
+                    .headers().disable()
+                    .authorizeRequests()
+                    .antMatchers("/logout").authenticated()
+                    .and().logout().logoutSuccessUrl("/")
+                    .and().formLogin().loginPage("/login").defaultSuccessUrl("/home", true).failureUrl("/login");
+        }
     }
-  }
+
+    @Configuration
+    @Order(4)
+    public static class NoneSecurityConfigurer extends WebSecurityConfigurerAdapter {
+
+        @Override
+        public void configure(final WebSecurity web) throws Exception {
+            web.ignoring().antMatchers("/static/**");
+        }
+    }
 
 }

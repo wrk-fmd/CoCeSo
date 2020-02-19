@@ -2,7 +2,7 @@ package at.wrk.coceso.plugin.geobroker.external;
 
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.enums.TaskState;
-import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerIncident;
+import at.wrk.coceso.plugin.geobroker.contract.broker.GeoBrokerIncident;
 import at.wrk.coceso.plugin.geobroker.data.CachedIncident;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
@@ -50,12 +50,14 @@ public class ExternalIncidentFactory implements GeoBrokerIncidentFactory {
         Integer concernId = incident.getConcern().getId();
         String externalIncidentId = incidentIdGenerator.generateExternalIncidentId(incident.getId(), concernId);
 
-        Map<String, TaskState> assignedUnitIds = ImmutableMap.of();
+        Map<String, TaskState> assignedUnitIds;
         if (incident.getUnitsSlim() != null) {
             assignedUnitIds = incident.getUnitsSlim()
                     .entrySet()
                     .stream()
                     .collect(toMap(entry -> unitIdGenerator.generateExternalUnitId(entry.getKey(), concernId), Map.Entry::getValue));
+        } else {
+            assignedUnitIds = ImmutableMap.of();
         }
 
         Map<String, String> externalAssignedUnitsMap = assignedUnitIds
@@ -72,7 +74,14 @@ public class ExternalIncidentFactory implements GeoBrokerIncidentFactory {
                 mapPoint(incident.getBo()),
                 mapPoint(incident.getAo()),
                 externalAssignedUnitsMap);
-        return new CachedIncident(geoBrokerIncident, assignedUnitIds, mapPoint(incident.getAo()), concernId, incident.getType(), incident.getState());
+        return new CachedIncident(
+                geoBrokerIncident,
+                assignedUnitIds,
+                mapPoint(incident.getAo()),
+                concernId,
+                incident.getId(),
+                incident.getType(),
+                incident.getState());
     }
 
     private String createGeoBrokerInfo(final Incident incident) {

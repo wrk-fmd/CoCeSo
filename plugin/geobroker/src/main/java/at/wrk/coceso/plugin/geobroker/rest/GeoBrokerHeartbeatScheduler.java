@@ -1,6 +1,6 @@
 package at.wrk.coceso.plugin.geobroker.rest;
 
-import at.wrk.coceso.plugin.geobroker.contract.StatusResponse;
+import at.wrk.coceso.plugin.geobroker.contract.broker.StatusResponse;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import org.slf4j.Logger;

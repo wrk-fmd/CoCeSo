@@ -3,7 +3,7 @@ package at.wrk.coceso.plugin.geobroker.external;
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.enums.TaskState;
-import at.wrk.coceso.plugin.geobroker.contract.GeoBrokerUnit;
+import at.wrk.coceso.plugin.geobroker.contract.broker.GeoBrokerUnit;
 import at.wrk.coceso.plugin.geobroker.data.CachedUnit;
 import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
@@ -53,7 +53,7 @@ public class ExternalUnitFactory implements GeoBrokerUnitFactory {
 
         boolean isAvailableForDispatching = availableForDispatchingCalculator.isAvailableForDispatching(unit);
 
-        // Target Point and referenced Units are caluculated in GeoBrokerManager.
+        // Target Point and referenced Units are calculated in GeoBrokerManager.
         GeoBrokerUnit geoBrokerUnit = new GeoBrokerUnit(
                 externalId,
                 Optional.ofNullable(unit.getCall()).orElse(""),
@@ -61,7 +61,7 @@ public class ExternalUnitFactory implements GeoBrokerUnitFactory {
                 mapPoint(unit.getPosition()),
                 isAvailableForDispatching);
 
-        return new CachedUnit(geoBrokerUnit, externalIncidentIds, unit.getType(), unit.getConcern().getId());
+        return new CachedUnit(geoBrokerUnit, externalIncidentIds, unit.getId(), unit.getType(), unit.getConcern().getId());
     }
 
     private String getExternalUnitId(final Unit unit) {
