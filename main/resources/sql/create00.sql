@@ -147,7 +147,7 @@ CREATE TABLE IF NOT EXISTS log
     unit_fk     INTEGER REFERENCES unit ON DELETE NO ACTION,
     patient_fk  INTEGER REFERENCES patient ON DELETE NO ACTION,
     taskstate   E_TASKSTATE,
-    user_fk     INTEGER   NOT NULL REFERENCES users ON DELETE NO ACTION,
+    user_fk     INTEGER REFERENCES users ON DELETE NO ACTION,
     text        TEXT,
     changes     JSON
 );

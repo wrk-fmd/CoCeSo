@@ -2,6 +2,7 @@ package at.wrk.coceso.plugin.geobroker.action;
 
 import at.wrk.coceso.entity.enums.TaskState;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -57,7 +58,7 @@ public class NextStateUnitAction implements UnitAction {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
                 .append("unitId", unitId)
                 .append("incidentId", incidentId)
                 .append("geoBrokerIncidentId", geoBrokerIncidentId)

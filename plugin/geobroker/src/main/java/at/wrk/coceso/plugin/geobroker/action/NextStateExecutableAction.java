@@ -5,6 +5,7 @@ import at.wrk.coceso.plugin.geobroker.action.factory.ActionUrlFactory;
 import at.wrk.coceso.plugin.geobroker.contract.broker.OneTimeAction;
 import at.wrk.coceso.service.TaskWriteService;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +53,7 @@ public class NextStateExecutableAction implements ExecutableAction {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
                 .append("actionId", actionId)
                 .append("action", action)
                 .toString();

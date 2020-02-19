@@ -3,10 +3,10 @@ package at.wrk.coceso.plugin.geobroker.data;
 import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.TaskState;
-import at.wrk.coceso.plugin.geobroker.GeoBrokerToStringStyle;
 import at.wrk.coceso.plugin.geobroker.contract.broker.GeoBrokerIncident;
 import at.wrk.coceso.plugin.geobroker.contract.broker.GeoBrokerPoint;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -92,7 +92,7 @@ public class CachedIncident implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, GeoBrokerToStringStyle.STYLE)
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
                 .append("incident", incident)
                 .append("assignedExternalUnitIds", assignedExternalUnitIds)
                 .append("destination", destination)

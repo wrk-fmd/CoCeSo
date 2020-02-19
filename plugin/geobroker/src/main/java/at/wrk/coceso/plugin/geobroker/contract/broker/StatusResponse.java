@@ -1,5 +1,8 @@
 package at.wrk.coceso.plugin.geobroker.contract.broker;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -31,8 +34,8 @@ public class StatusResponse implements Serializable {
 
     @Override
     public String toString() {
-        return "StatusResponse{" +
-                "instanceId='" + instanceId + '\'' +
-                '}';
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("instanceId", instanceId)
+                .toString();
     }
 }

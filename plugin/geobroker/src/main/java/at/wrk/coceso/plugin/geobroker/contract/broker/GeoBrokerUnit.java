@@ -6,9 +6,9 @@
 
 package at.wrk.coceso.plugin.geobroker.contract.broker;
 
-import at.wrk.coceso.plugin.geobroker.GeoBrokerToStringStyle;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
@@ -125,7 +125,7 @@ public class GeoBrokerUnit implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, GeoBrokerToStringStyle.STYLE)
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
                 .append("id", id)
                 .append("name", name)
                 .append("token", token)

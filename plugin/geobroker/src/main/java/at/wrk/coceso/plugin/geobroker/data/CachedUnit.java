@@ -2,9 +2,9 @@ package at.wrk.coceso.plugin.geobroker.data;
 
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entity.enums.UnitType;
-import at.wrk.coceso.plugin.geobroker.GeoBrokerToStringStyle;
 import at.wrk.coceso.plugin.geobroker.contract.broker.GeoBrokerUnit;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -58,8 +58,12 @@ public class CachedUnit implements Serializable {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         CachedUnit that = (CachedUnit) o;
         return concernId == that.concernId &&
                 Objects.equals(unit, that.unit) &&
@@ -75,7 +79,7 @@ public class CachedUnit implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, GeoBrokerToStringStyle.STYLE)
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
                 .append("unit", unit)
                 .append("incidentsWithState", incidentsWithState)
                 .append("unitId", unitId)

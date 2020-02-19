@@ -1,8 +1,8 @@
 package at.wrk.coceso.plugin.geobroker.contract.broker;
 
-import at.wrk.coceso.plugin.geobroker.GeoBrokerToStringStyle;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -97,7 +97,7 @@ public class GeoBrokerIncident implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, GeoBrokerToStringStyle.STYLE)
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
                 .append("id", id)
                 .append("type", type)
                 .append("priority", priority)
