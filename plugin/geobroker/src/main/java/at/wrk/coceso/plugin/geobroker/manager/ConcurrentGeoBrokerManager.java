@@ -227,6 +227,7 @@ public class ConcurrentGeoBrokerManager implements GeoBrokerManager {
                 .filter(cachedUnit -> cachedUnit.getConcernId() == concernId)
                 .map(CachedUnit::getGeoBrokerUnitId)
                 .distinct()
+                .sorted()
                 .collect(Collectors.toList());
     }
 
@@ -236,6 +237,8 @@ public class ConcurrentGeoBrokerManager implements GeoBrokerManager {
                 .filter(cachedIncident -> cachedIncident.getConcernId() == concernId)
                 .map(CachedIncident::getGeoBrokerIncidentId)
                 .distinct()
+                // optimization to reduce not-needed updates towards geobroker
+                .sorted()
                 .collect(Collectors.toList());
     }
 

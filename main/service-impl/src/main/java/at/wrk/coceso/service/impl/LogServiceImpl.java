@@ -157,7 +157,7 @@ class LogServiceImpl implements LogService {
       user = new User();
       user.setId(authUser.getUserId());
     } else {
-      LOG.debug("Writing log entry to database without authenticated user.");
+      LOG.trace("Writing log entry to database without authenticated user.");
       user = null;
     }
 
