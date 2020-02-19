@@ -27,7 +27,8 @@ public final class CachedIncidents {
                 assignedExternalUnitIds,
                 randomPoint(),
                 1,
-                incidentId, IncidentType.Task,
+                5,
+                IncidentType.Task,
                 IncidentState.InProgress);
     }
 }
