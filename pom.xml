@@ -68,6 +68,7 @@
     </properties>
 
     <modules>
+        <module>core</module>
         <module>config</module>
         <module>geocode</module>
         <module>main</module>

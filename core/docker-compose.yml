@@ -1,0 +1,24 @@
+version: '3.7'
+
+services:
+  mls-coceso:
+    image: wrk-fmd/mls-coceso:${MLS_TAG:-latest}
+    build:
+      context: .
+      args:
+        MODULE: coceso-service
+        APP: coceso-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    volumes:
+      - type: bind
+        source: ${MLS_COCESO_CONFIG:-./coceso-service/src/main/resources}
+        target: /config
+        read_only: true
+      - type: bind
+        source: ${MLS_LOG:-./log}
+        target: /log
+
+networks:
+  default:
+    name: mls-network

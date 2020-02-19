@@ -1,0 +1,33 @@
+# Ignore compiled target
+**/target
+
+# Ignore application.yml files
+**/application*.yml
+
+# Ignore json files in resources
+**/resources/**/*.json
+
+# Ignore keys in resources
+**/resources/**/*.key
+**/resources/**/*.pub
+
+# Ignore logging configuration
+**/log*.xml
+
+# Ignore data directories
+database
+log
+resources
+
+# Ignore libraries
+**/*.jar
+**/*.dll
+**/*.so
+
+# Ignore .git
+**/.git
+**/.gitignore
+
+# Ignore IDE config
+**/.idea
+**/*.iml
