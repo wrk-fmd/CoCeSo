@@ -115,12 +115,13 @@ public class GeoBrokerUnit implements Serializable {
                 Objects.equals(incidents, that.incidents) &&
                 Objects.equals(lastPoint, that.lastPoint) &&
                 Objects.equals(targetPoint, that.targetPoint) &&
-                Objects.equals(isAvailableForDispatching, that.isAvailableForDispatching);
+                Objects.equals(isAvailableForDispatching, that.isAvailableForDispatching) &&
+                Objects.equals(availableOneTimeActions, that.availableOneTimeActions);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, token, units, incidents, lastPoint, targetPoint, isAvailableForDispatching);
+        return Objects.hash(id, name, token, units, incidents, lastPoint, targetPoint, isAvailableForDispatching, availableOneTimeActions);
     }
 
     @Override
@@ -134,6 +135,7 @@ public class GeoBrokerUnit implements Serializable {
                 .append("lastPoint", lastPoint)
                 .append("targetPoint", targetPoint)
                 .append("isAvailableForDispatching", isAvailableForDispatching)
+                .append("availableOneTimeActions", availableOneTimeActions)
                 .toString();
     }
 }

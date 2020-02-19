@@ -55,7 +55,14 @@
     <c:forEach items="${logs}" var="log">
       <tr>
         <td><fmt:formatDate type="both" dateStyle="short" timeStyle="medium" value="${log.timestamp}"/></td>
-        <td><c:out value="${log.user}"/></td>
+        <td>
+          <c:if test="${not empty log.user}">
+            <c:out value="${log.user}"/>
+          </c:if>
+          <c:if test="${empty log.user}">
+            <em>OTA</em>
+          </c:if>
+        </td>
         <td class="log_text"><t:logtext log="${log}"/></td>
         <td>
           <c:if test="${not empty log.incident}">
