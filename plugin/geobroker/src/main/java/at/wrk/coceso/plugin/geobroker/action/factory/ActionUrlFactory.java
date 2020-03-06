@@ -8,12 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.util.UUID;
 
 @Component
 public class ActionUrlFactory {
     private static final Logger LOG = LoggerFactory.getLogger(ActionUrlFactory.class);
 
+    @Nullable
     private final String baseUrl;
 
     @Autowired
@@ -42,9 +44,10 @@ public class ActionUrlFactory {
         }
     }
 
+    @Nullable
     private static String formatBaseUrl(final String baseUrl) {
         String url = StringUtils.trimToNull(baseUrl);
-        if (url.endsWith("/")) {
+        if (url != null && url.endsWith("/")) {
             url = url.substring(0, url.length() - 1);
         }
 
