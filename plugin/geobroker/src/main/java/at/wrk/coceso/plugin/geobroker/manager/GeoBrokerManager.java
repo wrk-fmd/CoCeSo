@@ -3,6 +3,8 @@ package at.wrk.coceso.plugin.geobroker.manager;
 import at.wrk.coceso.plugin.geobroker.data.CachedIncident;
 import at.wrk.coceso.plugin.geobroker.data.CachedUnit;
 
+import java.util.List;
+
 /**
  * Collects updates of units and incidents, and triggers updates where the effected entity itself was not changed.
  * This includes:
@@ -20,4 +22,6 @@ public interface GeoBrokerManager {
     void incidentUpdated(CachedIncident incident);
 
     void incidentDeleted(String externalIncidentId);
+
+    List<CachedUnit> getAllUnitsOfConcern(final int concernId);
 }

@@ -1,8 +1,8 @@
 package at.wrk.coceso.service.impl;
 
 import at.wrk.coceso.entity.Concern;
-import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.Container;
+import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.enums.Errors;
 import at.wrk.coceso.exceptions.ErrorsException;
 import at.wrk.coceso.repository.ContainerRepository;
@@ -10,17 +10,22 @@ import at.wrk.coceso.repository.UnitRepository;
 import at.wrk.coceso.service.ConcernService;
 import at.wrk.coceso.service.ContainerService;
 import at.wrk.coceso.utils.Initializer;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.google.common.collect.ImmutableList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @Service
 @Transactional
 class ContainerServiceImpl implements ContainerService {
+  private static final Logger LOG = LoggerFactory.getLogger(ContainerServiceImpl.class);
 
   @Autowired
   private ContainerRepository containerRepository;
@@ -30,6 +35,21 @@ class ContainerServiceImpl implements ContainerService {
 
   @Autowired
   private ConcernService concernService;
+
+  @Override
+  public List<Container> getAll(final int concernId) {
+    Concern concern = concernService.getById(concernId);
+
+    List<Container> containers;
+    if (concern != null) {
+      containers = getAll(concern);
+    } else {
+      LOG.info("Failed to read concern for concernId '{}'.", concernId);
+      containers =  ImmutableList.of();
+    }
+
+    return containers;
+  }
 
   @Override
   public List<Container> getAll(Concern concern) {
@@ -54,7 +74,10 @@ class ContainerServiceImpl implements ContainerService {
 
   @Override
   public Set<Integer> getSpare(Concern concern) {
-    return unitRepository.findSpare(concern).stream().map(Unit::getId).collect(Collectors.toSet());
+    return unitRepository.findSpare(concern)
+            .stream()
+            .map(Unit::getId)
+            .collect(Collectors.toSet());
   }
 
   @Override

@@ -10,10 +10,15 @@ import at.wrk.coceso.entityevent.EntityEventHandler;
 import at.wrk.coceso.service.ContainerService;
 import at.wrk.coceso.service.ContainerWriteService;
 import at.wrk.coceso.utils.ActiveConcern;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @PreAuthorize("@auth.hasAccessLevel('Edit')")
@@ -29,36 +34,43 @@ public class ContainerController {
   private final EntityEventHandler<Container> entityEventHandler;
 
   @Autowired
-  public ContainerController(EntityEventFactory eehf) {
-    this.entityEventHandler = eehf.getEntityEventHandler(Container.class);
+  public ContainerController(final EntityEventFactory entityEventFactory) {
+    this.entityEventHandler = entityEventFactory.getEntityEventHandler(Container.class);
   }
 
   @RequestMapping(value = "getAll", produces = "application/json", method = RequestMethod.GET)
-  public SequencedResponse<List<Container>> getAll(@ActiveConcern Concern concern) {
+  public SequencedResponse<List<Container>> getAll(@ActiveConcern final Concern concern) {
     return new SequencedResponse<>(entityEventHandler.getHver(), entityEventHandler.getSeq(concern.getId()), containerService.getAll(concern));
   }
 
+  @RequestMapping(value = "getAllForConcern", produces = "application/json", method = RequestMethod.GET)
+  public RestResponse getAll(@RequestParam(value = "concernId") final int concernId) {
+    return new RestResponse(true, new RestProperty("container", containerService.getAll(concernId)));
+  }
+
   @RequestMapping(value = "updateContainer", produces = "application/json", method = RequestMethod.POST)
-  public RestResponse updateContainer(@RequestBody Container container, @ActiveConcern Concern concern) {
-    container = containerWriteService.update(container, concern);
-    return new RestResponse(true, new RestProperty("id", container.getId()));
+  public RestResponse updateContainer(@RequestBody final Container container, @ActiveConcern final Concern concern) {
+    Container updatedContainer = containerWriteService.update(container, concern);
+    return new RestResponse(true, new RestProperty("id", updatedContainer.getId()));
   }
 
   @RequestMapping(value = "removeContainer", produces = "application/json", method = RequestMethod.POST)
-  public RestResponse removeContainer(@RequestParam("container_id") int containerId) {
+  public RestResponse removeContainer(@RequestParam("container_id") final int containerId) {
     containerWriteService.remove(containerId);
     return new RestResponse(true);
   }
 
   @RequestMapping(value = "updateUnit", produces = "application/json", method = RequestMethod.POST)
-  public RestResponse updateUnit(@RequestParam("container_id") int containerId,
-      @RequestParam("unit_id") int unitId, @RequestParam("ordering") double ordering) {
+  public RestResponse updateUnit(
+          @RequestParam("container_id") final int containerId,
+          @RequestParam("unit_id") final int unitId,
+          @RequestParam("ordering") final double ordering) {
     containerWriteService.updateUnit(containerId, unitId, ordering);
     return new RestResponse(true);
   }
 
   @RequestMapping(value = "removeUnit", produces = "application/json", method = RequestMethod.POST)
-  public RestResponse removeUnit(@RequestParam("unit_id") int unitId) {
+  public RestResponse removeUnit(@RequestParam("unit_id") final int unitId) {
     containerWriteService.removeUnit(unitId);
     return new RestResponse(true);
   }

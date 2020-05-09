@@ -106,8 +106,8 @@
             <button type="button" class="btn btn-sm btn-danger" data-bind="click: close"><spring:message code="concern.close"/></button>
           </sec:authorize>
           <sec:authorize access="@auth.hasAccessLevel('Report')">
-            <div class="btn-group" role="group">
-              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <div class="btn-group btn-group-sm" role="group">
+              <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <spring:message code="pdf.report.create"/> <span class="caret"></span>
               </button>
               <ul class="dropdown-menu">
@@ -125,6 +125,13 @@
                 </li>
               </ul>
             </div>
+          </sec:authorize>
+          <sec:authorize access="@auth.hasAccessLevel('Edit')">
+            <c:if test="${isGeoBrokerFeatureAvailable}">
+              <a target="_blank" data-bind="attr: {href: '<c:url value="/geo/qr-codes?concernId="/>' + id}" class="btn btn-sm btn-default">
+                <spring:message code="concern.qr.codes"/>
+              </a>
+            </c:if>
           </sec:authorize>
         </td>
       </tr>
@@ -163,8 +170,8 @@
               <button type="button" class="btn btn-sm btn-danger" data-bind="click: reopen"><spring:message code="concern.reopen"/></button>
             </sec:authorize>
             <sec:authorize access="@auth.hasAccessLevel('Report')">
-              <div class="btn-group">
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <div  class="btn-group btn-group-sm" role="group">
+                <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <spring:message code="pdf.report.create"/> <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">

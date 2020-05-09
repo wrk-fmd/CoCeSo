@@ -43,7 +43,7 @@ public class GmapsWrapper {
 
     @PreDestroy
     public void preDestroy() {
-        LOG.info("shutting down Google Maps wrapper.");
+        LOG.info("Shutting down Google Maps wrapper.");
         if (this.context != null) {
             this.context.shutdown();
         }

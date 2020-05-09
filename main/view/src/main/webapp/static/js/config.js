@@ -27,7 +27,8 @@ define(function() {
       leaflet: "assets/leaflet/leaflet",
       stomp: "assets/stomp-websocket/stomp.min",
       bloodhound: "assets/corejs-typeahead/bloodhound.min",
-      typeahead: "assets/corejs-typeahead/typeahead.jquery.min"
+      typeahead: "assets/corejs-typeahead/typeahead.jquery.min",
+      qrcode: "assets/qrcode/qrcode"
     },
     map: {
       "knockout-sortable": {
@@ -48,7 +49,8 @@ define(function() {
       "bootstrap-datepicker.de": {deps: ["bootstrap-datepicker"]},
       "jquery-i18n": {deps: ["jquery"]},
       "jqueryui-touch-punch": {deps: ["jquery", "jquery-ui/widget", "jquery-ui/mouse"]},
-      stomp: {exports: "Stomp"}
+      stomp: {exports: "Stomp"},
+      qrcode: {exports: "QRCode"}
     }
   });
 });

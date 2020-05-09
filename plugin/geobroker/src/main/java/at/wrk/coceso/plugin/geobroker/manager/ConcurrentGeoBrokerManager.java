@@ -25,6 +25,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -127,6 +128,15 @@ public class ConcurrentGeoBrokerManager implements GeoBrokerManager {
     public void incidentDeleted(final String externalIncidentId) {
         this.incidentCache.remove(externalIncidentId);
         incidentPublisher.incidentDeleted(externalIncidentId);
+    }
+
+    @Override
+    public List<CachedUnit> getAllUnitsOfConcern(final int concernId) {
+        return ImmutableSet.copyOf(unitCache.values())
+                .stream()
+                .filter(u -> u.getConcernId() == concernId)
+                .sorted(Comparator.comparingInt(CachedUnit::getUnitId))
+                .collect(Collectors.toList());
     }
 
     private void updateAllOfficerUnits(final int concernId) {

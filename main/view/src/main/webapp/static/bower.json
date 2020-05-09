@@ -27,7 +27,7 @@
     "jquery-ui-bootstrap": "jquery-ui-bootstrap/jquery-ui-bootstrap#masterbs3",
     "jqueryui-touch-punch": "*",
     "js-cookie": "^2.1.0",
-    "knockout": "^3.4.0",
+    "knockout": "^3.5.0",
     "knockout-sortable": "^0.15.0",
     "leaflet": "^0.7.7",
     "less": "^2.6.0",

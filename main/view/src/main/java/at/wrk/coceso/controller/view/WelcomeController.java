@@ -1,5 +1,6 @@
 package at.wrk.coceso.controller.view;
 
+import at.wrk.coceso.controller.config.DeploymentStatusProvider;
 import at.wrk.coceso.data.AuthenticatedUser;
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.User;
@@ -9,6 +10,7 @@ import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.web.WebAttributes;
@@ -27,13 +29,23 @@ import java.util.Set;
 
 @Controller
 public class WelcomeController {
+    private final static Logger LOG = LoggerFactory.getLogger(WelcomeController.class);
 
     private static final Set<Integer> ALLOWED_ERRORS = ImmutableSet.of(1);
 
-    private final static Logger LOG = LoggerFactory.getLogger(WelcomeController.class);
+    private final UserService userService;
+    private final DeploymentStatusProvider deploymentStatusProvider;
+    private final String publicGeoBrokerUrl;
 
     @Autowired
-    private UserService userService;
+    public WelcomeController(
+            final UserService userService,
+            final DeploymentStatusProvider deploymentStatusProvider,
+            final @Value("${geobroker.public.url:configuration-missing}") String publicGeoBrokerUrl) {
+        this.userService = userService;
+        this.deploymentStatusProvider = deploymentStatusProvider;
+        this.publicGeoBrokerUrl = publicGeoBrokerUrl.endsWith("/") ? publicGeoBrokerUrl : publicGeoBrokerUrl + "/";
+    }
 
     @PreAuthorize("permitAll")
     @RequestMapping(value = "/", method = RequestMethod.GET)
@@ -73,7 +85,7 @@ public class WelcomeController {
             response.addCookie(new Cookie("concern", active.getId() + ""));
         } else {
             // Delete Cookie and active concern reference
-            LOG.info("{}: Active concern is already closed, clean up", authenticationUser);
+            LOG.info("{}: Active concern is already closed, cleaning up cookie", authenticationUser);
             response.addCookie(new Cookie("concern", null));
             userService.setActiveConcern(authenticationUser, null);
         }
@@ -81,9 +93,18 @@ public class WelcomeController {
         // Add Userdetails to Model
         map.addAttribute("user", Initializer.init(user, User::getInternalAuthorities));
         map.addAttribute("authenticatedUser", authenticationUser);
+        map.put("isGeoBrokerFeatureAvailable", deploymentStatusProvider.isGeoBrokerModuleDeployed());
 
-        LOG.debug("{}: Started Home Screen", user);
+        LOG.debug("{}: Started Home Screen with model map: {}", user, map);
 
         return "home";
+    }
+
+    @PreAuthorize("@auth.hasAccessLevel('Edit')")
+    @RequestMapping(value = "/geo/qr-codes", method = RequestMethod.GET)
+    public String showQrCodePage(final ModelMap map, @RequestParam(value = "concernId") final int concernId) {
+        map.put("concernId", concernId);
+        map.put("publicGeobrokerUrl", publicGeoBrokerUrl);
+        return "qr_codes";
     }
 }
