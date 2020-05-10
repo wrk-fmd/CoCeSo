@@ -9,7 +9,7 @@ The interface language is German or English (with your contribution any other la
 ## Requirements
 
 * Server
-  * Java JRE (version 1.8 required)
+  * Java JRE: at least version 1.8 required. OpenJDK 11 is tested and recommended.
   * Tomcat (version 8 required)
   * PostgreSQL DB (9.1 and newer tested)
   * Maven
