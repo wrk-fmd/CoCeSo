@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@taglib uri="http://www.springframework.org/security/tags" prefix="sec"%>
-<%@taglib uri="coceso" prefix="t"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
+<%@taglib uri="coceso" prefix="t" %>
 <%--
 /**
  * CoCeSo
@@ -89,10 +89,10 @@
 <div class="filtered-units">
   <!-- ko foreach: filteredUnits -->
   <div class="unit" data-bind="descendantsComplete: paintQrCode()">
-    <div class="qr" data-bind="attr: {'id': qrId}"></div>
+    <div class="qr" data-bind="attr: { id: qrId }"></div>
     <h1 data-bind="text: unitHeader"></h1>
     <p class="link-paragraph">
-      <a class="line-wrap" data-bind="href: generatedUrl, text: generatedUrl"></a>
+      <a class="line-wrap" data-bind="text: generatedUrl, attr: { href: generatedUrl }"></a>
     </p>
     <div class="info-content" data-bind="html: infoContent"></div>
   </div>
