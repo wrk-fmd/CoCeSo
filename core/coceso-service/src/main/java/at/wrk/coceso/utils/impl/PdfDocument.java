@@ -1,15 +1,15 @@
 package at.wrk.coceso.utils.impl;
 
-import at.wrk.coceso.data.AuthenticatedUser;
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Incident;
-import at.wrk.coceso.entity.LogEntry;
+import at.wrk.coceso.entity.JournalEntry;
 import at.wrk.coceso.entity.Patient;
+import at.wrk.coceso.entity.Task;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.enums.IncidentType;
-import at.wrk.coceso.entity.enums.LogEntryType;
+import at.wrk.coceso.entity.enums.JournalEntryType;
 import at.wrk.coceso.entity.enums.TaskState;
-import at.wrk.coceso.entity.helper.Changes;
+import at.wrk.coceso.entity.journal.Change;
 import at.wrk.coceso.entity.point.Point;
 import at.wrk.coceso.service.PdfService;
 import com.itextpdf.text.Document;
@@ -28,14 +28,14 @@ import org.springframework.context.NoSuchMessageException;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class PdfDocument extends Document implements AutoCloseable {
 
@@ -53,11 +53,7 @@ public class PdfDocument extends Document implements AutoCloseable {
     private final Locale locale;
     private final boolean fullDate;
 
-    public PdfDocument(
-            final Rectangle pageSize,
-            final boolean fullDate,
-            final PdfService pdfService,
-            final MessageSource messageSource,
+    public PdfDocument(final Rectangle pageSize, final boolean fullDate, final PdfService pdfService, final MessageSource messageSource,
             final Locale locale) {
         super(pageSize);
         this.fullDate = fullDate;
@@ -71,12 +67,12 @@ public class PdfDocument extends Document implements AutoCloseable {
         this.open();
     }
 
-    public void addFrontPage(final String titleMessageCode, final Concern concern, final AuthenticatedUser user) throws DocumentException {
+    public void addFrontPage(final String titleMessageCode, final Concern concern, final String username) throws DocumentException {
         String title = getMessage(titleMessageCode, new String[]{concern.getName()}, titleMessageCode);
 
         this.addTitle(title);
         this.addAuthor(getMessage("coceso", null));
-        this.addCreator(String.format("%s - %s", getMessage("coceso", null), user == null ? "N/A" : user.getUsername()));
+        this.addCreator(String.format("%s - %s", getMessage("coceso", null), username == null ? "N/A" : username));
 
         Paragraph p = new Paragraph();
         addEmptyLine(p, 1);
@@ -86,8 +82,9 @@ public class PdfDocument extends Document implements AutoCloseable {
         p.add(p0);
         addEmptyLine(p, 1);
 
-        Paragraph p1 = new Paragraph(getMessage("pdf.created",
-                new String[]{user == null ? "N/A" : user.getDisplayName(), new java.text.SimpleDateFormat(DATE_TIME_FORMAT).format(new Date())}), SUB_TITLE_FONT);
+        Paragraph p1 = new Paragraph(getMessage("pdf.created", new String[]{
+                username == null ? "N/A" : username, getFormattedTime(Instant.now(), true)
+        }), SUB_TITLE_FONT);
         p1.setAlignment(Element.ALIGN_CENTER);
         p.add(p1);
 
@@ -101,8 +98,7 @@ public class PdfDocument extends Document implements AutoCloseable {
     }
 
     public void addLastPage() throws DocumentException {
-        this.add(new Paragraph(getMessage("pdf.complete",
-                new String[]{new java.text.SimpleDateFormat(DATE_TIME_FORMAT).format(new Date())})));
+        this.add(new Paragraph(getMessage("pdf.complete", new String[]{getFormattedTime(Instant.now(), true)})));
     }
 
     public void addStatistics(final List<Incident> incidents) throws DocumentException {
@@ -123,7 +119,7 @@ public class PdfDocument extends Document implements AutoCloseable {
                         transportBlue++;
                     }
                     break;
-                case Relocation:
+                case Position:
                     relocation++;
                     if (incident.isBlue()) {
                         relocationBlue++;
@@ -171,7 +167,7 @@ public class PdfDocument extends Document implements AutoCloseable {
         this.newPage();
     }
 
-    public void addCustomLog(final List<LogEntry> logs) throws DocumentException {
+    public void addCustomLog(final List<JournalEntry> logs) throws DocumentException {
         Paragraph p = new Paragraph();
         Paragraph h = new Paragraph(getMessage("log.custom", null), TITLE_2_FONT);
         p.add(h);
@@ -187,7 +183,7 @@ public class PdfDocument extends Document implements AutoCloseable {
         addCell(table, getMessage("incident", null));
 
         logs.forEach(log -> {
-            addCell(table, getFormattedTime(log.getTimestamp()));
+            addCell(table, getFormattedTime(log.getTimestamp(), fullDate));
             addCell(table, log.getUsername());
             addCell(table, log.getText());
             addCell(table, getUnitTitle(log.getUnit()));
@@ -313,7 +309,6 @@ public class PdfDocument extends Document implements AutoCloseable {
             addCell(table, patient.getFirstname());
             addCell(table, patient.getInsurance());
             addCell(table, patient.getBirthday() == null ? "" : patient.getBirthday().format(DateTimeFormatter.ISO_DATE));
-            addCell(table, patient.getNaca() == null ? "" : patient.getNaca().name());
             addCell(table, patient.getDiagnosis());
 
             Set<String> hospital = patient.getHospital();
@@ -323,7 +318,10 @@ public class PdfDocument extends Document implements AutoCloseable {
                 addCell(table, patient.isDone() ? getMessage("patient.discharged", null) : "");
             }
 
-            String casusNr = patient.getIncidents().stream().map(Incident::getCasusNr).filter(StringUtils::isNotBlank).findFirst().orElse("");
+            String casusNr = patient.getIncidents().stream()
+                    .map(Incident::getCasusNr)
+                    .filter(StringUtils::isNotBlank)
+                    .findFirst().orElse("");
             addCell(table, casusNr);
         });
 
@@ -355,9 +353,10 @@ public class PdfDocument extends Document implements AutoCloseable {
         addCell(table, getMessage(inc.isBlue() ? "yes" : "no", null));
         addCell(table, "");
 
-        addCell(table, getMessage("incident.state", null) + ":");
-        addCell(table, getMessage("incident.state." + inc.getState().toString().toLowerCase(), null, inc.getState().toString()));
-        addCell(table, "");
+        // TODO
+//        addCell(table, getMessage("incident.state", null) + ":");
+//        addCell(table, getMessage("incident.state." + inc.getState().toString().toLowerCase(), null, inc.getState().toString()));
+//        addCell(table, "");
 
         if (inc.getType() == IncidentType.Task || inc.getType() == IncidentType.Transport) {
             addCell(table, getMessage("incident.bo", null) + ":");
@@ -429,9 +428,9 @@ public class PdfDocument extends Document implements AutoCloseable {
             addCell(table, "");
         }
 
-        if (patient.getErtype() != null && !patient.getErtype().isEmpty()) {
+        if (patient.getErType() != null && !patient.getErType().isEmpty()) {
             addCell(table, getMessage("patient.ertype", null) + ":");
-            addCell(table, patient.getErtype());
+            addCell(table, patient.getErType());
             addCell(table, "");
         }
         table.completeRow();
@@ -446,7 +445,7 @@ public class PdfDocument extends Document implements AutoCloseable {
     }
 
     private Element printIncidentLog(Incident inc) {
-        List<LogEntry> logs = pdfService.getLogByIncident(inc);
+        List<JournalEntry> logs = pdfService.getLogByIncident(inc);
 
         Paragraph p = new Paragraph(getMessage("log", null), DESCRIPTION_FONT);
 
@@ -462,16 +461,14 @@ public class PdfDocument extends Document implements AutoCloseable {
     }
 
     private Element printIncidentUnits(Incident inc) {
-        Map<Unit, TaskState> units = inc.getUnits();
-        return printUnits(inc, units);
+        return printUnits(inc, inc.getUnits());
     }
 
     private Element printRelatedUnits(Incident inc) {
-        Map<Unit, TaskState> units = pdfService.getRelatedUnits(inc);
-        return printUnits(inc, units);
+        return printUnits(inc, pdfService.getRelatedUnits(inc));
     }
 
-    private Element printUnits(final Incident inc, final Map<Unit, TaskState> units) {
+    private Element printUnits(final Incident inc, final Collection<Task> units) {
         if (units == null || units.isEmpty()) {
             return null;
         }
@@ -485,10 +482,11 @@ public class PdfDocument extends Document implements AutoCloseable {
         addCell(table, getMessage("unit", null));
         addCell(table, getMessage("task.state", null));
         addCell(table, getMessage("last_change", null));
-        units.forEach((unit, state) -> {
+        units.forEach(task -> {
+            Unit unit = task.getUnit();
             addCell(table, getUnitTitle(unit));
-            addCell(table, getTaskState(state));
-            addCell(table, getFormattedTime(pdfService.getLastUpdate(inc, unit)));
+            addCell(table, getTaskState(task.getState()));
+            addCell(table, getFormattedTime(pdfService.getLastUpdate(inc, unit), fullDate));
         });
 
         p.add(table);
@@ -510,9 +508,13 @@ public class PdfDocument extends Document implements AutoCloseable {
         addCell(table, getMessage("unit.state." + unit.getState().toString().toLowerCase(), null, unit.getState().toString()));
         addCell(table, "");
 
-        if (unit.getAni() != null && !unit.getAni().isEmpty()) {
+        if (unit.getContacts() != null && !unit.getContacts().isEmpty()) {
+            String contacts = unit.getContacts().stream()
+                    .map(c -> String.format("%s:%s", c.getType(), c.getData()))
+                    .collect(Collectors.joining(", "));
+
             addCell(table, getMessage("unit.ani", null) + ":");
-            addCell(table, unit.getAni());
+            addCell(table, contacts);
         }
         table.completeRow();
 
@@ -548,7 +550,7 @@ public class PdfDocument extends Document implements AutoCloseable {
     }
 
     private Element printUnitLog(Unit unit) {
-        List<LogEntry> logs = pdfService.getLogByUnit(unit);
+        List<JournalEntry> logs = pdfService.getLogByUnit(unit);
 
         PdfPTable table = new PdfPTable(new float[]{2, 2, 3.5F, 2.5F, 1, 5});
         table.setWidthPercentage(100);
@@ -560,8 +562,8 @@ public class PdfDocument extends Document implements AutoCloseable {
         return table;
     }
 
-    private void printUnitOrIncidentRow(final PdfPTable table, final LogEntry log, final String titleOfRowEntity) {
-        addCell(table, getFormattedTime(log.getTimestamp()));
+    private void printUnitOrIncidentRow(final PdfPTable table, final JournalEntry log, final String titleOfRowEntity) {
+        addCell(table, getFormattedTime(log.getTimestamp(), fullDate));
         addCell(table, log.getUsername());
         addCell(table, getLogText(log));
         addCell(table, titleOfRowEntity);
@@ -594,12 +596,13 @@ public class PdfDocument extends Document implements AutoCloseable {
         addCell(table, getMessage("incident.info", null));
         addCell(table, getMessage("task.state", null));
         addCell(table, getMessage("last_change", null));
-        unit.getIncidents().forEach((inc, s) -> {
+        unit.getIncidents().forEach(task -> {
+            Incident inc = task.getIncident();
             addCell(table, getIncidentTitle(inc));
             table.addCell(getBoAo(inc));
             addCell(table, inc.getInfo());
-            addCell(table, getTaskState(s));
-            addCell(table, getFormattedTime(pdfService.getLastUpdate(inc, unit)));
+            addCell(table, getTaskState(task.getState()));
+            addCell(table, getFormattedTime(pdfService.getLastUpdate(inc, unit), fullDate));
         });
 
         p.add(table);
@@ -612,12 +615,12 @@ public class PdfDocument extends Document implements AutoCloseable {
         }
     }
 
-    private String getFormattedTime(Timestamp timestamp) {
-        return timestamp == null ? "" : new SimpleDateFormat(fullDate ? DATE_TIME_FORMAT : TIME_FORMAT).format(timestamp);
+    private String getFormattedTime(Instant timestamp, boolean withDate) {
+        return timestamp == null ? "" : new SimpleDateFormat(withDate ? DATE_TIME_FORMAT : TIME_FORMAT).format(timestamp);
     }
 
-    private String getLogText(LogEntry log) {
-        return log.getType() == LogEntryType.CUSTOM
+    private String getLogText(JournalEntry log) {
+        return log.getType() == JournalEntryType.CUSTOM
                 ? log.getText()
                 : getMessage("log.type." + log.getType(), null, log.getText());
     }
@@ -679,7 +682,7 @@ public class PdfDocument extends Document implements AutoCloseable {
         return state != null ? getMessage("task.state." + state.toString().toLowerCase(), null, state.toString()) : "";
     }
 
-    private PdfPTable getLogChanges(Changes changes) {
+    private PdfPTable getLogChanges(Collection<Change> changes) {
         if (changes == null) {
             return null;
         }
@@ -690,7 +693,7 @@ public class PdfDocument extends Document implements AutoCloseable {
         table.setPaddingTop(-2);
 
         changes.forEach(c -> {
-            addCell(table, getMessage(changes.getType() + "." + c.getKey().toLowerCase(), null, c.getKey()) + ": ");
+            addCell(table, getMessage(c.getKey().toLowerCase(), null, c.getKey()) + ": ");
             addCell(table, c.getOldValue() != null ? c.getOldValue() + "" : "");
             addCell(table, c.getNewValue() != null ? c.getNewValue() + "" : "[empty]");
         });

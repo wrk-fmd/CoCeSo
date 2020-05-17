@@ -1,35 +1,32 @@
 package at.wrk.coceso.service;
 
+import at.wrk.coceso.dto.container.ContainerCreateDto;
+import at.wrk.coceso.dto.container.ContainerDto;
+import at.wrk.coceso.dto.container.ContainerUnitDto;
+import at.wrk.coceso.dto.container.ContainerUpdateDto;
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Container;
-import java.util.List;
-import java.util.Set;
+import at.wrk.coceso.entity.Unit;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional
 public interface ContainerService {
 
-  List<Container> getAll(Concern concern);
+    List<ContainerDto> getAll(Concern concern);
 
-  Container getRoot(Concern concern);
+    ContainerDto getRoot(Concern concern);
 
-  Set<Integer> getSpare(Concern concern);
+    Container create(Concern concern, ContainerCreateDto data);
 
-  Container doUpdate(Container container, Concern concern);
+    void update(Concern concern, Container container, ContainerUpdateDto data);
 
-  Container doRemove(int containerId);
+    void remove(Concern concern, Container container);
 
-  ContainerPair doUpdateUnit(int containerId, int unitId, double ordering);
+    void updateUnit(Concern concern, Container container, Unit unit, ContainerUnitDto data);
 
-  Container doRemoveUnit(int unitId);
-
-  static class ContainerPair {
-
-    public boolean notifyRoot = false;
-    public Container previous = null;
-    public Container newcont = null;
-  }
-
+    void removeUnit(Concern concern, Container container, Unit unit);
 }

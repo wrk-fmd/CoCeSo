@@ -1,286 +1,209 @@
 package at.wrk.coceso.service.impl;
 
+import at.wrk.coceso.dto.patient.PatientBriefDto;
+import at.wrk.coceso.dto.patient.PatientCreateDto;
+import at.wrk.coceso.dto.patient.PatientDto;
+import at.wrk.coceso.dto.patient.PatientUpdateDto;
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Patient;
-import at.wrk.coceso.entity.enums.Errors;
-import at.wrk.coceso.entity.enums.LogEntryType;
-import at.wrk.coceso.entity.helper.Changes;
-import at.wrk.coceso.entityevent.impl.NotifyList;
-import at.wrk.coceso.exceptions.ErrorsException;
+import at.wrk.coceso.entity.enums.JournalEntryType;
+import at.wrk.coceso.entity.enums.Sex;
+import at.wrk.coceso.entity.journal.ChangesCollector;
+import at.wrk.coceso.event.events.PatientEvent;
+import at.wrk.coceso.mapper.PatientMapper;
 import at.wrk.coceso.repository.PatientRepository;
-import at.wrk.coceso.service.LogService;
-import at.wrk.coceso.service.hooks.HookService;
-import at.wrk.coceso.service.internal.PatientServiceInternal;
-import at.wrk.coceso.utils.AuthenicatedUserProvider;
-import at.wrk.coceso.utils.DataAccessLogger;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import at.wrk.coceso.service.JournalService;
+import at.wrk.coceso.service.LoggingService;
+import at.wrk.coceso.service.PatientService;
+import at.wrk.coceso.utils.AuthenticatedUser;
+import at.wrk.fmd.mls.event.EventBus;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Objects;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @Transactional
-class PatientServiceImpl implements PatientServiceInternal {
+class PatientServiceImpl implements PatientService {
 
-  private final static Logger LOG = LoggerFactory.getLogger(PatientServiceImpl.class);
+    private final PatientRepository patientRepository;
+    private final PatientMapper patientMapper;
+    private final JournalService journalService;
+    private final LoggingService accessLoggingService;
+    private final EventBus eventBus;
 
-  @Autowired
-  private PatientRepository patientRepository;
-
-  @Autowired
-  private LogService logService;
-
-  @Autowired
-  private HookService hookService;
-
-  private final DataAccessLogger dataAccessLogger;
-  private final AuthenicatedUserProvider authenicatedUserProvider;
-
-  @Autowired
-  public PatientServiceImpl(
-          final DataAccessLogger dataAccessLogger,
-          final AuthenicatedUserProvider authenicatedUserProvider) {
-    this.dataAccessLogger = dataAccessLogger;
-    this.authenicatedUserProvider = authenicatedUserProvider;
-  }
-
-  @Override
-  public List<Patient> getAll(final Concern concern) {
-    List<Patient> patients = patientRepository.findByConcern(concern);
-    dataAccessLogger.logPatientAccess(patients, concern);
-    return patients;
-  }
-
-  @Override
-  public List<Patient> getAllSorted(final Concern concern) {
-    List<Patient> patients = patientRepository.findByConcern(concern, new Sort(Sort.Direction.ASC, "id"));
-    dataAccessLogger.logPatientAccess(patients, concern);
-    return patients;
-  }
-
-  @Override
-  public Patient getByIdNoLog(int patientId) {
-    Patient patient = patientRepository.findOne(patientId);
-    if (patient == null) {
-      throw new ErrorsException(Errors.HttpNotFound);
-    }
-    if (patient.getConcern().isClosed()) {
-      throw new ErrorsException(Errors.ConcernClosed);
-    }
-    return patient;
-  }
-
-  @Override
-  public Patient getById(int patientId) {
-    Patient patient = getByIdNoLog(patientId);
-    dataAccessLogger.logPatientAccess(patient);
-    return patient;
-  }
-
-  @Override
-  public Patient update(Patient patient, Concern concern, NotifyList notify) {
-    Changes changes = new Changes("patient");
-
-    if (patient.getId() == null) {
-      patient = prepareForCreate(patient, concern, changes);
-      patient = patientRepository.saveAndFlush(patient);
-      logService.logAuto(LogEntryType.PATIENT_CREATE, patient.getConcern(), patient, changes);
-      notify.addPatient(patient);
-    } else {
-      patient = prepareForUpdate(patient, changes);
-      if (!changes.isEmpty()) {
-        patient = patientRepository.saveAndFlush(patient);
-        logService.logAuto(LogEntryType.PATIENT_UPDATE, patient.getConcern(), patient, changes);
-        notify.addPatient(patient);
-      }
+    @Autowired
+    public PatientServiceImpl(final PatientRepository patientRepository, final PatientMapper patientMapper,
+            final JournalService journalService,
+            final LoggingService accessLoggingService, final EventBus eventBus) {
+        this.patientRepository = patientRepository;
+        this.patientMapper = patientMapper;
+        this.journalService = journalService;
+        this.accessLoggingService = accessLoggingService;
+        this.eventBus = eventBus;
     }
 
-    return patient;
-  }
-
-  @Override
-  public Patient updateAndDischarge(Patient patient, final NotifyList notify) {
-    Changes changes = new Changes("patient");
-
-    if (patient.getId() == null) {
-      throw new ErrorsException(Errors.PatientCreateNotAllowed);
+    @Override
+    public List<PatientDto> getAll(final Concern concern) {
+        List<Patient> patients = patientRepository.findByConcern(concern);
+        accessLoggingService.logPatientAccess(patients, concern);
+        return patients.stream()
+                .map(patientMapper::patientToDto)
+                .collect(Collectors.toList());
     }
 
-    patient = prepareForUpdate(patient, changes);
-
-    if (!patient.isDone()) {
-      changes.put("done", false, true);
-      patient.setDone(true);
+    @Override
+    public List<Patient> getAllSorted(final Concern concern) {
+        List<Patient> patients = patientRepository.findByConcern(concern, Sort.by(Sort.Direction.ASC, "id"));
+        accessLoggingService.logPatientAccess(patients, concern);
+        return patients;
     }
 
-    if (!changes.isEmpty()) {
-      patient = patientRepository.saveAndFlush(patient);
-      logService.logAuto(LogEntryType.PATIENT_UPDATE, patient.getConcern(), patient, changes);
-      notify.addPatient(patient);
+    @Override
+    public PatientBriefDto create(final Concern concern, final PatientCreateDto data) {
+        log.debug("{}: Creating patient: '{}'", AuthenticatedUser.getName(), data);
+
+        Patient patient = new Patient();
+        ChangesCollector changes = new ChangesCollector("patient");
+
+        // Set properties
+        patient.setConcern(concern);
+
+        if (data.getLastname() != null && !data.getLastname().isEmpty()) {
+            changes.put("lastname", data.getLastname());
+            patient.setLastname(data.getLastname());
+        }
+
+        if (data.getFirstname() != null && !data.getFirstname().isEmpty()) {
+            changes.put("firstname", data.getFirstname());
+            patient.setFirstname(data.getFirstname());
+        }
+
+        if (data.getExternalId() != null && !data.getExternalId().isEmpty()) {
+            changes.put("externalId", data.getExternalId());
+            patient.setExternalId(data.getExternalId());
+        }
+
+        if (data.getSex() != null) {
+            Sex sex = patientMapper.sexDtoToSex(data.getSex());
+            changes.put("sex", sex);
+            patient.setSex(sex);
+        }
+
+        if (data.getInsurance() != null && !data.getInsurance().isEmpty()) {
+            changes.put("insurance", data.getInsurance());
+            patient.setInsurance(data.getInsurance());
+        }
+
+        if (data.getBirthday() != null) {
+            changes.put("birthday", patientMapper.dateToString(data.getBirthday()));
+            patient.setBirthday(data.getBirthday());
+        }
+
+        if (data.getDiagnosis() != null && !data.getDiagnosis().isEmpty()) {
+            changes.put("diagnosis", data.getDiagnosis());
+            patient.setDiagnosis(data.getDiagnosis());
+        }
+
+        if (data.getErType() != null && !data.getErType().isEmpty()) {
+            changes.put("erType", data.getErType());
+            patient.setErType(data.getErType());
+        }
+
+        if (data.getInfo() != null && !data.getInfo().isEmpty()) {
+            changes.put("info", data.getInfo());
+            patient.setInfo(data.getInfo());
+        }
+
+        patient = patientRepository.save(patient);
+        journalService.logPatient(JournalEntryType.PATIENT_CREATE, patient, changes);
+        eventBus.publish(new PatientEvent(patientMapper.patientToDto(patient)));
+
+        return patientMapper.patientToBriefDto(patient);
     }
 
-    hookService.callPatientDone(patient, notify);
-    return patient;
-  }
+    @Override
+    public void update(final Patient patient, final PatientUpdateDto data) {
+        log.debug("{}: Updating patient '{}': '{}'", AuthenticatedUser.getName(), patient, data);
 
-  @Override
-  public Patient discharge(Patient patient, NotifyList notify) {
-    if (patient == null || patient.getId() == null) {
-      return patient;
+        ChangesCollector changes = new ChangesCollector("patient");
+
+        // Set updateable properties
+        if (data.getLastname() != null && !data.getLastname().equals(patient.getLastname())) {
+            changes.put("lastname", patient.getLastname(), data.getLastname());
+            patient.setLastname(data.getLastname());
+        }
+
+        if (data.getFirstname() != null && !data.getFirstname().equals(patient.getFirstname())) {
+            changes.put("firstname", patient.getFirstname(), data.getFirstname());
+            patient.setFirstname(data.getFirstname());
+        }
+
+        if (data.getExternalId() != null && !data.getExternalId().equals(patient.getExternalId())) {
+            changes.put("externalId", patient.getExternalId(), data.getExternalId());
+            patient.setExternalId(data.getExternalId());
+        }
+
+        Sex sex = patientMapper.sexDtoToSex(data.getSex());
+        if (sex != null && sex != patient.getSex()) {
+            changes.put("sex", patient.getSex(), sex);
+            patient.setSex(sex);
+        }
+
+        if (data.getInsurance() != null && !data.getInsurance().equals(patient.getInsurance())) {
+            changes.put("insurance", patient.getInsurance(), data.getInsurance());
+            patient.setInsurance(data.getInsurance());
+        }
+
+        if (data.getBirthday() != null && !data.getBirthday().equals(patient.getBirthday())) {
+            changes.put("birthday", patientMapper.dateToString(patient.getBirthday()), patientMapper.dateToString(data.getBirthday()));
+            patient.setBirthday(data.getBirthday());
+        }
+
+        if (data.getDiagnosis() != null && !data.getDiagnosis().equals(patient.getDiagnosis())) {
+            changes.put("diagnosis", patient.getDiagnosis(), data.getDiagnosis());
+            patient.setDiagnosis(data.getDiagnosis());
+        }
+
+        if (data.getErType() != null && !data.getErType().equals(patient.getErType())) {
+            changes.put("erType", patient.getErType(), data.getErType());
+            patient.setErType(data.getErType());
+        }
+
+        if (data.getInfo() != null && !data.getInfo().equals(patient.getInfo())) {
+            changes.put("info", patient.getInfo(), data.getInfo());
+            patient.setInfo(data.getInfo());
+        }
+
+        if (!changes.isEmpty()) {
+            journalService.logPatient(JournalEntryType.PATIENT_UPDATE, patient, changes);
+            eventBus.publish(new PatientEvent(patientMapper.patientToDto(patient)));
+        }
     }
 
-    if (!patient.isDone()) {
-      // Patient is not yet done: Set to done
-      Changes changes = new Changes("patient");
-      changes.put("done", false, true);
-      patient.setDone(true);
+    @Override
+    public void discharge(Patient patient) {
+        if (patient == null || patient.getId() == null) {
+            return;
+        }
 
-      // Save and notify
-      patient = patientRepository.saveAndFlush(patient);
-      logService.logAuto(LogEntryType.PATIENT_UPDATE, patient.getConcern(), patient, changes);
-      notify.addPatient(patient);
+        if (!patient.isDone()) {
+            // Patient is not yet done: Set to done
+            ChangesCollector changes = new ChangesCollector("patient");
+            changes.put("done", false, true);
+            patient.setDone(true);
+
+            // Save and notify
+            patient = patientRepository.saveAndFlush(patient);
+            journalService.logPatient(JournalEntryType.PATIENT_UPDATE, patient, changes);
+        }
+
+        // TODO
+        //hookService.callPatientDone(patient, notify);
     }
-
-    hookService.callPatientDone(patient, notify);
-    return patient;
-  }
-
-  private Patient prepareForCreate(final Patient patient, final Concern concern, final Changes changes) {
-    LOG.debug("{}: Creating patient: '{}'", authenicatedUserProvider.getAuthenticatedUser(), patient);
-
-    if (Concern.isClosedOrNull(concern)) {
-      LOG.warn("Patient cannot be created without open concern!");
-      throw new ErrorsException(Errors.ConcernClosed);
-    }
-
-    Patient save = new Patient();
-
-    // Set updated properties
-    save.setConcern(concern);
-
-    if (StringUtils.isNotBlank(patient.getLastname())) {
-      changes.put("lastname", null, patient.getLastname());
-      save.setLastname(patient.getLastname());
-    }
-
-    if (StringUtils.isNotBlank(patient.getFirstname())) {
-      changes.put("firstname", null, patient.getFirstname());
-      save.setFirstname(patient.getFirstname());
-    }
-
-    if (StringUtils.isNotBlank(patient.getExternalId())) {
-      changes.put("externalId", null, patient.getExternalId());
-      save.setExternalId(patient.getExternalId());
-    }
-
-    if (patient.getSex() != null) {
-      changes.put("sex", null, patient.getSex());
-      save.setSex(patient.getSex());
-    }
-
-    if (StringUtils.isNotBlank(patient.getInsurance())) {
-      changes.put("insurance", null, patient.getInsurance());
-      save.setInsurance(patient.getInsurance());
-    }
-
-    if (patient.getBirthday() != null) {
-      changes.put("birthday", null, patient.getBirthday().format(DateTimeFormatter.ISO_DATE));
-      save.setBirthday(patient.getBirthday());
-    }
-
-    if (patient.getNaca() != null) {
-      changes.put("naca", null, patient.getNaca());
-      save.setNaca(patient.getNaca());
-    }
-
-    if (StringUtils.isNotBlank(patient.getDiagnosis())) {
-      changes.put("diagnosis", null, patient.getDiagnosis());
-      save.setDiagnosis(patient.getDiagnosis());
-    }
-
-    if (StringUtils.isNotBlank(patient.getErtype())) {
-      changes.put("ertype", null, patient.getErtype());
-      save.setErtype(patient.getErtype());
-    }
-
-    if (StringUtils.isNotBlank(patient.getInfo())) {
-      changes.put("info", null, patient.getInfo());
-      save.setInfo(patient.getInfo());
-    }
-
-    return save;
-  }
-
-  private Patient prepareForUpdate(final Patient patient, final Changes changes) {
-    LOG.debug("{}: Updating patient #{}", authenicatedUserProvider.getAuthenticatedUser(), patient.getId());
-
-    Patient save = getByIdNoLog(patient.getId());
-
-    if (save.getConcern().isClosed()) {
-      LOG.warn("Tried to update patient #{} in closed concern.", patient.getId());
-      throw new ErrorsException(Errors.ConcernClosed);
-    }
-
-    // Set updateable properties
-    if (!Objects.equals(save.getLastname(), patient.getLastname())) {
-      changes.put("lastname", save.getLastname(), patient.getLastname());
-      save.setLastname(patient.getLastname());
-    }
-
-    if (!Objects.equals(save.getFirstname(), patient.getFirstname())) {
-      changes.put("firstname", save.getFirstname(), patient.getFirstname());
-      save.setFirstname(patient.getFirstname());
-    }
-
-    if (!Objects.equals(save.getExternalId(), patient.getExternalId())) {
-      changes.put("externalId", save.getExternalId(), patient.getExternalId());
-      save.setExternalId(patient.getExternalId());
-    }
-
-    if (patient.getSex() != save.getSex()) {
-      changes.put("sex", save.getSex(), patient.getSex());
-      save.setSex(patient.getSex());
-    }
-
-    if (!Objects.equals(save.getInsurance(), patient.getInsurance())) {
-      changes.put("insurance", save.getInsurance(), patient.getInsurance());
-      save.setInsurance(patient.getInsurance());
-    }
-
-    if (!Objects.equals(save.getBirthday(), patient.getBirthday())) {
-      changes.put("birthday", save.getBirthday() == null ? null : save.getBirthday().format(DateTimeFormatter.ISO_DATE),
-          patient.getBirthday() == null ? null : patient.getBirthday().format(DateTimeFormatter.ISO_DATE));
-      save.setBirthday(patient.getBirthday());
-    }
-
-    if (patient.getNaca() != null && patient.getNaca() != save.getNaca()) {
-      changes.put("naca", save.getNaca(), patient.getNaca());
-      save.setNaca(patient.getNaca());
-    }
-
-    if (!Objects.equals(save.getDiagnosis(), patient.getDiagnosis())) {
-      changes.put("diagnosis", save.getDiagnosis(), patient.getDiagnosis());
-      save.setDiagnosis(patient.getDiagnosis());
-    }
-
-    if (!Objects.equals(save.getErtype(), patient.getErtype())) {
-      changes.put("ertype", save.getErtype(), patient.getErtype());
-      save.setErtype(patient.getErtype());
-    }
-
-    if (!Objects.equals(save.getInfo(), patient.getInfo())) {
-      changes.put("info", save.getInfo(), patient.getInfo());
-      save.setInfo(patient.getInfo());
-    }
-
-    return save;
-  }
-
 }

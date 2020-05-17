@@ -1,33 +1,36 @@
 package at.wrk.coceso.service;
 
+import at.wrk.coceso.dto.concern.ConcernBriefDto;
+import at.wrk.coceso.dto.concern.ConcernCreateDto;
+import at.wrk.coceso.dto.concern.ConcernDto;
+import at.wrk.coceso.dto.concern.ConcernUpdateDto;
+import at.wrk.coceso.dto.concern.SectionCreateDto;
 import at.wrk.coceso.entity.Concern;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
-@Service
-@Transactional
 public interface ConcernService {
 
-  Concern getById(int id);
+    Optional<Concern> getConcern(long id);
 
-  List<Concern> getAll();
+    ConcernDto getConcern(Concern concern);
 
-  List<Concern> getAllOpen();
+    List<ConcernBriefDto> getAllBrief();
 
-  Concern getByName(String name);
+    List<ConcernDto> getAll();
 
-  Concern update(Concern concern);
+    List<Concern> getAllOpen();
 
-  void setClosed(int concern_id, boolean close);
+    Concern getByName(String name);
 
-  void addSection(String section, int concernId);
+    ConcernBriefDto create(ConcernCreateDto data);
 
-  void removeSection(String section, int concernId);
+    void update(Concern concern, ConcernUpdateDto data);
 
-  boolean isClosed(Integer concernId);
+    void setClosed(Concern concern, boolean close);
 
-  boolean isClosed(Concern concern);
+    void addSection(Concern concern, SectionCreateDto data);
 
+    void removeSection(Concern concern, String section);
 }

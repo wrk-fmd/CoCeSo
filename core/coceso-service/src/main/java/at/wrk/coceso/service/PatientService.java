@@ -1,22 +1,23 @@
 package at.wrk.coceso.service;
 
+import at.wrk.coceso.dto.patient.PatientBriefDto;
+import at.wrk.coceso.dto.patient.PatientCreateDto;
+import at.wrk.coceso.dto.patient.PatientDto;
+import at.wrk.coceso.dto.patient.PatientUpdateDto;
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Patient;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Service
-@Transactional
 public interface PatientService {
 
-  List<Patient> getAll(Concern concern);
+    List<PatientDto> getAll(Concern concern);
 
-  List<Patient> getAllSorted(Concern concern);
+    List<Patient> getAllSorted(Concern concern);
 
-  Patient getByIdNoLog(int patientId);
+    PatientBriefDto create(Concern concern, PatientCreateDto data);
 
-  Patient getById(int patientId);
+    void update(Patient patient, PatientUpdateDto data);
 
+    void discharge(Patient patient);
 }

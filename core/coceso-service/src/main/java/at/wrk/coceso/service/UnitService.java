@@ -1,30 +1,35 @@
 package at.wrk.coceso.service;
 
+import at.wrk.coceso.dto.unit.UnitBatchCreateDto;
+import at.wrk.coceso.dto.unit.UnitBriefDto;
+import at.wrk.coceso.dto.unit.UnitCreateDto;
+import at.wrk.coceso.dto.unit.UnitDto;
+import at.wrk.coceso.dto.unit.UnitUpdateDto;
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Incident;
+import at.wrk.coceso.entity.StaffMember;
+import at.wrk.coceso.entity.Task;
 import at.wrk.coceso.entity.Unit;
-import at.wrk.coceso.entity.User;
-import at.wrk.coceso.entity.enums.TaskState;
-import at.wrk.coceso.entity.enums.UnitType;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
-@Transactional
 public interface UnitService {
 
-  Unit getById(int id);
+    List<UnitDto> getAll(Concern concern);
 
-  List<Unit> getAll(Concern concern);
+    List<Unit> getAllSorted(Concern concern);
 
-  List<Unit> getAllSorted(Concern concern);
+    List<Task> getRelated(Incident incident);
 
-  List<Unit> getByUser(User user, Collection<UnitType> types);
+    UnitBriefDto create(Concern concern, UnitCreateDto data);
 
-  List<Unit> getByConcernUser(Concern concern, User user);
+    List<UnitBriefDto> createBatch(Concern concern, UnitBatchCreateDto batch);
 
-  Map<Unit, TaskState> getRelated(Incident incident);
+    void update(Unit unit, UnitUpdateDto data);
 
+    void remove(Unit unit);
+
+    void addCrewMember(Unit unit, StaffMember member);
+
+    void removeCrewMember(Unit unit, StaffMember member);
 }
