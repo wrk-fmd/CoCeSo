@@ -1,109 +1,88 @@
 package at.wrk.coceso.endpoint;
 
+import at.wrk.coceso.dto.concern.ConcernBriefDto;
+import at.wrk.coceso.dto.concern.ConcernCreateDto;
+import at.wrk.coceso.dto.concern.ConcernDto;
+import at.wrk.coceso.dto.concern.ConcernUpdateDto;
+import at.wrk.coceso.dto.concern.SectionCreateDto;
 import at.wrk.coceso.entity.Concern;
-import at.wrk.coceso.entity.helper.JsonViews;
-import at.wrk.coceso.entity.helper.RestProperty;
-import at.wrk.coceso.entity.helper.RestResponse;
 import at.wrk.coceso.service.ConcernService;
-import at.wrk.coceso.utils.ActiveConcern;
-import at.wrk.coceso.utils.Initializer;
-import at.wrk.coceso.validator.ConcernValidator;
-import com.fasterxml.jackson.annotation.JsonView;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/data/concern")
+@RequestMapping("/concerns")
 public class ConcernEndpoint {
 
-  private static final Logger LOG = LoggerFactory.getLogger(ConcernEndpoint.class);
+    private final ConcernService concernService;
 
-  @Autowired
-  private ConcernService concernService;
-
-  @Autowired
-  private ConcernValidator concernValidator;
-
-  @InitBinder
-  protected void initBinder(WebDataBinder binder) {
-    binder.addValidators(concernValidator);
-  }
-
-  @PreAuthorize("isAuthenticated()")
-  @JsonView(JsonViews.Home.class)
-  @RequestMapping(value = "getAll", produces = "application/json", method = RequestMethod.GET)
-  public List<Concern> getAll() {
-    return concernService.getAll();
-  }
-
-  @PreAuthorize("@auth.hasAccessLevel('Edit')")
-  @Transactional
-  @JsonView(JsonViews.Edit.class)
-  @RequestMapping(value = "get/{id}", produces = "application/json", method = RequestMethod.GET)
-  public Concern get(@PathVariable("id") int concern_id) {
-    return Initializer.init(concernService.getById(concern_id), Concern::getSections);
-  }
-
-  @PreAuthorize("@auth.hasAccessLevel('Edit')")
-  @JsonView(JsonViews.Edit.class)
-  @RequestMapping(value = "get", produces = "application/json", method = RequestMethod.GET)
-  public Concern getByCookie(@ActiveConcern(sections = true) Concern concern) {
-    return concern;
-  }
-
-  @PreAuthorize("@auth.hasAccessLevel('Edit')")
-  @RequestMapping(value = "update", produces = "application/json", method = RequestMethod.POST)
-  public RestResponse update(@RequestBody @Validated @Valid Concern concern, BindingResult result) {
-
-    if (result.hasErrors()) {
-      return new RestResponse(result);
+    @Autowired
+    public ConcernEndpoint(final ConcernService concernService) {
+        this.concernService = concernService;
     }
-    concern = concernService.update(concern);
-    return new RestResponse(true, new RestProperty("id", concern.getId()));
-  }
 
-  @PreAuthorize("@auth.hasAccessLevel('CloseConcern')")
-  @RequestMapping(value = "close", produces = "application/json", method = RequestMethod.POST)
-  public RestResponse close(@RequestParam("concern_id") int concern_id) {
-    concernService.setClosed(concern_id, true);
-    return new RestResponse(true);
-  }
+    @PreAuthorize("hasPermission(null, T(at.wrk.coceso.auth.AccessLevel).CONCERN_READ)")
+    @GetMapping
+    public List<ConcernBriefDto> getAllConcerns() {
+        return concernService.getAllBrief();
+    }
 
-  @PreAuthorize("@auth.hasAccessLevel('CloseConcern')")
-  @RequestMapping(value = "reopen", produces = "application/json", method = RequestMethod.POST)
-  public RestResponse reopen(@RequestParam("concern_id") int concern_id) {
-    concernService.setClosed(concern_id, false);
-    return new RestResponse(true);
-  }
+    @PreAuthorize("hasPermission(#concern, T(at.wrk.coceso.auth.AccessLevel).CONCERN_READ)")
+    @GetMapping("/{concern}")
+    public ConcernDto getConcern(@PathVariable final Concern concern) {
+        ParamValidator.exists(concern);
+        return concernService.getConcern(concern);
+    }
 
-  @PreAuthorize("@auth.hasAccessLevel('Edit')")
-  @RequestMapping(value = "addSection", produces = "application/json", method = RequestMethod.POST)
-  public RestResponse addSection(@RequestParam("section") String section, @RequestParam("concern") int concern) {
-    concernService.addSection(section, concern);
-    return new RestResponse(true);
-  }
+    @PreAuthorize("hasPermission(null, T(at.wrk.coceso.auth.AccessLevel).CONCERN_EDIT)")
+    @PostMapping
+    public ConcernBriefDto createConcern(@RequestBody @Valid final ConcernCreateDto data) {
+        return concernService.create(data);
+    }
 
-  @PreAuthorize("@auth.hasAccessLevel('Edit')")
-  @RequestMapping(value = "removeSection", produces = "application/json", method = RequestMethod.POST)
-  public RestResponse removeSection(@RequestParam("section") String section, @RequestParam("concern") int concern) {
-    concernService.removeSection(section, concern);
-    return new RestResponse(true);
-  }
+    @PreAuthorize("hasPermission(#concern, T(at.wrk.coceso.auth.AccessLevel).CONCERN_EDIT)")
+    @PutMapping("/{concern}")
+    public void updateConcern(@PathVariable final Concern concern, @RequestBody @Valid final ConcernUpdateDto data) {
+        ParamValidator.open(concern);
+        concernService.update(concern, data);
+    }
 
+    @PreAuthorize("hasPermission(#concern, T(at.wrk.coceso.auth.AccessLevel).CONCERN_CLOSE)")
+    @PutMapping("/{concern}/close")
+    public void closeConcern(@PathVariable final Concern concern) {
+        ParamValidator.exists(concern);
+        concernService.setClosed(concern, true);
+    }
+
+    @PreAuthorize("hasPermission(#concern, T(at.wrk.coceso.auth.AccessLevel).CONCERN_CLOSE)")
+    @PutMapping("/{concern}/open")
+    public void openConcern(@PathVariable final Concern concern) {
+        ParamValidator.exists(concern);
+        concernService.setClosed(concern, false);
+    }
+
+    @PreAuthorize("hasPermission(#concern, T(at.wrk.coceso.auth.AccessLevel).CONCERN_EDIT)")
+    @PostMapping("/{concern}/sections")
+    public void addSection(@PathVariable final Concern concern, @RequestBody @Valid final SectionCreateDto data) {
+        ParamValidator.open(concern);
+        concernService.addSection(concern, data);
+    }
+
+    @PreAuthorize("hasPermission(#concern, T(at.wrk.coceso.auth.AccessLevel).CONCERN_EDIT)")
+    @DeleteMapping("/{concern}/sections/{section}")
+    public void removeSection(@PathVariable final Concern concern, @PathVariable final String section) {
+        ParamValidator.open(concern);
+        concernService.removeSection(concern, section);
+    }
 }
