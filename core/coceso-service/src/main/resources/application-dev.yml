@@ -14,12 +14,6 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        jdbc:
-          lob.non_contextual_creation: true
-          time_zone: UTC
 
 application:
   auth:
@@ -30,4 +24,4 @@ logging:
   pattern:
     console: "%d %highlight(%-5level) [%12.12thread] %cyan(%logger{5}): %msg%n"
   level:
-    at.wrk.fmd.coceso: debug
+    at.wrk: debug

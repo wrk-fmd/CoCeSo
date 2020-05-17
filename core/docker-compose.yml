@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   mls-coceso:
-    image: wrk-fmd/mls-coceso:${MLS_TAG:-latest}
+    image: wrkfmdit/mls-coceso:${MLS_TAG:-latest}
     build:
       context: .
       args:

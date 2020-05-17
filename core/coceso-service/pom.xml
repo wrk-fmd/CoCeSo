@@ -13,6 +13,10 @@
     <artifactId>coceso-service</artifactId>
     <name>CoCeSo Core service implementation</name>
 
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+
     <dependencies>
         <!-- API DTOs -->
         <dependency>
@@ -25,7 +29,28 @@
         <dependency>
             <groupId>at.wrk.fmd.mls</groupId>
             <artifactId>auth-common</artifactId>
-            <version>${project.version}</version>
+            <version>${mls.auth.version}</version>
+        </dependency>
+
+        <!-- Notification sending -->
+        <dependency>
+            <groupId>at.wrk.fmd.mls</groupId>
+            <artifactId>replay-service</artifactId>
+            <version>${mls.replay.version}</version>
+        </dependency>
+
+        <!-- Geocoding -->
+        <dependency>
+            <groupId>at.wrk.fmd.mls</groupId>
+            <artifactId>geocoding-api</artifactId>
+            <version>${mls.geocoding.version}</version>
+        </dependency>
+
+        <!-- Common Hibernate types -->
+        <dependency>
+            <groupId>at.wrk.fmd.mls</groupId>
+            <artifactId>hibernate-types</artifactId>
+            <version>${mls.common.version}</version>
         </dependency>
 
         <!-- Spring Boot -->
@@ -46,23 +71,27 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
+        <!-- PDF generation -->
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itextpdf</artifactId>
+            <version>5.5.13.1</version>
+        </dependency>
+
         <!-- Swagger -->
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
-            <version>${io.springfox.version}</version>
         </dependency>
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
-            <version>${io.springfox.version}</version>
         </dependency>
 
         <!-- MapStruct -->
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
-            <version>${org.mapstruct.version}</version>
         </dependency>
 
         <!-- Lombok -->
@@ -91,6 +120,13 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>build-info</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
