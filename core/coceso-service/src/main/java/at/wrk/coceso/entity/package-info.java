@@ -1,24 +1,21 @@
-@TypeDefs({
-  @TypeDef(typeClass = ChangesUserType.class, defaultForType = Changes.class),
-  @TypeDef(typeClass = PointUserType.class, defaultForType = Point.class),
-  @TypeDef(typeClass = EnumUserType.class, parameters = @Parameter(name = "enumClass", value = "at.wrk.coceso.entity.enums.Authority"), defaultForType = Authority.class),
-  @TypeDef(typeClass = EnumUserType.class, parameters = @Parameter(name = "enumClass", value = "at.wrk.coceso.entity.enums.IncidentState"), defaultForType = IncidentState.class),
-  @TypeDef(typeClass = EnumUserType.class, parameters = @Parameter(name = "enumClass", value = "at.wrk.coceso.entity.enums.IncidentType"), defaultForType = IncidentType.class),
-  @TypeDef(typeClass = EnumUserType.class, parameters = @Parameter(name = "enumClass", value = "at.wrk.coceso.entity.enums.LogEntryType"), defaultForType = LogEntryType.class),
-  @TypeDef(typeClass = EnumUserType.class, parameters = @Parameter(name = "enumClass", value = "at.wrk.coceso.entity.enums.TaskState"), defaultForType = TaskState.class),
-  @TypeDef(typeClass = EnumUserType.class, parameters = @Parameter(name = "enumClass", value = "at.wrk.coceso.entity.enums.UnitState"), defaultForType = UnitState.class),
-  @TypeDef(typeClass = EnumUserType.class, parameters = @Parameter(name = "enumClass", value = "at.wrk.coceso.entity.enums.UnitType"), defaultForType = UnitType.class),
-  @TypeDef(typeClass = EnumUserType.class, parameters = @Parameter(name = "enumClass", value = "at.wrk.coceso.entity.enums.Naca"), defaultForType = Naca.class),
-  @TypeDef(typeClass = EnumUserType.class, parameters = @Parameter(name = "enumClass", value = "at.wrk.coceso.entity.enums.Sex"), defaultForType = Sex.class)
-})
+@TypeDef(typeClass = PostgresJsonType.class, defaultForType = Point.class)
+@TypeDef(typeClass = PostgresEnumType.class, defaultForType = IncidentClosedReason.class)
+@TypeDef(typeClass = PostgresEnumType.class, defaultForType = IncidentType.class)
+@TypeDef(typeClass = PostgresEnumType.class, defaultForType = JournalEntryType.class)
+@TypeDef(typeClass = PostgresEnumType.class, defaultForType = Sex.class)
+@TypeDef(typeClass = PostgresEnumType.class, defaultForType = TaskState.class)
+@TypeDef(typeClass = PostgresEnumType.class, defaultForType = UnitState.class)
+@TypeDef(typeClass = PostgresEnumType.class, defaultForType = UnitType.class)
 package at.wrk.coceso.entity;
 
-import at.wrk.coceso.entity.enums.*;
-import at.wrk.coceso.entity.helper.Changes;
+import at.wrk.coceso.entity.enums.IncidentClosedReason;
+import at.wrk.coceso.entity.enums.IncidentType;
+import at.wrk.coceso.entity.enums.JournalEntryType;
+import at.wrk.coceso.entity.enums.Sex;
+import at.wrk.coceso.entity.enums.TaskState;
+import at.wrk.coceso.entity.enums.UnitState;
+import at.wrk.coceso.entity.enums.UnitType;
 import at.wrk.coceso.entity.point.Point;
-import at.wrk.coceso.entity.types.ChangesUserType;
-import at.wrk.coceso.entity.types.EnumUserType;
-import at.wrk.coceso.entity.types.PointUserType;
-import org.hibernate.annotations.Parameter;
+import at.wrk.fmd.mls.hibernate.enums.PostgresEnumType;
+import at.wrk.fmd.mls.hibernate.json.PostgresJsonType;
 import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;

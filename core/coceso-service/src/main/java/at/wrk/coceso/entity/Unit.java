@@ -1,21 +1,13 @@
 package at.wrk.coceso.entity;
 
-import at.wrk.coceso.entity.enums.IncidentType;
-import at.wrk.coceso.entity.enums.TaskState;
+import at.wrk.coceso.dto.Lengths;
 import at.wrk.coceso.entity.enums.UnitState;
 import at.wrk.coceso.entity.enums.UnitType;
-import at.wrk.coceso.entity.helper.JsonViews;
 import at.wrk.coceso.entity.point.Point;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonView;
-import org.hibernate.annotations.Formula;
-import org.hibernate.annotations.Immutable;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotEmpty;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 
-import javax.persistence.Basic;
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -24,181 +16,116 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.MapKeyJoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import java.io.Serializable;
-import java.time.OffsetDateTime;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Entity
-public class Unit implements Serializable, Comparable<Unit>, ConcernBoundEntity {
+@Getter
+@Setter
+public class Unit implements Serializable, Comparable<Unit> {
 
-    @JsonView(JsonViews.Always.class)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
-    @JsonView(JsonViews.Client.class)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "concern_fk", updatable = false, nullable = false)
+    @JoinColumn(updatable = false, nullable = false)
     private Concern concern;
 
-    @JsonView({JsonViews.Main.class, JsonViews.ClientDetail.class, JsonViews.Patadmin.class})
     @Column(nullable = false)
     private UnitState state;
 
-    @JsonView(JsonViews.Always.class)
-    @Column(nullable = false, length = 64)
-    @NotEmpty(message = "unit.call.notempty")
+    @Column(nullable = false, length = Lengths.UNIT_CALL)
     private String call;
 
-    @JsonView({JsonViews.Edit.class, JsonViews.Main.class})
-    @Column(nullable = false, length = 64)
-    private String ani;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<Contact> contacts;
 
-    @JsonView({JsonViews.Edit.class, JsonViews.Main.class})
     @Column
     private boolean withDoc;
 
-    @JsonView({JsonViews.Edit.class, JsonViews.Main.class})
     @Column
     private boolean portable;
 
-    @JsonView({JsonViews.Edit.class, JsonViews.Main.class})
     @Column
     private boolean transportVehicle;
 
-    @JsonView(JsonViews.Edit.class)
-    @Column
-    private UnitType type;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<UnitType> types;
 
-    @JsonView(JsonViews.Patadmin.class)
-    @Column
-    private Integer capacity;
-
-    @JsonView(JsonViews.Patadmin.class)
-    @Length(max = 30)
-    @Column(length = 30)
-    private String imgsrc;
-
-    @JsonView({JsonViews.Edit.class, JsonViews.Main.class})
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "crew", joinColumns = {
-            @JoinColumn(name = "unit_fk")}, inverseJoinColumns = {
-            @JoinColumn(name = "user_fk")})
-    private Set<User> crew;
+    private Set<StaffMember> crew;
 
-    @JsonView({JsonViews.Edit.class, JsonViews.Main.class})
-    @Column(nullable = false)
+    @Column(nullable = false, length = Lengths.UNIT_INFO)
     private String info;
 
-    @JsonView(JsonViews.Main.class)
     @Column
     private Point position;
 
-    @JsonView({JsonViews.Edit.class, JsonViews.Main.class})
     @Column
     private Point home;
 
     // TODO: FK relation!
-    @JsonView({JsonViews.Edit.class, JsonViews.Main.class})
-    @Column(name = "section_fk")
+    @Column(length = Lengths.SECTION_NAME)
     private String section;
 
-    @JsonView({JsonViews.Main.class, JsonViews.ClientDetail.class})
-    @ElementCollection
-    @CollectionTable(name = "task", joinColumns = {@JoinColumn(name = "unit_fk")})
-    @MapKeyJoinColumn(name = "incident_fk")
-    @Column(name = "state")
-    private Map<Incident, TaskState> incidents;
+    @OneToMany(mappedBy = "unit")
+    private Set<Task> incidents;
 
-    @Immutable
-    @JsonView({JsonViews.Main.class, JsonViews.ClientDetail.class})
-    @ElementCollection
-    @CollectionTable(name = "task", joinColumns = {@JoinColumn(name = "unit_fk")})
-    @MapKeyColumn(name = "incident_fk")
-    @Column(name = "lastStateChangeAt")
-    private Map<Integer, OffsetDateTime> incidentStateChangedAtMap;
-
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinTable(name = "unit_in_container", joinColumns = {
-            @JoinColumn(name = "unit_fk")}, inverseJoinColumns = {
-            @JoinColumn(name = "container_fk")})
     private Container container;
 
-    @JsonView(JsonViews.Edit.class)
-    @Formula("EXISTS(SELECT 1 FROM log l WHERE l.unit_fk = id AND (l.type != 'UNIT_CREATE' OR l.type IS NULL))")
-    @Basic(fetch = FetchType.LAZY)
-    private Boolean locked;
+    @Column
+    private Integer ordering;
 
-    public Unit() {
-    }
-
-    public Unit(int id) {
-        this.id = id;
-    }
+//    @Formula("EXISTS(SELECT 1 FROM log l WHERE l.unit_fk = id AND (l.type != 'UNIT_CREATE' OR l.type IS NULL))")
+//    @Basic(fetch = FetchType.LAZY)
+//    private Boolean locked;
 
     @PrePersist
     @PreUpdate
     public void prePersist() {
         if (state == null) {
-            state = UnitState.AD;
+            state = UnitState.OFF_DUTY;
         }
 
         if (call == null) {
             call = "";
         }
 
-        if (ani == null) {
-            ani = "";
-        }
-
         if (info == null) {
             info = "";
-        }
-
-        if (home != null) {
-            home.tryToResolveExternalData();
-        }
-
-        if (position != null) {
-            position.tryToResolveExternalData();
         }
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-        if (obj == this) {
+    public boolean equals(Object o) {
+        if (this == o) {
             return true;
         }
-        return (this.id != null && this.id.equals(((Unit) obj).id));
+        if (!(o instanceof Unit)) {
+            return false;
+        }
+        Unit unit = (Unit) o;
+        return Objects.equals(id, unit.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hash(id);
     }
 
     @Override
-    public int compareTo(Unit t) {
-        if (t == null || t.id == null) {
-            return id == null ? 0 : -1;
-        }
-        return id == null ? 1 : id.compareTo(t.id);
+    public int compareTo(Unit other) {
+        return new CompareToBuilder().append(this.call, other.call).toComparison();
     }
 
     @Override
@@ -206,201 +133,51 @@ public class Unit implements Serializable, Comparable<Unit>, ConcernBoundEntity 
         return String.format("#%d (%s)", id, call);
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    @Override
-    public Concern getConcern() {
-        return concern;
-    }
-
-    public void setConcern(Concern concern) {
-        this.concern = concern;
-    }
-
-    public UnitState getState() {
-        return state;
-    }
-
-    public void setState(UnitState state) {
-        this.state = state;
-    }
-
-    public String getCall() {
-        return call;
-    }
-
-    public void setCall(String call) {
-        this.call = call;
-    }
-
-    public String getAni() {
-        return ani;
-    }
-
-    public void setAni(String ani) {
-        this.ani = ani;
-    }
-
-    public boolean isWithDoc() {
-        return withDoc;
-    }
-
-    public void setWithDoc(boolean withDoc) {
-        this.withDoc = withDoc;
-    }
-
-    public boolean isPortable() {
-        return portable;
-    }
-
-    public void setPortable(boolean portable) {
-        this.portable = portable;
-    }
-
-    public boolean isTransportVehicle() {
-        return transportVehicle;
-    }
-
-    public void setTransportVehicle(boolean transportVehicle) {
-        this.transportVehicle = transportVehicle;
-    }
-
-    public UnitType getType() {
-        return type;
-    }
-
-    public void setType(UnitType type) {
-        this.type = type;
-    }
-
-    public Set<User> getCrew() {
-        return crew;
-    }
-
-    public void addCrew(User user) {
+    public void addCrew(StaffMember member) {
         if (crew == null) {
             crew = new HashSet<>();
         }
-        crew.add(user);
+        crew.add(member);
     }
 
-    public void removeCrew(User user) {
+    public void removeCrew(StaffMember member) {
         if (crew != null) {
-            crew.remove(user);
+            crew.remove(member);
         }
     }
 
-    public String getInfo() {
-        return info;
+    public Optional<Task> getTask(Incident incident) {
+        return incidents.stream().filter(t -> t.getIncident().equals(incident)).findFirst();
     }
 
-    public void setInfo(String info) {
-        this.info = info;
-    }
-
-    public Point getPosition() {
-        return position;
-    }
-
-    public void setPosition(Point position) {
-        this.position = position;
-    }
-
-    public Point getHome() {
-        return home;
-    }
-
-    public void setHome(Point home) {
-        this.home = home;
-    }
-
-    @JsonIgnore
-    public Map<Incident, TaskState> getIncidents() {
-        return incidents;
-    }
-
-    @JsonProperty("incidents")
-    public Map<Integer, TaskState> getIncidentsSlim() {
-        return incidents == null ? null : incidents.entrySet().stream().collect(Collectors.toMap(entry -> entry.getKey().getId(), Map.Entry::getValue));
-    }
-
-    @JsonProperty("incidents")
-    public void setIncidentsSlim(Map<Integer, TaskState> incidents) {
-        this.incidents = incidents.entrySet().stream().collect(Collectors.toMap(entry -> new Incident(entry.getKey()), Map.Entry::getValue));
-    }
-
-    @JsonProperty(value = "incidentStateChangeTimestamps", access = JsonProperty.Access.READ_ONLY)
-    public Map<Integer, OffsetDateTime> getIncidentStateChangedAtMap() {
-        return incidentStateChangedAtMap;
-    }
-
-    public void addIncident(Incident incident, TaskState state) {
+    public void addTask(Task task) {
         if (incidents == null) {
-            incidents = new HashMap<>();
+            incidents = new HashSet<>();
         }
-
-        incidents.put(incident, state);
-        incident.addUnit(this, state);
+        incidents.add(task);
+        task.getIncident().addTask(task);
     }
 
-    public void removeIncident(Incident incident) {
+    public void removeTask(Task task) {
         if (incidents != null) {
-            incidents.remove(incident);
+            incidents.remove(task);
         }
-
-        incident.removeUnit(this);
-    }
-
-    public Container getContainer() {
-        return container;
+        task.getIncident().removeTask(task);
     }
 
     public void setContainer(Container container) {
+        if (this.container != null) {
+            this.container.removeUnit(this);
+        }
+        if (container != null) {
+            container.addUnit(this);
+        }
+
         this.container = container;
     }
 
-    public String getSection() {
-        return section;
-    }
-
-    public void setSection(String section) {
-        this.section = section;
-    }
-
-    public Boolean isLocked() {
-        return locked;
-    }
-
-    public void setLocked(Boolean locked) {
-        this.locked = locked;
-    }
-
-    public Integer getCapacity() {
-        return capacity;
-    }
-
-    public void setCapacity(Integer capacity) {
-        this.capacity = capacity;
-    }
-
-    public String getImgsrc() {
-        return imgsrc;
-    }
-
-    public void setImgsrc(String imgsrc) {
-        this.imgsrc = imgsrc;
-    }
-
-    @JsonView(JsonViews.Patadmin.class)
-    public int getPatients() {
-        return incidents == null ? 0 : (int) incidents.keySet().stream()
-                .filter(i -> i.getType() == IncidentType.Treatment && !i.getState().isDone())
-                .count();
+    void removeContainer() {
+        // This may only be triggered by the container and should not propagate
+        container = null;
     }
 }

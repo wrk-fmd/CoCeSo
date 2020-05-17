@@ -1,166 +1,123 @@
 package at.wrk.coceso.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import at.wrk.coceso.dto.Lengths;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.persistence.*;
 
 @Entity
-@Table(name = "container")
-public class Container implements Serializable, ConcernBoundEntity {
+@Getter
+@Setter
+public class Container implements Serializable {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @JsonIgnore
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "concern_fk", updatable = false, nullable = false)
-  private Concern concern;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(updatable = false, nullable = false)
+    private Concern concern;
 
-  private double ordering;
+    @Column
+    private long ordering;
 
-  @ManyToOne(fetch = FetchType.EAGER)
-  @JoinColumn(name = "parent")
-  private Container parent;
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Container parent;
 
-  @Column(length = 60, nullable = false)
-  private String name;
+    @Column(nullable = false, length = Lengths.CONTAINER_NAME)
+    private String name;
 
-  @ElementCollection(fetch = FetchType.EAGER)
-  @CollectionTable(name = "unit_in_container", joinColumns = {
-    @JoinColumn(name = "container_fk")})
-  @MapKeyJoinColumn(name = "unit_fk")
-  @Column(name = "ordering")
-  private Map<Unit, Double> units;
+    @OneToMany(mappedBy = "parent")
+    private Set<Container> children;
 
-  @JsonInclude(JsonInclude.Include.NON_NULL)
-  @Transient
-  private Set<Integer> spare;
+    @OneToMany(mappedBy = "container")
+    private Set<Unit> units;
 
-  public Container() {
-  }
-
-  public Container(int id) {
-    this.id = id;
-  }
-
-  @PrePersist
-  @PreUpdate
-  public void prePersist() {
-    if (name == null) {
-      name = "";
+    @PrePersist
+    @PreUpdate
+    public void prePersist() {
+        if (name == null) {
+            name = "";
+        }
     }
-  }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (obj == null || !(obj instanceof Container)) {
-      return false;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Container)) {
+            return false;
+        }
+        Container container = (Container) o;
+        return Objects.equals(id, container.id);
     }
-    if (obj == this) {
-      return true;
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
-    return (this.id != null && this.id.equals(((Container) obj).getId()));
-  }
 
-  @Override
-  public int hashCode() {
-    return Objects.hashCode(id);
-  }
-
-  @Override
-  public String toString() {
-    return String.format("#%d (%s)", id, name);
-  }
-
-  public Integer getId() {
-    return id;
-  }
-
-  public void setId(Integer id) {
-    this.id = id;
-  }
-
-  @Override
-  public Concern getConcern() {
-    return concern;
-  }
-
-  public void setConcern(Concern concern) {
-    this.concern = concern;
-  }
-
-  public double getOrdering() {
-    return ordering;
-  }
-
-  public void setOrdering(double ordering) {
-    this.ordering = ordering;
-  }
-
-  public Container getParent() {
-    return parent;
-  }
-
-  @JsonProperty("parent")
-  public Integer getParentSlim() {
-    return parent == null ? null : parent.getId();
-  }
-
-  public void setParent(Container parent) {
-    this.parent = parent;
-  }
-
-  @JsonProperty("parent")
-  public void setParentSlim(Integer parent) {
-    this.parent = parent == null ? null : new Container(parent);
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public Map<Integer, Double> getUnits() {
-    return units == null ? null : units.entrySet().stream().collect(Collectors.toMap(e -> e.getKey().getId(), Map.Entry::getValue));
-  }
-
-  public void setUnits(Map<Integer, Double> units) {
-  }
-
-  public void removeUnit(Unit unit) {
-    units.remove(unit);
-  }
-
-  public void addUnit(Unit unit, Double ordering) {
-    if (units == null) {
-      units = new HashMap<>();
+    @Override
+    public String toString() {
+        return String.format("#%d (%s)", id, name);
     }
-    units.put(unit, ordering);
-  }
 
-  public void emptyUnits() {
-    if (units != null) {
-      this.units.clear();
+    public void setParent(Container parent) {
+        if (this.parent != null) {
+            this.parent.children.remove(this);
+        }
+        if (parent != null) {
+            parent.children.add(this);
+        }
+
+        this.parent = parent;
     }
-  }
 
-  public Set<Integer> getSpare() {
-    return spare;
-  }
+    public void clearUnits() {
+        if (this.units != null) {
+            this.units.forEach(Unit::removeContainer);
+            this.units.clear();
+        }
+    }
 
-  public void setSpare(Set<Integer> spare) {
-    this.spare = spare;
-  }
+    void addUnit(Unit unit) {
+        units.add(unit);
+    }
 
+    void removeUnit(Unit unit) {
+        units.remove(unit);
+    }
+
+    public List<Long> getSortedChildren() {
+        return children == null ? Collections.emptyList() : children.stream()
+                .sorted(Comparator.comparing(Container::getOrdering))
+                .map(Container::getId)
+                .collect(Collectors.toList());
+    }
+
+    public List<Long> getSortedUnits() {
+        return units == null ? Collections.emptyList() : units.stream()
+                .sorted(Comparator.comparing(Unit::getOrdering))
+                .map(Unit::getId)
+                .collect(Collectors.toList());
+    }
 }

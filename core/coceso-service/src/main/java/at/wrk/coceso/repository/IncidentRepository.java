@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface IncidentRepository extends JpaRepository<Incident, Integer> {
+public interface IncidentRepository extends JpaRepository<Incident, Long> {
 
     String NOT_SINGLE_UNIT_INCIDENT = "type NOT IN ('ToHome', 'Standby', 'HoldPosition', 'Treatment')";
 
@@ -26,35 +26,35 @@ public interface IncidentRepository extends JpaRepository<Incident, Integer> {
      * Returns the incidents relevant for the initial loading. This functions corresponds to {@link Incident#isRelevant()} except that 'done'
      * relocations are NOT loaded on initial loading, but they are not removed during live operation from screen.
      */
-    @Query("SELECT i FROM Incident i WHERE concern = :concern AND (type IN ('Task', 'Transport') OR state <> 'Done')")
+    @Query("SELECT i FROM Incident i WHERE i.concern = :concern AND (i.type IN ('Task', 'Transport') OR i.closed IS NULL)")
     List<Incident> findRelevant(@Param("concern") Concern concern);
 
-    @Query("SELECT i FROM Incident i WHERE concern = :concern AND state <> 'Done'")
+    @Query("SELECT i FROM Incident i WHERE i.concern = :concern AND i.closed IS NULL")
     List<Incident> findActive(@Param("concern") Concern concern, Sort sort);
 
-    @Query("SELECT i FROM Incident i WHERE concern = :concern AND " + NOT_SINGLE_UNIT_INCIDENT)
+    @Query("SELECT i FROM Incident i WHERE i.concern = :concern AND " + NOT_SINGLE_UNIT_INCIDENT)
     List<Incident> findNonSingleUnit(@Param("concern") Concern concern, Sort sort);
 
-    @Query("SELECT i FROM Incident i WHERE concern = :concern AND state <> 'Done' AND " + NOT_SINGLE_UNIT_INCIDENT)
+    @Query("SELECT i FROM Incident i WHERE i.concern = :concern AND i.closed IS NULL AND " + NOT_SINGLE_UNIT_INCIDENT)
     List<Incident> findActiveNonSingleUnit(@Param("concern") Concern concern, Sort sort);
 
-    @Query("SELECT i FROM Incident i WHERE concern = :concern AND type = 'Transport'")
+    @Query("SELECT i FROM Incident i WHERE i.concern = :concern AND i.type = 'Transport'")
     List<Incident> findTransports(@Param("concern") Concern concern, Sort sort);
 
-    @Query("SELECT l.incident.id FROM LogEntry l WHERE l.unit = :unit AND l.incident IS NOT NULL GROUP BY l.incident")
+    @Query("SELECT l.incident.id FROM JournalEntry l WHERE l.unit = :unit AND l.incident IS NOT NULL GROUP BY l.incident")
     List<Integer> findRelated(@Param("unit") Unit unit);
 
     @Query(nativeQuery = true,
             value = "SELECT * FROM Incident i WHERE i.ao->>'@type' = 'unit' " +
-                    "AND i.type IN ('Task', 'Transport') AND i.concern_fk = :concern AND i.state <> 'Done'")
+                    "AND i.type IN ('Task', 'Transport') AND i.concern_fk = :concern AND i.closed IS NULL")
     List<Incident> findIncoming(@Param("concern") Concern concern);
 
     @Query(nativeQuery = true,
             value = "SELECT * FROM Incident i WHERE i.ao->>'@type' = 'unit' AND i.ao->>'id' = CAST(:unit AS TEXT) " +
-                    "AND i.type IN ('Task', 'Transport') AND i.concern_fk = :concern AND i.state <> 'Done'")
+                    "AND i.type IN ('Task', 'Transport') AND i.concern_fk = :concern AND i.closed IS NULL")
     List<Incident> findIncoming(@Param("concern") Concern concern, @Param("unit") int unit);
 
-    @Query("SELECT COUNT(DISTINCT patient) FROM Incident i WHERE type = 'Treatment' AND patient IS NOT NULL AND concern = :concern")
+    @Query("SELECT COUNT(DISTINCT i.patient) FROM Incident i WHERE i.type = 'Treatment' AND i.patient IS NOT NULL AND i.concern = :concern")
     long countTreatments(@Param("concern") Concern concern);
 
     @Query(nativeQuery = true,

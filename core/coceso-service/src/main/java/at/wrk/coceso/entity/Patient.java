@@ -1,13 +1,10 @@
 package at.wrk.coceso.entity;
 
+import at.wrk.coceso.dto.Lengths;
 import at.wrk.coceso.entity.enums.IncidentType;
-import at.wrk.coceso.entity.enums.Naca;
 import at.wrk.coceso.entity.enums.Sex;
-import at.wrk.coceso.entity.helper.JsonViews;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.Column;
@@ -28,282 +25,117 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
-public class Patient implements Serializable, ConcernBoundEntity {
+@Getter
+@Setter
+public class Patient implements Serializable {
 
-  @JsonView(JsonViews.Always.class)
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @JsonIgnore
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "concern_fk", updatable = false, nullable = false)
-  private Concern concern;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(updatable = false, nullable = false)
+    private Concern concern;
 
-  @JsonView(JsonViews.Always.class)
-  @Column(nullable = false, length = 64)
-  private String lastname;
+    @Column(nullable = false, length = Lengths.PATIENT_LASTNAME)
+    private String lastname;
 
-  @JsonView(JsonViews.Always.class)
-  @Column(nullable = false, length = 64)
-  private String firstname;
+    @Column(nullable = false, length = Lengths.PATIENT_FIRSTNAME)
+    private String firstname;
 
-  @JsonView(JsonViews.Always.class)
-  @Column(nullable = false, length = 40)
-  private String externalId;
+    @Column(nullable = false, length = Lengths.PATIENT_EXTERNAL)
+    private String externalId;
 
-  @JsonView(JsonViews.Always.class)
-  @Column
-  private Sex sex;
+    @Column
+    private Sex sex;
 
-  @JsonView(JsonViews.Always.class)
-  @Column(nullable = false, length = 40)
-  private String insurance;
+    @Column(nullable = false, length = Lengths.PATIENT_INSURANCE)
+    private String insurance;
 
-  @JsonView(JsonViews.Always.class)
-  @JsonFormat(shape = JsonFormat.Shape.STRING)
-  @Column
-  private LocalDate birthday;
+    @Column
+    private LocalDate birthday;
 
-  @JsonView(JsonViews.Patadmin.class)
-  @Column
-  private Naca naca;
+    @Column(nullable = false, length = Lengths.PATIENT_DIAGNOSIS)
+    private String diagnosis;
 
-  @JsonView(JsonViews.Always.class)
-  @Column(nullable = false)
-  private String diagnosis;
+    @Column(nullable = false, length = Lengths.PATIENT_ER_TYPE)
+    private String erType;
 
-  @JsonView(JsonViews.Always.class)
-  @Column(nullable = false, length = 40)
-  private String ertype;
+    @Column(nullable = false, length = Lengths.PATIENT_INFO)
+    private String info;
 
-  @JsonView(JsonViews.Always.class)
-  @Column(nullable = false)
-  private String info;
+    @Column
+    private boolean done;
 
-  @JsonIgnore
-  @Column
-  private boolean done;
+    @OneToMany(mappedBy = "patient")
+    private Set<Incident> incidents;
 
-  @JsonIgnore
-  @OneToMany(mappedBy = "patient")
-  private Set<Incident> incidents;
-
-  public Patient() {
-  }
-
-  public Patient(int id) {
-    this.id = id;
-  }
-
-  @PrePersist
-  @PreUpdate
-  public void prePersist() {
-    if (lastname == null) {
-      lastname = "";
-    }
-    if (firstname == null) {
-      firstname = "";
-    }
-    if (externalId == null) {
-      externalId = "";
-    }
-    if (insurance == null) {
-      insurance = "";
-    }
-    if (diagnosis == null) {
-      diagnosis = "";
-    }
-    if (ertype == null) {
-      ertype = "";
-    }
-    if (info == null) {
-      info = "";
-    }
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (obj == null || getClass() != obj.getClass()) {
-      return false;
-    }
-    if (obj == this) {
-      return true;
-    }
-    return (this.id != null && this.id.equals(((Patient) obj).id));
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hashCode(id);
-  }
-
-  public Integer getId() {
-    return id;
-  }
-
-  public void setId(Integer id) {
-    this.id = id;
-  }
-
-  @Override
-  public Concern getConcern() {
-    return concern;
-  }
-
-  public void setConcern(Concern concern) {
-    this.concern = concern;
-  }
-
-  public String getLastname() {
-    return lastname;
-  }
-
-  public void setLastname(String lastname) {
-    this.lastname = lastname;
-  }
-
-  public String getFirstname() {
-    return firstname;
-  }
-
-  public void setFirstname(String firstname) {
-    this.firstname = firstname;
-  }
-
-  public String getExternalId() {
-    return externalId;
-  }
-
-  public void setExternalId(String externalId) {
-    this.externalId = externalId;
-  }
-
-  public Sex getSex() {
-    return sex;
-  }
-
-  public void setSex(Sex sex) {
-    this.sex = sex;
-  }
-
-  public String getInsurance() {
-    return insurance;
-  }
-
-  public void setInsurance(String insurance) {
-    this.insurance = insurance;
-  }
-
-  public LocalDate getBirthday() {
-    return birthday;
-  }
-
-  public void setBirthday(LocalDate birthday) {
-    this.birthday = birthday;
-  }
-
-  public Naca getNaca() {
-    return naca;
-  }
-
-  public void setNaca(Naca naca) {
-    this.naca = naca;
-  }
-
-  public String getDiagnosis() {
-    return diagnosis;
-  }
-
-  public void setDiagnosis(String diagnosis) {
-    this.diagnosis = diagnosis;
-  }
-
-  public String getErtype() {
-    return ertype;
-  }
-
-  public void setErtype(String ertype) {
-    this.ertype = ertype;
-  }
-
-  public String getInfo() {
-    return info;
-  }
-
-  public void setInfo(String info) {
-    this.info = info;
-  }
-
-  public boolean isDone() {
-    return done;
-  }
-
-  public void setDone(boolean done) {
-    this.done = done;
-  }
-
-  public Set<Incident> getIncidents() {
-    return incidents;
-  }
-
-  @JsonIgnore
-  public String getFullName() {
-    return StringUtils.trimToEmpty(StringUtils.isNotBlank(externalId)
-        ? String.format("%s %s (%s)", StringUtils.trimToEmpty(lastname), StringUtils.trimToEmpty(firstname), StringUtils.trimToEmpty(externalId))
-        : String.format("%s %s", StringUtils.trimToEmpty(lastname), StringUtils.trimToEmpty(firstname)));
-  }
-
-  public Set<Unit> getGroup() {
-    if (incidents == null) {
-      return null;
+    @PrePersist
+    @PreUpdate
+    public void prePersist() {
+        if (lastname == null) {
+            lastname = "";
+        }
+        if (firstname == null) {
+            firstname = "";
+        }
+        if (externalId == null) {
+            externalId = "";
+        }
+        if (insurance == null) {
+            insurance = "";
+        }
+        if (diagnosis == null) {
+            diagnosis = "";
+        }
+        if (erType == null) {
+            erType = "";
+        }
+        if (info == null) {
+            info = "";
+        }
     }
 
-    return incidents.stream()
-        .filter(i -> i.getType() == IncidentType.Treatment && !i.getState().isDone())
-        .flatMap(i -> i.getUnits().keySet().stream())
-        .collect(Collectors.toSet());
-  }
-
-  @JsonProperty("group")
-  @JsonView(JsonViews.Patadmin.class)
-  public Integer getGroupId() {
-    if (incidents == null) {
-      return null;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Patient)) {
+            return false;
+        }
+        Patient patient = (Patient) o;
+        return Objects.equals(id, patient.id);
     }
 
-    return incidents.stream()
-        .filter(i -> i.getType() == IncidentType.Treatment && !i.getState().isDone())
-        .flatMap(i -> i.getUnits().keySet().stream())
-        .findFirst()
-        .map(Unit::getId)
-        .orElse(null);
-  }
-
-  @JsonIgnore
-  public Set<String> getHospital() {
-    if (incidents == null) {
-      return null;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
-    return incidents.stream()
-        .filter(i -> i.getType() == IncidentType.Transport && i.hasAo())
-        .map(i -> i.getAo().getInfo())
-        .collect(Collectors.toSet());
-  }
-
-  @JsonIgnore
-  public boolean isTransport() {
-    if (incidents == null) {
-      return false;
+    @Override
+    public String toString() {
+        return StringUtils.isNotBlank(externalId)
+                ? String.format("#%d: %s %s (%s)", id, lastname, firstname, externalId)
+                : String.format("#%d: %s %s", id, lastname, firstname);
     }
 
-    return incidents.stream().anyMatch(i -> i.getType() == IncidentType.Transport);
-  }
+    public Set<String> getHospital() {
+        if (incidents == null) {
+            return null;
+        }
 
-  @Override
-  public String toString() {
-    return String.format("#%d: %s (%s)", id, getFullName(), externalId);
-  }
+        return incidents.stream()
+                .filter(i -> i.getType() == IncidentType.Transport && i.hasAo())
+                .map(i -> i.getAo().getInfo())
+                .collect(Collectors.toSet());
+    }
 
+    public boolean isTransport() {
+        if (incidents == null) {
+            return false;
+        }
+
+        return incidents.stream().anyMatch(i -> i.getType() == IncidentType.Transport);
+    }
 }

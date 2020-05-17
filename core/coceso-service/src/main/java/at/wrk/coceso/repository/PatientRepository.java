@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface PatientRepository extends JpaRepository<Patient, Integer> {
+public interface PatientRepository extends JpaRepository<Patient, Long> {
 
   List<Patient> findByConcern(Concern concern);
 
@@ -26,7 +26,7 @@ public interface PatientRepository extends JpaRepository<Patient, Integer> {
 
   Page<Patient> findAll(Specification<Patient> spec, Pageable pageable);
 
-  @Query("SELECT p FROM Patient p JOIN p.incidents i WHERE i.state <> 'Done' AND i.type = 'Treatment' AND p.concern = :concern ORDER BY p.id DESC")
+  @Query("SELECT p FROM Patient p JOIN p.incidents i WHERE i.closed IS NULL AND i.type = 'Treatment' AND p.concern = :concern ORDER BY p.id DESC")
   List<Patient> findInTreatment(@Param("concern") Concern concern);
 
 }

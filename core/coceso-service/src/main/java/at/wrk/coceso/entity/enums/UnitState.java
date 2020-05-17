@@ -4,15 +4,15 @@ public enum UnitState {
     /**
      * Off duty. (German "Ausser Dienst")
      */
-    AD,
+    OFF_DUTY,
 
     /**
      * Ready. Unit can handle tasks. (German "Einsatzbereit")
      */
-    EB,
+    READY,
 
     /**
      * Not ready. For example crew is not complete or material is missing. (German "Nicht einsatzbereit")
      */
-    NEB
+    NOT_READY
 }
