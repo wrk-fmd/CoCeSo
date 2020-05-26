@@ -22,6 +22,7 @@ import at.wrk.coceso.repository.IncidentRepository;
 import at.wrk.coceso.service.IncidentService;
 import at.wrk.coceso.service.JournalService;
 import at.wrk.coceso.service.PointService;
+import at.wrk.coceso.service.TaskService;
 import at.wrk.coceso.utils.AuthenticatedUser;
 import at.wrk.fmd.mls.event.EventBus;
 import lombok.extern.slf4j.Slf4j;
@@ -46,15 +47,17 @@ class IncidentServiceImpl implements IncidentService {
 
     private final IncidentRepository incidentRepository;
     private final IncidentMapper incidentMapper;
+    private final TaskService taskService;
     private final PointService pointService;
     private final JournalService journalService;
     private final EventBus eventBus;
 
     @Autowired
     public IncidentServiceImpl(final IncidentRepository incidentRepository, final IncidentMapper incidentMapper,
-            final PointService pointService, final JournalService journalService, final EventBus eventBus) {
+            final TaskService taskService, final PointService pointService, final JournalService journalService, final EventBus eventBus) {
         this.incidentRepository = incidentRepository;
         this.incidentMapper = incidentMapper;
+        this.taskService = taskService;
         this.pointService = pointService;
         this.journalService = journalService;
         this.eventBus = eventBus;
@@ -182,6 +185,7 @@ class IncidentServiceImpl implements IncidentService {
         log.info("{}: Updating incident {} with data {}", AuthenticatedUser.getName(), incident, data);
 
         ChangesCollector changes = new ChangesCollector("incident");
+        boolean removeUnits = false;
 
         // Set updateable properties
 
@@ -197,7 +201,13 @@ class IncidentServiceImpl implements IncidentService {
             if (closed != incident.getClosed()) {
                 changes.put("closed", incident.getClosed(), closed);
                 incident.setClosed(closed);
-                incident.setEnded(closed != null ? Instant.now() : null);
+                if (closed == null) {
+                    incident.setEnded(null);
+                } else if (incident.getEnded() == null) {
+                    incident.setEnded(Instant.now());
+                }
+
+                removeUnits = closed != null;
             }
         }
 
@@ -253,6 +263,10 @@ class IncidentServiceImpl implements IncidentService {
         if (!changes.isEmpty()) {
             journalService.logIncident(JournalEntryType.INCIDENT_UPDATE, incident, changes);
             eventBus.publish(new IncidentEvent(incidentMapper.incidentToDto(incident)));
+        }
+
+        if (removeUnits) {
+            this.taskService.detachAll(incident, true);
         }
     }
 

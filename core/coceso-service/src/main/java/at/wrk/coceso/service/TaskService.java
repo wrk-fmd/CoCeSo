@@ -11,6 +11,8 @@ public interface TaskService {
 
     void changeState(Incident incident, Unit unit, TaskUpdateDto data);
 
+    void detachAll(Incident incident, boolean auto);
+
     void sendHome(Unit unit);
 
     void holdPosition(Unit unit);

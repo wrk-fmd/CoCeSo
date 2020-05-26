@@ -39,7 +39,6 @@ public class Task implements Serializable {
     @Column(nullable = false)
     private TaskState state;
 
-    @UpdateTimestamp
     @Column(nullable = false)
     private Instant updated;
 
@@ -51,6 +50,7 @@ public class Task implements Serializable {
         this.incident = incident;
         this.unit = unit;
         this.state = state;
+        this.updated = Instant.now();
     }
 
     @Override

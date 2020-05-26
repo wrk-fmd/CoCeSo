@@ -149,31 +149,4 @@ public class Incident implements Serializable, Comparable<Incident> {
             units.remove(task);
         }
     }
-
-    @Deprecated
-    public boolean hasAo() {
-        return !Point.isEmpty(ao);
-    }
-
-    @Deprecated
-    public void setArrival() {
-        arrival = Instant.now();
-    }
-
-    @Deprecated
-    public void setStateChange() {
-        stateChange = Instant.now();
-    }
-
-    @Deprecated
-    public void setEnded() {
-        ended = Instant.now();
-    }
-
-    @Deprecated
-    public boolean isRelevant() {
-        return type == IncidentType.Task
-                || type == IncidentType.Transport
-                || type == IncidentType.Position;
-    }
 }

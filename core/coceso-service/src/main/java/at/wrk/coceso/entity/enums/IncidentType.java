@@ -5,27 +5,20 @@ import java.util.EnumSet;
 
 public enum IncidentType {
 
-    Standby(true, EnumSet.of(TaskState.Assigned, TaskState.AAO, TaskState.Detached)),
-    ToHome(true, EnumSet.of(TaskState.Assigned, TaskState.ZAO, TaskState.AAO, TaskState.Detached)),
-    Position(false, EnumSet.of(TaskState.Assigned, TaskState.ZAO, TaskState.AAO, TaskState.Detached)),
+    Standby(EnumSet.of(TaskState.Assigned, TaskState.ABO, TaskState.Detached)),
+    ToHome(EnumSet.of(TaskState.Assigned, TaskState.ZBO, TaskState.ABO, TaskState.Detached)),
+    Position(EnumSet.of(TaskState.Assigned, TaskState.ZBO, TaskState.ABO, TaskState.Detached)),
     Task,
     Transport;
 
     private final Collection<TaskState> possibleStates;
-    private final boolean singleUnit;
 
     IncidentType() {
         this.possibleStates = EnumSet.allOf(TaskState.class);
-        this.singleUnit = false;
     }
 
-    IncidentType(boolean singleUnit, EnumSet<TaskState> possibleStates) {
+    IncidentType(EnumSet<TaskState> possibleStates) {
         this.possibleStates = possibleStates;
-        this.singleUnit = singleUnit;
-    }
-
-    public boolean isSingleUnit() {
-        return singleUnit;
     }
 
     public boolean isPossibleState(TaskState state) {
