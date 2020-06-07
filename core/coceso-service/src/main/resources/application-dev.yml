@@ -19,6 +19,24 @@ application:
   auth:
     verification:
       signing-key: classpath:dev.pub
+  messages:
+    templates:
+      alarm: |
+        CCS{{incidentId}}: {{type}}
+        BO: {{bo}}
+        {{info}}
+        Einheiten: {{units}}
+        BO URL: {{boUrl}}
+      casus: |
+        CCS{{incidentId}}
+        AO: {{ao}}
+        Casus: {{casusNr}} {{erType}}
+        AO URL: {{aoUrl}}
+    channels:
+      - id: /dev/ttyUSB50
+        name: Test Port 1
+      - id: /dev/ttyUSB51
+        name: Test Port 2
 
 logging:
   pattern:

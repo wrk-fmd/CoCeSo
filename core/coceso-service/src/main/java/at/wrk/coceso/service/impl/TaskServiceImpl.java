@@ -164,6 +164,7 @@ class TaskServiceImpl implements TaskService {
 
         // Execute callbacks and check if we should proceed
         if (executeCallbacks(task.getIncident(), task.getUnit(), state)) {
+            notify(task, true);
             return;
         }
 
@@ -366,19 +367,19 @@ class TaskServiceImpl implements TaskService {
     public void sendHome(Unit unit) {
         checkAssigned(unit, EnumSet.of(IncidentType.Standby, IncidentType.Position));
         // TODO This should only be possible if home is set
-        createIncident(unit, IncidentType.ToHome, unit.getHome());
+        createIncident(unit, IncidentType.ToHome, unit.getHome(), TaskState.Assigned);
     }
 
     @Override
     public void holdPosition(Unit unit) {
         checkAssigned(unit, Collections.emptySet());
-        createIncident(unit, IncidentType.Position, unit.getPosition());
+        createIncident(unit, IncidentType.Position, unit.getPosition(), TaskState.ABO);
     }
 
     @Override
     public void standby(Unit unit) {
         checkAssigned(unit, EnumSet.of(IncidentType.ToHome, IncidentType.Position));
-        createIncident(unit, IncidentType.Standby, unit.getPosition());
+        createIncident(unit, IncidentType.Standby, unit.getPosition(), TaskState.Assigned);
     }
 
     private void checkAssigned(Unit unit, Set<IncidentType> allowed) {
@@ -387,7 +388,7 @@ class TaskServiceImpl implements TaskService {
         }
     }
 
-    private void createIncident(Unit unit, IncidentType type, Point bo) {
+    private void createIncident(Unit unit, IncidentType type, Point bo, TaskState state) {
         Incident incident = new Incident();
         incident.setConcern(unit.getConcern());
         incident.setType(type);
@@ -395,6 +396,6 @@ class TaskServiceImpl implements TaskService {
         incident.setCaller(AuthenticatedUser.getName());
 
         incident = incidentRepository.save(incident);
-        assign(incident, unit, TaskState.Assigned, true);
+        assign(incident, unit, state, true);
     }
 }

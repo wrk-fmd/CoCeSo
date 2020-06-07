@@ -1,5 +1,6 @@
 package at.wrk.coceso.endpoint;
 
+import at.wrk.coceso.dto.message.SendMessageDto;
 import at.wrk.coceso.dto.unit.UnitBatchCreateDto;
 import at.wrk.coceso.dto.unit.UnitBriefDto;
 import at.wrk.coceso.dto.unit.UnitCreateDto;
@@ -8,6 +9,7 @@ import at.wrk.coceso.dto.unit.UnitUpdateDto;
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.StaffMember;
 import at.wrk.coceso.entity.Unit;
+import at.wrk.coceso.service.MessageService;
 import at.wrk.coceso.service.TaskService;
 import at.wrk.coceso.service.UnitService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +32,13 @@ public class UnitEndpoint {
 
     private final UnitService unitService;
     private final TaskService taskService;
+    private final MessageService messageService;
 
     @Autowired
-    public UnitEndpoint(final UnitService unitService, final TaskService taskService) {
+    public UnitEndpoint(final UnitService unitService, final TaskService taskService, final MessageService messageService) {
         this.unitService = unitService;
         this.taskService = taskService;
+        this.messageService = messageService;
     }
 
     @PreAuthorize("hasPermission(#concern, T(at.wrk.coceso.auth.AccessLevel).UNIT_READ)")
@@ -109,5 +113,13 @@ public class UnitEndpoint {
             @PathVariable final StaffMember member) {
         ParamValidator.open(concern, unit);
         unitService.removeCrewMember(unit, member);
+    }
+
+    @PreAuthorize("hasPermission(#unit, T(at.wrk.coceso.auth.AccessLevel).UNIT_MESSAGE)")
+    @PutMapping("/{unit}/message")
+    public void sendMessage(@PathVariable final Concern concern, @PathVariable final Unit unit,
+            @RequestBody @Valid final SendMessageDto data) {
+        ParamValidator.open(concern, unit);
+        messageService.sendMessage(unit, data);
     }
 }

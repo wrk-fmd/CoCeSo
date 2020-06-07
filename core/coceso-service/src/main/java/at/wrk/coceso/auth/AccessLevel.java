@@ -18,6 +18,7 @@ public enum AccessLevel {
     CONTAINER_EDIT("MLS"),
     INCIDENT_READ("MLS"),
     INCIDENT_EDIT("MLS"),
+    INCIDENT_ALARM("MLS"),
     JOURNAL_READ("MLS"),
     JOURNAL_CREATE("MLS"),
     PATIENT_READ("MLS"),
@@ -26,8 +27,10 @@ public enum AccessLevel {
     UNIT_READ("MLS"),
     UNIT_EDIT("MLS"),
     UNIT_ASSIGN("MLS"),
+    UNIT_MESSAGE("MLS"),
     STAFF_READ("MLS"),
     STAFF_EDIT("MLS"),
+    MESSAGE_READ("MLS"),
 
     // Access based on specific unit types
 

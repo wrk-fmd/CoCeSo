@@ -46,6 +46,13 @@
             <version>${mls.geocoding.version}</version>
         </dependency>
 
+        <!-- Message sending -->
+        <dependency>
+            <groupId>at.wrk.fmd.mls</groupId>
+            <artifactId>message-api</artifactId>
+            <version>${mls.message.version}</version>
+        </dependency>
+
         <!-- Common Hibernate types -->
         <dependency>
             <groupId>at.wrk.fmd.mls</groupId>

@@ -1,6 +1,7 @@
 package at.wrk.coceso.config;
 
 import at.wrk.coceso.dto.CocesoExchangeNames;
+import at.wrk.fmd.mls.message.dto.MessageExchangeNames;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Exchange;
@@ -35,6 +36,16 @@ public class MessageBrokerConfiguration {
     @Bean
     public Exchange stompContainersExchange() {
         return new DirectExchange(CocesoExchangeNames.STOMP_CONTAINERS);
+    }
+
+    @Bean
+    public Exchange stompMessagesExchange() {
+        return new DirectExchange(CocesoExchangeNames.STOMP_MESSAGES);
+    }
+
+    @Bean
+    public Exchange messageOutgoingExchange() {
+        return new DirectExchange(MessageExchangeNames.MESSAGE_OUTGOING);
     }
 
     @Bean

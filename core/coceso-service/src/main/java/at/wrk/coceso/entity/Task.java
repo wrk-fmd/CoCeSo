@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -41,6 +40,12 @@ public class Task implements Serializable {
 
     @Column(nullable = false)
     private Instant updated;
+
+    @Column
+    private Instant alarmSent;
+
+    @Column
+    private Instant casusSent;
 
     public Task() {
     }

@@ -23,6 +23,6 @@ public interface IncidentMapper {
 
     IncidentType typeDtoToType(IncidentTypeDto type);
 
-    @ValueMapping(source = "Open", target = MappingConstants.NULL)
+    @ValueMapping(source = "Active", target = MappingConstants.NULL)
     IncidentClosedReason closedReasonDtoClosedReason(IncidentClosedReasonDto state);
 }

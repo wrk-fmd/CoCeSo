@@ -19,4 +19,11 @@ public class TaskDto {
 
     @JsonFormat(shape = Shape.NUMBER)
     private Instant updated;
+
+    @JsonFormat(shape = Shape.NUMBER)
+    private Instant alarmSent;
+
+    @JsonFormat(shape = Shape.NUMBER)
+    private Instant casusSent;
+
 }
