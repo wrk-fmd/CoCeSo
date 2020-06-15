@@ -1,7 +1,7 @@
 package at.wrk.coceso.entity.types;
 
 import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.usertype.ParameterizedType;
 import org.hibernate.usertype.UserType;
 
@@ -32,7 +32,7 @@ public class EnumUserType implements UserType, ParameterizedType {
   }
 
   @Override
-  public Object nullSafeGet(ResultSet rs, String[] names, SessionImplementor session, Object owner) throws HibernateException, SQLException {
+  public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
     String value = rs.getString(names[0]);
     if (rs.wasNull()) {
       return null;
@@ -45,7 +45,7 @@ public class EnumUserType implements UserType, ParameterizedType {
   }
 
   @Override
-  public void nullSafeSet(PreparedStatement st, Object value, int index, SessionImplementor session) throws HibernateException, SQLException {
+  public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
     if (value == null) {
       st.setNull(index, Types.OTHER);
     } else if (value instanceof Enum) {

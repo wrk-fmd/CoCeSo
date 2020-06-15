@@ -33,12 +33,6 @@
             <artifactId>hibernate-jpa-2.1-api</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-entitymanager</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
         <!-- Database -->
         <dependency>
             <groupId>org.apache.tomcat</groupId>
