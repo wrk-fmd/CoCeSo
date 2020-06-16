@@ -6,7 +6,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 @Configuration
-@Order(4)
+@Order(14)
 public class NoneSecurityConfigurer extends WebSecurityConfigurerAdapter {
 
     @Override
