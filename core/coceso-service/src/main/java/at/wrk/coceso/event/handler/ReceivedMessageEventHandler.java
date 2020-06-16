@@ -3,9 +3,9 @@ package at.wrk.coceso.event.handler;
 import at.wrk.coceso.dto.CocesoExchangeNames;
 import at.wrk.coceso.dto.message.ReceivedMessageDto;
 import at.wrk.coceso.event.events.ReceivedMessageEvent;
+import at.wrk.fmd.mls.amqp.event.NotificationMessage;
 import at.wrk.fmd.mls.event.EventBus;
 import at.wrk.fmd.mls.event.EventHandler;
-import at.wrk.fmd.mls.replay.message.NotificationMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

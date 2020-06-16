@@ -12,12 +12,12 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 
 @Component
-class ContainerReplayHandler extends ConcernBoundReplayHandler<ContainerDto> {
+class ContainerStompHandler extends ConcernBoundAmqpHandler<ContainerDto> {
 
     private final ContainerService containerService;
 
     @Autowired
-    public ContainerReplayHandler(final ContainerService containerService, final ConcernService concernService,
+    public ContainerStompHandler(final ContainerService containerService, final ConcernService concernService,
             final AmqpTemplate amqpTemplate) {
         super(concernService, amqpTemplate, CocesoExchangeNames.STOMP_CONTAINERS);
         this.containerService = containerService;

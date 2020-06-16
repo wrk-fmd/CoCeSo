@@ -12,12 +12,12 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 
 @Component
-class PatientReplayHandler extends ConcernBoundReplayHandler<PatientDto> {
+class PatientStompHandler extends ConcernBoundAmqpHandler<PatientDto> {
 
     private final PatientService patientService;
 
     @Autowired
-    public PatientReplayHandler(final PatientService patientService, final ConcernService concernService, final AmqpTemplate amqpTemplate) {
+    public PatientStompHandler(final PatientService patientService, final ConcernService concernService, final AmqpTemplate amqpTemplate) {
         super(concernService, amqpTemplate, CocesoExchangeNames.STOMP_PATIENTS);
         this.patientService = patientService;
     }

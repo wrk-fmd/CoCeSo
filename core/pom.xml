@@ -6,7 +6,7 @@
     <parent>
         <groupId>at.wrk.fmd.mls</groupId>
         <artifactId>mls-parent</artifactId>
-        <version>3.0.1-RELEASE</version>
+        <version>3.0.3-RELEASE</version>
         <relativePath/>
     </parent>
 

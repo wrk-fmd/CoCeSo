@@ -19,6 +19,10 @@ application:
   auth:
     verification:
       signing-key: classpath:dev.pub
+  broker:
+    host: localhost
+    username: mls-rabbitmq-user
+    password: mls-rabbitmq-pass
   messages:
     templates:
       alarm: |

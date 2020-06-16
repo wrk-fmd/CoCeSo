@@ -5,8 +5,8 @@ import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.exceptions.ConcernClosedException;
 import at.wrk.coceso.exceptions.NotFoundException;
 import at.wrk.coceso.service.ConcernService;
-import at.wrk.fmd.mls.replay.handler.AbstractReplayHandler;
-import at.wrk.fmd.mls.replay.message.ReplayEvent;
+import at.wrk.fmd.mls.amqp.event.AmqpEvent;
+import at.wrk.fmd.mls.amqp.handler.AbstractAmqpHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.AmqpTemplate;
 
@@ -15,18 +15,18 @@ import java.util.Collection;
 import java.util.Collections;
 
 @Slf4j
-abstract class ConcernBoundReplayHandler<T> extends AbstractReplayHandler<T> {
+abstract class ConcernBoundAmqpHandler<T> extends AbstractAmqpHandler<T> {
 
     private final ConcernService concernService;
 
-    public ConcernBoundReplayHandler(final ConcernService concernService, final AmqpTemplate amqpTemplate, final String target) {
+    public ConcernBoundAmqpHandler(final ConcernService concernService, final AmqpTemplate amqpTemplate, final String target) {
         super(amqpTemplate, target);
         this.concernService = concernService;
     }
 
     @Override
     @Transactional
-    public void handle(ReplayEvent event) {
+    public void handle(AmqpEvent event) {
         super.handle(event);
     }
 

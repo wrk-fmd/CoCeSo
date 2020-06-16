@@ -12,12 +12,12 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 
 @Component
-class IncidentReplayHandler extends ConcernBoundReplayHandler<IncidentDto> {
+class IncidentStompHandler extends ConcernBoundAmqpHandler<IncidentDto> {
 
     private final IncidentService incidentService;
 
     @Autowired
-    public IncidentReplayHandler(final IncidentService incidentService, final ConcernService concernService,
+    public IncidentStompHandler(final IncidentService incidentService, final ConcernService concernService,
             final AmqpTemplate amqpTemplate) {
         super(concernService, amqpTemplate, CocesoExchangeNames.STOMP_INCIDENTS);
         this.incidentService = incidentService;

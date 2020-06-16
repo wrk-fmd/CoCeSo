@@ -12,12 +12,12 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 
 @Component
-class UnitReplayHandler extends ConcernBoundReplayHandler<UnitDto> {
+class UnitStompHandler extends ConcernBoundAmqpHandler<UnitDto> {
 
     private final UnitService unitService;
 
     @Autowired
-    public UnitReplayHandler(final UnitService unitService, final ConcernService concernService, final AmqpTemplate amqpTemplate) {
+    public UnitStompHandler(final UnitService unitService, final ConcernService concernService, final AmqpTemplate amqpTemplate) {
         super(concernService, amqpTemplate, CocesoExchangeNames.STOMP_UNITS);
         this.unitService = unitService;
     }

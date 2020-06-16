@@ -35,8 +35,15 @@
         <!-- Notification sending -->
         <dependency>
             <groupId>at.wrk.fmd.mls</groupId>
-            <artifactId>replay-service</artifactId>
-            <version>${mls.replay.version}</version>
+            <artifactId>amqp-common</artifactId>
+            <version>${mls.amqp.version}</version>
+        </dependency>
+
+        <!-- STOMP endpoint -->
+        <dependency>
+            <groupId>at.wrk.fmd.mls</groupId>
+            <artifactId>stomp-endpoint</artifactId>
+            <version>${mls.amqp.version}</version>
         </dependency>
 
         <!-- Geocoding -->
