@@ -119,7 +119,7 @@ public class ChainedGeocoder implements Geocoder<ImmutableAddress> {
     private ReverseResult<ImmutableAddress> findNearestFromCache(final LatLng coordinates, final int distance) {
         Bounds bounds = coordinates.boundsForDistance(distance);
         List<CacheEntry> entries = cacheRepository.findNearest(coordinates.getLat(), coordinates.getLng(),
-                bounds.sw.getLat(), bounds.ne.getLat(), bounds.sw.getLng(), bounds.ne.getLng(), new PageRequest(0, 1));
+                bounds.sw.getLat(), bounds.ne.getLat(), bounds.sw.getLng(), bounds.ne.getLng(), PageRequest.of(0, 1));
         if (entries.isEmpty()) {
             return null;
         }

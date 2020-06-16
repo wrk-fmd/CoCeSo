@@ -60,14 +60,14 @@ class PatientServiceImpl implements PatientServiceInternal {
 
   @Override
   public List<Patient> getAllSorted(final Concern concern) {
-    List<Patient> patients = patientRepository.findByConcern(concern, new Sort(Sort.Direction.ASC, "id"));
+    List<Patient> patients = patientRepository.findByConcern(concern, Sort.by(Sort.Direction.ASC, "id"));
     dataAccessLogger.logPatientAccess(patients, concern);
     return patients;
   }
 
   @Override
   public Patient getByIdNoLog(int patientId) {
-    Patient patient = patientRepository.findOne(patientId);
+    Patient patient = patientRepository.findById(patientId).orElse(null);
     if (patient == null) {
       throw new ErrorsException(Errors.HttpNotFound);
     }

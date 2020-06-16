@@ -29,8 +29,8 @@ import java.util.List;
 class LogServiceImpl implements LogService {
   private static final Logger LOG = LoggerFactory.getLogger(LogServiceImpl.class);
 
-  private final static Sort sortDesc = new Sort(Sort.Direction.DESC, "timestamp");
-  private final static Sort sortAsc = new Sort(Sort.Direction.ASC, "timestamp");
+  private final static Sort sortDesc = Sort.by(Sort.Direction.DESC, "timestamp");
+  private final static Sort sortAsc = Sort.by(Sort.Direction.ASC, "timestamp");
 
   @Autowired
   private LogRepository logRepository;
@@ -84,7 +84,7 @@ class LogServiceImpl implements LogService {
 
   @Override
   public List<LogEntry> getLast(Concern concern, int count) {
-    return logRepository.findByConcern(concern, new PageRequest(0, count, sortDesc));
+    return logRepository.findByConcern(concern, PageRequest.of(0, count, sortDesc));
   }
 
   @Override
@@ -119,7 +119,7 @@ class LogServiceImpl implements LogService {
 
   @Override
   public List<LogEntry> getLimitedByUnit(Unit unit, int count) {
-    return logRepository.findByUnit(unit, new PageRequest(0, count, sortDesc));
+    return logRepository.findByUnit(unit, PageRequest.of(0, count, sortDesc));
   }
 
   @Override
@@ -129,7 +129,7 @@ class LogServiceImpl implements LogService {
 
   @Override
   public Timestamp getLastTaskStateUpdate(Incident incident, Unit unit) {
-    List<LogEntry> last = logRepository.findLast(new PageRequest(0, 1), incident, unit,
+    List<LogEntry> last = logRepository.findLast(PageRequest.of(0, 1), incident, unit,
         LogEntryType.TASKSTATE_CHANGED, LogEntryType.UNIT_ASSIGN, LogEntryType.UNIT_DETACH, LogEntryType.UNIT_AUTO_DETACH);
     return last.isEmpty() ? null : last.get(0).getTimestamp();
   }
