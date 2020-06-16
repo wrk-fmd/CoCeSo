@@ -3,17 +3,19 @@ package at.wrk.coceso.radio;
 import at.wrk.coceso.entityevent.EntityEventFactory;
 import at.wrk.coceso.entityevent.EntityEventHandler;
 import at.wrk.coceso.entityevent.EntityEventListener;
-import java.time.OffsetDateTime;
-import java.util.EnumSet;
-import java.util.List;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.EnumSet;
+import java.util.List;
 
 @Service
 @PropertySource(value = "classpath:ports.properties", ignoreResourceNotFound = true)
@@ -55,16 +57,16 @@ public class RadioService implements SelcallListener {
   }
 
   @Override
-  public void saveCall(Selcall call) {
+  public void saveCall(final Selcall call) {
     selcallRepository.save(call);
   }
 
-  public List<Selcall> getLastMinutes(int minutes) {
+  public List<Selcall> getLastMinutes(final int minutes) {
     return selcallRepository.findByTimestampGreaterThanAndDirectionIn(
-        OffsetDateTime.now().minusMinutes(minutes), EnumSet.of(Selcall.Direction.RX, Selcall.Direction.RX_EMG));
+        Instant.now().minus(Duration.ofMinutes(minutes)), EnumSet.of(Selcall.Direction.RX, Selcall.Direction.RX_EMG));
   }
 
-  public boolean sendSelcall(Selcall selcall) {
+  public boolean sendSelcall(final Selcall selcall) {
     if (selcall == null || selcall.getAni() == null) {
       LOG.info("Selcall or ANI is null");
       return false;
@@ -77,14 +79,14 @@ public class RadioService implements SelcallListener {
         LOG.debug("Trying to send Selcall to '{}' on all ports", ani);
         transceivers.send(ani);
       } else {
-        LOG.debug("Trying to send Selcall to '{}' on port '%s'", ani, port);
+        LOG.debug("Trying to send Selcall to '{}' on port '{}'", ani, port);
         transceivers.send(port, ani);
       }
     } catch (IllegalArgumentException e) {
       success = false;
     }
 
-    selcall.setTimestamp(OffsetDateTime.now());
+    selcall.setTimestamp(Instant.now());
     selcall.setDirection(success ? Selcall.Direction.TX : Selcall.Direction.TX_FAILED);
     selcallRepository.save(selcall);
 

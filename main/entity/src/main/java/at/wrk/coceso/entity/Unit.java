@@ -32,7 +32,7 @@ import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import java.io.Serializable;
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -128,7 +128,7 @@ public class Unit implements Serializable, Comparable<Unit>, ConcernBoundEntity 
     @CollectionTable(name = "task", joinColumns = {@JoinColumn(name = "unit_fk")})
     @MapKeyColumn(name = "incident_fk")
     @Column(name = "lastStateChangeAt")
-    private Map<Integer, OffsetDateTime> incidentStateChangedAtMap;
+    private Map<Integer, Instant> incidentStateChangedAtMap;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
@@ -336,7 +336,7 @@ public class Unit implements Serializable, Comparable<Unit>, ConcernBoundEntity 
     }
 
     @JsonProperty(value = "incidentStateChangeTimestamps", access = JsonProperty.Access.READ_ONLY)
-    public Map<Integer, OffsetDateTime> getIncidentStateChangedAtMap() {
+    public Map<Integer, Instant> getIncidentStateChangedAtMap() {
         return incidentStateChangedAtMap;
     }
 

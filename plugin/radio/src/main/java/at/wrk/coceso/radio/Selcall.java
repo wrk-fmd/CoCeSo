@@ -12,7 +12,7 @@ import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.time.OffsetDateTime;
+import java.time.Instant;
 
 @Entity
 @TypeDef(typeClass = EnumUserType.class,
@@ -31,7 +31,7 @@ public class Selcall implements Serializable, Comparable<Selcall> {
 
     @NotNull
     @Column(name = "ts")
-    private OffsetDateTime timestamp;
+    private Instant timestamp;
 
     @NotNull
     @Column(nullable = false)
@@ -48,7 +48,7 @@ public class Selcall implements Serializable, Comparable<Selcall> {
         this.port = port;
         this.ani = ani;
         this.direction = direction;
-        this.timestamp = OffsetDateTime.now();
+        this.timestamp = Instant.now();
     }
 
     @Override
@@ -76,11 +76,11 @@ public class Selcall implements Serializable, Comparable<Selcall> {
         this.ani = ani;
     }
 
-    public OffsetDateTime getTimestamp() {
+    public Instant getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(OffsetDateTime timestamp) {
+    public void setTimestamp(Instant timestamp) {
         this.timestamp = timestamp;
     }
 

@@ -25,7 +25,7 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -100,11 +100,11 @@ public class Incident implements Serializable, Comparable<Incident>, ConcernBoun
     @JsonView(JsonViews.Main.class)
     @NotNull
     @Column(nullable = false, updatable = false)
-    private OffsetDateTime created;
+    private Instant created;
 
     @JsonView(JsonViews.Main.class)
     @Column
-    private OffsetDateTime arrival;
+    private Instant arrival;
 
     /**
      * The last state change of any task of this incident. If a task is still assigned, this timestamp matches the most recent timestamp of all assigned tasks.
@@ -112,11 +112,11 @@ public class Incident implements Serializable, Comparable<Incident>, ConcernBoun
      */
     @JsonView(JsonViews.Main.class)
     @Column
-    private OffsetDateTime stateChange;
+    private Instant stateChange;
 
     @JsonView(JsonViews.Main.class)
     @Column
-    private OffsetDateTime ended;
+    private Instant ended;
 
     @Transient
     private Map<Integer, TaskState> addedUnits;
@@ -148,7 +148,7 @@ public class Incident implements Serializable, Comparable<Incident>, ConcernBoun
         }
 
         if (created == null) {
-            created = OffsetDateTime.now();
+            created = Instant.now();
         }
 
         if (bo != null) {
@@ -353,32 +353,32 @@ public class Incident implements Serializable, Comparable<Incident>, ConcernBoun
         this.section = section;
     }
 
-    public OffsetDateTime getCreated() {
+    public Instant getCreated() {
         return created;
     }
 
-    public OffsetDateTime getArrival() {
+    public Instant getArrival() {
         return arrival;
     }
 
     public void setArrival() {
-        arrival = OffsetDateTime.now();
+        arrival = Instant.now();
     }
 
-    public OffsetDateTime getStateChange() {
+    public Instant getStateChange() {
         return stateChange;
     }
 
     public void setStateChange() {
-        stateChange = OffsetDateTime.now();
+        stateChange = Instant.now();
     }
 
-    public OffsetDateTime getEnded() {
+    public Instant getEnded() {
         return ended;
     }
 
     public void setEnded() {
-        ended = OffsetDateTime.now();
+        ended = Instant.now();
     }
 
     @JsonIgnore
