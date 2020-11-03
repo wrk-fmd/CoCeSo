@@ -13,13 +13,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.web.client.RestTemplate;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.both;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 public class ViennaGeocoderTest {
 
@@ -101,23 +102,23 @@ public class ViennaGeocoderTest {
         ReverseResult<ImmutableAddress> result;
 
         result = sut.reverse(new LatLng(48.202813, 16.342256));
-        assertNotNull("Expected a result at Kandlgasse, 1070", result);
-        assertEquals("Kandlgasse", result.result.getStreet());
-        assertNotNull("Expected a post code at Kandlgasse, 1070", result.result.getPostCode());
-        assertEquals(1070, (int) result.result.getPostCode());
+        assertThat("Expected a result at Kandlgasse, 1070", result, notNullValue());
+        assertThat(result.result.getStreet(), equalTo("Kandlgasse"));
+        assertThat("Expected a post code at Kandlgasse, 1070", result.result.getPostCode(), notNullValue());
+        assertThat(result.result.getPostCode(), equalTo(1070));
         Integer number = result.result.getNumber().getFrom();
-        assertNotNull("Expected a number at Kandlgasse, 1070", number);
-        assertTrue("Expected number to be in range 19-24", number >= 19 && number <= 24);
-        assertTrue("Expected distance to be at most 50 meters", result.dist < 50);
+        assertThat("Expected a number at Kandlgasse, 1070", number, notNullValue());
+        assertThat("Expected number to be in range 19-24", number, both(greaterThanOrEqualTo(19)).and(lessThanOrEqualTo(24)));
+        assertThat("Expected distance to be at most 50 meters", result.dist, lessThanOrEqualTo(50));
 
         result = sut.reverse(new LatLng(48.32, 16.19));
-        assertNotNull("Expected a result near the border of Vienna", result);
-        assertNotNull("Expected a post code for request outside of Vienna", result.result.getPostCode());
-        assertEquals(1140, (int) result.result.getPostCode());
-        assertTrue("Expected result to be far away from coordinates", result.dist > 5000);
+        assertThat("Expected a result near the border of Vienna", result, notNullValue());
+        assertThat("Expected a post code for request outside of Vienna", result.result.getPostCode(), notNullValue());
+        assertThat(result.result.getPostCode(), equalTo(1140));
+        assertThat("Expected result to be far away from coordinates", result.dist, greaterThan(5000));
 
         result = sut.reverse(new LatLng(48.18, 16.10));
-        assertNull("Expected no result for request at Pressbaum", result);
+        assertThat("Expected no result for request at Pressbaum", result, nullValue());
     }
 
     private ImmutableAddress createAddress(final String street, final String number, final Integer postCode, final String city) {
