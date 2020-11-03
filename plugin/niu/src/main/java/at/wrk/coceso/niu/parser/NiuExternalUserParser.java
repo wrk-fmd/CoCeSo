@@ -41,7 +41,10 @@ public class NiuExternalUserParser implements ExternalUserParser {
     private final CSVFormat csvFormat;
 
     public NiuExternalUserParser() {
-        csvFormat = CSVFormat.RFC4180.withDelimiter(CSV_DELIMITER).withHeader();
+        csvFormat = CSVFormat.RFC4180
+                .withDelimiter(CSV_DELIMITER)
+                .withHeader()
+                .withAllowMissingColumnNames();
     }
 
     @Override
