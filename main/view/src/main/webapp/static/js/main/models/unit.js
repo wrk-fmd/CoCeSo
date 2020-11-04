@@ -228,9 +228,9 @@ define([
           return false;
         }
 
-        return (ko.utils.arrayFirst(this.incidents(), function(task) {
+        return (!!ko.utils.arrayFirst(this.incidents(), function(task) {
           return (task.isAssigned());
-        }) !== null);
+        }));
       }, this);
 
       /**

@@ -296,9 +296,9 @@ define([
        * @returns {boolean}
        */
       this.disableInProgress = ko.computed(function () {
-        return (ko.utils.arrayFirst(this.units(), function (task) {
+        return (!ko.utils.arrayFirst(this.units(), function (task) {
           return !task.isDetached();
-        }) === null);
+        }));
       }, this);
 
       this.isAlarmTextSendingEnabled = ko.computed(function () {
@@ -401,7 +401,7 @@ define([
             var assigned = ko.utils.arrayFirst(this.units(), function (task) {
               return (task.unit_id === unit);
             });
-            if (assigned === null) {
+            if (!assigned) {
               assigned = new Task(taskState ? taskState : constants.TaskState.assigned, this.id, unit);
               assigned.taskState.extend({observeChanges: {server: null, orig: null}});
               assigned.changed = assigned.taskState.changed;

@@ -120,9 +120,10 @@ define(["jquery", "knockout", "./person", "data/save", "utils/conf", "utils/dest
           return;
         }
 
-        if (ko.utils.arrayFirst(self.crew(), function(item) {
+        var assignedPerson = ko.utils.arrayFirst(self.crew(), function(item) {
           return (item.id === person.id);
-        }) !== null) {
+        });
+        if (assignedPerson !== null) {
           ajaxSave({unit_id: self.id, person_id: person.id}, "unit/removePerson.json", function() {
             self.crew.remove(function(item) {
               return (item.id === person.id);
