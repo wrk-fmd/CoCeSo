@@ -40,7 +40,7 @@
         <spring.version>4.3.30.RELEASE</spring.version>
         <spring.data.commons.version>1.13.23.RELEASE</spring.data.commons.version>
         <spring.data.jpa.version>1.11.23.RELEASE</spring.data.jpa.version>
-        <spring.security.version>4.2.19.RELEASE</spring.security.version>
+        <spring.security.version>5.2.10.RELEASE</spring.security.version>
         <apache.httpclient.version>4.5.13</apache.httpclient.version>
         <apache.httpasyncclient.version>4.1.4</apache.httpasyncclient.version>
 
