@@ -85,7 +85,7 @@ public class UnitTargetFactory {
                 String rawTargetNumber = splittedNumber[1];
                 targetNumber = createTypedTargetNumberIfNotBlank(targetType, rawTargetNumber);
             } else {
-                LOG.info("Target URI '{}' could not be parsed for a typed target number.");
+                LOG.info("Target URI '{}' could not be parsed for a typed target number.", targetUri);
                 targetNumber = Optional.empty();
             }
         } else {
