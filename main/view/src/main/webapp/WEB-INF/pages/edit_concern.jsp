@@ -152,12 +152,7 @@
             <!-- /ko -->
             <div id="spare">
               <spring:message code="edit.container.spare"/>:
-              <ul class="unit_list unit_list_edit" data-bind="sortable: {data: spare, connectClass: 'unit_list_edit', afterMove: $root.container.dropUnit, options: {placeholder: 'unit-placeholder ui-corner-all'}}">
-                <li>
-                  <a href="#" class="unit_state">
-                    <span class="ui-corner-all" data-bind="text: call"></span>
-                  </a>
-                </li>
+              <ul class="unit_list unit_list_edit" data-bind="sortable: {template: 'template-container-unit-item', data: spare, connectClass: 'unit_list_edit', afterMove: $root.container.dropUnit, options: {placeholder: 'unit-placeholder ui-corner-all'}}">
               </ul>
             </div>
           </div>

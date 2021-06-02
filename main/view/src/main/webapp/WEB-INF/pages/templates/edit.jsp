@@ -76,15 +76,17 @@
     </div>
 
     <div class="panel-body">
-      <ul class="unit_list unit_list_edit" data-bind="sortable: {data: units, connectClass: 'unit_list_edit', afterMove: $root.container.dropUnit, options: {placeholder: 'unit-placeholder ui-corner-all'}}">
-        <li>
-          <a href="#" class="unit_state">
-            <span class="ui-corner-all" data-bind="text: call"></span>
-          </a>
-        </li>
-      </ul>
+      <ul class="unit_list unit_list_edit" data-bind="sortable: {template: 'template-container-unit-item', data: units, connectClass: 'unit_list_edit', afterMove: $root.container.dropUnit, options: {placeholder: 'unit-placeholder ui-corner-all'}}"></ul>
 
       <div class="unit_container_edit" data-bind="sortable: {template: 'template-container', data: subContainer, connectClass: 'unit_container_edit', afterMove: $root.container.drop, options: {placeholder: 'container-placeholder'}}"></div>
     </div>
   </div>
+</script>
+
+<script type="text/html" id="template-container-unit-item">
+  <li>
+    <a href="#" class="unit_state">
+      <span class="ui-corner-all" data-bind="text: call"></span>
+    </a>
+  </li>
 </script>

@@ -123,7 +123,7 @@ define(["jquery", "knockout", "./person", "data/save", "utils/conf", "utils/dest
         var assignedPerson = ko.utils.arrayFirst(self.crew(), function(item) {
           return (item.id === person.id);
         });
-        if (assignedPerson !== null) {
+        if (assignedPerson !== null && assignedPerson !== undefined) {
           ajaxSave({unit_id: self.id, person_id: person.id}, "unit/removePerson.json", function() {
             self.crew.remove(function(item) {
               return (item.id === person.id);
