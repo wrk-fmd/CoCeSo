@@ -70,6 +70,7 @@ class ContainerServiceImpl implements ContainerService {
 
         ContainerDto root = new ContainerDto();
         root.setConcern(concern.getId());
+        root.setName(concern.getName());
         root.setChildren(rootChildren);
         root.setUnits(unassigned);
         return root;

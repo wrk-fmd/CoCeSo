@@ -16,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -71,6 +72,10 @@ public class Concern implements Serializable {
     @Override
     public String toString() {
         return String.format("#%d (%s)", id, name);
+    }
+
+    public Set<String> getSections() {
+        return sections != null ? sections : Collections.emptySet();
     }
 
     public boolean containsSection(final String section) {

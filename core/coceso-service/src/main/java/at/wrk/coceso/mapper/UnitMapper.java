@@ -1,11 +1,9 @@
 package at.wrk.coceso.mapper;
 
-import at.wrk.coceso.dto.contact.ContactDto;
 import at.wrk.coceso.dto.unit.UnitBriefDto;
 import at.wrk.coceso.dto.unit.UnitDto;
 import at.wrk.coceso.dto.unit.UnitStateDto;
 import at.wrk.coceso.dto.unit.UnitTypeDto;
-import at.wrk.coceso.entity.Contact;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.enums.UnitState;
 import at.wrk.coceso.entity.enums.UnitType;
@@ -31,5 +29,4 @@ public interface UnitMapper {
     default String typesToString(Collection<UnitType> types) {
         return types != null && !types.isEmpty() ? types.stream().map(UnitType::toString).collect(Collectors.joining(", ")) : null;
     }
-
 }

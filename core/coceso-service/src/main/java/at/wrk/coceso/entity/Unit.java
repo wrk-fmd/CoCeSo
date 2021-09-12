@@ -22,6 +22,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
@@ -133,6 +134,14 @@ public class Unit implements Serializable, Comparable<Unit> {
         return String.format("#%d (%s)", id, call);
     }
 
+    public Set<UnitType> getTypes() {
+        return types != null ? types : Collections.emptySet();
+    }
+
+    public Set<StaffMember> getCrew() {
+        return crew != null ? crew : Collections.emptySet();
+    }
+
     public void addCrew(StaffMember member) {
         if (crew == null) {
             crew = new HashSet<>();
@@ -144,6 +153,14 @@ public class Unit implements Serializable, Comparable<Unit> {
         if (crew != null) {
             crew.remove(member);
         }
+    }
+
+    public Set<Contact> getContacts() {
+        return contacts != null ? contacts : Collections.emptySet();
+    }
+
+    public Set<Task> getIncidents() {
+        return incidents != null ? incidents : Collections.emptySet();
     }
 
     public Optional<Task> getTask(Incident incident) {

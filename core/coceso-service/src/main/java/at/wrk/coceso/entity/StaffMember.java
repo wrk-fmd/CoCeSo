@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -79,6 +80,14 @@ public class StaffMember implements Serializable {
     @Override
     public String toString() {
         return String.format("#%d: %s %s", id, lastname, firstname);
+    }
+
+    public Set<Integer> getPersonnelId() {
+        return personnelId != null ? personnelId : Collections.emptySet();
+    }
+
+    public Set<Contact> getContacts() {
+        return contacts != null ? contacts : Collections.emptySet();
     }
 
     public void addContact(Contact contact) {

@@ -22,6 +22,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -135,6 +136,10 @@ public class Incident implements Serializable, Comparable<Incident> {
     @Override
     public String toString() {
         return String.format("#%d", id);
+    }
+
+    public Set<Task> getUnits() {
+        return units != null ? units : Collections.emptySet();
     }
 
     void addTask(Task task) {
