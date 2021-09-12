@@ -5,6 +5,8 @@ import at.wrk.coceso.dto.staff.StaffMemberDto;
 import at.wrk.coceso.dto.staff.StaffMemberUpdateDto;
 import at.wrk.coceso.entity.StaffMember;
 import at.wrk.coceso.service.StaffService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,7 +37,8 @@ public class StaffEndpoint {
 
     @PreAuthorize("hasPermission(null, T(at.wrk.coceso.auth.AccessLevel).STAFF_READ)")
     @GetMapping
-    public Page<StaffMemberDto> getAllStaff(final Pageable pageable, @RequestParam(required = false) final String filter) {
+    public Page<StaffMemberDto> getAllStaff(@Parameter(hidden = true) final Pageable pageable,
+            @RequestParam(required = false) final String filter) {
         return staffService.getAll(pageable, filter);
     }
 
@@ -61,6 +64,7 @@ public class StaffEndpoint {
 
     @PreAuthorize("hasPermission(null, T(at.wrk.coceso.auth.AccessLevel).STAFF_EDIT)")
     @PostMapping(consumes = "text/csv")
+    @Operation(hidden = true)
     public Collection<StaffMemberDto> upload(@RequestBody String body) {
         return staffService.importCsv(body);
     }
