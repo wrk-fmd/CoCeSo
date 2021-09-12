@@ -19,11 +19,4 @@
         <module>coceso-api</module>
         <module>coceso-service</module>
     </modules>
-
-    <repositories>
-        <repository>
-            <id>bintray-wrk-fmd</id>
-            <url>http://dl.bintray.com/wrk-fmd/mls-ecosystem</url>
-        </repository>
-    </repositories>
 </project>
