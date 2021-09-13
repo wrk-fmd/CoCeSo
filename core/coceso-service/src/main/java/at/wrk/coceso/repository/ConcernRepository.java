@@ -10,8 +10,10 @@ import java.util.List;
 @Repository
 public interface ConcernRepository extends JpaRepository<Concern, Long> {
 
-  Concern findByName(String name);
+    Concern findByName(String name);
 
-  @Query("SELECT c FROM Concern c WHERE c.closed = false")
-  List<Concern> findAllOpen();
+    boolean existsByName(String name);
+
+    @Query("SELECT c FROM Concern c WHERE c.closed = false")
+    List<Concern> findAllOpen();
 }

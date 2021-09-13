@@ -9,6 +9,7 @@ import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.enums.JournalEntryType;
 import at.wrk.coceso.entity.journal.ChangesCollector;
 import at.wrk.coceso.event.events.ConcernEvent;
+import at.wrk.coceso.exceptions.ConcernExistsException;
 import at.wrk.coceso.exceptions.SectionExistsException;
 import at.wrk.coceso.mapper.ConcernMapper;
 import at.wrk.coceso.repository.ConcernRepository;
@@ -82,6 +83,8 @@ class ConcernServiceImpl implements ConcernService {
     public ConcernBriefDto create(final ConcernCreateDto data) {
         log.debug("{}: Triggered creation of concern {}", AuthenticatedUser.getName(), data);
 
+        validateConcernName(data.getName());
+
         ChangesCollector changes = new ChangesCollector("concern");
         Concern concern = new Concern();
 
@@ -107,6 +110,7 @@ class ConcernServiceImpl implements ConcernService {
         ChangesCollector changes = new ChangesCollector("concern");
 
         if (data.getName() != null && !data.getName().equals(concern.getName())) {
+            validateConcernName(data.getName());
             changes.put("name", concern.getName(), data.getName());
             concern.setName(data.getName());
         }
@@ -119,6 +123,13 @@ class ConcernServiceImpl implements ConcernService {
         if (!changes.isEmpty()) {
             journalService.logConcern(JournalEntryType.CONCERN_UPDATE, concern, changes);
             eventBus.publish(new ConcernEvent(concernMapper.concernToDto(concern)));
+        }
+    }
+
+    private void validateConcernName(String name) {
+        if (concernRepository.existsByName(name)) {
+            log.debug("Concern with name '{}' already exists", name);
+            throw new ConcernExistsException();
         }
     }
 
