@@ -1,5 +1,6 @@
 package at.wrk.coceso.service;
 
+import at.wrk.coceso.dto.staff.StaffMemberBriefDto;
 import at.wrk.coceso.dto.staff.StaffMemberCreateDto;
 import at.wrk.coceso.dto.staff.StaffMemberDto;
 import at.wrk.coceso.dto.staff.StaffMemberUpdateDto;
@@ -13,11 +14,13 @@ import java.util.List;
 @Service
 public interface StaffService {
 
-    List<StaffMemberDto> getAll();
+    List<StaffMemberBriefDto> getAll();
 
-    Page<StaffMemberDto> getAll(Pageable pageable, String filter);
+    Page<StaffMemberBriefDto> getAll(Pageable pageable, String filter);
 
-    StaffMemberDto create(StaffMemberCreateDto data);
+    StaffMemberDto get(StaffMember staffMember);
+
+    StaffMemberBriefDto create(StaffMemberCreateDto data);
 
     void update(StaffMember staffMember, StaffMemberUpdateDto data);
 

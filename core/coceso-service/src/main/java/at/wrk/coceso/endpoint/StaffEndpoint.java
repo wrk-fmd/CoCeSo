@@ -1,12 +1,13 @@
 package at.wrk.coceso.endpoint;
 
+import at.wrk.coceso.dto.staff.StaffMemberBriefDto;
 import at.wrk.coceso.dto.staff.StaffMemberCreateDto;
 import at.wrk.coceso.dto.staff.StaffMemberDto;
 import at.wrk.coceso.dto.staff.StaffMemberUpdateDto;
 import at.wrk.coceso.entity.StaffMember;
 import at.wrk.coceso.service.StaffService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,14 +38,21 @@ public class StaffEndpoint {
 
     @PreAuthorize("hasPermission(null, T(at.wrk.coceso.auth.AccessLevel).STAFF_READ)")
     @GetMapping
-    public Page<StaffMemberDto> getAllStaff(@Parameter(hidden = true) final Pageable pageable,
+    public Page<StaffMemberBriefDto> getAllStaff(@ParameterObject final Pageable pageable,
             @RequestParam(required = false) final String filter) {
         return staffService.getAll(pageable, filter);
     }
 
+    @PreAuthorize("hasPermission(#staffMember, T(at.wrk.coceso.auth.AccessLevel).STAFF_READ)")
+    @GetMapping("/{staffMember}")
+    public StaffMemberDto getStaffMember(@PathVariable final StaffMember staffMember) {
+        ParamValidator.exists(staffMember);
+        return staffService.get(staffMember);
+    }
+
     @PreAuthorize("hasPermission(null, T(at.wrk.coceso.auth.AccessLevel).STAFF_EDIT)")
     @PostMapping
-    public StaffMemberDto createStaffMember(@RequestBody @Valid final StaffMemberCreateDto data) {
+    public StaffMemberBriefDto createStaffMember(@RequestBody @Valid final StaffMemberCreateDto data) {
         return staffService.create(data);
     }
 

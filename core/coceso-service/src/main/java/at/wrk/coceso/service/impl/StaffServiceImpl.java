@@ -1,5 +1,6 @@
 package at.wrk.coceso.service.impl;
 
+import at.wrk.coceso.dto.staff.StaffMemberBriefDto;
 import at.wrk.coceso.dto.staff.StaffMemberCreateDto;
 import at.wrk.coceso.dto.staff.StaffMemberDto;
 import at.wrk.coceso.dto.staff.StaffMemberUpdateDto;
@@ -57,19 +58,18 @@ class StaffServiceImpl implements StaffService {
     }
 
     @Override
-    public List<StaffMemberDto> getAll() {
+    public List<StaffMemberBriefDto> getAll() {
         return staffRepository.findAll().stream()
-                .map(staffMapper::staffMemberToDto)
+                .map(staffMapper::staffMemberToBriefDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Page<StaffMemberDto> getAll(final Pageable pageable, final String filter) {
+    public Page<StaffMemberBriefDto> getAll(final Pageable pageable, final String filter) {
         if (StringUtils.isBlank(filter)) {
-            return staffRepository.findAll(pageable).map(staffMapper::staffMemberToDto);
+            return staffRepository.findAll(pageable).map(staffMapper::staffMemberToBriefDto);
         }
 
-        // TODO Check this
         Specification<StaffMember> spec = (Root<StaffMember> root, CriteriaQuery<?> cq, CriteriaBuilder cb) -> {
             String[] patterns = filter.trim().toLowerCase().split("(\\*|\\s|%)+");
             Predicate[] predicates = new Predicate[patterns.length];
@@ -87,11 +87,16 @@ class StaffServiceImpl implements StaffService {
             }
             return cb.and(predicates);
         };
-        return staffRepository.findAll(spec, pageable).map(staffMapper::staffMemberToDto);
+        return staffRepository.findAll(spec, pageable).map(staffMapper::staffMemberToBriefDto);
     }
 
     @Override
-    public StaffMemberDto create(final StaffMemberCreateDto data) {
+    public StaffMemberDto get(StaffMember staffMember) {
+        return staffMapper.staffMemberToDto(staffMember);
+    }
+
+    @Override
+    public StaffMemberBriefDto create(final StaffMemberCreateDto data) {
         log.info("{}: Triggered creation of staff member with data {}", AuthenticatedUser.getName(), data);
 
         StaffMember staffMember = new StaffMember();
@@ -102,7 +107,7 @@ class StaffServiceImpl implements StaffService {
         staffMember.setContacts(staffMapper.contactDtosToContacts(data.getContacts()));
 
         staffMember = staffRepository.save(staffMember);
-        return staffMapper.staffMemberToDto(staffMember);
+        return staffMapper.staffMemberToBriefDto(staffMember);
     }
 
     @Override

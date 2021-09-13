@@ -1,6 +1,7 @@
 package at.wrk.coceso.mapper;
 
 import at.wrk.coceso.dto.contact.ContactDto;
+import at.wrk.coceso.dto.staff.StaffMemberBriefDto;
 import at.wrk.coceso.dto.staff.StaffMemberDto;
 import at.wrk.coceso.entity.Contact;
 import at.wrk.coceso.entity.StaffMember;
@@ -14,6 +15,8 @@ import java.util.stream.Collectors;
 public interface StaffMapper {
 
     StaffMemberDto staffMemberToDto(StaffMember staffMember);
+
+    StaffMemberBriefDto staffMemberToBriefDto(StaffMember staffMember);
 
     Set<ContactDto> contactsToDtos(Collection<Contact> contact);
 
