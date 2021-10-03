@@ -60,8 +60,8 @@ define(["jquery", "knockout", "../models/editableunit", "../models/person", "dat
         if (!filterVal) {
           return [];
         }
-        return $.map(filterVal.split(" "), function(item) {
-          return new RegExp(RegExp.escape(item), "i");
+        return $.map(filterVal.split(" "), function(singleSearchTerm) {
+          return new RegExp(RegExp.escape(singleSearchTerm.normalizeAccents()), "i");
         });
       }, this);
 
@@ -70,10 +70,10 @@ define(["jquery", "knockout", "../models/editableunit", "../models/person", "dat
       this.filtered = this.persons.extend({
         list: {
           filter: {
-            regex: function(item) {
+            regex: function(personToTest) {
               var regex = self.regex(), i;
               for (i = 0; i < regex.length; i++) {
-                if (!regex[i].test(item.pid) && !regex[i].test(item.fullname)) {
+                if (!regex[i].test(personToTest.personnelId) && !regex[i].test(personToTest.normalizedFullname)) {
                   return false;
                 }
               }

@@ -28,6 +28,7 @@ define(function() {
     this.id = data.id;
     this.fullname = data.lastname + " " + data.firstname;
     this.personnelId = data.personnelId;
+    this.normalizedFullname = this.fullname.normalizeAccents();
   };
 
   return Person;

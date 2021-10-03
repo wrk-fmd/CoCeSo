@@ -82,4 +82,9 @@ define(["jquery", "knockout", "utils/conf"], function ($, ko, conf) {
       return '&' + String.escapeChars[m] + ';';
     });
   };
+
+  String.prototype.normalizeAccents = function () {
+    // From https://stackoverflow.com/questions/5700636/using-javascript-to-perform-text-matches-with-without-accented-characters
+    return this.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+  };
 });
