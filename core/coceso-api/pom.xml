@@ -13,6 +13,13 @@
     <name>CoCeSo Core Service API declaration</name>
 
     <dependencies>
+        <!-- Geocoding -->
+        <dependency>
+            <groupId>at.wrk.fmd.mls</groupId>
+            <artifactId>geocoding-api</artifactId>
+            <version>${mls.geocoding.version}</version>
+        </dependency>
+
         <!-- Spring Boot -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -41,6 +48,12 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>at.wrk.fmd.mls</groupId>
+            <artifactId>geocoding-api</artifactId>
+            <version>3.0.0-RELEASE</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 

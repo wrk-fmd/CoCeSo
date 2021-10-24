@@ -3,7 +3,6 @@ package at.wrk.coceso.entity;
 import at.wrk.coceso.dto.Lengths;
 import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.Sex;
-import at.wrk.coceso.entity.point.Point;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
@@ -126,9 +125,10 @@ public class Patient implements Serializable {
             return null;
         }
 
+        // TODO Update this
         return incidents.stream()
-                .filter(i -> i.getType() == IncidentType.Transport && !Point.isEmpty(i.getAo()))
-                .map(i -> i.getAo().getInfo())
+                .filter(i -> i.getType() == IncidentType.Transport && i.getAo() != null)
+                .map(i -> i.getAo().toString())
                 .collect(Collectors.toSet());
     }
 

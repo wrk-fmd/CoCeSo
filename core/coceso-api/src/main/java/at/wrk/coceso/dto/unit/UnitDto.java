@@ -1,9 +1,9 @@
 package at.wrk.coceso.dto.unit;
 
 import at.wrk.coceso.dto.contact.ContactDto;
-import at.wrk.coceso.dto.point.PointDto;
 import at.wrk.coceso.dto.staff.StaffMemberDto;
 import at.wrk.coceso.dto.task.TaskDto;
+import at.wrk.fmd.mls.geocoding.api.dto.PointDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

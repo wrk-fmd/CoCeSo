@@ -16,7 +16,6 @@ import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entity.enums.UnitState;
 import at.wrk.coceso.entity.enums.UnitType;
 import at.wrk.coceso.entity.journal.ChangesCollector;
-import at.wrk.coceso.entity.point.Point;
 import at.wrk.coceso.event.events.ContainerEvent;
 import at.wrk.coceso.event.events.UnitEvent;
 import at.wrk.coceso.mapper.StaffMapper;
@@ -24,9 +23,9 @@ import at.wrk.coceso.mapper.UnitMapper;
 import at.wrk.coceso.repository.UnitRepository;
 import at.wrk.coceso.service.ContainerService;
 import at.wrk.coceso.service.JournalService;
-import at.wrk.coceso.service.PointService;
 import at.wrk.coceso.service.UnitService;
 import at.wrk.coceso.utils.AuthenticatedUser;
+import at.wrk.coceso.utils.PointUtils;
 import at.wrk.fmd.mls.event.EventBus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,20 +49,18 @@ class UnitServiceImpl implements UnitService {
     private final StaffMapper staffMapper;
 
     private final ContainerService containerService;
-    private final PointService pointService;
     private final JournalService journalService;
 
     private final EventBus eventBus;
 
     @Autowired
     public UnitServiceImpl(final UnitRepository unitRepository, final UnitMapper unitMapper, final StaffMapper staffMapper,
-            final ContainerService containerService, final PointService pointService, final JournalService journalService,
+            final ContainerService containerService, final JournalService journalService,
             final EventBus eventBus) {
         this.unitRepository = unitRepository;
         this.unitMapper = unitMapper;
         this.staffMapper = staffMapper;
         this.containerService = containerService;
-        this.pointService = pointService;
         this.journalService = journalService;
         this.eventBus = eventBus;
     }
@@ -117,11 +114,9 @@ class UnitServiceImpl implements UnitService {
             unit.setInfo(data.getInfo());
         }
 
-        // Using null for the concern prevents a UnitPoint being created. Maybe make that more explicit?
-        Point home = pointService.getPoint(null, data.getHome());
-        if (!Point.isEmpty(home)) {
-            changes.put("home", Point.toStringOrNull(home));
-            unit.setHome(home);
+        if (!PointUtils.isEmpty(data.getHome())) {
+            changes.put("home", PointUtils.toString(data.getHome()));
+            unit.setHome(PointUtils.toNullIfEmpty(data.getHome()));
         }
 
         if (data.isPortable()) {
@@ -204,17 +199,14 @@ class UnitServiceImpl implements UnitService {
             unit.setInfo(data.getInfo());
         }
 
-        // Using null for the concern prevents a UnitPoint being created. Maybe make that more explicit?
-        Point home = pointService.getPoint(null, data.getHome());
-        if (data.getHome() != null && !Point.infoEquals(home, unit.getHome())) {
-            changes.put("home", Point.toStringOrNull(unit.getHome()), Point.toStringOrNull(home));
-            unit.setHome(home);
+        if (data.getHome() != null && !PointUtils.equals(data.getHome(), unit.getHome())) {
+            changes.put("home", PointUtils.toString(unit.getHome()), PointUtils.toString(data.getHome()));
+            unit.setHome(PointUtils.toNullIfEmpty(data.getHome()));
         }
 
-        Point position = pointService.getPoint(unit.getConcern(), data.getPosition());
-        if (data.getPosition() != null && !Point.infoEquals(position, unit.getPosition())) {
-            changes.put("position", Point.toStringOrNull(unit.getPosition()), Point.toStringOrNull(position));
-            unit.setPosition(position);
+        if (data.getPosition() != null && !PointUtils.equals(data.getPosition(), unit.getPosition())) {
+            changes.put("position", PointUtils.toString(unit.getPosition()), PointUtils.toString(data.getPosition()));
+            unit.setPosition(PointUtils.toNullIfEmpty(data.getPosition()));
         }
 
         Set<Contact> contacts = staffMapper.contactDtosToContacts(data.getContacts());

@@ -10,8 +10,8 @@ import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.JournalEntryType;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entity.journal.Change;
-import at.wrk.coceso.entity.point.Point;
 import at.wrk.coceso.service.PdfService;
+import at.wrk.coceso.utils.PointUtils;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
@@ -360,16 +360,16 @@ public class PdfDocument extends Document implements AutoCloseable {
 
         if (inc.getType() == IncidentType.Task || inc.getType() == IncidentType.Transport) {
             addCell(table, getMessage("incident.bo", null) + ":");
-            addCell(table, Point.isEmpty(inc.getBo())
+            addCell(table, PointUtils.isEmpty(inc.getBo())
                     ? getMessage("incident.nobo", null)
-                    : inc.getBo().getInfo());
+                    : PointUtils.toString(inc.getBo()));
             addCell(table, "");
         }
 
         addCell(table, getMessage("incident.ao", null) + ":");
-        addCell(table, Point.isEmpty(inc.getAo())
+        addCell(table, PointUtils.isEmpty(inc.getAo())
                 ? getMessage("incident.noao", null)
-                : inc.getAo().getInfo());
+                : PointUtils.toString(inc.getAo()));
         addCell(table, "");
 
         if (inc.getInfo() != null && !inc.getInfo().isEmpty()) {
@@ -519,11 +519,11 @@ public class PdfDocument extends Document implements AutoCloseable {
         table.completeRow();
 
         addCell(table, getMessage("unit.position", null) + ":");
-        addCell(table, Point.isEmpty(unit.getPosition()) ? "N/A" : unit.getPosition().getInfo());
+        addCell(table, PointUtils.isEmpty(unit.getPosition()) ? "N/A" : PointUtils.toString(unit.getPosition()));
         addCell(table, "");
 
         addCell(table, getMessage("unit.home", null) + ":");
-        addCell(table, Point.isEmpty(unit.getHome()) ? "N/A" : unit.getHome().getInfo());
+        addCell(table, PointUtils.isEmpty(unit.getHome()) ? "N/A" : PointUtils.toString(unit.getHome()));
         addCell(table, "");
 
         if (unit.getInfo() != null && !unit.getInfo().isEmpty()) {
@@ -655,20 +655,20 @@ public class PdfDocument extends Document implements AutoCloseable {
         table.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
 
         if (inc.getType() == IncidentType.Task || inc.getType() == IncidentType.Transport) {
-            if (Point.isEmpty(inc.getAo())) {
+            if (PointUtils.isEmpty(inc.getAo())) {
                 table.getDefaultCell().setColspan(2);
             }
-            addCell(table, Point.isEmpty(inc.getBo())
+            addCell(table, PointUtils.isEmpty(inc.getBo())
                     ? getMessage("incident.nobo", null)
-                    : inc.getBo().getInfo());
-            if (!Point.isEmpty(inc.getAo())) {
-                addCell(table, inc.getAo().getInfo());
+                    : PointUtils.toString(inc.getBo()));
+            if (!PointUtils.isEmpty(inc.getAo())) {
+                addCell(table, PointUtils.toString(inc.getAo()));
             }
         } else {
             table.getDefaultCell().setColspan(2);
-            addCell(table, Point.isEmpty(inc.getAo())
+            addCell(table, PointUtils.isEmpty(inc.getAo())
                     ? getMessage("incident.noao", null)
-                    : inc.getAo().getInfo());
+                    : PointUtils.toString(inc.getAo()));
         }
 
         return table;

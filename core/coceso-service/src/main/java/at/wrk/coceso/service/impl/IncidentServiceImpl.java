@@ -14,16 +14,15 @@ import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.JournalEntryType;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entity.journal.ChangesCollector;
-import at.wrk.coceso.entity.point.Point;
 import at.wrk.coceso.event.events.IncidentEvent;
 import at.wrk.coceso.event.events.PatientAssignedEvent;
 import at.wrk.coceso.mapper.IncidentMapper;
 import at.wrk.coceso.repository.IncidentRepository;
 import at.wrk.coceso.service.IncidentService;
 import at.wrk.coceso.service.JournalService;
-import at.wrk.coceso.service.PointService;
 import at.wrk.coceso.service.TaskService;
 import at.wrk.coceso.utils.AuthenticatedUser;
+import at.wrk.coceso.utils.PointUtils;
 import at.wrk.fmd.mls.event.EventBus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,17 +47,15 @@ class IncidentServiceImpl implements IncidentService {
     private final IncidentRepository incidentRepository;
     private final IncidentMapper incidentMapper;
     private final TaskService taskService;
-    private final PointService pointService;
     private final JournalService journalService;
     private final EventBus eventBus;
 
     @Autowired
     public IncidentServiceImpl(final IncidentRepository incidentRepository, final IncidentMapper incidentMapper,
-            final TaskService taskService, final PointService pointService, final JournalService journalService, final EventBus eventBus) {
+            final TaskService taskService, final JournalService journalService, final EventBus eventBus) {
         this.incidentRepository = incidentRepository;
         this.incidentMapper = incidentMapper;
         this.taskService = taskService;
-        this.pointService = pointService;
         this.journalService = journalService;
         this.eventBus = eventBus;
     }
@@ -137,16 +134,14 @@ class IncidentServiceImpl implements IncidentService {
             incident.setBlue(true);
         }
 
-        Point bo = pointService.getPoint(concern, data.getBo());
-        if (!Point.isEmpty(bo)) {
-            changes.put("bo", bo.toString());
-            incident.setBo(bo);
+        if (!PointUtils.isEmpty(data.getBo())) {
+            changes.put("bo", PointUtils.toString(data.getBo()));
+            incident.setBo(PointUtils.toNullIfEmpty(data.getBo()));
         }
 
-        Point ao = pointService.getPoint(concern, data.getAo());
-        if (!Point.isEmpty(ao)) {
-            changes.put("ao", ao.toString());
-            incident.setAo(ao);
+        if (!PointUtils.isEmpty(data.getAo())) {
+            changes.put("ao", PointUtils.toString(data.getAo()));
+            incident.setAo(PointUtils.toNullIfEmpty(data.getAo()));
         }
 
         if (data.getCasusNr() != null) {
@@ -221,16 +216,14 @@ class IncidentServiceImpl implements IncidentService {
             incident.setBlue(data.getBlue());
         }
 
-        Point bo = pointService.getPoint(incident.getConcern(), data.getBo());
-        if (data.getBo() != null && !Point.infoEquals(bo, incident.getBo())) {
-            changes.put("bo", Point.toStringOrNull(incident.getBo()), Point.toStringOrNull(bo));
-            incident.setBo(bo);
+        if (data.getBo() != null && !PointUtils.equals(data.getBo(), incident.getBo())) {
+            changes.put("bo", PointUtils.toString(incident.getBo()), PointUtils.toString(data.getBo()));
+            incident.setBo(PointUtils.toNullIfEmpty(data.getBo()));
         }
 
-        Point ao = pointService.getPoint(incident.getConcern(), data.getAo());
-        if (data.getAo() != null && !Point.infoEquals(ao, incident.getAo())) {
-            changes.put("ao", Point.toStringOrNull(incident.getAo()), Point.toStringOrNull(ao));
-            incident.setAo(ao);
+        if (data.getAo() != null && !PointUtils.equals(data.getAo(), incident.getAo())) {
+            changes.put("ao", PointUtils.toString(incident.getAo()), PointUtils.toString(data.getAo()));
+            incident.setAo(PointUtils.toNullIfEmpty(data.getAo()));
         }
 
         if (data.getCasusNr() != null && !data.getCasusNr().equals(incident.getCasusNr())) {

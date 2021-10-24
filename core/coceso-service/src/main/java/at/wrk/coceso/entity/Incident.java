@@ -3,7 +3,7 @@ package at.wrk.coceso.entity;
 import at.wrk.coceso.dto.Lengths;
 import at.wrk.coceso.entity.enums.IncidentClosedReason;
 import at.wrk.coceso.entity.enums.IncidentType;
-import at.wrk.coceso.entity.point.Point;
+import at.wrk.fmd.mls.geocoding.api.dto.PointDto;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.builder.CompareToBuilder;
@@ -50,10 +50,10 @@ public class Incident implements Serializable, Comparable<Incident> {
     private Set<Task> units;
 
     @Column
-    private Point bo;
+    private PointDto bo;
 
     @Column
-    private Point ao;
+    private PointDto ao;
 
     @Column(nullable = false, length = Lengths.INCIDENT_CASUS)
     private String casusNr;

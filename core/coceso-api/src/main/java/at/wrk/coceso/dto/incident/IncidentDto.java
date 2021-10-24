@@ -1,7 +1,7 @@
 package at.wrk.coceso.dto.incident;
 
-import at.wrk.coceso.dto.point.PointDto;
 import at.wrk.coceso.dto.task.TaskDto;
+import at.wrk.fmd.mls.geocoding.api.dto.PointDto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import io.swagger.v3.oas.annotations.media.Schema;

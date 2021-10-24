@@ -12,7 +12,6 @@ import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.JournalEntryType;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entity.journal.ChangesCollector;
-import at.wrk.coceso.entity.point.Point;
 import at.wrk.coceso.event.events.TaskEvent;
 import at.wrk.coceso.exceptions.ImpossibleIncidentException;
 import at.wrk.coceso.exceptions.ImpossibleTaskStateException;
@@ -26,7 +25,9 @@ import at.wrk.coceso.repository.TaskRepository;
 import at.wrk.coceso.service.JournalService;
 import at.wrk.coceso.service.TaskService;
 import at.wrk.coceso.utils.AuthenticatedUser;
+import at.wrk.coceso.utils.PointUtils;
 import at.wrk.fmd.mls.event.EventBus;
+import at.wrk.fmd.mls.geocoding.api.dto.PointDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -272,21 +273,21 @@ class TaskServiceImpl implements TaskService {
      */
     private void setUnitPosition(final Incident incident, final Unit unit, final TaskState state) {
         // Set the unit's position if ABO/AAO
-        Point position = null;
+        PointDto position = null;
         if (state == TaskState.ABO) {
             position = incident.getBo();
         } else if (state == TaskState.AAO) {
             position = incident.getAo();
         }
 
-        if (position == null || Point.infoEquals(position, unit.getPosition())) {
+        if (position == null || PointUtils.equals(position, unit.getPosition())) {
             return;
         }
 
         log.debug("Position auto-set for unit {}", unit);
 
         ChangesCollector changes = new ChangesCollector("unit");
-        changes.put("position", Point.toStringOrNull(unit.getPosition()), Point.toStringOrNull(position));
+        changes.put("position", PointUtils.toString(unit.getPosition()), PointUtils.toString(position));
         unit.setPosition(position);
 
         journalService.logUnit(JournalEntryType.UNIT_AUTOSET_POSITION, unit, changes);
@@ -388,7 +389,7 @@ class TaskServiceImpl implements TaskService {
         }
     }
 
-    private void createIncident(Unit unit, IncidentType type, Point bo, TaskState state) {
+    private void createIncident(Unit unit, IncidentType type, PointDto bo, TaskState state) {
         Incident incident = new Incident();
         incident.setConcern(unit.getConcern());
         incident.setType(type);

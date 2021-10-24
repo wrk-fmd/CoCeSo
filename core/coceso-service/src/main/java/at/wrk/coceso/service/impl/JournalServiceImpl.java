@@ -116,13 +116,13 @@ class JournalServiceImpl implements JournalService {
                 .text(data.getText());
 
         if (data.getIncident() != null) {
-            Incident incident = incidentRepository.getOne(data.getIncident());
+            Incident incident = incidentRepository.getById(data.getIncident());
             ParamValidator.matches(concern, incident);
             entry.incident(incident);
         }
 
         if (data.getUnit() != null) {
-            Unit unit = unitRepository.getOne(data.getUnit());
+            Unit unit = unitRepository.getById(data.getUnit());
             ParamValidator.matches(concern, unit);
             entry.unit(unit);
         }

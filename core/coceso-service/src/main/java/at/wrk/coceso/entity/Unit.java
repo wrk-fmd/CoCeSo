@@ -3,7 +3,7 @@ package at.wrk.coceso.entity;
 import at.wrk.coceso.dto.Lengths;
 import at.wrk.coceso.entity.enums.UnitState;
 import at.wrk.coceso.entity.enums.UnitType;
-import at.wrk.coceso.entity.point.Point;
+import at.wrk.fmd.mls.geocoding.api.dto.PointDto;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.builder.CompareToBuilder;
@@ -69,10 +69,10 @@ public class Unit implements Serializable, Comparable<Unit> {
     private String info;
 
     @Column
-    private Point position;
+    private PointDto position;
 
     @Column
-    private Point home;
+    private PointDto home;
 
     // TODO: FK relation!
     @Column(length = Lengths.SECTION_NAME)

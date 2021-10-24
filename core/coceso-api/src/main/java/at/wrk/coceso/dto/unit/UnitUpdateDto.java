@@ -2,7 +2,7 @@ package at.wrk.coceso.dto.unit;
 
 import at.wrk.coceso.dto.Lengths;
 import at.wrk.coceso.dto.contact.ContactDto;
-import at.wrk.coceso.dto.point.PointDto;
+import at.wrk.fmd.mls.geocoding.api.dto.PointDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

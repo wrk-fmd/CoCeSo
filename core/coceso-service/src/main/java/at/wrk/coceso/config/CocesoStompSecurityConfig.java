@@ -12,6 +12,7 @@ import static at.wrk.coceso.dto.CocesoExchangeNames.STOMP_INCIDENTS;
 import static at.wrk.coceso.dto.CocesoExchangeNames.STOMP_MESSAGES;
 import static at.wrk.coceso.dto.CocesoExchangeNames.STOMP_PATIENTS;
 import static at.wrk.coceso.dto.CocesoExchangeNames.STOMP_UNITS;
+import static at.wrk.fmd.mls.geocoding.api.queues.GeocodingQueueNames.GEOCODE_REQUESTS;
 
 import at.wrk.fmd.mls.stomp.config.StompSecurityConfig;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.access.expression.SecurityExpressionHandler;
-import org.springframework.security.config.annotation.web.messaging.MessageSecurityMetadataSourceRegistry;
 import org.springframework.security.messaging.access.expression.DefaultMessageSecurityExpressionHandler;
 
 /**
@@ -44,12 +44,15 @@ class CocesoStompSecurityConfig extends StompSecurityConfig {
     }
 
     @Override
-    protected void customizeInbound(MessageSecurityMetadataSourceRegistry registry) {
-        hasPermission(registry, STOMP_CONCERNS, CONCERN_READ);
-        hasPermission(registry, STOMP_INCIDENTS, INCIDENT_READ);
-        hasPermission(registry, STOMP_UNITS, UNIT_READ);
-        hasPermission(registry, STOMP_CONTAINERS, CONTAINER_READ);
-        hasPermission(registry, STOMP_PATIENTS, PATIENT_READ);
-        hasPermission(registry, STOMP_MESSAGES, MESSAGE_READ);
+    protected void customizeInbound(StompSecurityRegistry registry) {
+        registry
+                .subscribeWithPermission(STOMP_CONCERNS, CONCERN_READ)
+                .subscribeWithPermission(STOMP_INCIDENTS, INCIDENT_READ)
+                .subscribeWithPermission(STOMP_UNITS, UNIT_READ)
+                .subscribeWithPermission(STOMP_CONTAINERS, CONTAINER_READ)
+                .subscribeWithPermission(STOMP_PATIENTS, PATIENT_READ)
+                .subscribeWithPermission(STOMP_MESSAGES, MESSAGE_READ)
+                .sendAuthenticated(GEOCODE_REQUESTS)
+        ;
     }
 }

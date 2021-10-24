@@ -1,4 +1,4 @@
-@TypeDef(typeClass = PostgresJsonType.class, defaultForType = Point.class)
+@TypeDef(typeClass = PostgresJsonType.class, defaultForType = PointDto.class)
 @TypeDef(typeClass = PostgresEnumType.class, defaultForType = IncidentClosedReason.class)
 @TypeDef(typeClass = PostgresEnumType.class, defaultForType = IncidentType.class)
 @TypeDef(typeClass = PostgresEnumType.class, defaultForType = JournalEntryType.class)
@@ -15,7 +15,7 @@ import at.wrk.coceso.entity.enums.Sex;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entity.enums.UnitState;
 import at.wrk.coceso.entity.enums.UnitType;
-import at.wrk.coceso.entity.point.Point;
+import at.wrk.fmd.mls.geocoding.api.dto.PointDto;
 import at.wrk.fmd.mls.hibernate.enums.PostgresEnumType;
 import at.wrk.fmd.mls.hibernate.json.PostgresJsonType;
 import org.hibernate.annotations.TypeDef;
