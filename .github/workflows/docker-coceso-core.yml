@@ -1,0 +1,25 @@
+name: Build mls-coceso Docker image
+
+on:
+  push:
+    branches:
+      # TODO Switch branches when new version is main
+      # - master
+      # - dev
+      - core-rework
+    paths:
+      - .github/workflows/docker-coceso-core.yml
+      - core/**
+
+jobs:
+  deploy:
+    uses: wrk-fmd/mls-packages/.github/workflows/docker-build.yml@main
+    with:
+      PROJECT_MODULE: coceso-service
+      PROJECT_APP: coceso-service
+      DOCKER_CONTEXT: ./core
+      DOCKER_NAME: wrkfmdit/mls-coceso
+    secrets:
+      MLS_PACKAGES_TOKEN: ${{ secrets.MLS_PACKAGES_TOKEN }}
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}

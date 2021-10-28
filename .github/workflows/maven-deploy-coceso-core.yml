@@ -1,0 +1,22 @@
+name: Deploy coceso-core Maven artifacts
+
+on:
+  push:
+    branches:
+      # TODO Switch branches when new version is main
+      # - master
+      # - dev
+      - core-rework
+    paths:
+      - .github/workflows/maven-deploy-coceso-core.yml
+      - core/coceso-api/**
+      - core/coceso-service/**
+      - core/pom.xml
+
+jobs:
+  deploy:
+    uses: wrk-fmd/mls-packages/.github/workflows/maven-deploy.yml@main
+    with:
+      directory: core
+    secrets:
+      token: ${{ secrets.MLS_PACKAGES_TOKEN }}
