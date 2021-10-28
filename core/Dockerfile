@@ -4,7 +4,7 @@
 # - APP is the name of the generated Spring Boot jar file, normally the artifact id of the maven module
 
 # First stage: Build the source code with maven
-FROM maven:slim AS build
+FROM maven:3-openjdk-11-slim AS build
 WORKDIR /app
 
 # Copy all POM files
@@ -15,11 +15,9 @@ COPY  ./pom.xml                 ./
 COPY  ./coceso-api/pom.xml      ./coceso-api/
 COPY  ./coceso-service/pom.xml  ./coceso-service/
 
-# Copy maven proxy config
-COPY ./mvn-proxy.xml ./
-
-# Resolve all dependencies, don't fail on missing (internal) dependencies
-RUN mvn -s mvn-proxy.xml -B dependency:go-offline > /dev/null
+# Resolve all dependencies
+RUN --mount=type=secret,id=m2-settings,dst=/root/.m2/settings.xml --mount=type=cache,target=/root/.m2/repository \
+    mvn -q -B dependency:go-offline
 
 # Specify the required module
 ARG MODULE
@@ -28,27 +26,26 @@ ARG MODULE
 COPY ./ ./
 
 # Build the requested module and dependencies
-RUN mvn -s mvn-proxy.xml -q package -pl ${MODULE} -am
+RUN --mount=type=cache,target=/root/.m2/repository \
+    mvn -q package -pl "${MODULE}" -am
+
+# Extract the JAR
+ARG APP
+RUN java -Djarmode=layertools -jar /app/${MODULE}/target/${APP}-*.jar extract
 
 # Second stage: Build the server image (needs only JRE)
-FROM openjdk:jre-slim AS runtime
+FROM adoptopenjdk/openjdk11:alpine-jre AS runtime
 
 # Run as non-root
-# TODO Make this work with mounted volumes
-#RUN adduser --system --group spring
-#USER spring
+RUN adduser --gecos "" --shell "/sbin/nologin" --disabled-password --no-create-home spring
+USER spring
 
-# Volume for Spring Boot to write to
-VOLUME /tmp
-
-# Volumes where the config and log directories are mounted
-VOLUME /config
-VOLUME /log
-
-# The arguments have to be declared again
-ARG MODULE
-ARG APP
+# Copy the classes and dependencies
+WORKDIR /app
+COPY --from=build /app/dependencies/ ./
+COPY --from=build /app/spring-boot-loader/ ./
+COPY --from=build /app/snapshot-dependencies/ ./
+COPY --from=build /app/application/ ./
 
 # Run the Spring Boot application
-COPY --from=build /app/${MODULE}/target/${APP}-*.jar /app/app.jar
-ENTRYPOINT ["java", "-Dspring.config.location=file:/config/", "-jar", "/app/app.jar"]
+ENTRYPOINT ["java", "-Dspring.config.location=file:/config/", "org.springframework.boot.loader.JarLauncher"]

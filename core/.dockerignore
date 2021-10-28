@@ -1,33 +1,77 @@
-# Ignore compiled target
+##############################################
+### Ignore everything from .gitignore      ###
+### This is .gitignore with prefixed "**/" ###
+##############################################
+
+# generic files to ignore
+# backup files (*~) and vim swap file (.swp), MacOS dir file (.DS_Store)
+**/*~
+**/*.lock
+**/*.DS_Store
+**/*.swp
+**/*.out
+
+# IDE files to ignore (Netbeans, Eclipse, IntelliJ)
+**/nbproject
+**/nb-configuration.xml
+**/nbactions.xml
+**/.netbeans.xml
+**/context.xml
+**/.classpath
+**/.project
+**/.settings
+**/build.xml
+**/*.iml
+**/.idea
+
+# ignore development database and log directories
+**/database
+**/log
+
+# ignore generated .class files
+**/*.class
+
+# ignore compilation output
 **/target
 
-# Ignore application.yml files
+# ignore private maven cache
+**/.m2
+
+##############################################
+### Additionally ignore some tracked files ###
+##############################################
+
+# Ignore application.yml files (for all profiles)
 **/application*.yml
 
 # Ignore json files in resources
 **/resources/**/*.json
 
 # Ignore keys in resources
+**/resources/**/keys
 **/resources/**/*.key
 **/resources/**/*.pub
 
 # Ignore logging configuration
 **/log*.xml
 
-# Ignore data directories
-database
-log
-resources
-
-# Ignore libraries
-**/*.jar
-**/*.dll
-**/*.so
-
 # Ignore .git
 **/.git
 **/.gitignore
+**/.gitkeep
 
-# Ignore IDE config
-**/.idea
-**/*.iml
+# Ignore .editorconfig
+**/.editorconfig
+
+# Ignore Docker config files themselves
+**/.dockerignore
+**/docker-compose.yml
+**/Dockerfile
+
+# Ignore scripts
+**/.github
+**/docker-build.sh
+
+# Ignore docs
+**/LICENSE*
+**/README*

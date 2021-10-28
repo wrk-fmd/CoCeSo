@@ -10,9 +10,11 @@ services:
         APP: coceso-service
       network: host
     ports:
-      - 8093:8080
+      - "8093:8080"
     environment:
       SPRING_PROFILES_ACTIVE: docker
+    tmpfs:
+      - /tmp
     volumes:
       - type: bind
         source: ${MLS_COCESO_CONFIG:-./coceso-service/src/main/resources}
