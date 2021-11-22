@@ -83,6 +83,11 @@ class AddressPoint implements Point, Address {
     }
 
     @JsonView({JsonViews.Database.class, JsonViews.PointFull.class})
+    public String getTitle() {
+        return title;
+    }
+
+    @JsonView({JsonViews.Database.class, JsonViews.PointFull.class})
     @Override
     public String getStreet() {
         return street;
@@ -110,6 +115,11 @@ class AddressPoint implements Point, Address {
     @Override
     public String getCity() {
         return city;
+    }
+
+    @JsonView({JsonViews.Database.class, JsonViews.PointFull.class})
+    public String getAdditional() {
+        return additional;
     }
 
     @JsonView(JsonViews.PointMinimal.class)
