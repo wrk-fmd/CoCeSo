@@ -33,7 +33,10 @@ define(["jquery", "bloodhound", "knockout", "typeahead"],
       "Intensiv",
       "Stroke",
       "Schockraum",
-      "Arbeitsunfall"
+      "Arbeitsunfall",
+      "Augen",
+      "Dermatologie",
+      "HNO",
     ];
 
     var bloodhound = new Bloodhound({
