@@ -14,6 +14,8 @@ WORKDIR /app
 COPY  ./pom.xml                 ./
 COPY  ./coceso-api/pom.xml      ./coceso-api/
 COPY  ./coceso-service/pom.xml  ./coceso-service/
+COPY  ./plugin/pom.xml          ./plugin/
+COPY  ./plugin/niu/pom.xml      ./plugin/niu/
 
 # Resolve all dependencies
 RUN --mount=type=secret,id=m2-settings,dst=/root/.m2/settings.xml --mount=type=cache,target=/root/.m2/repository \
