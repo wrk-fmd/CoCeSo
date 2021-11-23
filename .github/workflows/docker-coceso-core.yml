@@ -7,9 +7,6 @@ on:
       # - master
       # - dev
       - core-rework
-    paths:
-      - .github/workflows/docker-coceso-core.yml
-      - core/**
 
 jobs:
   deploy:
@@ -17,7 +14,6 @@ jobs:
     with:
       PROJECT_MODULE: coceso-service
       PROJECT_APP: coceso-service
-      DOCKER_CONTEXT: ./core
       DOCKER_NAME: wrkfmdit/mls-coceso
     secrets:
       MLS_PACKAGES_TOKEN: ${{ secrets.MLS_PACKAGES_TOKEN }}

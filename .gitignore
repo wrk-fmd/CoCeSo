@@ -6,7 +6,7 @@
 *.swp
 *.out
 
-# IDE files to ignore (Netbeans, Eclipse)
+# IDE files to ignore (Netbeans, Eclipse, IntelliJ)
 nbproject
 nb-configuration.xml
 nbactions.xml
@@ -19,9 +19,9 @@ build.xml
 *.iml
 .idea
 
-# ignore database configuration
-coceso.properties
-ports.properties
+# ignore development database and log directories
+database
+log/**
 
 # ignore generated .class files
 *.class
@@ -32,11 +32,8 @@ target
 # ignore private maven cache
 .m2
 
-# ignore bower cache
-bower_components
-
-# ignore tiles and layers
-/resources/
+# except explicitely added empty directories
+!.gitkeep
 
 # except this file
 !.gitignore

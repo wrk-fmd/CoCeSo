@@ -9,14 +9,13 @@ on:
       - core-rework
     paths:
       - .github/workflows/maven-deploy-coceso-core.yml
-      - core/coceso-api/**
-      - core/coceso-service/**
-      - core/pom.xml
+      - coceso-api/**
+      - coceso-service/**
+      - plugin/**
+      - pom.xml
 
 jobs:
   deploy:
     uses: wrk-fmd/mls-packages/.github/workflows/maven-deploy.yml@main
-    with:
-      directory: core
     secrets:
       token: ${{ secrets.MLS_PACKAGES_TOKEN }}
