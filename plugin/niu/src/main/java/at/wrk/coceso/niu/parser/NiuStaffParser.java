@@ -12,7 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -33,18 +32,18 @@ public class NiuStaffParser implements StaffParser {
     private static final String FIRSTNAME = "Vorname";
     private static final String PERSONNEL_ID = "DNr.";
     private static final Collection<String> TELEPHONE_FIELDS = Arrays.asList(
-        "Telefon geschäftlich",
-        "Telefon Privat",
-        "Telefon WRK",
-        "Handy privat",
-        "Handy geschäftlich",
-        "Handy WRK"
+            "Telefon geschäftlich",
+            "Telefon Privat",
+            "Telefon WRK",
+            "Handy privat",
+            "Handy geschäftlich",
+            "Handy WRK"
     );
 
     private final CSVFormat csvFormat;
 
     public NiuStaffParser() {
-        csvFormat = CSVFormat.RFC4180.withDelimiter(CSV_DELIMITER).withHeader();
+        csvFormat = CSVFormat.RFC4180.withDelimiter(CSV_DELIMITER).withHeader().withAllowMissingColumnNames();
     }
 
     @Override
@@ -57,10 +56,10 @@ public class NiuStaffParser implements StaffParser {
         }
 
         return StreamSupport.stream(records.spliterator(), false)
-            .map(this::parseRecord)
-            .filter(Objects::nonNull)
-            .collect(Collectors.toMap(ParsedStaffMember::getExternalId, Function.identity(), this::combine))
-            .values();
+                .map(this::parseRecord)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toMap(ParsedStaffMember::getExternalId, Function.identity(), this::combine))
+                .values();
     }
 
     private ParsedStaffMember parseRecord(final CSVRecord record) {
@@ -78,14 +77,14 @@ public class NiuStaffParser implements StaffParser {
         // This is not really a stable ID, but it should work for combining multiple personnel ids into one entry
         staffMember.setExternalId(lastname + firstname);
 
-        staffMember.setFirstname(lastname);
-        staffMember.setLastname(firstname);
+        staffMember.setFirstname(firstname);
+        staffMember.setLastname(lastname);
         staffMember.setPersonnelId(Collections.singleton(personnelId));
 
         Set<ContactDto> contacts = TELEPHONE_FIELDS.stream()
-            .map(fieldName -> parsePhone(record, fieldName))
-            .filter(Objects::nonNull)
-            .collect(Collectors.toSet());
+                .map(fieldName -> parsePhone(record, fieldName))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
         staffMember.setContacts(contacts);
 
         return staffMember;

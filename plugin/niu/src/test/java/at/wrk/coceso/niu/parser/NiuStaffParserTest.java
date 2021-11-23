@@ -2,31 +2,37 @@ package at.wrk.coceso.niu.parser;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import at.wrk.coceso.dto.contact.ContactDto;
 import at.wrk.coceso.parser.staff.ParsedStaffMember;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 
-public class NiuStaffParserTest {
+class NiuStaffParserTest {
+
+    private static final String CSV_HEADER = "Kategorie|DNr.|Anrede|Vorg.Titel|Nachname|Vorname|Weitere Vornamen|Nachg.Titel|"
+            + "Bereich|Straße|PLZ|Ort|Mitgliederstatus|Telefon geschäftlich|Telefon Privat|Telefon WRK|"
+            + "Handy privat|Handy geschäftlich|Handy WRK|e-mail privat|e-mail geschäftlich|e-mail WRK|Fax geschäftlich|Fax Privat|"
+            + "fax WRK|Notruf Pager WRK|Pager|Bereitschaft WRK|Tetra Funkgerät|\n";
 
     private NiuStaffParser sut;
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         sut = new NiuStaffParser();
     }
 
     @Test
-    public void validCsv_returnExternalUsers() {
-        String csv =
-            "Kategorie|DNr.|Anrede|Vorg.Titel|Nachname|Vorname|Weitere Vornamen|Nachg.Titel|Bereich|Straße|PLZ|Ort|Mitgliederstatus|Telefon geschäftlich|Telefon Privat|Telefon WRK|Handy privat|Handy geschäftlich|Handy WRK|e-mail privat|e-mail geschäftlich|e-mail WRK|Fax geschäftlich|Fax Privat|fax WRK|Notruf Pager WRK|Pager|Bereitschaft WRK|Tetra Funkgerät|\n"
-                +
-                "NIU-Kontakt|1234|Herr||Mustermann|Max||MSc|WRK\\LV WIEN\\KHD|Mustergasse 1/2|1010|Wien|AKTIV|||+43 (600) 1234|+43 (600) 1234|+43 (600) 1235||||max.mustermann@here.local||||000300||+43 (600) 1234||\n";
+    void validCsv_returnExternalUsers() throws Exception {
+        String csv = CSV_HEADER
+                + "NIU-Kontakt|1234|Herr||Mustermann|Max||MSc|"
+                + "WRK\\LV WIEN\\KHD|Mustergasse 1/2|1010|Wien|AKTIV|||+43 (600) 1234|"
+                + "+43 (600) 1234|+43 (600) 1235||||max.mustermann@here.local|||"
+                + "|000300||+43 (600) 1234||\n";
 
         Collection<ParsedStaffMember> parsed = sut.parse(csv);
 
@@ -36,7 +42,7 @@ public class NiuStaffParserTest {
         assertNotNull(staffMember);
 
         assertEquals("Max", staffMember.getFirstname());
-        assertEquals("Mustermann", staffMember.getFirstname());
+        assertEquals("Mustermann", staffMember.getLastname());
 
         assertEquals(1, staffMember.getPersonnelId().size());
         assertThat(staffMember.getPersonnelId(), contains(1234));
@@ -46,13 +52,16 @@ public class NiuStaffParserTest {
     }
 
     @Test
-    public void oneLineHasInvalidData_returnValidData() {
-        String csv =
-            "Kategorie|DNr.|Anrede|Vorg.Titel|Nachname|Vorname|Weitere Vornamen|Nachg.Titel|Bereich|Straße|PLZ|Ort|Mitgliederstatus|Telefon geschäftlich|Telefon Privat|Telefon WRK|Handy privat|Handy geschäftlich|Handy WRK|e-mail privat|e-mail geschäftlich|e-mail WRK|Fax geschäftlich|Fax Privat|fax WRK|Notruf Pager WRK|Pager|Bereitschaft WRK|Tetra Funkgerät|\n"
-                +
-                "NIU-Kontakt|1234|Herr||Mustermann|Max||MSc|WRK\\LV WIEN\\KHD|Mustergasse 1/2|1010|Wien|AKTIV|||+43 (600) 1234|+43 (600) 1234|+43 (600) 1235||||max.mustermann@here.local||||000300||+43 (600) 1234||\n"
-                +
-                "NIU-Kontakt|invalid-id|Herr||Musterfrau|Matilde||MSc|WRK\\LV WIEN\\KHD|Mustergasse 1/2|1010|Wien|AKTIV|||+43 (600) 1234|+43 (600) 1234|+43 (600) 1235||||max.mustermann@here.local||||000300||+43 (600) 1234||\n";
+    void oneLineHasInvalidData_returnValidData() throws Exception {
+        String csv = CSV_HEADER
+                + "NIU-Kontakt|1234|Herr||Mustermann|Max||MSc|"
+                + "WRK\\LV WIEN\\KHD|Mustergasse 1/2|1010|Wien|AKTIV|||+43 (600) 1234|"
+                + "+43 (600) 1234|+43 (600) 1235||||max.mustermann@here.local|||"
+                + "|000300||+43 (600) 1234||\n"
+                + "NIU-Kontakt|invalid-id|Herr||Musterfrau|Matilde||MSc|"
+                + "WRK\\LV WIEN\\KHD|Mustergasse 1/2|1010|Wien|AKTIV|||+43 (600) 1234|"
+                + "+43 (600) 1234|+43 (600) 1235||||max.mustermann@here.local|||"
+                + "|000300||+43 (600) 1234||\n";
 
         Collection<ParsedStaffMember> parsed = sut.parse(csv);
 
@@ -62,7 +71,7 @@ public class NiuStaffParserTest {
         assertNotNull(staffMember);
 
         assertEquals("Max", staffMember.getFirstname());
-        assertEquals("Mustermann", staffMember.getFirstname());
+        assertEquals("Mustermann", staffMember.getLastname());
 
         assertEquals(1, staffMember.getPersonnelId().size());
         assertThat(staffMember.getPersonnelId(), contains(1234));
@@ -72,11 +81,15 @@ public class NiuStaffParserTest {
     }
 
     @Test
-    public void headerWithInvalidEncoding_returnPartOfData() {
-        String csv =
-            "Kategorie|DNr.|Anrede|Vorg.Titel|Nachname|Vorname|Weitere Vornamen|Nachg.Titel|Bereich|Straße|PLZ|Ort|Mitgliederstatus|Telefon geschäftlich|Telefon Privat|Telefon WRK|Handy privat|Handy geschxxxftlich|Handy WRK|e-mail privat|e-mail geschäftlich|e-mail WRK|Fax geschäftlich|Fax Privat|fax WRK|Notruf Pager WRK|Pager|Bereitschaft WRK|Tetra Funkgerät|\n"
-                +
-                "NIU-Kontakt|1234|Herr||Mustermann|Max||MSc|WRK\\LV WIEN\\KHD|Mustergasse 1/2|1010|Wien|AKTIV|||+43 (600) 1234|+43 (600) 1234|+43 (600) 1235||||max.mustermann@here.local||||000300||+43 (600) 1234||\n";
+    void headerWithInvalidEncoding_returnPartOfData() throws Exception {
+        String csv = "Kategorie|DNr.|Anrede|Vorg.Titel|Nachname|Vorname|Weitere Vornamen|Nachg.Titel|"
+                + "Bereich|Straße|PLZ|Ort|Mitgliederstatus|Telefon geschäftlich|Telefon Privat|Telefon WRK|"
+                + "Handy privat|Handy geschxxxftlich|Handy WRK|e-mail privat|e-mail geschäftlich|e-mail WRK|Fax geschäftlich|Fax Privat|"
+                + "fax WRK|Notruf Pager WRK|Pager|Bereitschaft WRK|Tetra Funkgerät|\n"
+                + "NIU-Kontakt|1234|Herr||Mustermann|Max||MSc|"
+                + "WRK\\LV WIEN\\KHD|Mustergasse 1/2|1010|Wien|AKTIV|||+43 (600) 1234|"
+                + "+43 (600) 1234|+43 (600) 1235||||max.mustermann@here.local|||"
+                + "|000300||+43 (600) 1234||\n";
 
         Collection<ParsedStaffMember> parsed = sut.parse(csv);
 
@@ -86,7 +99,7 @@ public class NiuStaffParserTest {
         assertNotNull(staffMember);
 
         assertEquals("Max", staffMember.getFirstname());
-        assertEquals("Mustermann", staffMember.getFirstname());
+        assertEquals("Mustermann", staffMember.getLastname());
 
         assertEquals(1, staffMember.getPersonnelId().size());
         assertThat(staffMember.getPersonnelId(), contains(1234));
