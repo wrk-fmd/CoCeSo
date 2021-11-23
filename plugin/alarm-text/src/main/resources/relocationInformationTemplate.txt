@@ -1,7 +1,0 @@
-{time}
-CCS{incidentId}: {type}
-{ao}
-
-{info}
-
-URL: {aoCoordinateUrl}

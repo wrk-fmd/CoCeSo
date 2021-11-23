@@ -1,7 +1,0 @@
-{time}
-CCS{incidentId}: {type}
-BO: {bo}
-{info}
-{unitsName}: {units}
-
-BO URL: {boCoordinateUrl}
