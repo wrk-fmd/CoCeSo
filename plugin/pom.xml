@@ -24,17 +24,6 @@
     <module>wflwr-poi</module>
     <module>geobroker</module>
     <module>alarm-text</module>
+    <module>radio</module>
   </modules>
-
-  <profiles>
-    <profile>
-      <id>radio</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <modules>
-        <module>radio</module>
-      </modules>
-    </profile>
-  </profiles>
 </project>

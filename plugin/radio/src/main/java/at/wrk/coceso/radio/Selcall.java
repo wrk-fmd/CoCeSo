@@ -44,11 +44,11 @@ public class Selcall implements Serializable, Comparable<Selcall> {
     public Selcall() {
     }
 
-    public Selcall(String port, String ani, Direction direction) {
+    public Selcall(String port, String ani, Direction direction, OffsetDateTime timestamp) {
         this.port = port;
         this.ani = ani;
         this.direction = direction;
-        this.timestamp = OffsetDateTime.now();
+        this.timestamp = timestamp;
     }
 
     @Override

@@ -1,5 +1,12 @@
 [
   {
+    "text": "AKH\nWähringer Gürtel 18-20\n1090 Wien",
+    "coordinates": {
+      "lat": 48.22141,
+      "lng": 16.34619
+    }
+  },
+  {
     "text": "AKH Ev\nWähringer Gürtel 18-20/6D\n1090 Wien",
     "coordinates": {
       "lat": 48.22141,
@@ -21,17 +28,45 @@
     }
   },
   {
-    "text": "FLO Ev\nHinaysgasse 1/A/EG\n1210 Wien",
+    "text": "KHN\nBrünner Straße 68\n1210 Wien",
     "coordinates": {
-      "lat": 48.2538,
-      "lng": 16.40624
+      "lat": 48.26826,
+      "lng": 16.40653
     }
   },
   {
-    "text": "HAN Ev\nHeinrich-Collin-Straße 30/Pav.3/2\n1140 Wien",
+    "text": "KHN Ev\nBrünner Straße 68\n1210 Wien",
     "coordinates": {
-      "lat": 48.19951,
-      "lng": 16.29101
+      "lat": 48.26826,
+      "lng": 16.40653
+    }
+  },
+  {
+    "text": "KHN Unf\nBrünner Straße 68\n1210 Wien",
+    "coordinates": {
+      "lat": 48.26826,
+      "lng": 16.40653
+    }
+  },
+  {
+    "text": "KHN Kinder\nBrünner Straße 68\n1210 Wien",
+    "coordinates": {
+      "lat": 48.26835,
+      "lng": 16.40596
+    }
+  },
+  {
+    "text": "HAN\nHeinrich-Collin-Straße 30\n1140 Wien",
+    "coordinates": {
+      "lat": 48.19897,
+      "lng": 16.29217
+    }
+  },
+  {
+    "text": "HAN Ev\nHeinrich-Collin-Straße 30/Pav.5/EG\n1140 Wien",
+    "coordinates": {
+      "lat": 48.19957,
+      "lng": 16.29202
     }
   },
   {
@@ -42,10 +77,38 @@
     }
   },
   {
+    "text": "KFJ\nKundratstraße 3\n1100 Wien",
+    "coordinates": {
+      "lat": 48.17426,
+      "lng": 16.35175
+    }
+  },
+  {
     "text": "KFJ Ev\nKundratstraße 3/Pav.M\n1100 Wien",
     "coordinates": {
       "lat": 48.17452,
       "lng": 16.35138
+    }
+  },
+  {
+    "text": "KFJ Chir\nKundratstraße 3/Pav.Z\n1100 Wien",
+    "coordinates": {
+      "lat": 48.17343,
+      "lng": 16.35157
+    }
+  },
+  {
+    "text": "KFJ Kinder\nKundratstraße 3/Pav.Z\n1100 Wien",
+    "coordinates": {
+      "lat": 48.174,
+      "lng": 16.35214
+    }
+  },
+  {
+    "text": "KHH\nWolkersbergenstraße 1\n1130 Wien",
+    "coordinates": {
+      "lat": 48.16906,
+      "lng": 16.2786
     }
   },
   {
@@ -77,10 +140,24 @@
     }
   },
   {
+    "text": "OWS\nBaumgartner Höhe 1\n1140 Wien",
+    "coordinates": {
+      "lat": 48.20719,
+      "lng": 16.28035
+    }
+  },
+  {
     "text": "OWS Ev\nSanatoriumstraße 2/Pav. Wienerwald\n1140 Wien",
     "coordinates": {
       "lat": 48.20724,
       "lng": 16.2739
+    }
+  },
+  {
+    "text": "RUD\nJuchgasse 25\n1030 Wien",
+    "coordinates": {
+      "lat": 48.19637,
+      "lng": 16.39084
     }
   },
   {
@@ -91,10 +168,24 @@
     }
   },
   {
+    "text": "RUD Chir\nJuchgasse 25\n1030 Wien",
+    "coordinates": {
+      "lat": 48.19586,
+      "lng": 16.39005
+    }
+  },
+  {
     "text": "RUD Kinder\nBoerhaavegasse 13\n1030 Wien",
     "coordinates": {
       "lat": 48.19603,
       "lng": 16.3923
+    }
+  },
+  {
+    "text": "SMZO\nLangobardenstraße 122\n1220 Wien",
+    "coordinates": {
+      "lat": 48.21923,
+      "lng": 16.46314
     }
   },
   {
@@ -130,6 +221,13 @@
     "coordinates": {
       "lat": 48.17311,
       "lng": 16.34406
+    }
+  },
+  {
+    "text": "WIL\nMontleartstraße 37\n1160 Wien",
+    "coordinates": {
+      "lat": 48.21114,
+      "lng": 16.30349
     }
   },
   {
