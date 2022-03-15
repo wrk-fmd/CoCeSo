@@ -10,7 +10,7 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 
 @Component
-public class AuthenicatedUserProvider {
+public class AuthenticatedUserProvider {
 
     /**
      * Returns the authenticated user of the current context. Returns {@literal null} if no user is logged in or found in context.

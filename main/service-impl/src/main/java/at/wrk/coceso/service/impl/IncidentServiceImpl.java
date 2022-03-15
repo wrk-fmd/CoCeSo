@@ -21,7 +21,7 @@ import at.wrk.coceso.service.hooks.HookService;
 import at.wrk.coceso.service.internal.IncidentServiceInternal;
 import at.wrk.coceso.service.internal.PatientServiceInternal;
 import at.wrk.coceso.service.internal.TaskServiceInternal;
-import at.wrk.coceso.utils.AuthenicatedUserProvider;
+import at.wrk.coceso.utils.AuthenticatedUserProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,11 +57,11 @@ class IncidentServiceImpl implements IncidentServiceInternal {
     @Autowired
     private UnitService unitService;
 
-    private final AuthenicatedUserProvider authenicatedUserProvider;
+    private final AuthenticatedUserProvider authenticatedUserProvider;
 
     @Autowired
-    IncidentServiceImpl(final AuthenicatedUserProvider authenicatedUserProvider) {
-        this.authenicatedUserProvider = authenicatedUserProvider;
+    IncidentServiceImpl(final AuthenticatedUserProvider authenticatedUserProvider) {
+        this.authenticatedUserProvider = authenticatedUserProvider;
     }
 
     @Override
@@ -238,7 +238,7 @@ class IncidentServiceImpl implements IncidentServiceInternal {
     }
 
     private Incident prepareForCreate(final Incident incident, final Concern concern, final Changes changes) {
-        LOG.debug("{}: Triggered incident create with incident data: {}", authenicatedUserProvider.getAuthenticatedUser(), incident);
+        LOG.debug("{}: Triggered incident create with incident data: {}", authenticatedUserProvider.getAuthenticatedUser(), incident);
 
         if (Concern.isClosedOrNull(concern)) {
             LOG.warn("Tried to create incident without open concern");
@@ -318,7 +318,7 @@ class IncidentServiceImpl implements IncidentServiceInternal {
     }
 
     private Incident prepareForUpdate(final Incident incident, final Changes changes) {
-        LOG.info("{}: Triggered update of incident {}", authenicatedUserProvider.getAuthenticatedUser(), incident);
+        LOG.info("{}: Triggered update of incident {}", authenticatedUserProvider.getAuthenticatedUser(), incident);
 
         Incident save = getById(incident.getId());
         if (save == null) {

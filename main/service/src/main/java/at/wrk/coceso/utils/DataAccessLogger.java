@@ -13,22 +13,22 @@ import java.util.Collection;
 public class DataAccessLogger {
     private final static Logger LOG = LoggerFactory.getLogger(DataAccessLogger.class);
 
-    private final AuthenicatedUserProvider authenicatedUserProvider;
+    private final AuthenticatedUserProvider authenticatedUserProvider;
 
     @Autowired
-    public DataAccessLogger(final AuthenicatedUserProvider authenicatedUserProvider) {
-        this.authenicatedUserProvider = authenicatedUserProvider;
+    public DataAccessLogger(final AuthenticatedUserProvider authenticatedUserProvider) {
+        this.authenticatedUserProvider = authenticatedUserProvider;
     }
 
     public void logPatientAccess(final Patient patient) {
-        LOG.info("{}: Reading patient information of patient '{}'", authenicatedUserProvider.getAuthenticatedUser(), patient);
+        LOG.info("{}: Reading patient information of patient '{}'", authenticatedUserProvider.getAuthenticatedUser(), patient);
     }
 
     public void logPatientAccess(final Collection<Patient> infos, final Concern concern) {
-        LOG.info("{}: Loaded patients for concern '{}'. {} patients matched.", authenicatedUserProvider.getAuthenticatedUser(), concern, infos == null ? -1 : infos.size());
+        LOG.info("{}: Loaded patients for concern '{}'. {} patients matched.", authenticatedUserProvider.getAuthenticatedUser(), concern, infos == null ? -1 : infos.size());
     }
 
     public void logPatientAccess(final Collection<Patient> infos, final Concern concern, final String query) {
-        LOG.info("{}: Searching patients for query '{}' in concern '{}'. {} patients matched.", authenicatedUserProvider.getAuthenticatedUser(), query, concern, infos == null ? -1 : infos.size());
+        LOG.info("{}: Searching patients for query '{}' in concern '{}'. {} patients matched.", authenticatedUserProvider.getAuthenticatedUser(), query, concern, infos == null ? -1 : infos.size());
     }
 }

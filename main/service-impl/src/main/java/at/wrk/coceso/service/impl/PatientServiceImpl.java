@@ -11,7 +11,7 @@ import at.wrk.coceso.repository.PatientRepository;
 import at.wrk.coceso.service.LogService;
 import at.wrk.coceso.service.hooks.HookService;
 import at.wrk.coceso.service.internal.PatientServiceInternal;
-import at.wrk.coceso.utils.AuthenicatedUserProvider;
+import at.wrk.coceso.utils.AuthenticatedUserProvider;
 import at.wrk.coceso.utils.DataAccessLogger;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -41,14 +41,14 @@ class PatientServiceImpl implements PatientServiceInternal {
   private HookService hookService;
 
   private final DataAccessLogger dataAccessLogger;
-  private final AuthenicatedUserProvider authenicatedUserProvider;
+  private final AuthenticatedUserProvider authenticatedUserProvider;
 
   @Autowired
   public PatientServiceImpl(
           final DataAccessLogger dataAccessLogger,
-          final AuthenicatedUserProvider authenicatedUserProvider) {
+          final AuthenticatedUserProvider authenticatedUserProvider) {
     this.dataAccessLogger = dataAccessLogger;
-    this.authenicatedUserProvider = authenicatedUserProvider;
+    this.authenticatedUserProvider = authenticatedUserProvider;
   }
 
   @Override
@@ -153,7 +153,7 @@ class PatientServiceImpl implements PatientServiceInternal {
   }
 
   private Patient prepareForCreate(final Patient patient, final Concern concern, final Changes changes) {
-    LOG.debug("{}: Creating patient: '{}'", authenicatedUserProvider.getAuthenticatedUser(), patient);
+    LOG.debug("{}: Creating patient: '{}'", authenticatedUserProvider.getAuthenticatedUser(), patient);
 
     if (Concern.isClosedOrNull(concern)) {
       LOG.warn("Patient cannot be created without open concern!");
@@ -219,7 +219,7 @@ class PatientServiceImpl implements PatientServiceInternal {
   }
 
   private Patient prepareForUpdate(final Patient patient, final Changes changes) {
-    LOG.debug("{}: Updating patient #{}", authenicatedUserProvider.getAuthenticatedUser(), patient.getId());
+    LOG.debug("{}: Updating patient #{}", authenticatedUserProvider.getAuthenticatedUser(), patient.getId());
 
     Patient save = getByIdNoLog(patient.getId());
 

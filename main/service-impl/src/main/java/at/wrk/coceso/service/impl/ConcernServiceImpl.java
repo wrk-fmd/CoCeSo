@@ -7,7 +7,7 @@ import at.wrk.coceso.exceptions.ErrorsException;
 import at.wrk.coceso.repository.ConcernRepository;
 import at.wrk.coceso.service.ConcernService;
 import at.wrk.coceso.service.LogService;
-import at.wrk.coceso.utils.AuthenicatedUserProvider;
+import at.wrk.coceso.utils.AuthenticatedUserProvider;
 import at.wrk.coceso.validator.impl.BeanValidator;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -33,11 +33,11 @@ class ConcernServiceImpl implements ConcernService {
   @Autowired
   private LogService logService;
 
-  private final AuthenicatedUserProvider authenicatedUserProvider;
+  private final AuthenticatedUserProvider authenticatedUserProvider;
 
   @Autowired
-  ConcernServiceImpl(final AuthenicatedUserProvider authenicatedUserProvider) {
-    this.authenicatedUserProvider = authenicatedUserProvider;
+  ConcernServiceImpl(final AuthenticatedUserProvider authenticatedUserProvider) {
+    this.authenticatedUserProvider = authenticatedUserProvider;
   }
 
   @Override
@@ -69,7 +69,7 @@ class ConcernServiceImpl implements ConcernService {
       throw new ErrorsException(Errors.ConcernClosed);
     }
 
-    LOG.debug("{}: Triggered update of concern {}", authenicatedUserProvider.getAuthenticatedUser(), concern);
+    LOG.debug("{}: Triggered update of concern {}", authenticatedUserProvider.getAuthenticatedUser(), concern);
     save.setId(concern.getId());
     save.setName(concern.getName());
     save.setInfo(concern.getInfo());
@@ -101,10 +101,10 @@ class ConcernServiceImpl implements ConcernService {
     concernRepository.saveAndFlush(concern);
 
     if (close) {
-      LOG.info("{}: Closed concern {}", authenicatedUserProvider.getAuthenticatedUser(), concern);
+      LOG.info("{}: Closed concern {}", authenticatedUserProvider.getAuthenticatedUser(), concern);
       logService.logAuto(LogEntryType.CONCERN_CLOSE, concern, null);
     } else {
-      LOG.info("{}: Reopened concern {}", authenicatedUserProvider.getAuthenticatedUser(), concern);
+      LOG.info("{}: Reopened concern {}", authenticatedUserProvider.getAuthenticatedUser(), concern);
       logService.logAuto(LogEntryType.CONCERN_REOPEN, concern, null);
     }
   }

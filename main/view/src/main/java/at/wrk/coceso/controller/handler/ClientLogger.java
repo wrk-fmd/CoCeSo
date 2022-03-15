@@ -2,7 +2,7 @@ package at.wrk.coceso.controller.handler;
 
 import at.wrk.coceso.contract.client.ClientLog;
 import at.wrk.coceso.contract.client.ClientLogLevel;
-import at.wrk.coceso.utils.AuthenicatedUserProvider;
+import at.wrk.coceso.utils.AuthenticatedUserProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +14,11 @@ import java.util.Optional;
 public class ClientLogger {
     private static final Logger LOG = LoggerFactory.getLogger(ClientLogger.class);
 
-    private final AuthenicatedUserProvider authenicatedUserProvider;
+    private final AuthenticatedUserProvider authenticatedUserProvider;
 
     @Autowired
-    public ClientLogger(final AuthenicatedUserProvider authenicatedUserProvider) {
-        this.authenicatedUserProvider = authenicatedUserProvider;
+    public ClientLogger(final AuthenticatedUserProvider authenticatedUserProvider) {
+        this.authenticatedUserProvider = authenticatedUserProvider;
     }
 
     public void handleClientLog(final ClientLog clientLog, final String remoteHost) {
@@ -46,7 +46,7 @@ public class ClientLogger {
     private String buildLogLine(final ClientLog clientLog, final String remoteHost) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("User '");
-        stringBuilder.append(authenicatedUserProvider.getAuthenticatedUser());
+        stringBuilder.append(authenticatedUserProvider.getAuthenticatedUser());
         stringBuilder.append("' on remote host '");
         stringBuilder.append(remoteHost);
         stringBuilder.append("' reported:");

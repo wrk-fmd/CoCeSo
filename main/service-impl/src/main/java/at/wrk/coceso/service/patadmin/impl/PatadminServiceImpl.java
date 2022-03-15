@@ -18,7 +18,7 @@ import at.wrk.coceso.repository.UnitRepository;
 import at.wrk.coceso.service.LogService;
 import at.wrk.coceso.service.patadmin.internal.PatadminServiceInternal;
 import at.wrk.coceso.specification.PatientSearchSpecification;
-import at.wrk.coceso.utils.AuthenicatedUserProvider;
+import at.wrk.coceso.utils.AuthenticatedUserProvider;
 import at.wrk.coceso.utils.DataAccessLogger;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -53,12 +53,12 @@ class PatadminServiceImpl implements PatadminServiceInternal {
     private LogService logService;
 
     private final DataAccessLogger dataAccessLogger;
-    private final AuthenicatedUserProvider authenicatedUserProvider;
+    private final AuthenticatedUserProvider authenticatedUserProvider;
 
     @Autowired
-    PatadminServiceImpl(final DataAccessLogger dataAccessLogger, final AuthenicatedUserProvider authenicatedUserProvider) {
+    PatadminServiceImpl(final DataAccessLogger dataAccessLogger, final AuthenticatedUserProvider authenticatedUserProvider) {
         this.dataAccessLogger = dataAccessLogger;
-        this.authenicatedUserProvider = authenicatedUserProvider;
+        this.authenticatedUserProvider = authenticatedUserProvider;
     }
 
     @Override
@@ -137,7 +137,7 @@ class PatadminServiceImpl implements PatadminServiceInternal {
         Unit unit = getGroup(group.getId());
         Unit unitAfterUpdate;
         if (!unit.getConcern().equals(concern)) {
-            LOG.warn("{}: Tried to update group {} of wrong concern", authenicatedUserProvider.getAuthenticatedUser(), unit);
+            LOG.warn("{}: Tried to update group {} of wrong concern", authenticatedUserProvider.getAuthenticatedUser(), unit);
             unitAfterUpdate = null;
         } else {
             Changes changes = new Changes("unit");
@@ -161,14 +161,14 @@ class PatadminServiceImpl implements PatadminServiceInternal {
             }
 
             if (!changes.isEmpty()) {
-                LOG.debug("{}: Triggered update of unit #{} with changes {}.", authenicatedUserProvider.getAuthenticatedUser(), unit.getId(), changes);
+                LOG.debug("{}: Triggered update of unit #{} with changes {}.", authenticatedUserProvider.getAuthenticatedUser(), unit.getId(), changes);
                 logService.logAuto(LogEntryType.UNIT_UPDATE, unit.getConcern(), unit, null, changes);
                 notify.addUnit(unit.getId());
                 unitAfterUpdate = unit;
             } else {
                 LOG.debug(
                         "{}: Triggered update of unit #{} (Treatment group) without any effective changes. Update is skipped.",
-                        authenicatedUserProvider.getAuthenticatedUser(),
+                        authenticatedUserProvider.getAuthenticatedUser(),
                         unit.getId());
                 unitAfterUpdate = null;
             }
