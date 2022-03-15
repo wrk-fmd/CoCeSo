@@ -92,7 +92,6 @@ class SecurityConfigurer {
         @Override
         protected void configure(final HttpSecurity http) throws Exception {
             http.antMatcher("/**")
-                    .exceptionHandling().accessDeniedHandler(new LoggingAccessDeniedHandler()).and()
                     .csrf().disable()
                     .headers().disable()
                     .authorizeRequests()

@@ -1,5 +1,6 @@
 package at.wrk.coceso.auth;
 
+import at.wrk.coceso.data.AuthenticatedUser;
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.Patient;
@@ -11,6 +12,7 @@ import at.wrk.coceso.service.ConcernService;
 import at.wrk.coceso.service.IncidentService;
 import at.wrk.coceso.service.PatientService;
 import at.wrk.coceso.service.UnitService;
+import at.wrk.coceso.utils.AuthenticatedUserProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +39,9 @@ public class AuthorizationProvider {
 
     @Autowired
     private PatientService patientService;
+
+    @Autowired
+    private AuthenticatedUserProvider authenticatedUserProvider;
 
     public boolean hasAccessLevel(final AccessLevel level) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -109,8 +114,10 @@ public class AuthorizationProvider {
             return true;
         }
 
-        User user = getUser();
-        if (user == null || !user.isAllowLogin() || unit == null || unit.getId() == null || unit.getConcern().isClosed()) {
+        AuthenticatedUser user = authenticatedUserProvider.getAuthenticatedUser();
+        LOG.trace("Checking access level '{}' for user '{}' in the context of unit '{}'.", level, user, unit);
+        if (user == null || !user.isEnabled() || unit == null || unit.getId() == null || unit.getConcern().isClosed()) {
+            LOG.trace("  Access is rejected because user is disabled or concern is already closed.");
             return false;
         }
 
@@ -125,8 +132,10 @@ public class AuthorizationProvider {
             return true;
         }
 
-        User user = getUser();
-        if (user == null || !user.isAllowLogin() || incident == null || incident.getId() == null || incident.getConcern().isClosed()) {
+        AuthenticatedUser user = authenticatedUserProvider.getAuthenticatedUser();
+        LOG.trace("Checking access level '{}' for user '{}' in the context of incident '{}'.", level, user, incident);
+        if (user == null || !user.isEnabled() || incident == null || incident.getId() == null || incident.getConcern().isClosed()) {
+            LOG.trace("  Access is rejected because user is disabled or concern is already closed.");
             return false;
         }
 
@@ -142,9 +151,9 @@ public class AuthorizationProvider {
             return true;
         }
 
-        User user = getUser();
+        AuthenticatedUser user = authenticatedUserProvider.getAuthenticatedUser();
         LOG.trace("Checking access level '{}' for user '{}' in the context of concern '{}'.", level, user, concern);
-        if (user == null || !user.isAllowLogin() || Concern.isClosedOrNull(concern)) {
+        if (user == null || !user.isEnabled() || Concern.isClosedOrNull(concern)) {
             LOG.trace("  Access is rejected because user is disabled or concern is already closed.");
             return false;
         }
@@ -160,28 +169,28 @@ public class AuthorizationProvider {
             return true;
         }
 
-        User user = getUser();
-        if (user == null || !user.isAllowLogin() || patient == null || patient.getId() == null || patient.getConcern().isClosed()) {
+        AuthenticatedUser user = authenticatedUserProvider.getAuthenticatedUser();
+        LOG.trace("Checking access level '{}' for user '{}' in the context of patient '{}'.", level, user, patient);
+        if (user == null || !user.isEnabled() || patient == null || patient.getId() == null || patient.getConcern().isClosed()) {
+            LOG.trace("  Access is rejected because user is disabled or concern is already closed.");
             return false;
         }
 
         return checkConcernAccess(user, patient.getConcern(), level);
     }
 
-    private boolean checkConcernAccess(final User user, final Concern concern, final AccessLevel level) {
+    private boolean checkConcernAccess(final AuthenticatedUser user, final Concern concern, final AccessLevel level) {
         return level.allowConcernWide() &&
-                unitService.getByConcernUser(concern, user)
+                unitService.getByConcernUser(concern, user.getUserId())
                         .stream()
                         .anyMatch(u -> level.isGrantedFor(u.getType(), false));
     }
 
-    private boolean checkLocalAccess(final User user, final Unit unit, final AccessLevel level) {
-        return (unit.getCrew().contains(user) && level.isGrantedFor(unit.getType(), true));
+    private boolean checkLocalAccess(final AuthenticatedUser user, final Unit unit, final AccessLevel level) {
+        boolean isUserInUnitCrew = unit.getCrew()
+                .stream()
+                .map(User::getId)
+                .anyMatch(id -> id == user.getUserId());
+        return isUserInUnitCrew && level.isGrantedFor(unit.getType(), true);
     }
-
-    public User getUser() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return (auth != null && auth.getPrincipal() instanceof User) ? (User) auth.getPrincipal() : null;
-    }
-
 }

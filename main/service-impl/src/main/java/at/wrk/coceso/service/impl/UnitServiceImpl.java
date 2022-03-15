@@ -24,7 +24,7 @@ import at.wrk.coceso.service.UserService;
 import at.wrk.coceso.service.internal.IncidentServiceInternal;
 import at.wrk.coceso.service.internal.TaskServiceInternal;
 import at.wrk.coceso.service.internal.UnitServiceInternal;
-import at.wrk.coceso.utils.AuthenicatedUserProvider;
+import at.wrk.coceso.utils.AuthenticatedUserProvider;
 import at.wrk.coceso.utils.Initializer;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.StringUtils;
@@ -68,11 +68,11 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
   @Autowired
   private UnitImporter unitImporter;
 
-  private final AuthenicatedUserProvider authenicatedUserProvider;
+  private final AuthenticatedUserProvider authenticatedUserProvider;
 
   @Autowired
-  UnitServiceImpl(final AuthenicatedUserProvider authenicatedUserProvider) {
-    this.authenicatedUserProvider = authenicatedUserProvider;
+  UnitServiceImpl(final AuthenticatedUserProvider authenticatedUserProvider) {
+    this.authenticatedUserProvider = authenticatedUserProvider;
   }
 
   @Override
@@ -102,8 +102,10 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
   }
 
   @Override
-  public List<Unit> getByConcernUser(Concern concern, User user) {
-    return unitRepository.findByConcernUser(concern, user);
+  public List<Unit> getByConcernUser(final Concern concern, final int userId) {
+    return Optional.ofNullable(userService.getById(userId))
+            .map(user -> unitRepository.findByConcernUser(concern, user))
+            .orElse(ImmutableList.of());
   }
 
   @Override
@@ -114,9 +116,9 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
 
   @Override
   public Unit updateMain(final Unit unit, final NotifyList notify) {
-    LOG.debug("{}: Triggered update of unit {}", authenicatedUserProvider.getAuthenticatedUser(), unit);
+    LOG.debug("{}: Triggered update of unit {}", authenticatedUserProvider.getAuthenticatedUser(), unit);
     if (unit.getId() == null) {
-      LOG.warn("{}: Tried to create unit via 'update' method. Operation is rejected.", authenicatedUserProvider.getAuthenticatedUser());
+      LOG.warn("{}: Tried to create unit via 'update' method. Operation is rejected.", authenticatedUserProvider.getAuthenticatedUser());
       throw new ErrorsException(Errors.UnitCreateNotAllowed);
     }
 
@@ -129,7 +131,7 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
     }
 
     if (save.getConcern().isClosed()) {
-      LOG.warn("{}: Tried to update unit {} in closed concern", authenicatedUserProvider.getAuthenticatedUser(), unit);
+      LOG.warn("{}: Tried to update unit {} in closed concern", authenticatedUserProvider.getAuthenticatedUser(), unit);
       throw new ErrorsException(Errors.ConcernClosed);
     }
 
@@ -167,10 +169,10 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
     Changes changes = new Changes("unit");
     Unit save;
     if (unit.getId() == null) {
-      LOG.info("{}: Triggered unit create: {}", authenicatedUserProvider.getAuthenticatedUser(), unit);
+      LOG.info("{}: Triggered unit create: {}", authenticatedUserProvider.getAuthenticatedUser(), unit);
 
       if (Concern.isClosedOrNull(concern)) {
-        LOG.warn("{}: Tried to create unit {} in closed concern.", authenicatedUserProvider.getAuthenticatedUser(), unit);
+        LOG.warn("{}: Tried to create unit {} in closed concern.", authenticatedUserProvider.getAuthenticatedUser(), unit);
         throw new ErrorsException(Errors.ConcernClosed);
       }
 
@@ -215,7 +217,7 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
 
       save.setLocked(false);
     } else {
-      LOG.info("{}: Triggered update of unit: {}", authenicatedUserProvider, unit);
+      LOG.info("{}: Triggered update of unit: {}", authenticatedUserProvider, unit);
 
       save = getById(unit.getId());
       if (save == null) {
@@ -224,7 +226,7 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
       }
 
       if (save.getConcern().isClosed()) {
-        LOG.warn("{}: Tried to update unit {} in closed concern", authenicatedUserProvider.getAuthenticatedUser(), unit);
+        LOG.warn("{}: Tried to update unit {} in closed concern", authenticatedUserProvider.getAuthenticatedUser(), unit);
         throw new ErrorsException(Errors.ConcernClosed);
       }
 
@@ -309,11 +311,11 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
   public Unit doRemove(final int unitId) {
     Unit unit = Initializer.init(getById(unitId), Unit::getConcern);
     if (unit == null) {
-      LOG.info("{}: Tried to remove non-existing Unit #{}", authenicatedUserProvider.getAuthenticatedUser(), unitId);
+      LOG.info("{}: Tried to remove non-existing Unit #{}", authenticatedUserProvider.getAuthenticatedUser(), unitId);
       throw new ErrorsException(Errors.EntityMissing);
     }
     if (unit.isLocked()) {
-      LOG.warn("{}: Tried to remove non-deletable Unit #{}", authenicatedUserProvider.getAuthenticatedUser(), unit.getId());
+      LOG.warn("{}: Tried to remove non-deletable Unit #{}", authenticatedUserProvider.getAuthenticatedUser(), unit.getId());
       throw new ErrorsException(Errors.UnitLocked);
     }
 
@@ -413,7 +415,7 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
 
   @Override
   public int importUnits(final String data, final Concern concern, final NotifyList notify) {
-    LOG.info("{}: started import of units", authenicatedUserProvider.getAuthenticatedUser());
+    LOG.info("{}: started import of units", authenticatedUserProvider.getAuthenticatedUser());
 
     Map<Unit, Changes> units = unitImporter.importUnits(data, concern, getAll(concern));
     units.forEach((unit, changes) -> {
@@ -427,7 +429,7 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
 
   private void setPropertiesAndSave(final NotifyList notify, final Unit unit, final Incident inc) {
     inc.setState(IncidentState.InProgress);
-    Optional.ofNullable(authenicatedUserProvider.getAuthenticatedUser())
+    Optional.ofNullable(authenticatedUserProvider.getAuthenticatedUser())
             .map(AuthenticatedUser::getUsername)
             .ifPresent(inc::setCaller);
     inc.setAo(unit.getHome());

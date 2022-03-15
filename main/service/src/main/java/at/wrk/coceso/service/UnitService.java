@@ -23,7 +23,7 @@ public interface UnitService {
 
   List<Unit> getByUser(User user, Collection<UnitType> types);
 
-  List<Unit> getByConcernUser(Concern concern, User user);
+  List<Unit> getByConcernUser(Concern concern, int userId);
 
   Map<Unit, TaskState> getRelated(Incident incident);
 

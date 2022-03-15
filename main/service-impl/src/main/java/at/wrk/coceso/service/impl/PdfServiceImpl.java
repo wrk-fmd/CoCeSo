@@ -10,7 +10,7 @@ import at.wrk.coceso.service.LogService;
 import at.wrk.coceso.service.PatientService;
 import at.wrk.coceso.service.PdfService;
 import at.wrk.coceso.service.UnitService;
-import at.wrk.coceso.utils.AuthenicatedUserProvider;
+import at.wrk.coceso.utils.AuthenticatedUserProvider;
 import at.wrk.coceso.utils.impl.PdfDocument;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.PageSize;
@@ -49,11 +49,11 @@ class PdfServiceImpl implements PdfService {
     @Autowired
     private UnitService unitService;
 
-    private final AuthenicatedUserProvider authenicatedUserProvider;
+    private final AuthenticatedUserProvider authenticatedUserProvider;
 
     @Autowired
-    PdfServiceImpl(final AuthenicatedUserProvider authenicatedUserProvider) {
-        this.authenicatedUserProvider = authenicatedUserProvider;
+    PdfServiceImpl(final AuthenticatedUserProvider authenticatedUserProvider) {
+        this.authenticatedUserProvider = authenticatedUserProvider;
     }
 
     @Override
@@ -64,7 +64,7 @@ class PdfServiceImpl implements PdfService {
             final Locale locale) {
         try (PdfDocument doc = new PdfDocument(PageSize.A4.rotate(), fullDate, this, messageSource, locale)) {
             doc.start(response);
-            doc.addFrontPage("pdf.report.header", concern, authenicatedUserProvider.getAuthenticatedUser());
+            doc.addFrontPage("pdf.report.header", concern, authenticatedUserProvider.getAuthenticatedUser());
             doc.addStatistics(incidentService.getAll(concern));
             doc.addCustomLog(logService.getCustomAsc(concern));
             doc.addUnitsLog(unitService.getAllSorted(concern));
@@ -85,7 +85,7 @@ class PdfServiceImpl implements PdfService {
             final Locale locale) {
         try (PdfDocument doc = new PdfDocument(PageSize.A4.rotate(), fullDate, this, messageSource, locale)) {
             doc.start(response);
-            doc.addFrontPage("pdf.dump.header", concern, authenicatedUserProvider.getAuthenticatedUser());
+            doc.addFrontPage("pdf.dump.header", concern, authenticatedUserProvider.getAuthenticatedUser());
             doc.addUnitsCurrent(unitService.getAllSorted(concern));
             doc.addIncidentsCurrent(incidentService.getAllForDump(concern));
             doc.addLastPage();
@@ -104,7 +104,7 @@ class PdfServiceImpl implements PdfService {
             final Locale locale) {
         try (PdfDocument doc = new PdfDocument(PageSize.A4.rotate(), fullDate, this, messageSource, locale)) {
             doc.start(response);
-            doc.addFrontPage("pdf.transport.header", concern, authenicatedUserProvider.getAuthenticatedUser());
+            doc.addFrontPage("pdf.transport.header", concern, authenticatedUserProvider.getAuthenticatedUser());
             doc.addTransports(incidentService.getAllTransports(concern));
             doc.addLastPage();
 
@@ -121,7 +121,7 @@ class PdfServiceImpl implements PdfService {
             final Locale locale) {
         try (final PdfDocument doc = new PdfDocument(PageSize.A4.rotate(), false, this, messageSource, locale)) {
             doc.start(response);
-            doc.addFrontPage("pdf.patients.header", concern, authenicatedUserProvider.getAuthenticatedUser());
+            doc.addFrontPage("pdf.patients.header", concern, authenticatedUserProvider.getAuthenticatedUser());
             doc.addPatients(patientService.getAllSorted(concern));
             doc.addLastPage();
 

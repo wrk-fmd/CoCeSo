@@ -14,7 +14,7 @@ import at.wrk.coceso.importer.ImportException;
 import at.wrk.coceso.importer.UserImporter;
 import at.wrk.coceso.repository.UserRepository;
 import at.wrk.coceso.service.UserService;
-import at.wrk.coceso.utils.AuthenicatedUserProvider;
+import at.wrk.coceso.utils.AuthenticatedUserProvider;
 import at.wrk.coceso.utils.Initializer;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -50,12 +50,12 @@ class UserServiceImpl implements UserService {
     private UserImporter userImporter;
 
     private final BCryptPasswordEncoder passwordEncoder;
-    private final AuthenicatedUserProvider authenicatedUserProvider;
+    private final AuthenticatedUserProvider authenticatedUserProvider;
 
     @Autowired
-    UserServiceImpl(final BCryptPasswordEncoder passwordEncoder, final AuthenicatedUserProvider authenicatedUserProvider) {
+    UserServiceImpl(final BCryptPasswordEncoder passwordEncoder, final AuthenticatedUserProvider authenticatedUserProvider) {
         this.passwordEncoder = passwordEncoder;
-        this.authenicatedUserProvider = authenicatedUserProvider;
+        this.authenticatedUserProvider = authenticatedUserProvider;
     }
 
     @Override
@@ -103,7 +103,8 @@ class UserServiceImpl implements UserService {
 
     @Override
     public User update(final User editedUser) {
-        LOG.info("{}: Triggered update of user {} (userId #{})", authenicatedUserProvider.getAuthenticatedUser(), editedUser, editedUser.getId());
+        AuthenticatedUser authenticatedUser = authenticatedUserProvider.getAuthenticatedUser();
+        LOG.info("{}: Triggered update of user {} (userId #{})", authenticatedUser, editedUser, editedUser.getId());
 
         if (editedUser.getId() != null) {
             User oldUser = getById(editedUser.getId());
@@ -118,7 +119,7 @@ class UserServiceImpl implements UserService {
                 editedUser.setAllowLogin(oldUser.isAllowLogin());
                 editedUser.setUsername(oldUser.getUsername());
                 editedUser.setInternalAuthorities(oldUser.getInternalAuthorities());
-            } else if (editedUser.equals(authorizationProvider.getUser())) {
+            } else if (authenticatedUser != null && editedUser.getId() == authenticatedUser.getUserId()) {
                 // Prevent removal of Root from own account
                 editedUser.getInternalAuthorities().add(Authority.Root);
             }
@@ -142,7 +143,7 @@ class UserServiceImpl implements UserService {
 
     @Override
     public boolean setPassword(final int userId, final String password) {
-        final AuthenticatedUser user = authenicatedUserProvider.getAuthenticatedUser();
+        final AuthenticatedUser user = authenticatedUserProvider.getAuthenticatedUser();
 
         User dbUser = getById(userId);
         if (dbUser == null) {
@@ -190,7 +191,7 @@ class UserServiceImpl implements UserService {
             return -1;
         }
 
-        LOG.info("{}: started import of users", authenicatedUserProvider.getAuthenticatedUser());
+        LOG.info("{}: started import of users", authenticatedUserProvider.getAuthenticatedUser());
         try {
             Collection<User> updated = userImporter.updateUsers(data, getAll());
             userRepository.save(updated);

@@ -4,7 +4,7 @@ import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.exceptions.ConcernException;
 import at.wrk.coceso.service.ConcernService;
 import at.wrk.coceso.service.PdfService;
-import at.wrk.coceso.utils.AuthenicatedUserProvider;
+import at.wrk.coceso.utils.AuthenticatedUserProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +30,11 @@ public class PdfController {
     @Autowired
     private ConcernService concernService;
 
-    private final AuthenicatedUserProvider authenicatedUserProvider;
+    private final AuthenticatedUserProvider authenticatedUserProvider;
 
     @Autowired
-    public PdfController(final AuthenicatedUserProvider authenicatedUserProvider) {
-        this.authenicatedUserProvider = authenicatedUserProvider;
+    public PdfController(final AuthenticatedUserProvider authenticatedUserProvider) {
+        this.authenticatedUserProvider = authenticatedUserProvider;
     }
 
     @RequestMapping(value = "report", produces = "application/pdf", method = RequestMethod.GET)
@@ -46,11 +46,11 @@ public class PdfController {
         Concern concern = concernService.getById(id);
 
         if (concern == null) {
-            LOG.info("{}: Failed to read concern during PDF creation. Concern #{} does not exist in database.", authenicatedUserProvider.getAuthenticatedUser(), id);
+            LOG.info("{}: Failed to read concern during PDF creation. Concern #{} does not exist in database.", authenticatedUserProvider.getAuthenticatedUser(), id);
             throw new ConcernException("Concern does not exist.");
         }
 
-        LOG.info("{}: Requested final report for concern {}", authenicatedUserProvider.getAuthenticatedUser(), concern);
+        LOG.info("{}: Requested final report for concern {}", authenticatedUserProvider.getAuthenticatedUser(), concern);
 
         pdfService.generateReport(concern, fullDate, response, locale);
     }
@@ -66,7 +66,7 @@ public class PdfController {
             throw new ConcernException("Concern is already closed.");
         }
 
-        LOG.info("{}: Requested pdf dump for concern {}", authenicatedUserProvider.getAuthenticatedUser(), concern);
+        LOG.info("{}: Requested pdf dump for concern {}", authenticatedUserProvider.getAuthenticatedUser(), concern);
 
         pdfService.generateDump(concern, fullDate, response, locale);
     }
@@ -82,7 +82,7 @@ public class PdfController {
             throw new ConcernException("Concern does not exist.");
         }
 
-        LOG.info("{}: Requested transport list for concern {}", authenicatedUserProvider.getAuthenticatedUser(), concern);
+        LOG.info("{}: Requested transport list for concern {}", authenticatedUserProvider.getAuthenticatedUser(), concern);
 
         pdfService.generateTransport(concern, fullDate, response, locale);
     }
@@ -97,7 +97,7 @@ public class PdfController {
             throw new ConcernException("Concern does not exist.");
         }
 
-        LOG.info("{}: Requested patient list for concern {}", authenicatedUserProvider.getAuthenticatedUser(), concern);
+        LOG.info("{}: Requested patient list for concern {}", authenticatedUserProvider.getAuthenticatedUser(), concern);
 
         pdfService.generatePatients(concern, response, locale);
     }

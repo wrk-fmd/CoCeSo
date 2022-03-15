@@ -12,7 +12,7 @@ import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entity.helper.Changes;
 import at.wrk.coceso.repository.LogRepository;
 import at.wrk.coceso.service.LogService;
-import at.wrk.coceso.utils.AuthenicatedUserProvider;
+import at.wrk.coceso.utils.AuthenticatedUserProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,11 +35,11 @@ class LogServiceImpl implements LogService {
   @Autowired
   private LogRepository logRepository;
 
-  private final AuthenicatedUserProvider authenicatedUserProvider;
+  private final AuthenticatedUserProvider authenticatedUserProvider;
 
   @Autowired
-  LogServiceImpl(final AuthenicatedUserProvider authenicatedUserProvider) {
-    this.authenicatedUserProvider = authenicatedUserProvider;
+  LogServiceImpl(final AuthenticatedUserProvider authenticatedUserProvider) {
+    this.authenticatedUserProvider = authenticatedUserProvider;
   }
 
   @Override
@@ -151,7 +151,7 @@ class LogServiceImpl implements LogService {
 
 
   private User getUser() {
-    AuthenticatedUser authUser = authenicatedUserProvider.getAuthenticatedUser();
+    AuthenticatedUser authUser = authenticatedUserProvider.getAuthenticatedUser();
     User user;
     if (authUser != null) {
       user = new User();
