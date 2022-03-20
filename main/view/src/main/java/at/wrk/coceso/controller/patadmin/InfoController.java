@@ -74,7 +74,7 @@ public class InfoController {
   public String showPatient(final ModelMap map, @PathVariable final int id) {
     Patient patient = Initializer.initGroups(patientService.getById(id));
     map.addAttribute("patient", patient);
-    map.addAttribute("logs", logService.getStatesByPatient(patient));
+    map.addAttribute("logs", logService.getPatientLogsFilteredByOverviewStates(patient));
     patadminService.addAccessLevels(map, patient.getConcern());
     return "patadmin/info/view";
   }
