@@ -92,7 +92,7 @@
         </div>
       </div>
 
-      <!-- ko if: idObs && isTaskOrTransport -->
+      <!-- ko if: isTaskOrTransport -->
       <div class="clearfix">
         <!-- ko if: patient -->
         <div class="col-md-7">
@@ -108,7 +108,9 @@
         <!-- /ko -->
         <!-- ko ifnot: patient -->
         <div class="form-group col-md-5">
-          <button type="button" class="btn btn-success btn-sm" data-bind="click: openPatient"><spring:message code="patient.add"/></button>
+          <button type="button" class="btn btn-success btn-sm" data-bind="click: openPatient, enable: isPatientCreationAllowed">
+            <spring:message code="patient.add"/>
+          </button>
         </div>
         <!-- /ko -->
       </div>

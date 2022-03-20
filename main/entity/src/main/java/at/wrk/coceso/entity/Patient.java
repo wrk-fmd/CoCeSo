@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -243,6 +244,7 @@ public class Patient implements Serializable, ConcernBoundEntity {
     this.done = done;
   }
 
+  @Nullable
   public Set<Incident> getIncidents() {
     return incidents;
   }

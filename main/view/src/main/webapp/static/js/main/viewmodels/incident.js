@@ -305,6 +305,10 @@ define([
         return !!this.idObs() && !this.form.changed()
       }, this);
 
+      this.isPatientCreationAllowed = ko.computed(function () {
+        return !!this.idObs()
+      }, this);
+
       /**
        * Highlight AO Field if empty and minimum of 1 Unit is ABO
        *

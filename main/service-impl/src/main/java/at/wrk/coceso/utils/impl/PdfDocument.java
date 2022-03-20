@@ -323,7 +323,11 @@ public class PdfDocument extends Document implements AutoCloseable {
                 addCell(table, patient.isDone() ? getMessage("patient.discharged", null) : "");
             }
 
-            String casusNr = patient.getIncidents().stream().map(Incident::getCasusNr).filter(StringUtils::isNotBlank).findFirst().orElse("");
+            String casusNr = "";
+            if (patient.getIncidents() != null) {
+                casusNr = patient.getIncidents().stream().map(Incident::getCasusNr).filter(StringUtils::isNotBlank).findFirst().orElse("");
+            }
+
             addCell(table, casusNr);
         });
 

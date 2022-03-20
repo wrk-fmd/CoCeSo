@@ -13,6 +13,7 @@ import at.wrk.coceso.entity.helper.Changes;
 import at.wrk.coceso.repository.LogRepository;
 import at.wrk.coceso.service.LogService;
 import at.wrk.coceso.utils.AuthenticatedUserProvider;
+import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -109,12 +111,14 @@ class LogServiceImpl implements LogService {
 
   @Override
   public List<LogEntry> getByPatient(Patient patient) {
-    return logRepository.findByPatient(patient, patient.getIncidents(), sortDesc);
+    Set<Incident> incidentsToFilter = patient.getIncidents() == null ? ImmutableSet.of() : patient.getIncidents();
+    return logRepository.findByPatient(patient, incidentsToFilter, sortDesc);
   }
 
   @Override
   public List<LogEntry> getStatesByPatient(Patient patient) {
-    return logRepository.findStatesByPatient(patient, patient.getIncidents(), sortDesc);
+    Set<Incident> incidentsToFilter = patient.getIncidents() == null ? ImmutableSet.of() : patient.getIncidents();
+    return logRepository.findStatesByPatient(patient, incidentsToFilter, sortDesc);
   }
 
   @Override
