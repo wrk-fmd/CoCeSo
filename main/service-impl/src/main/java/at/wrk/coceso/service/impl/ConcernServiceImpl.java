@@ -42,7 +42,7 @@ class ConcernServiceImpl implements ConcernService {
 
   @Override
   public Concern getById(int id) {
-    return concernRepository.findOne(id);
+    return concernRepository.getById(id);
   }
 
   @Override

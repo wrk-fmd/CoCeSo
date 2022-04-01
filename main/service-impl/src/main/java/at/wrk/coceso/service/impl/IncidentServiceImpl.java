@@ -42,7 +42,7 @@ class IncidentServiceImpl implements IncidentServiceInternal {
 
     private final static Logger LOG = LoggerFactory.getLogger(IncidentServiceImpl.class);
 
-    private final static Sort SORT = new Sort(Sort.Direction.ASC, "id");
+    private final static Sort SORT = Sort.by(Sort.Direction.ASC, "id");
 
     @Autowired
     private IncidentRepository incidentRepository;
@@ -66,7 +66,7 @@ class IncidentServiceImpl implements IncidentServiceInternal {
 
     @Override
     public Incident getById(int id) {
-        return incidentRepository.findOne(id);
+        return incidentRepository.getById(id);
     }
 
     @Override

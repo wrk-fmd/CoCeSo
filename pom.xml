@@ -38,8 +38,8 @@
         <servlet.version>3.1.0</servlet.version>
 
         <spring.version>5.3.18</spring.version>
-        <spring.data.commons.version>1.13.23.RELEASE</spring.data.commons.version>
-        <spring.data.jpa.version>1.11.23.RELEASE</spring.data.jpa.version>
+        <spring.data.commons.version>2.6.3</spring.data.commons.version>
+        <spring.data.jpa.version>2.6.3</spring.data.jpa.version>
         <spring.security.version>5.6.2</spring.security.version>
         <apache.httpclient.version>4.5.13</apache.httpclient.version>
         <apache.httpasyncclient.version>4.1.4</apache.httpasyncclient.version>
