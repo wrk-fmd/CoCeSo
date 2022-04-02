@@ -90,7 +90,7 @@ define(["jquery", "knockout", "./person", "data/save", "utils/conf", "utils/dest
           info: self.info(),
           home: self.home(),
           section: self.section() === "" ? null : self.section()
-        }), "unit/updateFull.json", function() {
+        }), "unit/updateFull", function() {
           root.error(false);
           if (success instanceof Function) {
             success();
@@ -108,7 +108,7 @@ define(["jquery", "knockout", "./person", "data/save", "utils/conf", "utils/dest
           return (item.id === person.id);
         });
         if (alreadyAssignedPerson === null || alreadyAssignedPerson === undefined) {
-          ajaxSave({unit_id: self.id, person_id: person.id}, "unit/assignPerson.json", function() {
+          ajaxSave({unit_id: self.id, person_id: person.id}, "unit/assignPerson", function() {
             self.crew.push(person);
           });
         }
@@ -124,7 +124,7 @@ define(["jquery", "knockout", "./person", "data/save", "utils/conf", "utils/dest
           return (item.id === person.id);
         });
         if (assignedPerson !== null && assignedPerson !== undefined) {
-          ajaxSave({unit_id: self.id, person_id: person.id}, "unit/removePerson.json", function() {
+          ajaxSave({unit_id: self.id, person_id: person.id}, "unit/removePerson", function() {
             self.crew.remove(function(item) {
               return (item.id === person.id);
             });

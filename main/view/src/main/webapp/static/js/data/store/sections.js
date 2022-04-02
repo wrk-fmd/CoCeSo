@@ -46,7 +46,7 @@ define(["jquery", "knockout", "utils/conf", "utils/i18n"],
       };
 
       this.load = function() {
-        $.getJSON(conf.get("jsonBase") + "concern/get.json", function(data, status) {
+        $.getJSON(conf.get("jsonBase") + "concern/get", function(data, status) {
           if (status !== "notmodified" && data) {
             self.sections($.map(data.sections || [], function(name) {
               return {

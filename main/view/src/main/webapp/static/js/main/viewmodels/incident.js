@@ -368,7 +368,7 @@ define([
               incident_id: self.id,
               unit_id: task.unit_id,
               state: constants.TaskState.detached
-            }, "incident/setToState.json", self.afterSave, self.saveError, self.httpError);
+            }, "incident/setToState", self.afterSave, self.saveError, self.httpError);
           } else {
             // Just remove it locally
             self.units.remove(task);
@@ -453,7 +453,7 @@ define([
             units.remove(task);
           });
 
-          save(JSON.stringify(data), "incident/update.json", this.afterSave, this.saveError, this.httpError, this.form.saving);
+          save(JSON.stringify(data), "incident/update", this.afterSave, this.saveError, this.httpError, this.form.saving);
         }
       },
       /**

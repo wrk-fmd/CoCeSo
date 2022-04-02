@@ -330,7 +330,7 @@ define(["knockout", "data/save", "data/store/incidents", "data/store/units",
             info_text: info, button_text: button, elements: elements,
             save: function () {
               clientLogger.debugLog("#userInput Confirming task state transition for new state '" + nextState + "'.");
-              save({incident_id: incident.id, unit_id: unit.id, state: nextState}, "incident/setToState.json");
+              save({incident_id: incident.id, unit_id: unit.id, state: nextState}, "incident/setToState");
             }
           });
         }

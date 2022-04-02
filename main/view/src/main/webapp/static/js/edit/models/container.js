@@ -98,7 +98,7 @@ define(["jquery", "knockout", "./slimunit", "data/save", "data/store/hierarchy",
           name: self.name(),
           parent: self.parent(),
           ordering: self.ordering()
-        }), "container/updateContainer.json", function() {
+        }), "container/updateContainer", function() {
           root.error(false);
         }, root.saveError, root.httpError);
       };
@@ -113,7 +113,7 @@ define(["jquery", "knockout", "./slimunit", "data/save", "data/store/hierarchy",
 
         ajaxSave({
           container_id: this.id
-        }, "container/removeContainer.json", function() {
+        }, "container/removeContainer", function() {
           root.error(false);
         }, root.saveError, root.httpError);
       };

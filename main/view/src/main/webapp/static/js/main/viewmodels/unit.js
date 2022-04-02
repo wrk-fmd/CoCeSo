@@ -207,7 +207,7 @@ define(["knockout", "./form", "../models/task", "../models/unit",
             incidents.remove(task);
           });
 
-          save(JSON.stringify(data), "unit/update.json", this.afterSave, this.saveError, this.httpError, this.form.saving);
+          save(JSON.stringify(data), "unit/update", this.afterSave, this.saveError, this.httpError, this.form.saving);
         }
       },
       /**

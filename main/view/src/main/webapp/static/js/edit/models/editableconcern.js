@@ -61,12 +61,12 @@ define(["jquery", "knockout", "data/save", "utils/conf", "utils/errorhandling", 
           return {
             name: name,
             remove: function() {
-              ajaxSave({section: name, concern: self.id}, "concern/removeSection.json",
+              ajaxSave({section: name, concern: self.id}, "concern/removeSection",
                 self.load, self.saveError, self.httpError);
             }
           };
         }));
-        
+
         // Dirty fix, because knockout doesn't allow specifying the default options value in select
         self.selectSections($.merge([{value: "", name: defaultOption}], $.map(data.sections || [], function(section) {
           return {value: section, name: section};
@@ -76,7 +76,7 @@ define(["jquery", "knockout", "data/save", "utils/conf", "utils/errorhandling", 
       };
 
       this.load = function() {
-        $.getJSON(conf.get("jsonBase") + "concern/get.json", function(data, status) {
+        $.getJSON(conf.get("jsonBase") + "concern/get", function(data, status) {
           if (status !== "notmodified" && data) {
             self.set(data);
           }
@@ -90,13 +90,13 @@ define(["jquery", "knockout", "data/save", "utils/conf", "utils/errorhandling", 
           id: self.id,
           name: self.name(),
           info: self.info()
-        }), "concern/update.json", self.load, self.saveError, self.httpError, self.form.saving);
+        }), "concern/update", self.load, self.saveError, self.httpError, self.form.saving);
       };
 
       this.reloadingRadio = ko.observable(false);
 
       this.reloadRadio = function() {
-        ajaxSave(null, "radio/reloadPorts.json", null, this.saveError, this.httpError, this.reloadingRadio);
+        ajaxSave(null, "radio/reloadPorts", null, this.saveError, this.httpError, this.reloadingRadio);
       };
 
       this.addingSection = ko.observable(false);
@@ -108,7 +108,7 @@ define(["jquery", "knockout", "data/save", "utils/conf", "utils/errorhandling", 
       this.addSection = function() {
         var name = this.section().trim();
         if (name !== "") {
-          ajaxSave({section: name, concern: this.id}, "concern/addSection.json", function() {
+          ajaxSave({section: name, concern: this.id}, "concern/addSection", function() {
             self.load();
             self.section("");
           }, this.saveError, this.httpError, this.addingSection);

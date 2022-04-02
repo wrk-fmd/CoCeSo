@@ -188,7 +188,7 @@
               <ul class="dropdown-menu">
                 <li>
                   <a href="#" title="<spring:message code="log.custom"/>"
-                     data-bind="click: function() {openLogs({url: 'log/getCustom.json', autoload: true, title: '<spring:message code="log.custom"/>'})}">
+                     data-bind="click: function() {openLogs({url: 'log/getCustom', autoload: true, title: '<spring:message code="log.custom"/>'})}">
                     <span class="glyphicon glyphicon-info-sign"></span> <spring:message code="log.custom"/>
                   </a>
                 </li>

@@ -28,7 +28,7 @@ define(["knockout", "../models/call", "data/load", "data/stomp", "data/store/rad
     "use strict";
 
     var loadOptions = {
-      url: "radio/getLast/5.json",
+      url: "radio/getLast/5",
       stomp: "/topic/radio/incoming",
       cbFull: function(data) {
         ko.utils.arrayForEach(data, function(item) {
@@ -61,7 +61,7 @@ define(["knockout", "../models/call", "data/load", "data/stomp", "data/store/rad
         (function getPorts() {
           $.ajax({
             dataType: "json",
-            url: conf.get("jsonBase") + "radio/ports.json",
+            url: conf.get("jsonBase") + "radio/ports",
             success: function(data) {
               store.ports(data);
             },

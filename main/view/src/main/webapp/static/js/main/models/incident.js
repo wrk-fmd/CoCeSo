@@ -510,7 +510,7 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
 
         if ((unit instanceof Unit) && self.id && unit.id) {
           clientLogger.debugLog("#userInput Assigning unit '" + unit.id + "' to incident '" + self.id + "' via drag&drop into an incident item of the incident list. Incident is automatically saved.");
-          save({incident_id: self.id, unit_id: unit.id}, "assignUnit.json");
+          save({incident_id: self.id, unit_id: unit.id}, "assignUnit");
         }
       };
     };

@@ -172,7 +172,7 @@ define(["knockout", "./form", "../models/patient", "data/save", "data/store/pati
           self.idObs(self.id);
         }
         if (self.id && data.incident) {
-          save({incident_id: data.incident, patient_id: self.id}, "incident/assignPatient.json", null, self.saveError, self.httpError);
+          save({incident_id: data.incident, patient_id: self.id}, "incident/assignPatient", null, self.saveError, self.httpError);
         }
       };
     };
@@ -198,7 +198,7 @@ define(["knockout", "./form", "../models/patient", "data/save", "data/store/pati
             sex: this.sex()
           };
 
-          save(JSON.stringify(data), "patient/update.json", this.afterSave, this.saveError, this.httpError, this.form.saving);
+          save(JSON.stringify(data), "patient/update", this.afterSave, this.saveError, this.httpError, this.form.saving);
         }
       },
       /**

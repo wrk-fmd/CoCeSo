@@ -44,7 +44,7 @@ define(["jquery", "knockout", "data/save", "data/store/incidents", "data/store/u
           text: this.text(),
           unit: this.unit() || null,
           incident: this.incident || null
-        }), "log/add.json", this.afterSave, this.saveError, this.httpError);
+        }), "log/add", this.afterSave, this.saveError, this.httpError);
       };
 
       this.afterSave = function() {

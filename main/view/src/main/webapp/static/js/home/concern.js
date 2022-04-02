@@ -46,7 +46,7 @@ define(["knockout", "data/save", "js-cookie", "ko/extenders/boolean"],
           return false;
         }
 
-        ajaxSave({concern_id: this.id}, "setActiveConcern.json", function() {
+        ajaxSave({concern_id: this.id}, "setActiveConcern", function() {
           self.id ? Cookies.set("concern", self.id, {path: ""}) : Cookies.remove("concern", {path: ""});
           rootModel.error(false);
           rootModel.concernId(self.id);
@@ -55,7 +55,7 @@ define(["knockout", "data/save", "js-cookie", "ko/extenders/boolean"],
       };
 
       this.close = function() {
-        ajaxSave({concern_id: this.id}, "concern/close.json", function() {
+        ajaxSave({concern_id: this.id}, "concern/close", function() {
           rootModel.error(false);
           self.closed(true);
           if (self.isActive()) {
@@ -67,7 +67,7 @@ define(["knockout", "data/save", "js-cookie", "ko/extenders/boolean"],
       };
 
       this.reopen = function() {
-        ajaxSave({concern_id: this.id}, "concern/reopen.json", function() {
+        ajaxSave({concern_id: this.id}, "concern/reopen", function() {
           rootModel.error(false);
           self.closed(false);
         }, rootModel.saveError, rootModel.httpError);

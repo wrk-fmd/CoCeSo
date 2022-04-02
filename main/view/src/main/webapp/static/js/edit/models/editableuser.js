@@ -138,7 +138,7 @@ define(["jquery", "knockout", "./user", "data/save", "utils/conf", "utils/errorh
             username: this.username(),
             allowLogin: this.allowlogin(),
             internalAuthorities: this.authorities()
-          }), "user/update.json", function(response) {
+          }), "user/update", function(response) {
             self.error(false);
             if (response.id) {
               self.idObs(response.id);
@@ -151,7 +151,7 @@ define(["jquery", "knockout", "./user", "data/save", "utils/conf", "utils/errorh
                 id: self.idObs(),
                 username: self.username(),
                 password: self.password()
-              }), "user/setPassword.json", function() {
+              }), "user/setPassword", function() {
                 self.password("");
                 self.password2("");
               }, self.saveError, self.httpError, self.form.saving);
