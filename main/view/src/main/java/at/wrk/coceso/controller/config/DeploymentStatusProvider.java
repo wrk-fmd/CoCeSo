@@ -37,6 +37,7 @@ public class DeploymentStatusProvider {
             LOG.info("Class was not found during deployment status check: '{}'. Associated feature is DISABLED. Message: {}", className, e.getMessage());
             alarmTextClassPresent = false;
         }
+
         return alarmTextClassPresent;
     }
 }

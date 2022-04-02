@@ -16,7 +16,7 @@ public class WebAppInitializer implements WebApplicationInitializer {
     @Override
     public void onStartup(ServletContext context) throws ServletException {
         AnnotationConfigWebApplicationContext rootContext = new AnnotationConfigWebApplicationContext();
-        rootContext.register(WebMvcConfigurer.class);
+        rootContext.register(CocesoWebMvcConfigurer.class);
 
         FilterRegistration.Dynamic encodingFilter = context.addFilter("encodingFilter", new CharacterEncodingFilter("UTF-8", true));
         encodingFilter.addMappingForUrlPatterns(null, true, "/*");
