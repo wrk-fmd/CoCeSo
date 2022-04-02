@@ -66,7 +66,7 @@ class IncidentServiceImpl implements IncidentServiceInternal {
 
     @Override
     public Incident getById(int id) {
-        return incidentRepository.getById(id);
+        return incidentRepository.findById(id).orElse(null);
     }
 
     @Override

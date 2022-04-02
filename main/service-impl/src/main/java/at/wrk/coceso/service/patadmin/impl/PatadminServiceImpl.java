@@ -104,7 +104,7 @@ class PatadminServiceImpl implements PatadminServiceInternal {
 
     @Override
     public Unit getGroup(final int id) {
-        Unit group = unitRepository.getById(id);
+        Unit group = unitRepository.findById(id).orElse(null);
         if (group == null) {
             throw new ErrorsException(Errors.EntityMissing);
         }

@@ -60,7 +60,7 @@ class UserServiceImpl implements UserService {
 
     @Override
     public User getById(int id) {
-        return userRepository.getById(id);
+        return userRepository.findById(id).orElse(null);
     }
 
     @Override

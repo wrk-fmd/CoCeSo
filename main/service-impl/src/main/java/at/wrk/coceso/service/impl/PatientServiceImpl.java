@@ -67,7 +67,7 @@ class PatientServiceImpl implements PatientServiceInternal {
 
   @Override
   public Patient getByIdNoLog(int patientId) {
-    Patient patient = patientRepository.getById(patientId);
+    Patient patient = patientRepository.findById(patientId).orElse(null);
     if (patient == null) {
       throw new ErrorsException(Errors.HttpNotFound);
     }

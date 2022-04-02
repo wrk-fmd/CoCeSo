@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -82,35 +83,39 @@ class ContainerServiceImpl implements ContainerService {
 
   @Override
   public synchronized Container doUpdate(Container container, Concern concern) {
-    return Initializer.init(containerRepository.saveAndFlush(container.getId() == null ? prepareCreate(container, concern) : prepareUpdate(container)),
-        Container::getConcern);
+    Container createdOrUpdatedContainer = container.getId() == null ? prepareCreate(container, concern) : prepareUpdate(container);
+    return Initializer.init(containerRepository.saveAndFlush(createdOrUpdatedContainer), Container::getConcern);
   }
 
   @Override
   public synchronized Container doRemove(int containerId) {
-    Container container = containerRepository.getById(containerId);
-    if (container == null) {
+    Optional<Container> container = containerRepository.findById(containerId);
+    if (!container.isPresent()) {
       throw new ErrorsException(Errors.EntityMissing);
     }
-    if (container.getConcern().isClosed()) {
+    if (container.get().getConcern().isClosed()) {
       throw new ErrorsException(Errors.ConcernClosed);
     }
 
-    containerRepository.delete(container);
-    return Initializer.init(container, Container::getConcern);
+    containerRepository.delete(container.get());
+    return Initializer.init(container.get(), Container::getConcern);
   }
 
   @Override
   public synchronized ContainerPair doUpdateUnit(int containerId, int unitId, double ordering) {
-    Unit unit = unitRepository.getById(unitId);
-    Container container = containerRepository.getById(containerId);
+    Optional<Unit> unitOptional = unitRepository.findById(unitId);
+    Optional<Container> containerOptional = containerRepository.findById(containerId);
 
-    if (unit == null || container == null) {
+    if (!unitOptional.isPresent() || !containerOptional.isPresent()) {
       throw new ErrorsException(Errors.EntityMissing);
     }
+
+    Unit unit = unitOptional.get();
+    Container container = containerOptional.get();
     if (unit.getConcern().isClosed()) {
       throw new ErrorsException(Errors.ConcernClosed);
     }
+
     if (!unit.getConcern().equals(container.getConcern())) {
       throw new ErrorsException(Errors.ConcernMismatch);
     }
@@ -134,7 +139,7 @@ class ContainerServiceImpl implements ContainerService {
 
   @Override
   public synchronized Container doRemoveUnit(int unitId) {
-    Unit unit = unitRepository.getById(unitId);
+    Unit unit = unitRepository.findById(unitId).orElse(null);
     if (unit == null) {
       throw new ErrorsException(Errors.EntityMissing);
     }
@@ -164,7 +169,7 @@ class ContainerServiceImpl implements ContainerService {
         throw new ErrorsException(Errors.ContainerMultipleRoots);
       }
     } else {
-      Container parent = containerRepository.getById(container.getParentSlim());
+      Container parent = containerRepository.findById(container.getParentSlim()).orElse(null);
       if (parent == null || !container.getConcern().equals(parent.getConcern())) {
         throw new ErrorsException(Errors.ConcernMismatch);
       }
@@ -176,13 +181,13 @@ class ContainerServiceImpl implements ContainerService {
   }
 
   private Container prepareUpdate(Container container) {
-    Container old = containerRepository.getById(container.getId());
-    if (old.getConcern().isClosed()) {
+    Container old = containerRepository.findById(container.getId()).orElse(null);
+    if (old == null || old.getConcern().isClosed()) {
       throw new ErrorsException(Errors.ConcernClosed);
     }
 
     if (container.getParentSlim() != null && !container.getParentSlim().equals(old.getParentSlim())) {
-      Container parent = containerRepository.getById(container.getParentSlim());
+      Container parent = containerRepository.findById(container.getParentSlim()).orElse(null);
       if (parent == null || !old.getConcern().equals(parent.getConcern())) {
         // New parent does not exist or has wrong concern
         throw new ErrorsException(Errors.ConcernMismatch);
