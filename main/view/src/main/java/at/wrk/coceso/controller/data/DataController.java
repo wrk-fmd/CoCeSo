@@ -15,6 +15,7 @@ import at.wrk.coceso.utils.ActiveConcern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -74,6 +75,7 @@ public class DataController {
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "setActiveConcern", produces = "application/json", method = RequestMethod.POST)
+    @Transactional
     public RestResponse setActiveConcern(
             @RequestParam("concern_id") final Integer concernId,
             @AuthenticationPrincipal final AuthenticatedUser user) {

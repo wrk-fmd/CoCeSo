@@ -32,19 +32,7 @@ public interface JsonViews {
   interface Client extends Web {
   }
 
-  interface ClientList extends Client {
-  }
-
   interface ClientDetail extends Client {
-  }
-
-  interface ClientUnit extends Client {
-  }
-
-  interface ClientUnitList extends ClientList, ClientUnit {
-  }
-
-  interface ClientUnitDetail extends ClientDetail, ClientUnit {
   }
 
   interface Patadmin extends Web {
