@@ -44,7 +44,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
       openIncidents: function(options, position) {
         clientLogger.debugLog("#userInput Opening window 'incident list'.");
         taskbar.winman("addWindow", {
-          src: conf.get("contentBase") + "incident.html",
+          src: conf.get("contentBase") + "incident",
           pos: position || "left+70% top+30%",
           model: "main/viewmodels/incidents",
           options: options || {},
@@ -60,7 +60,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
       openIncident: function(data, position) {
         clientLogger.debugLog("#userInput Opening window 'incident form'.");
         taskbar.winman("addWindow", {
-          src: conf.get("contentBase") + "incident_form.html",
+          src: conf.get("contentBase") + "incident_form",
           pos: position || "left+30% top+10%",
           model: "main/viewmodels/incident",
           options: data || {}
@@ -75,7 +75,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
       openUnits: function(options, position) {
         clientLogger.debugLog("#userInput Opening window 'unit list'.");
         taskbar.winman("addWindow", {
-          src: conf.get("contentBase") + "unit.html",
+          src: conf.get("contentBase") + "unit",
           pos: position || "left+20% bottom",
           model: "main/viewmodels/units",
           options: options || {},
@@ -90,7 +90,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
       openHierarchyUnits: function(position) {
         clientLogger.debugLog("#userInput Opening window 'unit hierarchy'.");
         taskbar.winman("addWindow", {
-          src: conf.get("contentBase") + "unit_hierarchy.html",
+          src: conf.get("contentBase") + "unit_hierarchy",
           pos: position || "left top",
           model: "main/viewmodels/hierarchy",
           save: true
@@ -105,7 +105,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
       openUnit: function(data, position) {
         clientLogger.debugLog("#userInput Opening window 'unit form'.");
         taskbar.winman("addWindow", {
-          src: conf.get("contentBase") + "unit_form.html",
+          src: conf.get("contentBase") + "unit_form",
           pos: position || "left+10% top+20%",
           model: "main/viewmodels/unit",
           options: data || {}
@@ -121,7 +121,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
         clientLogger.debugLog("#userInput Opening window 'unit detail'.");
         if (id) {
           taskbar.winman("addWindow", {
-            src: conf.get("contentBase") + "unit_detail.html",
+            src: conf.get("contentBase") + "unit_detail",
             pos: position || "left+10% top+20%",
             model: "main/viewmodels/unitdetail",
             options: id
@@ -137,7 +137,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
       openLogAdd: function(data, position) {
         clientLogger.debugLog("#userInput Opening window 'add new log entry'.");
         taskbar.winman("addWindow", {
-          src: conf.get("contentBase") + "log_add.html",
+          src: conf.get("contentBase") + "log_add",
           pos: position || "left+20% top+20%",
           model: "main/viewmodels/customlog",
           options: data || {}
@@ -152,7 +152,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
       openLogs: function(options, position) {
         clientLogger.debugLog("#userInput Opening window 'concern log'.");
         taskbar.winman("addWindow", {
-          src: conf.get("contentBase") + "log.html",
+          src: conf.get("contentBase") + "log",
           pos: position || "left+30% top+10%",
           model: "main/viewmodels/logs",
           options: options || {},
@@ -168,7 +168,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
       openPatients: function(options, position) {
         clientLogger.debugLog("#userInput Opening window 'patient list'.");
         taskbar.winman("addWindow", {
-          src: conf.get("contentBase") + "patient.html",
+          src: conf.get("contentBase") + "patient",
           pos: position || "left+40% top+30%",
           model: "main/viewmodels/patients",
           options: options || {},
@@ -184,7 +184,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
       openPatient: function(data, position) {
         clientLogger.debugLog("#userInput Opening window 'patient details'.");
         taskbar.winman("addWindow", {
-          src: conf.get("contentBase") + "patient_form.html",
+          src: conf.get("contentBase") + "patient_form",
           pos: position || "left+40% top+30%",
           model: "main/viewmodels/patient",
           options: data || {}
@@ -194,7 +194,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
       openAlarmText: function(alarmTextData, windowPosition) {
         clientLogger.debugLog("#userInput Opening window 'alarm text confirmation'.");
         taskbar.winman("addWindow", {
-          src: conf.get("contentBase") + "alarm_text_form.html",
+          src: conf.get("contentBase") + "alarm_text_form",
           pos: windowPosition || "left+25% top+35%",
           model: "main/viewmodels/alarm",
           options: alarmTextData
@@ -209,7 +209,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
       openRadio: function(position) {
         clientLogger.debugLog("#userInput Opening window 'radio history'.");
         taskbar.winman("addWindow", {
-          src: conf.get("contentBase") + "radio.html",
+          src: conf.get("contentBase") + "radio",
           pos: position || "left+40% top+10%",
           model: "main/viewmodels/radio",
           save: true
@@ -224,7 +224,7 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
       openMap: function(options, position) {
         clientLogger.debugLog("#userInput Opening window 'situation map'.");
         taskbar.winman("addWindow", {
-          src: conf.get("contentBase") + "map.html",
+          src: conf.get("contentBase") + "map",
           pos: position || "left+10% top",
           model: "map/viewmodel",
           options: options || {},
