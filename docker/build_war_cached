@@ -7,4 +7,4 @@ docker run -it --rm \
 	-w /usr/src/mymaven \
 	maven:alpine mvn \
 		-P -radio \
-		"$@" package
+		"$@" clean package
