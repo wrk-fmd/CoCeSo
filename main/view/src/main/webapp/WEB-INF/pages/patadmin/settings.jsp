@@ -26,7 +26,7 @@
       <c:set value="active" var="nav_settings"/>
       <%@include file="navbar.jsp"%>
 
-      <form:form method="post" servletRelativeAction="/patadmin/settings" acceptCharset="utf-8" commandName="form">
+      <form:form method="post" servletRelativeAction="/patadmin/settings" acceptCharset="utf-8" modelAttribute="form">
         <div class="table-responsive">
           <table class="table table-full table-striped table-condensed">
             <tr>
@@ -37,21 +37,20 @@
               <th>Active</th>
             </tr>
             <c:forEach items="${form.groups}" var="group" varStatus="status">
-              <c:set var="itemIndex" value="${status.index}"/>
               <tr>
                 <td>
-                  <form:hidden path="groups[${itemIndex}].id"/>
+                  <form:hidden path="groups[${status.index}].id"/>
                   <c:out value="${group.id}"/>
                 </td>
                 <td><c:out value="${group.call}"/></td>
                 <td>
-                  <form:select path="groups[${itemIndex}].imgsrc" cssClass="form-control">
+                  <form:select path="groups[${status.index}].imgsrc" cssClass="form-control">
                     <form:option value="">---</form:option>
                     <form:options items="${groupIcons}" itemLabel="name" itemValue="name"/>
                   </form:select>
                 </td>
-                <td><form:input path="groups[${itemIndex}].capacity" type="number" min="0" cssClass="form-control number-2"/></td>
-                <td><form:checkbox path="groups[${itemIndex}].active"/></td>
+                <td><form:input path="groups[${status.index}].capacity" type="number" min="0" cssClass="form-control number-2"/></td>
+                <td><form:checkbox path="groups[${status.index}].active"/></td>
               </tr>
             </c:forEach>
           </table>
