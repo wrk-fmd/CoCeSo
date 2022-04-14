@@ -93,7 +93,7 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
 
   @Override
   public List<Unit> getAllSorted(Concern concern) {
-    return unitRepository.findByConcern(concern, new Sort(Sort.Direction.ASC, "id"));
+    return unitRepository.findByConcern(concern, Sort.by(Sort.Direction.ASC, "id"));
   }
 
   @Override

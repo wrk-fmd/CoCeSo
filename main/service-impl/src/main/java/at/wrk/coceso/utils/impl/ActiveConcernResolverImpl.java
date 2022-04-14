@@ -24,7 +24,7 @@ import java.util.Set;
 @Component
 class ActiveConcernResolverImpl implements ActiveConcernResolver {
 
-    private static final Set<Class> SUPPORTED_PARAMETER_TYPES = ImmutableSet.of(Concern.class, Integer.class, int.class);
+    private static final Set<Class<?>> SUPPORTED_PARAMETER_TYPES = ImmutableSet.of(Concern.class, Integer.class, int.class);
 
     @Autowired
     private ConcernService concernService;

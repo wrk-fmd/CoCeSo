@@ -53,7 +53,7 @@ define(["knockout", "data/save", "utils/errorhandling", "ko/bindings/point", "ko
           transportVehicle: this.vehicle(),
           portable: this.portable(),
           home: this.home()
-        }), "unit/createBatch.json", function() {
+        }), "unit/createBatch", function() {
           self.call("");
           self.from(null);
           self.to(null);
@@ -68,7 +68,7 @@ define(["knockout", "data/save", "utils/errorhandling", "ko/bindings/point", "ko
       this.csv = ko.observable(null);
 
       this.upload = function() {
-        ajaxSave(this.csv(), "unit/upload.json", function() {
+        ajaxSave(this.csv(), "unit/upload", function() {
           self.csv(null);
           self.error(false);
         }, this.saveError, this.httpError, null, "text/csv");

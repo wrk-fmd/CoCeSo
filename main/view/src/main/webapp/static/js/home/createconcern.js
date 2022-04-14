@@ -38,7 +38,7 @@ define(["knockout", "data/save", "ko/extenders/changes"], function(ko, ajaxSave)
 
       ajaxSave(JSON.stringify({
         name: self.name()
-      }), "concern/update.json", function() {
+      }), "concern/update", function() {
         rootModel.error(false);
         self.name("");
         rootModel.load();

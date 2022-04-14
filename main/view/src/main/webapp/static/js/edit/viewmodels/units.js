@@ -30,7 +30,7 @@ define(["jquery", "knockout", "../models/editableunit", "../models/person", "dat
     "use strict";
 
     load({
-      url: "unit/edit.json",
+      url: "unit/edit",
       stomp: "/topic/unit/edit/{c}",
       model: EditableUnit,
       store: store.models
@@ -93,7 +93,7 @@ define(["jquery", "knockout", "../models/editableunit", "../models/person", "dat
 
       // Load all persons
       this.loadPersons = function() {
-        $.getJSON(conf.get("jsonBase") + "user/getAll.json", function(data, status) {
+        $.getJSON(conf.get("jsonBase") + "user/getAll", function(data, status) {
           if (status !== "notmodified") {
             self.persons($.map(data, function(item) {
               return new Person(item, self);
@@ -114,7 +114,7 @@ define(["jquery", "knockout", "../models/editableunit", "../models/person", "dat
           return;
         }
 
-        ajaxSave({id: unit.id}, "unit/remove.json", function() {
+        ajaxSave({id: unit.id}, "unit/remove", function() {
           self.error(false);
         }, self.saveError, self.httpError);
       };

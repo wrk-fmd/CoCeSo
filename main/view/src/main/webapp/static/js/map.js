@@ -20,13 +20,13 @@ require(["config"], function() {
       lock.lock();
 
       load({
-        url: "incident/main.json",
+        url: "incident/main",
         stomp: "/topic/incident/main/{c}",
         model: Incident,
         store: incidentsStore.models
       });
       load({
-        url: "unit/main.json",
+        url: "unit/main",
         stomp: "/topic/unit/main/{c}",
         model: Unit,
         store: unitsStore.models

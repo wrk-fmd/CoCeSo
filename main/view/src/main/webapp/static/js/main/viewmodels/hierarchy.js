@@ -26,7 +26,7 @@ define(["jquery", "knockout", "../models/container", "data/load", "data/stomp", 
     "use strict";
 
     var loadOptions = {
-      url: "container/getAll.json",
+      url: "container/getAll",
       stomp: "/topic/container/{c}",
       model: Container,
       store: store.models,

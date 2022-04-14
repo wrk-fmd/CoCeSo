@@ -22,7 +22,7 @@ define(["knockout", "./typeahead", "utils/conf"], function(ko, typeahead, conf) 
 
   ko.bindingHandlers.point = {
     init: function(element) {
-      typeahead(element, conf.get("jsonBase") + "poiAutocomplete.json?q=%QUERY",
+      typeahead(element, conf.get("jsonBase") + "poiAutocomplete?q=%QUERY",
         function(str) {
           return str;
         },

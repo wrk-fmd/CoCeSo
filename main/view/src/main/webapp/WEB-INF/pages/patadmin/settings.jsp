@@ -26,7 +26,7 @@
       <c:set value="active" var="nav_settings"/>
       <%@include file="navbar.jsp"%>
 
-      <form:form method="post" servletRelativeAction="/patadmin/settings" acceptCharset="utf-8" commandName="form">
+      <form:form method="post" servletRelativeAction="/patadmin/settings" acceptCharset="utf-8" modelAttribute="form">
         <div class="table-responsive">
           <table class="table table-full table-striped table-condensed">
             <tr>
@@ -46,7 +46,7 @@
                 <td>
                   <form:select path="groups[${status.index}].imgsrc" cssClass="form-control">
                     <form:option value="">---</form:option>
-                    <form:options items="${images}" itemLabel="name" itemValue="name"/>
+                    <form:options items="${groupIcons}" itemLabel="name" itemValue="name"/>
                   </form:select>
                 </td>
                 <td><form:input path="groups[${status.index}].capacity" type="number" min="0" cssClass="form-control number-2"/></td>

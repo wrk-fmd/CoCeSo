@@ -32,14 +32,14 @@ require(["config"], function() {
 
       //Preload incidents, patients and units
       load({
-        url: "incident/main.json",
+        url: "incident/main",
         stomp: "/topic/incident/main/{c}",
         model: Incident,
         store: incidentsStore.models
       });
       window.setTimeout(function() {
         load({
-          url: "patient/main.json",
+          url: "patient/main",
           stomp: "/topic/patient/main/{c}",
           model: Patient,
           store: patientsStore.models
@@ -47,7 +47,7 @@ require(["config"], function() {
       }, 2000);
       window.setTimeout(function() {
         load({
-          url: "unit/main.json",
+          url: "unit/main",
           stomp: "/topic/unit/main/{c}",
           model: Unit,
           store: unitsStore.models

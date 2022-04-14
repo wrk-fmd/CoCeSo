@@ -18,7 +18,7 @@ require(["config"], function() {
       "use strict";
 
       load({
-        url: "patadmin/registration/groups.json",
+        url: "patadmin/registration/groups",
         stomp: "/topic/patadmin/groups/{c}",
         model: Group,
         store: store.models

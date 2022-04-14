@@ -449,7 +449,7 @@ define([
       setAD: {
         value: function() {
           if (this.id && !this.isAD()) {
-            save(JSON.stringify({id: this.id, state: constants.Unit.state.ad}), "unit/update.json");
+            save(JSON.stringify({id: this.id, state: constants.Unit.state.ad}), "unit/update");
           }
         }
       },
@@ -462,7 +462,7 @@ define([
       setEB: {
         value: function() {
           if (this.id && !this.isEB()) {
-            save(JSON.stringify({id: this.id, state: constants.Unit.state.eb}), "unit/update.json");
+            save(JSON.stringify({id: this.id, state: constants.Unit.state.eb}), "unit/update");
           }
         }
       },
@@ -475,7 +475,7 @@ define([
       setNEB: {
         value: function() {
           if (this.id && !this.isNEB()) {
-            save(JSON.stringify({id: this.id, state: constants.Unit.state.neb}), "unit/update.json");
+            save(JSON.stringify({id: this.id, state: constants.Unit.state.neb}), "unit/update");
           }
         }
       },
@@ -488,7 +488,7 @@ define([
       sendHome: {
         value: function() {
           if (this.id && !this.disableSendHome()) {
-            save({id: this.id}, "unit/sendHome.json");
+            save({id: this.id}, "unit/sendHome");
           }
         }
       },
@@ -501,7 +501,7 @@ define([
       standby: {
         value: function() {
           if (this.id && !this.disableStandby()) {
-            save({id: this.id}, "unit/standby.json");
+            save({id: this.id}, "unit/standby");
           }
         }
       },
@@ -514,7 +514,7 @@ define([
       holdPosition: {
         value: function() {
           if (this.id && !this.disableHoldPosition()) {
-            save({id: this.id}, "unit/holdPosition.json");
+            save({id: this.id}, "unit/holdPosition");
           }
         }
       },
@@ -527,7 +527,7 @@ define([
       sendCall: {
         value: function() {
           if (this.ani) {
-            save(JSON.stringify({ani: this.ani}), "radio/send.json");
+            save(JSON.stringify({ani: this.ani}), "radio/send");
           }
         }
       },

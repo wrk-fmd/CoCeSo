@@ -87,7 +87,7 @@ define(["jquery", "knockout", "./concern", "./createconcern",
 
       // Load concern lists
       this.load = function() {
-        $.getJSON(conf.get("jsonBase") + "concern/getAll.json", function(data, status) {
+        $.getJSON(conf.get("jsonBase") + "concern/getAll", function(data, status) {
           if (status !== "notmodified") {
             self.concerns($.map(data, function(item) {
               return new Concern(item, self);

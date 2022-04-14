@@ -113,13 +113,13 @@ define(["jquery", "knockout", "utils/conf", "utils/i18n", "jquery-ui/widgets/dia
       // Load tab
       var defaultWindows = this.tabId === 0 ? {
         1: {
-          src: conf.get("contentBase") + "unit_hierarchy.html",
+          src: conf.get("contentBase") + "unit_hierarchy",
           pos: "left top",
           model: "main/viewmodels/hierarchy",
           save: true
         },
         2: {
-          src: conf.get("contentBase") + "incident.html",
+          src: conf.get("contentBase") + "incident",
           pos: "left+70% top",
           model: "main/viewmodels/incidents",
           options: {filter: ['overview', 'active'], title: _("main.incident.active")},

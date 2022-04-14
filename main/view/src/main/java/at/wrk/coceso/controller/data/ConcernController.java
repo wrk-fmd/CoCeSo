@@ -9,8 +9,6 @@ import at.wrk.coceso.utils.ActiveConcern;
 import at.wrk.coceso.utils.Initializer;
 import at.wrk.coceso.validator.ConcernValidator;
 import com.fasterxml.jackson.annotation.JsonView;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,8 +29,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/data/concern")
 public class ConcernController {
-
-  private static final Logger LOG = LoggerFactory.getLogger(ConcernController.class);
 
   @Autowired
   private ConcernService concernService;

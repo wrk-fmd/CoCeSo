@@ -43,7 +43,7 @@ define(["jquery", "knockout", "../models/container", "../models/slimunit", "data
     }
 
     load({
-      url: "container/getAll.json",
+      url: "container/getAll",
       stomp: "/topic/container/{c}",
       model: Container,
       store: store.models,
@@ -113,7 +113,7 @@ define(["jquery", "knockout", "../models/container", "../models/slimunit", "data
         if (data.targetParent === self.spare) {
           ajaxSave({
             unit_id: data.item.id
-          }, "container/removeUnit.json", function() {
+          }, "container/removeUnit", function() {
             self.error(false);
           }, self.saveError, self.httpError);
         } else if (data.targetParent.model instanceof Container) {
@@ -122,7 +122,7 @@ define(["jquery", "knockout", "../models/container", "../models/slimunit", "data
             container_id: data.targetParent.model.id,
             unit_id: data.item.id,
             ordering: data.item.ordering
-          }, "container/updateUnit.json", function() {
+          }, "container/updateUnit", function() {
             self.error(false);
           }, self.saveError, self.httpError);
         }

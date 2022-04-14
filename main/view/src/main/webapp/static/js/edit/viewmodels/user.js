@@ -42,7 +42,7 @@ define(["jquery", "knockout", "../models/user", "../models/editableuser",
       initErrorHandling(this);
 
       this.reload = function(target) {
-        paginate("user/getFiltered.json", target || self.users, User);
+        paginate("user/getFiltered", target || self.users, User);
       };
 
       this.users = ko.observableArray([]).extend({
@@ -70,7 +70,7 @@ define(["jquery", "knockout", "../models/user", "../models/editableuser",
       this.csv = ko.observable(null);
 
       this.upload = function() {
-        ajaxSave(this.csv(), "user/upload.json", function() {
+        ajaxSave(this.csv(), "user/upload", function() {
           self.csv(null);
           self.error(false);
           self.reload();

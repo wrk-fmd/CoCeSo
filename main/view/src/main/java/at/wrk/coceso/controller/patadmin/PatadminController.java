@@ -1,6 +1,7 @@
 package at.wrk.coceso.controller.patadmin;
 
 import at.wrk.coceso.entity.Concern;
+import at.wrk.coceso.form.GroupIcon;
 import at.wrk.coceso.form.GroupsForm;
 import at.wrk.coceso.service.patadmin.PatadminService;
 import at.wrk.coceso.service.patadmin.PatadminWriteService;
@@ -20,6 +21,9 @@ import org.springframework.web.servlet.ModelAndView;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(value = "/patadmin")
@@ -59,9 +63,8 @@ public class PatadminController {
   @RequestMapping(value = "/settings", method = RequestMethod.GET)
   public ModelAndView showSettings(final ModelMap map, @ActiveConcern final Concern concern) {
     try {
-      File[] images = new ClassPathResource("../../static/imgs/groups", getClass().getClassLoader()).getFile().listFiles();
-      Arrays.sort(images);
-      map.addAttribute("images", images);
+      List<GroupIcon> groupIcons = readAvailableGroupIcons();
+      map.addAttribute("groupIcons", groupIcons);
     } catch (IOException ex) {
       LOG.error("Error loading group image files", ex);
     }
@@ -69,6 +72,21 @@ public class PatadminController {
     patadminService.addAccessLevels(map, concern);
     GroupsForm form = new GroupsForm(patadminService.getGroups(concern));
     return new ModelAndView("patadmin/settings", "form", form);
+  }
+
+  private List<GroupIcon> readAvailableGroupIcons() throws IOException {
+    File[] images = new ClassPathResource("../../static/imgs/groups", getClass().getClassLoader()).getFile().listFiles();
+    List<GroupIcon> groupIcons;
+    if (images != null) {
+      groupIcons = Arrays.stream(images)
+              .map(file -> new GroupIcon(file.getName()))
+              .sorted()
+              .collect(Collectors.toList());
+    } else {
+      groupIcons = Collections.emptyList();
+    }
+
+    return groupIcons;
   }
 
   @PreAuthorize("@auth.hasPermission(#concern, 'PatadminSettings')")

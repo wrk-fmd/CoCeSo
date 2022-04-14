@@ -60,7 +60,7 @@ class UserServiceImpl implements UserService {
 
     @Override
     public User getById(int id) {
-        return userRepository.findOne(id);
+        return userRepository.findById(id).orElse(null);
     }
 
     @Override
@@ -194,8 +194,7 @@ class UserServiceImpl implements UserService {
         LOG.info("{}: started import of users", authenticatedUserProvider.getAuthenticatedUser());
         try {
             Collection<User> updated = userImporter.updateUsers(data, getAll());
-            userRepository.save(updated);
-            userRepository.flush();
+            userRepository.saveAllAndFlush(updated);
             return updated.size();
         } catch (ImportException ex) {
             LOG.warn("Error during import.", ex);

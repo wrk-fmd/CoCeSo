@@ -104,7 +104,7 @@ class PatadminServiceImpl implements PatadminServiceInternal {
 
     @Override
     public Unit getGroup(final int id) {
-        Unit group = unitRepository.findOne(id);
+        Unit group = unitRepository.findById(id).orElse(null);
         if (group == null) {
             throw new ErrorsException(Errors.EntityMissing);
         }
@@ -128,9 +128,7 @@ class PatadminServiceImpl implements PatadminServiceInternal {
                 .collect(Collectors.toSet());
 
 
-        List<Unit> saved = unitRepository.save(save);
-        unitRepository.flush();
-        return saved;
+        return unitRepository.saveAllAndFlush(save);
     }
 
     private Unit updateTreatmentGroup(final Concern concern, final NotifyList notify, final Group group) {
