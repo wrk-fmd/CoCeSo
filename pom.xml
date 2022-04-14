@@ -18,7 +18,7 @@
         <commons.io.version>2.11.0</commons.io.version>
         <guava.version>31.1-jre</guava.version>
 
-        <hibernate.version>5.2.18.Final</hibernate.version>
+        <hibernate.version>5.4.24.Final</hibernate.version>
         <!-- Hibernate 5.2 ships with a non-Java-11 compatible version of javassist.
              This can be removed if the originally shippped version is 3.23.1 or higher. -->
         <javassist.version>3.28.0-GA</javassist.version>
