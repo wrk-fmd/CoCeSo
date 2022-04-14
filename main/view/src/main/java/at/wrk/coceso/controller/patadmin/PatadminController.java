@@ -20,8 +20,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -83,7 +83,7 @@ public class PatadminController {
               .sorted()
               .collect(Collectors.toList());
     } else {
-      groupIcons = new ArrayList<>();
+      groupIcons = Collections.emptyList();
     }
 
     return groupIcons;
