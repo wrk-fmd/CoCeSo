@@ -22,6 +22,12 @@
             <version>${jackson.version}</version>
         </dependency>
 
+        <!-- GeoJson -->
+        <dependency>
+            <groupId>de.grundid.opendatalab</groupId>
+            <artifactId>geojson-jackson</artifactId>
+        </dependency>
+
         <!-- Commons -->
         <dependency>
             <groupId>org.apache.commons</groupId>

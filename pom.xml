@@ -33,6 +33,7 @@
         <jackson.version>2.13.2</jackson.version>
         <jackson.databind.version>2.13.2.2</jackson.databind.version>
         <com.fatboyindustrial.gson.javatime.serialisers>1.1.1</com.fatboyindustrial.gson.javatime.serialisers>
+        <geojson-jackson.version>1.14</geojson-jackson.version>
 
         <google.maps.services.version>0.9.3</google.maps.services.version>
 
@@ -197,6 +198,12 @@
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
                 <version>${jackson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>de.grundid.opendatalab</groupId>
+                <artifactId>geojson-jackson</artifactId>
+                <version>${geojson-jackson.version}</version>
             </dependency>
 
             <dependency>

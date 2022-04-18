@@ -46,12 +46,9 @@
         <Logger name="at.wrk.coceso" level="debug"/>
         <Logger name="at.wrk.geocode" level="debug"/>
 
-        <Logger level="error">
-            <AppenderRef ref="async_error"/>
-        </Logger>
-
         <Root level="warn">
             <AppenderRef ref="async_coceso"/>
+            <AppenderRef ref="async_error" level="error"/>
         </Root>
     </Loggers>
 </Configuration>
