@@ -1,6 +1,8 @@
 package at.wrk.coceso.radio;
 
 import at.wrk.coceso.entity.types.EnumUserType;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -102,12 +104,12 @@ public class Selcall implements Serializable, Comparable<Selcall> {
 
     @Override
     public String toString() {
-        return "Selcall{" +
-                "id=" + id +
-                ", ani='" + ani + '\'' +
-                ", timestamp=" + timestamp +
-                ", direction=" + direction +
-                ", port='" + port + '\'' +
-                '}';
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("id", id)
+                .append("ani", ani)
+                .append("timestamp", timestamp)
+                .append("direction", direction)
+                .append("port", port)
+                .toString();
     }
 }

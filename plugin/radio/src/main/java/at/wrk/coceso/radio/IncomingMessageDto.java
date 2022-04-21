@@ -1,6 +1,9 @@
 package at.wrk.coceso.radio;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import java.time.Instant;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -41,5 +44,15 @@ public class IncomingMessageDto {
 
     public void setEmergency(boolean emergency) {
         this.emergency = emergency;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("channel", channel)
+                .append("sender", sender)
+                .append("timestamp", timestamp)
+                .append("emergency", emergency)
+                .toString();
     }
 }

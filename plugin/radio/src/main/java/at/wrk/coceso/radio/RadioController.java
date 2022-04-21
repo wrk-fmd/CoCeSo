@@ -1,5 +1,6 @@
 package at.wrk.coceso.radio;
 
+import at.wrk.coceso.entity.helper.RestProperty;
 import at.wrk.coceso.entity.helper.RestResponse;
 import at.wrk.coceso.entity.helper.SequencedResponse;
 import at.wrk.coceso.entityevent.EntityEventFactory;
@@ -27,7 +28,7 @@ public class RadioController {
 
   @RequestMapping(value = "send", method = RequestMethod.POST, produces = "application/json")
   public RestResponse send(@RequestBody Selcall selcall) {
-    return new RestResponse(radioService.sendSelcall(selcall));
+    return new RestResponse(false, new RestProperty("info", "Not implemented."));
   }
 
   @RequestMapping(value = "ports", method = RequestMethod.GET, produces = "application/json")
@@ -37,7 +38,7 @@ public class RadioController {
 
   @RequestMapping(value = "reloadPorts", method = RequestMethod.POST, produces = "application/json")
   public RestResponse reloadPorts() {
-    return new RestResponse(radioService.reloadPorts());
+    return new RestResponse(true, new RestProperty("info", "Not implemented."));
   }
 
   @RequestMapping(value = "getLast/{minutes}", method = RequestMethod.GET, produces = "application/json")

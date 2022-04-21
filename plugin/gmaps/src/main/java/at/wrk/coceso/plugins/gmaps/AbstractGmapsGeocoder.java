@@ -15,8 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class AbstractGmapsGeocoder implements Geocoder<ImmutableAddress> {
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractGmapsGeocoder.class);
 
     @Autowired
     private GmapsWrapper gmapsWrapper;
@@ -24,24 +23,24 @@ public abstract class AbstractGmapsGeocoder implements Geocoder<ImmutableAddress
     @Override
     public LatLng geocode(ImmutableAddress address) {
         if (!gmapsWrapper.isActive()) {
-            logger.trace("Google Maps wrapper is not active");
+            LOG.trace("Google Maps wrapper is not active");
             return null;
         }
 
         String query = buildQueryString(address);
         if (query == null) {
-            logger.trace("Cannot query null-query. Address input was: '{}'.", address);
+            LOG.trace("Cannot query null-query. Address input was: '{}'.", address);
             return null;
         }
 
-        logger.debug("Querying Google Maps for '{}'", query);
+        LOG.debug("Querying Google Maps for '{}'", query);
         try {
             GeocodingResult[] results = gmapsWrapper.geocode(query);
             if (results.length > 0) {
                 return new LatLng(results[0].geometry.location.lat, results[0].geometry.location.lng);
             }
         } catch (Exception ex) {
-            logger.info("Error getting coordinates for address query: " + query, ex);
+            LOG.info("Error getting coordinates for address query: " + query, ex);
         }
 
         return null;
@@ -53,18 +52,18 @@ public abstract class AbstractGmapsGeocoder implements Geocoder<ImmutableAddress
             return null;
         }
 
-        logger.debug("Reverse geocoding with Google Maps for ({})", coordinates);
+        LOG.debug("Reverse geocoding with Google Maps for ({})", coordinates);
         try {
             GeocodingResult[] results = gmapsWrapper.reverseGeocode(coordinates.getLat(), coordinates.getLng());
             if (results.length > 0) {
                 LatLng actualCoordinates = new LatLng(results[0].geometry.location.lat, results[0].geometry.location.lng);
                 int dist = coordinates.distance(actualCoordinates);
                 GmapsAddress address = new GmapsAddress(results[0].addressComponents);
-                logger.debug("Found address '{}' {} meters away with Google Maps", address.getInfo(", "), dist);
+                LOG.debug("Found address '{}' {} meters away with Google Maps", address.getInfo(", "), dist);
                 return new ReverseResult<>(dist, ImmutableAddress.createFromAddress(address), actualCoordinates);
             }
         } catch (Exception ex) {
-            logger.info("Error getting address for '{}'", coordinates, ex);
+            LOG.info("Error getting address for '{}'", coordinates, ex);
         }
 
         return null;
@@ -96,8 +95,7 @@ public abstract class AbstractGmapsGeocoder implements Geocoder<ImmutableAddress
                             if (postCode == null) {
                                 try {
                                     this.postCode = Integer.parseInt(component.longName.trim());
-                                } catch (NumberFormatException e) {
-
+                                } catch (NumberFormatException ignored) {
                                 }
                             }
                             break;

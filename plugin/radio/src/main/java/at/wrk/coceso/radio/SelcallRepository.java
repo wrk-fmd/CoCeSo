@@ -10,7 +10,5 @@ import java.util.List;
 @Repository
 public interface SelcallRepository extends JpaRepository<Selcall, Integer> {
 
-  List<Selcall> findByAni(String ani);
-
-  List<Selcall> findByTimestampGreaterThanAndDirectionIn(OffsetDateTime timestamp, Collection<Selcall.Direction> direction);
+    List<Selcall> findByTimestampGreaterThanAndDirectionIn(final OffsetDateTime timestamp, final Collection<Selcall.Direction> direction);
 }

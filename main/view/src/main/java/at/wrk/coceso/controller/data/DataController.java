@@ -69,7 +69,7 @@ public class DataController {
     public RestResponse clientLogger(
             @RequestBody final ClientLog clientLog,
             final HttpServletRequest request) {
-        clientLogger.handleClientLog(clientLog, request.getRemoteHost());
+        clientLogger.handleClientLog(clientLog, request.getRemoteAddr());
         return new RestResponse(true);
     }
 
