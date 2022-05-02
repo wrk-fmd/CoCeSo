@@ -64,8 +64,10 @@ class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getByUsername(String username) {
-        return Initializer.init(userRepository.findByUsername(username), User::getInternalAuthorities);
+    public User getByUsername(final String username) {
+        return StringUtils.isBlank(username)
+                ? null
+                : Initializer.init(userRepository.findByUsername(username), User::getInternalAuthorities);
     }
 
     @Override

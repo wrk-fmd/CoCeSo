@@ -17,6 +17,7 @@ public interface UserService {
   @Nullable
   User getById(int id);
 
+  @Nullable
   User getByUsername(String username);
 
   User getByPersonnelId(int personnelId);

@@ -19,7 +19,7 @@ class UserValidatorImpl implements UserValidator {
   }
 
   @Override
-  public void validate(Object o, Errors errors) {
+  public void validate(final Object o, final Errors errors) {
     User u = (User) o;
 
     // Check if user really exists
@@ -31,10 +31,10 @@ class UserValidatorImpl implements UserValidator {
       }
     }
 
+    // Check if username is unique
     User existing = userService.getByUsername(u.getUsername());
     if (existing != null && !u.equals(existing)) {
       errors.rejectValue("name", "user.username.exists");
     }
   }
-
 }
