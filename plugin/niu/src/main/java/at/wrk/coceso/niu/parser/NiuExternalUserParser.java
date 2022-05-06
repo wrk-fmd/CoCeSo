@@ -31,7 +31,7 @@ public class NiuExternalUserParser implements ExternalUserParser {
     private static final String PERSONNELID = "DNr.";
     private static final ImmutableSet<String> TELEPHONE_FIELDS = ImmutableSet.of(
             "Telefon geschäftlich",
-            "Telefon Privat",
+            "Telefon privat",
             "Telefon WRK",
             "Handy privat",
             "Handy geschäftlich",
