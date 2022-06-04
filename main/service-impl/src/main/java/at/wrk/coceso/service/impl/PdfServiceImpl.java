@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.time.Instant;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
@@ -164,7 +164,7 @@ class PdfServiceImpl implements PdfService {
     }
 
     private void addContentDispositionHeaderWithFilename(final HttpServletResponse response, final String reportTypeFilenameSuffix) {
-        String filename = String.format("%s_%s.pdf", DateTimeFormatter.ISO_DATE.format(Instant.now()), reportTypeFilenameSuffix);
+        String filename = String.format("%s_%s.pdf", DateTimeFormatter.ISO_DATE.format(LocalDate.now()), reportTypeFilenameSuffix);
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "filename=" + filename + "");
     }
 }
