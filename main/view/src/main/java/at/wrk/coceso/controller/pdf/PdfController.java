@@ -24,17 +24,15 @@ public class PdfController {
 
     private final static Logger LOG = LoggerFactory.getLogger(PdfController.class);
 
-    @Autowired
-    private PdfService pdfService;
-
-    @Autowired
-    private ConcernService concernService;
-
+    private final PdfService pdfService;
+    private final ConcernService concernService;
     private final AuthenticatedUserProvider authenticatedUserProvider;
 
     @Autowired
-    public PdfController(final AuthenticatedUserProvider authenticatedUserProvider) {
+    public PdfController(final AuthenticatedUserProvider authenticatedUserProvider, final PdfService pdfService, final ConcernService concernService) {
         this.authenticatedUserProvider = authenticatedUserProvider;
+        this.pdfService = pdfService;
+        this.concernService = concernService;
     }
 
     @RequestMapping(value = "report", produces = "application/pdf", method = RequestMethod.GET)

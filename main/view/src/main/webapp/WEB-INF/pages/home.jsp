@@ -112,16 +112,16 @@
               </button>
               <ul class="dropdown-menu">
                 <li>
-                  <a target="_blank" data-bind="attr: {href: '<c:url value="/pdf/report.pdf?id="/>' + id}"><spring:message code="pdf.report"/></a>
+                  <a target="_blank" data-bind="attr: {href: '<c:url value="/pdf/report?id="/>' + id}"><spring:message code="pdf.report"/></a>
                 </li>
                 <li>
-                  <a target="_blank" data-bind="attr: {href: '<c:url value="/pdf/transport.pdf?id="/>' + id}"><spring:message code="pdf.transport"/></a>
+                  <a target="_blank" data-bind="attr: {href: '<c:url value="/pdf/transport?id="/>' + id}"><spring:message code="pdf.transport"/></a>
                 </li>
                 <li>
-                  <a target="_blank" data-bind="attr: {href: '<c:url value="/pdf/patients.pdf?id="/>' + id}"><spring:message code="pdf.patients"/></a>
+                  <a target="_blank" data-bind="attr: {href: '<c:url value="/pdf/patients?id="/>' + id}"><spring:message code="pdf.patients"/></a>
                 </li>
                 <li>
-                  <a target="_blank" data-bind="attr: {href: '<c:url value="/pdf/dump.pdf?id="/>' + id}"><spring:message code="pdf.dump"/></a>
+                  <a target="_blank" data-bind="attr: {href: '<c:url value="/pdf/dump?id="/>' + id}"><spring:message code="pdf.dump"/></a>
                 </li>
               </ul>
             </div>
@@ -176,13 +176,13 @@
                 </button>
                 <ul class="dropdown-menu">
                   <li>
-                    <a target="_blank" data-bind="attr: {href: '<c:url value="/pdf/report.pdf?id="/>' + id}"><spring:message code="pdf.report"/></a>
+                    <a target="_blank" data-bind="attr: {href: '<c:url value="/pdf/report?id="/>' + id}"><spring:message code="pdf.report"/></a>
                   </li>
                   <li>
-                    <a target="_blank" data-bind="attr: {href: '<c:url value="/pdf/transport.pdf?id="/>' + id}"><spring:message code="pdf.transport"/></a>
+                    <a target="_blank" data-bind="attr: {href: '<c:url value="/pdf/transport?id="/>' + id}"><spring:message code="pdf.transport"/></a>
                   </li>
                   <li>
-                    <a target="_blank" data-bind="attr: {href: '<c:url value="/pdf/patients.pdf?id="/>' + id}"><spring:message code="pdf.patients"/></a>
+                    <a target="_blank" data-bind="attr: {href: '<c:url value="/pdf/patients?id="/>' + id}"><spring:message code="pdf.patients"/></a>
                   </li>
                 </ul>
               </div>

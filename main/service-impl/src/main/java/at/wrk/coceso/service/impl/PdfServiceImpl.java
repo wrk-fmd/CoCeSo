@@ -18,12 +18,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -71,6 +74,8 @@ class PdfServiceImpl implements PdfService {
             doc.addIncidentsLog(incidentService.getAllForReport(concern));
             doc.addLastPage();
 
+            addContentDispositionHeaderWithFilename(response, "coceso-report");
+
             LOG.info("PDF for concern {} completely written", concern);
         } catch (IOException | DocumentException e) {
             LOG.error("Error on printing pdf for concern {}", concern, e);
@@ -90,6 +95,8 @@ class PdfServiceImpl implements PdfService {
             doc.addIncidentsCurrent(incidentService.getAllForDump(concern));
             doc.addLastPage();
 
+            addContentDispositionHeaderWithFilename(response, "coceso-dump");
+
             LOG.info("PDF for concern {} completely written", concern);
         } catch (IOException | DocumentException e) {
             LOG.error("Error on printing pdf for concern {}", concern, e);
@@ -108,6 +115,8 @@ class PdfServiceImpl implements PdfService {
             doc.addTransports(incidentService.getAllTransports(concern));
             doc.addLastPage();
 
+            addContentDispositionHeaderWithFilename(response, "coceso-transport-report");
+
             LOG.info("PDF for concern {} completely written", concern);
         } catch (IOException | DocumentException e) {
             LOG.error("Error on printing pdf for concern {}", concern, e);
@@ -124,6 +133,8 @@ class PdfServiceImpl implements PdfService {
             doc.addFrontPage("pdf.patients.header", concern, authenticatedUserProvider.getAuthenticatedUser());
             doc.addPatients(patientService.getAllSorted(concern));
             doc.addLastPage();
+
+            addContentDispositionHeaderWithFilename(response, "coceso-patient-report");
 
             LOG.info("PDF for concern {} completely written", concern);
         } catch (IOException | DocumentException e) {
@@ -149,5 +160,10 @@ class PdfServiceImpl implements PdfService {
     @Override
     public Timestamp getLastUpdate(final Incident incident, final Unit unit) {
         return logService.getLastTaskStateUpdate(incident, unit);
+    }
+
+    private void addContentDispositionHeaderWithFilename(final HttpServletResponse response, final String reportTypeFilenameSuffix) {
+        String filename = String.format("%s_%s.pdf", DateTimeFormatter.ISO_DATE.format(Instant.now()), reportTypeFilenameSuffix);
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"");
     }
 }

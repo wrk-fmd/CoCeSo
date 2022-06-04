@@ -29,9 +29,9 @@ import org.springframework.context.NoSuchMessageException;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
+import java.time.format.FormatStyle;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -45,13 +45,12 @@ public class PdfDocument extends Document implements AutoCloseable {
     private static final Font DESCRIPTION_FONT = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD);
     private static final Font DEFAULT_FONT = new Font(Font.FontFamily.HELVETICA, 10);
 
-    private final static String TIME_FORMAT = "HH:mm:ss";
-    private final static String DATE_TIME_FORMAT = "dd.MM.yy HH:mm:ss";
-
     private final PdfService pdfService;
     private final MessageSource messageSource;
     private final Locale locale;
     private final boolean fullDate;
+    private final DateTimeFormatter dateTimeFormatter;
+    private final DateTimeFormatter timeFormatter;
 
     public PdfDocument(
             final Rectangle pageSize,
@@ -64,6 +63,9 @@ public class PdfDocument extends Document implements AutoCloseable {
         this.pdfService = pdfService;
         this.messageSource = messageSource;
         this.locale = locale;
+
+        this.dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(locale);
+        this.timeFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.MEDIUM).withLocale(locale);
     }
 
     public void start(final HttpServletResponse response) throws DocumentException, IOException {
@@ -87,7 +89,7 @@ public class PdfDocument extends Document implements AutoCloseable {
         addEmptyLine(p, 1);
 
         Paragraph p1 = new Paragraph(getMessage("pdf.created",
-                new String[]{user == null ? "N/A" : user.getDisplayName(), new java.text.SimpleDateFormat(DATE_TIME_FORMAT).format(new Date())}), SUB_TITLE_FONT);
+                new String[]{user == null ? "N/A" : user.getDisplayName(), dateTimeFormatter.format(LocalDateTime.now())}), SUB_TITLE_FONT);
         p1.setAlignment(Element.ALIGN_CENTER);
         p.add(p1);
 
@@ -101,8 +103,8 @@ public class PdfDocument extends Document implements AutoCloseable {
     }
 
     public void addLastPage() throws DocumentException {
-        this.add(new Paragraph(getMessage("pdf.complete",
-                new String[]{new java.text.SimpleDateFormat(DATE_TIME_FORMAT).format(new Date())})));
+        String currentDateTimeString = dateTimeFormatter.format(LocalDateTime.now());
+        this.add(new Paragraph(getMessage("pdf.complete", new String[]{currentDateTimeString})));
     }
 
     public void addStatistics(final List<Incident> incidents) throws DocumentException {
@@ -617,7 +619,8 @@ public class PdfDocument extends Document implements AutoCloseable {
     }
 
     private String getFormattedTime(Timestamp timestamp) {
-        return timestamp == null ? "" : new SimpleDateFormat(fullDate ? DATE_TIME_FORMAT : TIME_FORMAT).format(timestamp);
+        LocalDateTime dateTime = timestamp != null ? timestamp.toLocalDateTime() : null;
+        return dateTime == null ? "" : (fullDate ? dateTimeFormatter : timeFormatter).format(dateTime);
     }
 
     private String getLogText(LogEntry log) {
