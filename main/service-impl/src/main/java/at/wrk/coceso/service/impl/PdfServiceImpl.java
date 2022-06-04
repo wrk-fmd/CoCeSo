@@ -66,6 +66,8 @@ class PdfServiceImpl implements PdfService {
             final HttpServletResponse response,
             final Locale locale) {
         try (PdfDocument doc = new PdfDocument(PageSize.A4.rotate(), fullDate, this, messageSource, locale)) {
+            addContentDispositionHeaderWithFilename(response, "coceso-report");
+
             doc.start(response);
             doc.addFrontPage("pdf.report.header", concern, authenticatedUserProvider.getAuthenticatedUser());
             doc.addStatistics(incidentService.getAll(concern));
@@ -73,8 +75,6 @@ class PdfServiceImpl implements PdfService {
             doc.addUnitsLog(unitService.getAllSorted(concern));
             doc.addIncidentsLog(incidentService.getAllForReport(concern));
             doc.addLastPage();
-
-            addContentDispositionHeaderWithFilename(response, "coceso-report");
 
             LOG.info("PDF for concern {} completely written", concern);
         } catch (IOException | DocumentException e) {
@@ -89,13 +89,14 @@ class PdfServiceImpl implements PdfService {
             final HttpServletResponse response,
             final Locale locale) {
         try (PdfDocument doc = new PdfDocument(PageSize.A4.rotate(), fullDate, this, messageSource, locale)) {
+            addContentDispositionHeaderWithFilename(response, "coceso-dump");
+
             doc.start(response);
             doc.addFrontPage("pdf.dump.header", concern, authenticatedUserProvider.getAuthenticatedUser());
             doc.addUnitsCurrent(unitService.getAllSorted(concern));
             doc.addIncidentsCurrent(incidentService.getAllForDump(concern));
             doc.addLastPage();
 
-            addContentDispositionHeaderWithFilename(response, "coceso-dump");
 
             LOG.info("PDF for concern {} completely written", concern);
         } catch (IOException | DocumentException e) {
@@ -110,12 +111,12 @@ class PdfServiceImpl implements PdfService {
             final HttpServletResponse response,
             final Locale locale) {
         try (PdfDocument doc = new PdfDocument(PageSize.A4.rotate(), fullDate, this, messageSource, locale)) {
+            addContentDispositionHeaderWithFilename(response, "coceso-transport-report");
+
             doc.start(response);
             doc.addFrontPage("pdf.transport.header", concern, authenticatedUserProvider.getAuthenticatedUser());
             doc.addTransports(incidentService.getAllTransports(concern));
             doc.addLastPage();
-
-            addContentDispositionHeaderWithFilename(response, "coceso-transport-report");
 
             LOG.info("PDF for concern {} completely written", concern);
         } catch (IOException | DocumentException e) {
@@ -129,12 +130,12 @@ class PdfServiceImpl implements PdfService {
             final HttpServletResponse response,
             final Locale locale) {
         try (final PdfDocument doc = new PdfDocument(PageSize.A4.rotate(), false, this, messageSource, locale)) {
+            addContentDispositionHeaderWithFilename(response, "coceso-patient-report");
+
             doc.start(response);
             doc.addFrontPage("pdf.patients.header", concern, authenticatedUserProvider.getAuthenticatedUser());
             doc.addPatients(patientService.getAllSorted(concern));
             doc.addLastPage();
-
-            addContentDispositionHeaderWithFilename(response, "coceso-patient-report");
 
             LOG.info("PDF for concern {} completely written", concern);
         } catch (IOException | DocumentException e) {
@@ -164,6 +165,6 @@ class PdfServiceImpl implements PdfService {
 
     private void addContentDispositionHeaderWithFilename(final HttpServletResponse response, final String reportTypeFilenameSuffix) {
         String filename = String.format("%s_%s.pdf", DateTimeFormatter.ISO_DATE.format(Instant.now()), reportTypeFilenameSuffix);
-        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"");
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "filename=" + filename + "");
     }
 }
