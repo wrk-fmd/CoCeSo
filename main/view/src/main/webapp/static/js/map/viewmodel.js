@@ -204,7 +204,7 @@ define(["jquery", "knockout", "./leaflet", "./layers", "./legend", "./markerlaye
             layersControl.addOverlay(layer, name);
             if (ko.utils.arrayFirst(overlayOption, function(item) {
               return (layers.names[item] === name);
-            }) !== null) {
+            })) {
               map.addLayer(layer);
             }
           });
