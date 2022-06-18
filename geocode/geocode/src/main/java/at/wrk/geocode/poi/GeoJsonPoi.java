@@ -103,7 +103,31 @@ public abstract class GeoJsonPoi extends AbstractJsonPoi {
 
         public PoiResource(Resource resource, String prefix) {
             this.resource = resource;
-            this.prefix = prefix;
+            this.prefix = prefix != null ? prefix : extractPrefix(resource);
+        }
+
+        private static String extractPrefix(Resource resource) {
+            try {
+                String prefix = resource.getURI().toString();
+
+                int geojsonIndex = prefix.lastIndexOf("/geojson/");
+                if (geojsonIndex < 0) {
+                    // Automatic prefix detection requires relative path to "geojson" directory
+                    return null;
+                }
+
+                prefix = prefix.substring(geojsonIndex + 9);
+                int separatorIndex = prefix.lastIndexOf("/");
+                if (separatorIndex < 0) {
+                    // Only file name, no prefix
+                    return null;
+                }
+
+                // Return the path without the filename part
+                return prefix.substring(0, separatorIndex);
+            } catch (IOException e) {
+                return null;
+            }
         }
     }
 }
