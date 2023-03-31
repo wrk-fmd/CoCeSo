@@ -30,8 +30,8 @@
 
         <itextpdf.version>5.5.13.2</itextpdf.version>
 
-        <jackson.version>2.13.2</jackson.version>
-        <jackson.databind.version>2.13.2.2</jackson.databind.version>
+        <jackson.version>2.13.4.2</jackson.version>
+        <jackson.databind.version>2.13.4.2</jackson.databind.version>
         <com.fatboyindustrial.gson.javatime.serialisers>1.1.1</com.fatboyindustrial.gson.javatime.serialisers>
         <geojson-jackson.version>1.14</geojson-jackson.version>
 
