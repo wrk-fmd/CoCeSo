@@ -56,13 +56,21 @@ public class RadioService {
         LOG.debug("Received new message from radio: {}", message);
 
         // Add channel to port list, if it doesn't already exist
-        ports.computeIfAbsent(message.getChannel(), path -> new Port(path, null));
+        ports.computeIfAbsent(
+                message.getChannel(),
+                path -> {
+                    LOG.info("Creating new radio port at '{}' with name '{}'.", path, message.getChannelName());
+                    return new Port(path, message.getChannelName());
+                });
 
         // Transform to internal entity
+        Direction direction = message.isOutgoingTalkburst()
+                ? (message.isEmergency() ? Direction.RX_EMG : Direction.RX)
+                : Direction.TX;
         Selcall call = new Selcall(
                 message.getChannel(),
                 message.getSender(),
-                message.isEmergency() ? Direction.RX_EMG : Direction.RX,
+                direction,
                 message.getTimestamp().atOffset(ZoneOffset.UTC)
         );
         entityEventHandler.entityChanged(call, 0);
