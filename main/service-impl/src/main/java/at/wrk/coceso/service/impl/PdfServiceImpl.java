@@ -165,6 +165,6 @@ class PdfServiceImpl implements PdfService {
 
     private void addContentDispositionHeaderWithFilename(final HttpServletResponse response, final String reportTypeFilenameSuffix) {
         String filename = String.format("%s_%s.pdf", DateTimeFormatter.ISO_DATE.format(LocalDate.now()), reportTypeFilenameSuffix);
-        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "filename=" + filename + "");
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "filename=" + filename);
     }
 }

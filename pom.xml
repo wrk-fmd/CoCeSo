@@ -30,8 +30,8 @@
 
         <itextpdf.version>5.5.13.3</itextpdf.version>
 
-        <jackson.version>2.13.4.2</jackson.version>
-        <jackson.databind.version>2.13.4.2</jackson.databind.version>
+        <jackson.version>2.14.2</jackson.version>
+        <jackson.databind.version>2.14.2</jackson.databind.version>
         <com.fatboyindustrial.gson.javatime.serialisers>1.1.1</com.fatboyindustrial.gson.javatime.serialisers>
         <geojson-jackson.version>1.14</geojson-jackson.version>
 
@@ -41,17 +41,17 @@
         <jstl.version>1.2</jstl.version>
         <servlet.version>3.1.0</servlet.version>
 
-        <spring.version>5.3.18</spring.version>
-        <spring.data.commons.version>2.6.3</spring.data.commons.version>
+        <spring.version>5.3.26</spring.version>
+        <spring.data.commons.version>2.6.10</spring.data.commons.version>
         <spring.data.jpa.version>2.6.3</spring.data.jpa.version>
-        <spring.security.version>5.6.9</spring.security.version>
+        <spring.security.version>5.8.2</spring.security.version>
         <apache.httpclient.version>4.5.13</apache.httpclient.version>
         <apache.httpasyncclient.version>4.1.4</apache.httpasyncclient.version>
 
-        <log4j.version>2.17.2</log4j.version>
+        <log4j.version>2.20.0</log4j.version>
         <slf4j.version>1.7.36</slf4j.version>
 
-        <tomcat.version>8.5.77</tomcat.version>
+        <tomcat.version>8.5.87</tomcat.version>
         <postgresql.version>9.1-901-1.jdbc4</postgresql.version>
 
         <jsr.305.version>3.0.2</jsr.305.version>
