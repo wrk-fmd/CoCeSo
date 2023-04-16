@@ -20,7 +20,8 @@ public class SendTextMessageRequestFactory {
 
     private final static Map<String, SmsGatewayType> TYPE_MAPPING = ImmutableMap.of(
             AlarmTextConfiguration.DEFAULT_SMS_GATEWAY_TYPE, SmsGatewayType.GAMMU,
-            "internal", SmsGatewayType.INTERNAL
+            "internal", SmsGatewayType.INTERNAL,
+            "bearer", SmsGatewayType.INTERNAL_BEARER_TOKEN
     );
 
     private final String authenticationToken;
@@ -45,11 +46,17 @@ public class SendTextMessageRequestFactory {
             SendTextMessageRequest request = createRequest(alarmText, targets);
 
             String jsonRequest = gson.toJson(request);
-            if (gatewayType == SmsGatewayType.INTERNAL) {
-                httpEntity = Optional.of(HttpEntities.createHttpEntityForJsonString(jsonRequest, authenticationToken));
-            } else {
-                httpEntity = Optional.of(HttpEntities.createHttpEntityForJsonString(jsonRequest));
-
+            switch (gatewayType) {
+                case INTERNAL:
+                    httpEntity = Optional.of(HttpEntities.createHttpEntityForJsonStringWithBasicAuthentication(jsonRequest, authenticationToken));
+                    break;
+                case INTERNAL_BEARER_TOKEN:
+                    httpEntity = Optional.of(HttpEntities.createHttpEntityForJsonStringWithBearerTokenAuthentication(jsonRequest, authenticationToken));
+                    break;
+                case GAMMU:
+                default:
+                    httpEntity = Optional.of(HttpEntities.createHttpEntityForJsonString(jsonRequest));
+                    break;
             }
         } else {
             LOG.info("Incomplete SMS gateway configuration. authentication token is missing.");
@@ -63,6 +70,7 @@ public class SendTextMessageRequestFactory {
 
         switch (gatewayType) {
             case INTERNAL:
+            case INTERNAL_BEARER_TOKEN:
                 request = createInternalRequest(alarmText, targets);
                 break;
             case GAMMU:

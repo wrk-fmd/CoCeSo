@@ -1,6 +1,8 @@
 package at.wrk.coceso.alarm.text.sender.sms.data;
 
 import com.google.common.collect.ImmutableList;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.List;
 import java.util.Objects;
@@ -50,10 +52,10 @@ public class NiuSendTextMessageRequest implements SendTextMessageRequest {
 
     @Override
     public String toString() {
-        return "NiuSendTextMessageRequest{" +
-                "numbers=" + numbers +
-                ", message='" + message + '\'' +
-                ", waitForDelivery=" + waitForDelivery +
-                '}';
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("numbers", numbers)
+                .append("message", message)
+                .append("waitForDelivery", waitForDelivery)
+                .toString();
     }
 }

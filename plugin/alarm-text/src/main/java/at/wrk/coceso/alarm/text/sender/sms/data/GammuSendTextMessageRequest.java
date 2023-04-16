@@ -1,13 +1,15 @@
 package at.wrk.coceso.alarm.text.sender.sms.data;
 
 import com.google.common.collect.ImmutableList;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 
 /**
- * Uses Java Gammu Head. See https://github.com/robo-w/java-gammu-head#json-api.
+ * Uses Java Gammu Head. See <a href="https://github.com/robo-w/java-gammu-head#json-api">Gammu Head Project</a>.
  */
 public class GammuSendTextMessageRequest implements SendTextMessageRequest {
     private static final long serialVersionUID = 1L;
@@ -53,10 +55,10 @@ public class GammuSendTextMessageRequest implements SendTextMessageRequest {
 
     @Override
     public String toString() {
-        return "GammuSendTextMessageRequest{" +
-                "authenticationToken='" + authenticationToken + '\'' +
-                ", targetPhoneNumbers=" + targetPhoneNumbers +
-                ", messageContent='" + messageContent + '\'' +
-                '}';
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("authenticationToken", authenticationToken)
+                .append("targetPhoneNumbers", targetPhoneNumbers)
+                .append("messageContent", messageContent)
+                .toString();
     }
 }

@@ -11,19 +11,29 @@ public final class HttpEntities {
     private HttpEntities() {
     }
 
-    public static HttpEntity<String> createHttpEntityForJsonString(final String unitJson) {
+    public static HttpEntity<String> createHttpEntityForJsonString(final String jsonContent) {
         HttpHeaders headers = createJsonApplicationType();
 
-        return new HttpEntity<>(unitJson, headers);
+        return new HttpEntity<>(jsonContent, headers);
     }
 
-    public static HttpEntity<String> createHttpEntityForJsonString(final String unitJson, final String basicAuthConcatenatedString) {
+    public static HttpEntity<String> createHttpEntityForJsonStringWithBasicAuthentication(final String jsonContent, final String basicAuthConcatenatedString) {
         HttpHeaders headers = createJsonApplicationType();
 
         String encodedString = encodeBasicAuthCredentials(basicAuthConcatenatedString);
         headers.add("Authorization", "Basic " + encodedString);
 
-        return new HttpEntity<>(unitJson, headers);
+        return new HttpEntity<>(jsonContent, headers);
+    }
+
+    public static HttpEntity<String> createHttpEntityForJsonStringWithBearerTokenAuthentication(
+            final String jsonContent,
+            final String bearerToken) {
+        HttpHeaders headers = createJsonApplicationType();
+
+        headers.add("Authorization", "Bearer " + bearerToken);
+
+        return new HttpEntity<>(jsonContent, headers);
     }
 
     private static String encodeBasicAuthCredentials(final String stringToEncode) {
