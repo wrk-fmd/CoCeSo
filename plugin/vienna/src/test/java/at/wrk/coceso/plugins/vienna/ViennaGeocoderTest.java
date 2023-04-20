@@ -10,7 +10,6 @@ import at.wrk.geocode.util.AddressMatcher;
 import at.wrk.geocode.util.AddressNumberMatcher;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.web.client.RestTemplate;
 
@@ -23,7 +22,6 @@ import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 
-@Ignore("OGD Service is currently broken")
 public class ViennaGeocoderTest {
 
     private ViennaGeocoder sut;
