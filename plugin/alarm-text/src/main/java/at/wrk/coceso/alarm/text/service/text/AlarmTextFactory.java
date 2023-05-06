@@ -139,7 +139,11 @@ public class AlarmTextFactory {
 
         if (point != null && point.getCoordinates() != null) {
             // US locale is needed for dot in floating point number.
-            pointUrl = String.format(Locale.US, "https://google.com/maps/place/%f,%f", point.getCoordinates().getLat(), point.getCoordinates().getLng());
+            pointUrl = String.format(
+                    Locale.US,
+                    "https://www.google.com/maps/search/?api=1&query=%f%%2C%f",
+                    point.getCoordinates().getLat(),
+                    point.getCoordinates().getLng());
         } else {
             LOG.debug("Cannot set address url for alarm text. Address coordinate property is null.");
         }
