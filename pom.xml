@@ -16,7 +16,7 @@
         <commons.text.version>1.9</commons.text.version>
         <commons.csv.version>1.8</commons.csv.version>
         <commons.io.version>2.11.0</commons.io.version>
-        <guava.version>31.1-jre</guava.version>
+        <guava.version>32.0.0-jre</guava.version>
 
         <hibernate.version>5.2.18.Final</hibernate.version>
         <!-- Hibernate 5.2 ships with a non-Java-11 compatible version of javassist.
