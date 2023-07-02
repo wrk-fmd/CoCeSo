@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,6 +68,7 @@ class PdfServiceImpl implements PdfService {
             final Locale locale) {
         try (PdfDocument doc = new PdfDocument(PageSize.A4.rotate(), fullDate, this, messageSource, locale)) {
             addContentDispositionHeaderWithFilename(response, "coceso-report");
+            addContentTypeHeader(response);
 
             doc.start(response);
             doc.addFrontPage("pdf.report.header", concern, authenticatedUserProvider.getAuthenticatedUser());
@@ -90,6 +92,7 @@ class PdfServiceImpl implements PdfService {
             final Locale locale) {
         try (PdfDocument doc = new PdfDocument(PageSize.A4.rotate(), fullDate, this, messageSource, locale)) {
             addContentDispositionHeaderWithFilename(response, "coceso-dump");
+            addContentTypeHeader(response);
 
             doc.start(response);
             doc.addFrontPage("pdf.dump.header", concern, authenticatedUserProvider.getAuthenticatedUser());
@@ -112,6 +115,7 @@ class PdfServiceImpl implements PdfService {
             final Locale locale) {
         try (PdfDocument doc = new PdfDocument(PageSize.A4.rotate(), fullDate, this, messageSource, locale)) {
             addContentDispositionHeaderWithFilename(response, "coceso-transport-report");
+            addContentTypeHeader(response);
 
             doc.start(response);
             doc.addFrontPage("pdf.transport.header", concern, authenticatedUserProvider.getAuthenticatedUser());
@@ -131,6 +135,7 @@ class PdfServiceImpl implements PdfService {
             final Locale locale) {
         try (final PdfDocument doc = new PdfDocument(PageSize.A4.rotate(), false, this, messageSource, locale)) {
             addContentDispositionHeaderWithFilename(response, "coceso-patient-report");
+            addContentTypeHeader(response);
 
             doc.start(response);
             doc.addFrontPage("pdf.patients.header", concern, authenticatedUserProvider.getAuthenticatedUser());
@@ -161,6 +166,10 @@ class PdfServiceImpl implements PdfService {
     @Override
     public Timestamp getLastUpdate(final Incident incident, final Unit unit) {
         return logService.getLastTaskStateUpdate(incident, unit);
+    }
+
+    private static void addContentTypeHeader(final HttpServletResponse response) {
+        response.setContentType(MediaType.APPLICATION_PDF_VALUE);
     }
 
     private void addContentDispositionHeaderWithFilename(final HttpServletResponse response, final String reportTypeFilenameSuffix) {
