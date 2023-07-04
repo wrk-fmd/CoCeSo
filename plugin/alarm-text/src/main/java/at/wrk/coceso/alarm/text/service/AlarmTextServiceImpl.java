@@ -4,7 +4,6 @@ import at.wrk.coceso.alarm.text.api.AlarmTextType;
 import at.wrk.coceso.alarm.text.data.SendAlarmTextResult;
 import at.wrk.coceso.alarm.text.sender.AlarmTextSender;
 import at.wrk.coceso.alarm.text.service.text.AlarmTextFactory;
-import at.wrk.coceso.entity.User;
 import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,7 +68,10 @@ public class AlarmTextServiceImpl implements AlarmTextService {
     }
 
     private String sanitizeString(final String alarmText) {
-        return alarmText.replace("\r\n", "\n").replace("\r", "\n");
+        return alarmText
+                .replace("\r\n", "\n")
+                .replace("\r", "\n")
+                .trim();
     }
 
     private Map<String, SendAlarmTextResult> alarmAllTargets(
