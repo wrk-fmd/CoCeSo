@@ -56,7 +56,7 @@ public class AlarmTextFactory {
         if (incident != null) {
             alarmText = Optional.of(buildAlarmText(incident, type, locale));
         } else {
-            LOG.info("Incident #{} does not exist. Alarm text cannot be created.");
+            LOG.info("Incident #{} does not exist. Alarm text cannot be created.", incidentId);
         }
 
         return alarmText;
@@ -89,7 +89,7 @@ public class AlarmTextFactory {
 
         String alarmText = template;
 
-        alarmText = alarmText.replace("{incidentId}", incident.getId() + "");
+        alarmText = alarmText.replace("{incidentId}", String.valueOf(incident.getId()));
         alarmText = alarmText.replace("{time}", buildTime());
         alarmText = alarmText.replace("{type}", buildTypeString(locale, incident.getType(), incident.isBlue()));
         alarmText = alarmText.replace("{bo}", buildAddressString(incident.getBo()));

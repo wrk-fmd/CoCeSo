@@ -2,7 +2,6 @@ package at.wrk.coceso.alarm.text.service;
 
 import at.wrk.coceso.alarm.text.api.AlarmTextType;
 import at.wrk.coceso.entity.Incident;
-import at.wrk.coceso.entity.User;
 import at.wrk.coceso.service.IncidentService;
 import at.wrk.coceso.service.IncidentWriteService;
 import org.slf4j.Logger;
