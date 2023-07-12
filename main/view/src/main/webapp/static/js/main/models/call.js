@@ -48,9 +48,11 @@ define(["knockout", "data/store/radio", "data/store/units", "ko/extenders/timefo
         if (store.aniMap[this.ani]) {
           return units.get(store.aniMap[this.ani]);
         }
-        var id, models = units.models();
+        var id;
+        var models = units.models();
         for (id in models) {
-          if (models[id].ani === this.ani) {
+          var aniListOfUnit = models[id].ani;
+          if (aniListOfUnit && aniListOfUnit.includes(this.ani)) {
             store.aniMap[this.ani] = id;
             return models[id];
           }
