@@ -65,8 +65,8 @@ public class RadioService {
 
         // Transform to internal entity
         Direction direction = message.isOutgoingTalkburst()
-                ? (message.isEmergency() ? Direction.RX_EMG : Direction.RX)
-                : Direction.TX;
+                ? Direction.TX
+                : (message.isEmergency() ? Direction.RX_EMG : Direction.RX);
         Selcall call = new Selcall(
                 message.getChannel(),
                 message.getSender(),
