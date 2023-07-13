@@ -3,11 +3,11 @@ package at.wrk.coceso.niu.parser;
 import at.wrk.coceso.importer.ImportException;
 import at.wrk.coceso.niu.data.ExternalUser;
 import at.wrk.coceso.niu.data.ExternalUserId;
-import com.google.common.collect.ImmutableSet;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collection;
+import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
@@ -27,7 +27,7 @@ public class NiuExternalUserParserTest {
 
         Collection<ExternalUser> externalUsers = sut.parseExternalUsers(validCsv);
 
-        ExternalUser expectedUser = new ExternalUser(new ExternalUserId(1234, "Mustermann", "Max"), ImmutableSet.of("+43 (600) 1234", "+43 (600) 1235"));
+        ExternalUser expectedUser = new ExternalUser(new ExternalUserId(1234, "Mustermann", "Max"), Set.of("+43 (600) 1234", "+43 (600) 1235"));
         assertThat(externalUsers, contains(expectedUser));
     }
 
@@ -47,7 +47,7 @@ public class NiuExternalUserParserTest {
 
         Collection<ExternalUser> externalUsers = sut.parseExternalUsers(validCsv);
 
-        ExternalUser expectedUser = new ExternalUser(new ExternalUserId(1234, "Mustermann", "Max"), ImmutableSet.of("+43 (600) 1234", "+43 (600) 1235"));
+        ExternalUser expectedUser = new ExternalUser(new ExternalUserId(1234, "Mustermann", "Max"), Set.of("+43 (600) 1234", "+43 (600) 1235"));
         assertThat(externalUsers, contains(expectedUser));
     }
 
@@ -58,7 +58,7 @@ public class NiuExternalUserParserTest {
 
         Collection<ExternalUser> externalUsers = sut.parseExternalUsers(validCsv);
 
-        ExternalUser expectedUser = new ExternalUser(new ExternalUserId(1234, "Mustermann", "Max"), ImmutableSet.of("+43 (600) 1234"));
+        ExternalUser expectedUser = new ExternalUser(new ExternalUserId(1234, "Mustermann", "Max"), Set.of("+43 (600) 1234"));
         assertThat(externalUsers, contains(expectedUser));
     }
 }

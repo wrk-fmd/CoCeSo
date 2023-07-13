@@ -3,6 +3,7 @@ package at.wrk.coceso.specification;
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Patient;
 import at.wrk.coceso.entity.Patient_;
+
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;

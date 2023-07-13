@@ -6,7 +6,6 @@
 
 package at.wrk.coceso.plugin.geobroker.contract.broker;
 
-import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -53,12 +52,12 @@ public class GeoBrokerUnit implements Serializable {
         this.id = Objects.requireNonNull(id, "Unit identifier must not be null.");
         this.name = Objects.requireNonNull(name, "Display name of unit must not be null.");
         this.token = Objects.requireNonNull(token, "Token of unit must not be null.");
-        this.units = units == null ? ImmutableList.of() : ImmutableList.copyOf(units);
-        this.incidents = incidents == null ? ImmutableList.of() : ImmutableList.copyOf(incidents);
+        this.units = units == null ? List.of() : List.copyOf(units);
+        this.incidents = incidents == null ? List.of() : List.copyOf(incidents);
         this.lastPoint = lastPoint;
         this.targetPoint = targetPoint;
         this.isAvailableForDispatching = isAvailableForDispatching;
-        this.availableOneTimeActions = availableOneTimeActions == null ? ImmutableList.of() : ImmutableList.copyOf(availableOneTimeActions);
+        this.availableOneTimeActions = availableOneTimeActions == null ? List.of() : List.copyOf(availableOneTimeActions);
     }
 
     public String getId() {

@@ -5,13 +5,14 @@ import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.enums.UnitType;
-import java.util.Collection;
-import java.util.List;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.Collection;
+import java.util.List;
 
 @Repository
 public interface UnitRepository extends JpaRepository<Unit, Integer> {

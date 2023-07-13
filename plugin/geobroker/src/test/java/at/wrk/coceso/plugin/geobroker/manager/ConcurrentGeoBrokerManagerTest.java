@@ -13,10 +13,11 @@ import at.wrk.coceso.plugin.geobroker.rest.GeoBrokerUnitPublisher;
 import at.wrk.coceso.plugin.geobroker.utils.CachedIncidents;
 import at.wrk.coceso.plugin.geobroker.utils.GeoBrokerUnits;
 import at.wrk.coceso.plugin.geobroker.utils.Strings;
-import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Map;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -50,7 +51,7 @@ public class ConcurrentGeoBrokerManagerTest {
     public void updateUnit_publishUpdate() {
         GeoBrokerUnit updatedUnit = GeoBrokerUnits.random();
 
-        sut.unitUpdated(new CachedUnit(updatedUnit, ImmutableMap.of(), 21, UnitType.Portable, 1));
+        sut.unitUpdated(new CachedUnit(updatedUnit, Map.of(), 21, UnitType.Portable, 1));
 
         verify(unitPublisher).unitUpdated(any(GeoBrokerUnit.class));
     }
@@ -98,10 +99,10 @@ public class ConcurrentGeoBrokerManagerTest {
         String externalUnitId = randomString();
         GeoBrokerUnit unit = GeoBrokerUnits.random(externalUnitId);
 
-        sut.unitUpdated(new CachedUnit(unit, ImmutableMap.of(), 21, UnitType.Portable, 1));
+        sut.unitUpdated(new CachedUnit(unit, Map.of(), 21, UnitType.Portable, 1));
         reset(unitPublisher);
 
-        sut.incidentUpdated(CachedIncidents.random(ImmutableMap.of(externalUnitId, TaskState.ZBO)));
+        sut.incidentUpdated(CachedIncidents.random(Map.of(externalUnitId, TaskState.ZBO)));
 
         verify(unitPublisher).unitUpdated(any());
     }

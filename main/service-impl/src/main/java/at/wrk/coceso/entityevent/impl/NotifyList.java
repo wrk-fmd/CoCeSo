@@ -7,7 +7,6 @@ import at.wrk.coceso.entityevent.EntityEventFactory;
 import at.wrk.coceso.entityevent.EntityEventHandler;
 import at.wrk.coceso.repository.UnitRepository;
 import at.wrk.coceso.utils.Initializer;
-import com.google.common.collect.ImmutableList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -80,7 +79,7 @@ public class NotifyList {
   }
 
   private static <T> List<T> copyCollectionAndClear(final Collection<T> sourceCollection) {
-    List<T> immutableList = ImmutableList.copyOf(sourceCollection);
+    List<T> immutableList = List.copyOf(sourceCollection);
     sourceCollection.clear();
     return immutableList;
   }

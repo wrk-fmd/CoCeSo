@@ -1,8 +1,9 @@
 package at.wrk.coceso.entity.types;
 
+import org.hibernate.HibernateException;
+
 import java.util.HashMap;
 import java.util.Map;
-import org.hibernate.HibernateException;
 
 public class MapUserType extends JsonUserType<Map> {
 

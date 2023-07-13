@@ -10,7 +10,6 @@ import at.wrk.coceso.repository.UnitRepository;
 import at.wrk.coceso.service.ConcernService;
 import at.wrk.coceso.service.ContainerService;
 import at.wrk.coceso.utils.Initializer;
-import com.google.common.collect.ImmutableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +45,7 @@ class ContainerServiceImpl implements ContainerService {
       containers = getAll(concern);
     } else {
       LOG.info("Failed to read concern for concernId '{}'.", concernId);
-      containers =  ImmutableList.of();
+      containers =  List.of();
     }
 
     return containers;

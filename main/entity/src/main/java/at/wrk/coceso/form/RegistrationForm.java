@@ -2,8 +2,9 @@ package at.wrk.coceso.form;
 
 import at.wrk.coceso.entity.Patient;
 import at.wrk.coceso.entity.enums.Naca;
-import java.time.LocalDate;
 import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDate;
 
 public class RegistrationForm {
 

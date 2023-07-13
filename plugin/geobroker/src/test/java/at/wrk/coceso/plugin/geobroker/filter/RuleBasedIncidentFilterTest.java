@@ -6,13 +6,14 @@ import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.plugin.geobroker.data.CachedIncident;
 import at.wrk.coceso.plugin.geobroker.utils.GeoBrokerIncidents;
 import at.wrk.coceso.plugin.geobroker.utils.GeoBrokerPoints;
-import com.google.common.collect.ImmutableMap;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import org.hamcrest.MatcherAssert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.Map;
 
 import static org.hamcrest.Matchers.equalTo;
 
@@ -30,7 +31,7 @@ public class RuleBasedIncidentFilterTest {
     public void supportedIncidentType_returnTrue(final IncidentType incidentType) {
         CachedIncident incident = new CachedIncident(
                 GeoBrokerIncidents.random(),
-                ImmutableMap.of("unit1", TaskState.ZBO, "unit2", TaskState.ABO),
+                Map.of("unit1", TaskState.ZBO, "unit2", TaskState.ABO),
                 GeoBrokerPoints.randomPoint(),
                 42,
                 7,
@@ -48,7 +49,7 @@ public class RuleBasedIncidentFilterTest {
     public void notSupportedIncidentType_returnFalse(final IncidentType incidentType) {
         CachedIncident incident = new CachedIncident(
                 GeoBrokerIncidents.random(),
-                ImmutableMap.of("unit1", TaskState.ZBO, "unit2", TaskState.ABO),
+                Map.of("unit1", TaskState.ZBO, "unit2", TaskState.ABO),
                 GeoBrokerPoints.randomPoint(),
                 42,
                 7,
@@ -66,7 +67,7 @@ public class RuleBasedIncidentFilterTest {
     public void notDone_returnTrue(final IncidentState incidentState) {
         CachedIncident incident = new CachedIncident(
                 GeoBrokerIncidents.random(),
-                ImmutableMap.of("unit1", TaskState.ZBO, "unit2", TaskState.ABO),
+                Map.of("unit1", TaskState.ZBO, "unit2", TaskState.ABO),
                 GeoBrokerPoints.randomPoint(),
                 42,
                 7,
@@ -83,7 +84,7 @@ public class RuleBasedIncidentFilterTest {
     public void done_returnFalse() {
         CachedIncident incident = new CachedIncident(
                 GeoBrokerIncidents.random(),
-                ImmutableMap.of("unit1", TaskState.ZBO, "unit2", TaskState.ABO),
+                Map.of("unit1", TaskState.ZBO, "unit2", TaskState.ABO),
                 GeoBrokerPoints.randomPoint(),
                 42,
                 7,
@@ -100,7 +101,7 @@ public class RuleBasedIncidentFilterTest {
     public void emptyAssignedUnitsAndOpen_returnTrue() {
         CachedIncident incident = new CachedIncident(
                 GeoBrokerIncidents.random(),
-                ImmutableMap.of(),
+                Map.of(),
                 GeoBrokerPoints.randomPoint(),
                 42,
                 7,
@@ -117,7 +118,7 @@ public class RuleBasedIncidentFilterTest {
     public void emptyAssignedUnitsAndInProgress_returnFalse() {
         CachedIncident incident = new CachedIncident(
                 GeoBrokerIncidents.random(),
-                ImmutableMap.of(),
+                Map.of(),
                 GeoBrokerPoints.randomPoint(),
                 42,
                 7,
@@ -135,7 +136,7 @@ public class RuleBasedIncidentFilterTest {
     public void unitsNoLongerAtIncidentAndInProgress_returnFalse(final TaskState taskState) {
         CachedIncident incident = new CachedIncident(
                 GeoBrokerIncidents.random(),
-                ImmutableMap.of("unit1", taskState),
+                Map.of("unit1", taskState),
                 GeoBrokerPoints.randomPoint(),
                 42,
                 7,
@@ -153,7 +154,7 @@ public class RuleBasedIncidentFilterTest {
     public void unitsStillAtIncidentAndInProgress_returnTrue(final TaskState taskState) {
         CachedIncident incident = new CachedIncident(
                 GeoBrokerIncidents.random(),
-                ImmutableMap.of("unit1", taskState),
+                Map.of("unit1", taskState),
                 GeoBrokerPoints.randomPoint(),
                 42,
                 7,

@@ -6,17 +6,18 @@ import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.plugin.geobroker.contract.broker.GeoBrokerPoint;
 import at.wrk.coceso.plugin.geobroker.data.CachedIncident;
 import at.wrk.coceso.plugin.geobroker.utils.GeoBrokerIncidents;
-import com.google.common.collect.ImmutableMap;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Map;
+
 import static at.wrk.coceso.plugin.geobroker.utils.GeoBrokerPoints.randomPoint;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
 
 @RunWith(JUnitParamsRunner.class)
 public class TargetPointExtractorTest {
@@ -99,7 +100,7 @@ public class TargetPointExtractorTest {
     private CachedIncident createIncidentOfType(final IncidentType incidentType) {
         return new CachedIncident(
                 GeoBrokerIncidents.random(),
-                ImmutableMap.of(),
+                Map.of(),
                 randomPoint(),
                 1,
                 7,

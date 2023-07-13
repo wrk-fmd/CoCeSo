@@ -1,6 +1,7 @@
 package at.wrk.coceso.plugins.vienna;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Arrays;
 
 class AddressInfoList {

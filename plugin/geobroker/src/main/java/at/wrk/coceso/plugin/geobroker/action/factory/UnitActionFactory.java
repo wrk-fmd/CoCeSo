@@ -6,18 +6,17 @@ import at.wrk.coceso.plugin.geobroker.action.NextStateUnitAction;
 import at.wrk.coceso.plugin.geobroker.action.UnitAction;
 import at.wrk.coceso.plugin.geobroker.data.CachedIncident;
 import at.wrk.coceso.plugin.geobroker.data.CachedUnit;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class UnitActionFactory {
-    private static final Map<TaskState, TaskState> TASK_STATES_OF_TASK_OR_TRANSPORT = ImmutableMap.of(
+    private static final Map<TaskState, TaskState> TASK_STATES_OF_TASK_OR_TRANSPORT = Map.of(
             TaskState.Assigned, TaskState.ZBO,
             TaskState.ZBO, TaskState.ABO,
             TaskState.ABO, TaskState.ZAO,
@@ -25,7 +24,7 @@ public class UnitActionFactory {
             TaskState.AAO, TaskState.Detached
     );
 
-    private static final Map<TaskState, TaskState> TASK_STATES_OF_RELOCATION = ImmutableMap.of(
+    private static final Map<TaskState, TaskState> TASK_STATES_OF_RELOCATION = Map.of(
             TaskState.Assigned, TaskState.ZAO,
             TaskState.ZAO, TaskState.AAO,
             TaskState.AAO, TaskState.Detached
@@ -46,9 +45,9 @@ public class UnitActionFactory {
                     .map(incident -> buildNextStateAction(cachedUnit, incident))
                     .filter(Optional::isPresent)
                     .map(Optional::get)
-                    .collect(ImmutableList.toImmutableList());
+                    .collect(Collectors.toUnmodifiableList());
         } else {
-            actions = ImmutableList.of();
+            actions = List.of();
         }
 
         return actions;

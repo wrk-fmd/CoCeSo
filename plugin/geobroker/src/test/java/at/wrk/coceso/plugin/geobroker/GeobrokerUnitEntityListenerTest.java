@@ -7,13 +7,13 @@ import at.wrk.coceso.plugin.geobroker.external.ExternalUnitIdGenerator;
 import at.wrk.coceso.plugin.geobroker.external.GeoBrokerUnitFactory;
 import at.wrk.coceso.plugin.geobroker.loader.UnitLoader;
 import at.wrk.coceso.plugin.geobroker.manager.GeoBrokerManager;
-import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -68,7 +68,7 @@ public class GeobrokerUnitEntityListenerTest {
         CachedUnit geoBrokerUnit = mock(CachedUnit.class);
         when(unitFactory.createExternalUnit(unit)).thenReturn(geoBrokerUnit);
 
-        when(unitLoader.loadAllUnitsOfActiveConcerns()).thenReturn(ImmutableSet.of(unit));
+        when(unitLoader.loadAllUnitsOfActiveConcerns()).thenReturn(Set.of(unit));
 
         sut.onContextRefreshed(null);
 

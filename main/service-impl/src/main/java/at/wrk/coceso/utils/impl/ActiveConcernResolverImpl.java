@@ -6,7 +6,6 @@ import at.wrk.coceso.service.ConcernService;
 import at.wrk.coceso.utils.ActiveConcern;
 import at.wrk.coceso.utils.ActiveConcernResolver;
 import at.wrk.coceso.utils.Initializer;
-import com.google.common.collect.ImmutableSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
@@ -24,7 +23,7 @@ import java.util.Set;
 @Component
 class ActiveConcernResolverImpl implements ActiveConcernResolver {
 
-    private static final Set<Class<?>> SUPPORTED_PARAMETER_TYPES = ImmutableSet.of(Concern.class, Integer.class, int.class);
+    private static final Set<Class<?>> SUPPORTED_PARAMETER_TYPES = Set.of(Concern.class, Integer.class, int.class);
 
     @Autowired
     private ConcernService concernService;

@@ -13,7 +13,15 @@
 })
 package at.wrk.coceso.entity;
 
-import at.wrk.coceso.entity.enums.*;
+import at.wrk.coceso.entity.enums.Authority;
+import at.wrk.coceso.entity.enums.IncidentState;
+import at.wrk.coceso.entity.enums.IncidentType;
+import at.wrk.coceso.entity.enums.LogEntryType;
+import at.wrk.coceso.entity.enums.Naca;
+import at.wrk.coceso.entity.enums.Sex;
+import at.wrk.coceso.entity.enums.TaskState;
+import at.wrk.coceso.entity.enums.UnitState;
+import at.wrk.coceso.entity.enums.UnitType;
 import at.wrk.coceso.entity.helper.Changes;
 import at.wrk.coceso.entity.point.Point;
 import at.wrk.coceso.entity.types.ChangesUserType;

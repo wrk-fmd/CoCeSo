@@ -1,7 +1,6 @@
 package at.wrk.coceso.plugins.vienna.util;
 
 import at.wrk.geocode.autocomplete.CSVRecordParser;
-import com.google.common.collect.ImmutableList;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -29,7 +28,7 @@ public class ViennaStreetParser implements CSVRecordParser<String> {
         final String districts = record.get(DISTRICT_COLUMN_NAME).trim();
 
         if (districts.length() == 0) {
-            return ImmutableList.of(street);
+            return List.of(street);
         }
 
         return Arrays.stream(districts.split("\\|"))
@@ -37,6 +36,6 @@ public class ViennaStreetParser implements CSVRecordParser<String> {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .map(code -> street + "\n" + code + " Wien")
-                .collect(Collectors.toList());
+                .collect(Collectors.toUnmodifiableList());
     }
 }

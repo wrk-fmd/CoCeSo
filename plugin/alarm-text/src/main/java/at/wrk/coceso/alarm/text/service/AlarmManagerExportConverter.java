@@ -7,7 +7,6 @@ import at.wrk.coceso.alarm.text.api.export.alarm.manager.TetraContact;
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.repository.UnitRepository;
-import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -45,25 +44,25 @@ public class AlarmManagerExportConverter {
         Map<String, List<String>> validTargetsOfUnit = unitTargetFactory.getValidTargetsOfUnitStream(Stream.of(unit));
 
         List<SmsContact> smsContacts = validTargetsOfUnit
-                .getOrDefault("tel", ImmutableList.of())
+                .getOrDefault("tel", List.of())
                 .stream()
                 .map(smsContact -> new SmsContact(unit.getCall(), smsContact))
-                .collect(Collectors.toList());
+                .collect(Collectors.toUnmodifiableList());
 
         List<TetraContact> tetraContacts = validTargetsOfUnit
-                .getOrDefault("tetra", ImmutableList.of())
+                .getOrDefault("tetra", List.of())
                 .stream()
                 .map(tetraContact -> new TetraContact(unit.getCall(), tetraContact))
-                .collect(Collectors.toList());
+                .collect(Collectors.toUnmodifiableList());
 
         return new AlarmManagerUnit(unit.getId().toString(), unit.getCall(), analogRadioIds, smsContacts, tetraContacts);
     }
 
     private List<AnalogRadioContact> getAnalogRadioIds(final Unit unit) {
-        ImmutableList<AnalogRadioContact> analogRadioContacts = ImmutableList.of();
+        List<AnalogRadioContact> analogRadioContacts = List.of();
         String ani = unit.getAni();
         if (StringUtils.isNotBlank(ani) && !ani.startsWith("tel") && !ani.startsWith("tetra")) {
-            analogRadioContacts = ImmutableList.of(new AnalogRadioContact(ani));
+            analogRadioContacts = List.of(new AnalogRadioContact(ani));
         }
 
         return analogRadioContacts;

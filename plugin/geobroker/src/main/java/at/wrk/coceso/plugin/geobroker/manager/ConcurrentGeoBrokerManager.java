@@ -13,8 +13,6 @@ import at.wrk.coceso.plugin.geobroker.external.TargetPointExtractor;
 import at.wrk.coceso.plugin.geobroker.filter.IncidentFilter;
 import at.wrk.coceso.plugin.geobroker.rest.GeoBrokerIncidentPublisher;
 import at.wrk.coceso.plugin.geobroker.rest.GeoBrokerUnitPublisher;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -132,11 +130,11 @@ public class ConcurrentGeoBrokerManager implements GeoBrokerManager {
 
     @Override
     public List<CachedUnit> getAllUnitsOfConcern(final int concernId) {
-        return ImmutableSet.copyOf(unitCache.values())
+        return Set.copyOf(unitCache.values())
                 .stream()
                 .filter(u -> u.getConcernId() == concernId)
                 .sorted(Comparator.comparingInt(CachedUnit::getUnitId))
-                .collect(Collectors.toList());
+                .collect(Collectors.toUnmodifiableList());
     }
 
     private void updateAllOfficerUnits(final int concernId) {
@@ -176,7 +174,7 @@ public class ConcurrentGeoBrokerManager implements GeoBrokerManager {
     private CachedUnit updateCachedUnit(final CachedUnit unit) {
         List<String> assignedGeoBrokerUnitIds;
         List<String> assignedGeoBrokerIncidentIds;
-        List<String> directlyAssignedIncidentIds = ImmutableList.copyOf(unit.getIncidentsWithState().keySet());
+        List<String> directlyAssignedIncidentIds = List.copyOf(unit.getIncidentsWithState().keySet());
 
         if (showAllUnitsForOfficers && Objects.equals(unit.getUnitType(), UnitType.Officer)) {
             // Providing all units and incidents of the same concern for Officer-Unit.
@@ -267,7 +265,7 @@ public class ConcurrentGeoBrokerManager implements GeoBrokerManager {
         return Optional.ofNullable(incidentCache.get(incidentId))
                 .map(CachedIncident::getAssignedExternalUnitIds)
                 .map(Map::keySet)
-                .orElse(ImmutableSet.of())
+                .orElse(Set.of())
                 .stream();
     }
 

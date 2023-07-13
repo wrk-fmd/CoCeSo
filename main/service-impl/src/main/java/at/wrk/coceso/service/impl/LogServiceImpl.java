@@ -13,7 +13,6 @@ import at.wrk.coceso.entity.helper.Changes;
 import at.wrk.coceso.repository.LogRepository;
 import at.wrk.coceso.service.LogService;
 import at.wrk.coceso.utils.AuthenticatedUserProvider;
-import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +37,7 @@ class LogServiceImpl implements LogService {
     private final static Sort TIMESTAMP_DESCENDING = Sort.by(Sort.Direction.DESC, "timestamp");
     private final static Sort TIMESTAMP_ASCENDING = Sort.by(Sort.Direction.ASC, "timestamp");
 
-    private final static Set<LogEntryType> OVERVIEW_ENTRY_TYPE = ImmutableSet.of(
+    private final static Set<LogEntryType> OVERVIEW_ENTRY_TYPE = Set.of(
             LogEntryType.UNIT_ASSIGN,
             LogEntryType.UNIT_DETACH,
             LogEntryType.UNIT_AUTO_DETACH,

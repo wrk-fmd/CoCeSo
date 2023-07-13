@@ -4,7 +4,6 @@ import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.plugin.geobroker.contract.broker.GeoBrokerIncident;
 import at.wrk.coceso.plugin.geobroker.data.CachedIncident;
-import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -57,7 +56,7 @@ public class ExternalIncidentFactory implements GeoBrokerIncidentFactory {
                     .stream()
                     .collect(toMap(entry -> unitIdGenerator.generateExternalUnitId(entry.getKey(), concernId), Map.Entry::getValue));
         } else {
-            assignedUnitIds = ImmutableMap.of();
+            assignedUnitIds = Map.of();
         }
 
         Map<String, String> externalAssignedUnitsMap = assignedUnitIds

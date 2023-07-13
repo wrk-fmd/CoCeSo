@@ -6,7 +6,6 @@ import at.wrk.coceso.plugin.geobroker.action.context.ActionRunnerContext;
 import at.wrk.coceso.plugin.geobroker.action.factory.ActionUrlFactory;
 import at.wrk.coceso.plugin.geobroker.contract.broker.OneTimeAction;
 import at.wrk.coceso.plugin.geobroker.contract.ota.api.ResultCode;
-import com.google.common.collect.ImmutableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +17,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
@@ -42,7 +42,7 @@ public class ConcurrentOneTimeActionManager implements OneTimeActionManager {
 
     @Override
     public synchronized List<OneTimeAction> registerActions(final String geoBrokerUnitId, final List<UnitAction> updatedActions) {
-        List<UnitAction> oldActions = registeredUnitActions.getOrDefault(geoBrokerUnitId, ImmutableList.of());
+        List<UnitAction> oldActions = registeredUnitActions.getOrDefault(geoBrokerUnitId, List.of());
         Stream<UnitAction> removedActions = oldActions
                 .stream()
                 .filter(action -> !updatedActions.contains(action));
@@ -71,7 +71,7 @@ public class ConcurrentOneTimeActionManager implements OneTimeActionManager {
                 .stream()
                 .map(executableActionMap::get)
                 .map(action -> action.getOneTimeAction(actionUrlFactory))
-                .collect(ImmutableList.toImmutableList());
+                .collect(Collectors.toUnmodifiableList());
     }
 
     @Override

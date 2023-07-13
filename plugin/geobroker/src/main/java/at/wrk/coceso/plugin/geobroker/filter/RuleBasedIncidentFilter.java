@@ -4,7 +4,6 @@ import at.wrk.coceso.entity.enums.IncidentState;
 import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.plugin.geobroker.data.CachedIncident;
-import com.google.common.collect.ImmutableList;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -12,11 +11,11 @@ import java.util.List;
 @Component
 public class RuleBasedIncidentFilter implements IncidentFilter {
 
-    private static final List<IncidentType> SUPPORTED_INCIDENT_TYPES = ImmutableList.of(
+    private static final List<IncidentType> SUPPORTED_INCIDENT_TYPES = List.of(
             IncidentType.Task,
             IncidentType.Transport,
             IncidentType.Relocation);
-    private static final List<TaskState> RELEVANT_TASK_STATES = ImmutableList.of(
+    private static final List<TaskState> RELEVANT_TASK_STATES = List.of(
             TaskState.Assigned,
             TaskState.ZBO,
             TaskState.ABO,

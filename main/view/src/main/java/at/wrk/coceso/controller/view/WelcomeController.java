@@ -6,7 +6,6 @@ import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.User;
 import at.wrk.coceso.service.UserService;
 import at.wrk.coceso.utils.Initializer;
-import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +30,7 @@ import java.util.Set;
 public class WelcomeController {
     private final static Logger LOG = LoggerFactory.getLogger(WelcomeController.class);
 
-    private static final Set<Integer> ALLOWED_ERRORS = ImmutableSet.of(1);
+    private static final Set<Integer> ALLOWED_ERRORS = Set.of(1);
 
     private final UserService userService;
     private final DeploymentStatusProvider deploymentStatusProvider;

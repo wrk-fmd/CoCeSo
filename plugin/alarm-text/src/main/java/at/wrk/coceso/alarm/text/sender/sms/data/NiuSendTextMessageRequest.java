@@ -1,6 +1,5 @@
 package at.wrk.coceso.alarm.text.sender.sms.data;
 
-import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -18,7 +17,7 @@ public class NiuSendTextMessageRequest implements SendTextMessageRequest {
     private final boolean waitForDelivery;
 
     public NiuSendTextMessageRequest(final List<String> numbers, final String message, final boolean waitForDelivery) {
-        this.numbers = numbers == null ? ImmutableList.of(): ImmutableList.copyOf(numbers);
+        this.numbers = numbers == null ? List.of(): List.copyOf(numbers);
         this.message = message;
         this.waitForDelivery = waitForDelivery;
     }

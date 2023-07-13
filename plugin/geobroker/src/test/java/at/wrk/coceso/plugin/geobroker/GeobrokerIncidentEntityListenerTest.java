@@ -6,9 +6,10 @@ import at.wrk.coceso.plugin.geobroker.external.ExternalIncidentIdGenerator;
 import at.wrk.coceso.plugin.geobroker.external.GeoBrokerIncidentFactory;
 import at.wrk.coceso.plugin.geobroker.loader.IncidentLoader;
 import at.wrk.coceso.plugin.geobroker.manager.GeoBrokerManager;
-import com.google.common.collect.ImmutableSet;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Set;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -46,7 +47,7 @@ public class GeobrokerIncidentEntityListenerTest {
         CachedIncident cachedIncident = mock(CachedIncident.class);
         when(incidentFactory.createExternalIncident(incident)).thenReturn(cachedIncident);
 
-        when(incidentLoader.loadAllIncidentsOfActiveConcerns()).thenReturn(ImmutableSet.of(incident));
+        when(incidentLoader.loadAllIncidentsOfActiveConcerns()).thenReturn(Set.of(incident));
 
         sut.onContextRefreshed(null);
 

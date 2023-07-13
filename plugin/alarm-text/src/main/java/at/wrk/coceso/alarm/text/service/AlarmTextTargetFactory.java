@@ -4,7 +4,6 @@ import at.wrk.coceso.alarm.text.api.AlarmTextType;
 import at.wrk.coceso.entity.Incident;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.service.IncidentService;
-import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +28,7 @@ public class AlarmTextTargetFactory {
     }
 
     public Map<String, List<String>> createTargetList(final int incidentId, final AlarmTextType type) {
-        ImmutableMap<String, List<String>> targets = ImmutableMap.of();
+        Map<String, List<String>> targets = Map.of();
         Incident incident = incidentService.getById(incidentId);
         if (incident != null) {
             Stream<Unit> unitStream = incident.getUnits()
@@ -40,7 +39,7 @@ public class AlarmTextTargetFactory {
             }
 
             Map<String, List<String>> validTargets = unitTargetFactory.getValidTargetsOfUnitStream(unitStream);
-            targets = ImmutableMap.copyOf(validTargets);
+            targets = Map.copyOf(validTargets);
         }
 
         return targets;

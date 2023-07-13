@@ -1,7 +1,8 @@
 package at.wrk.coceso.plugin.geobroker.utils;
 
 import at.wrk.coceso.plugin.geobroker.contract.broker.GeoBrokerIncident;
-import com.google.common.collect.ImmutableMap;
+
+import java.util.Map;
 
 import static at.wrk.coceso.plugin.geobroker.utils.GeoBrokerPoints.randomPoint;
 import static at.wrk.coceso.plugin.geobroker.utils.Strings.randomString;
@@ -19,6 +20,6 @@ public final class GeoBrokerIncidents {
                 randomString(),
                 randomPoint(),
                 randomPoint(),
-                ImmutableMap.of("externalUnitId-42", "ZBO"));
+                Map.of("externalUnitId-42", "ZBO"));
     }
 }

@@ -2,7 +2,6 @@ package at.wrk.coceso.alarm.text.sender.sms.data;
 
 import at.wrk.coceso.alarm.text.configuration.AlarmTextConfiguration;
 import at.wrk.coceso.utils.HttpEntities;
-import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +17,7 @@ import java.util.Optional;
 public class SendTextMessageRequestFactory {
     private static final Logger LOG = LoggerFactory.getLogger(SendTextMessageRequestFactory.class);
 
-    private final static Map<String, SmsGatewayType> TYPE_MAPPING = ImmutableMap.of(
+    private final static Map<String, SmsGatewayType> TYPE_MAPPING = Map.of(
             AlarmTextConfiguration.DEFAULT_SMS_GATEWAY_TYPE, SmsGatewayType.GAMMU,
             "internal", SmsGatewayType.INTERNAL,
             "bearer", SmsGatewayType.INTERNAL_BEARER_TOKEN
