@@ -36,7 +36,7 @@ public class AsyncTetraAlarmTextSender implements AlarmTextSender {
         this.gson = gson;
         this.asyncRestTemplate = asyncRestTemplate;
         this.callback = callback;
-        this.gatewayUrl = buildSendUrl(alarmTextConfiguration.getTetraGatewayUrlString());
+        this.gatewayUrl = buildSendUrl(alarmTextConfiguration.getTetraGatewayUri());
     }
 
     private static URI buildSendUrl(final URI alarmTextGatewayUrl) {

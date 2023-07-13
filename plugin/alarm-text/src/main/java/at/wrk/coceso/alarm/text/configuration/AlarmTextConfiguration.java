@@ -15,31 +15,31 @@ public class AlarmTextConfiguration {
     private static final Logger LOG = LoggerFactory.getLogger(AlarmTextConfiguration.class);
     public static final String DEFAULT_SMS_GATEWAY_TYPE = "gammu";
 
-    private final URI smsGatewayUrl;
+    private final URI smsGatewayUri;
     private final String smsGatewayType;
-    private final URI tetraGatewayUrlString;
+    private final URI tetraGatewayUri;
     private final String validPrefix;
     private final String defaultCountryCode;
     private final String authenticationToken;
 
     public AlarmTextConfiguration(
-            @Value("${alarm.text.gateway.sms.uri}") final String smsGatewayUrl,
-            @Value("${alarm.text.gateway.sms.type}") final String smsGatewayType,
-            @Value("${alarm.text.gateway.tetra.uri}") final String tetraGatewayUrlString,
-            @Value("${alarm.text.gateway.phone.number.prefix}") final String validPhonePrefix,
-            @Value("${alarm.text.gateway.phone.number.default.country.code}") final String defaultCountryCode,
-            @Value("${alarm.text.gateway.authenticationToken}") final String authenticationToken) {
-        this.smsGatewayUrl = parseUriFromString(smsGatewayUrl);
+            @Value("${alarm.text.gateway.sms.uri:}") final String smsGatewayUriString,
+            @Value("${alarm.text.gateway.sms.type:}") final String smsGatewayType,
+            @Value("${alarm.text.gateway.tetra.uri:}") final String tetraGatewayUriString,
+            @Value("${alarm.text.gateway.phone.number.prefix:}") final String validPhonePrefix,
+            @Value("${alarm.text.gateway.phone.number.default.country.code:}") final String defaultCountryCode,
+            @Value("${alarm.text.gateway.authenticationToken:}") final String authenticationToken) {
+        this.smsGatewayUri = parseHttpUriFromString(smsGatewayUriString);
         this.smsGatewayType = StringUtils.isNotBlank(smsGatewayType) ? smsGatewayType : DEFAULT_SMS_GATEWAY_TYPE;
-        this.tetraGatewayUrlString = parseUriFromString(tetraGatewayUrlString);
-        this.validPrefix = trimIfNotNull(validPhonePrefix);
-        this.defaultCountryCode = trimIfNotNull(defaultCountryCode);
-        this.authenticationToken = trimIfNotNull(authenticationToken);
+        this.tetraGatewayUri = parseHttpUriFromString(tetraGatewayUriString);
+        this.validPrefix = StringUtils.trimToNull(validPhonePrefix);
+        this.defaultCountryCode = StringUtils.trimToNull(defaultCountryCode);
+        this.authenticationToken = StringUtils.trimToNull(authenticationToken);
     }
 
     @Nullable
-    public URI getSmsGatewayUrl() {
-        return smsGatewayUrl;
+    public URI getSmsGatewayUri() {
+        return smsGatewayUri;
     }
 
     public String getSmsGatewayType() {
@@ -47,8 +47,8 @@ public class AlarmTextConfiguration {
     }
 
     @Nullable
-    public URI getTetraGatewayUrlString() {
-        return tetraGatewayUrlString;
+    public URI getTetraGatewayUri() {
+        return tetraGatewayUri;
     }
 
     @Nullable
@@ -65,20 +65,24 @@ public class AlarmTextConfiguration {
         return authenticationToken;
     }
 
-    private static URI parseUriFromString(final String urlString) {
+    private static URI parseHttpUriFromString(final String uriString) {
         URI parsedUri = null;
-        if (urlString != null) {
+        String trimmedUriString = StringUtils.trimToNull(uriString);
+        if (trimmedUriString != null) {
             try {
-                parsedUri = new URI(urlString.trim());
+                parsedUri = new URI(trimmedUriString);
             } catch (URISyntaxException e) {
-                LOG.error("Invalid URL for alarm text gateway: '{}'", urlString);
+                LOG.error("Invalid URI for alarm text gateway: '{}'", uriString);
             }
         }
 
-        return parsedUri;
-    }
+        if (parsedUri != null
+                && !StringUtils.equalsIgnoreCase(parsedUri.getScheme(), "https")
+                && !StringUtils.equalsIgnoreCase(parsedUri.getScheme(), "http")) {
+            LOG.warn("Configured URI is not a valid HTTP(S) URI: {}.", uriString);
+            parsedUri = null;
+        }
 
-    private static String trimIfNotNull(final String inputString) {
-        return inputString == null ? null : inputString.trim();
+        return parsedUri;
     }
 }

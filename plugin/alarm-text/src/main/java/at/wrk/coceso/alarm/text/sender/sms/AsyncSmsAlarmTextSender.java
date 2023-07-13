@@ -32,7 +32,7 @@ public class AsyncSmsAlarmTextSender implements AlarmTextSender {
             final AsyncRestTemplate asyncRestTemplate,
             final SmsSendAlarmTextCallback callback,
             final SendTextMessageRequestFactory sendTextMessageRequestFactory) {
-        this.gatewayUrl = alarmTextConfiguration.getSmsGatewayUrl();
+        this.gatewayUrl = alarmTextConfiguration.getSmsGatewayUri();
         this.asyncRestTemplate = asyncRestTemplate;
         this.callback = callback;
         this.sendTextMessageRequestFactory = sendTextMessageRequestFactory;

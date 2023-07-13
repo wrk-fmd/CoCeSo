@@ -1,10 +1,11 @@
 package at.wrk.coceso.config;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 @Component
 public class AuthConfig {
@@ -23,8 +24,8 @@ public class AuthConfig {
   public AuthConfig(@Value("${auth.authUrl}") String authUrl, @Value("${auth.useAuthUrl}") Boolean useAuthUrl,
       @Value("${auth.firstUse}") Boolean firstUse) throws MalformedURLException {
     this.authUrl = new URL(authUrl);
-    this.useAuthUrl = useAuthUrl == null ? false : useAuthUrl;
-    this.firstUse = firstUse == null ? false : firstUse;
+    this.useAuthUrl = useAuthUrl != null && useAuthUrl;
+    this.firstUse = firstUse != null && firstUse;
   }
 
   public URL getAuthUrl() {
@@ -38,5 +39,4 @@ public class AuthConfig {
   public boolean isFirstUse() {
     return firstUse;
   }
-
 }

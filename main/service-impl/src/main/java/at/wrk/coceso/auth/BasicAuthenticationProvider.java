@@ -28,16 +28,16 @@ import java.util.Set;
 import static java.util.stream.Collectors.toSet;
 
 @Component
-class AuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
+class BasicAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AuthenticationProvider.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BasicAuthenticationProvider.class);
 
     private final AuthConfig config;
     private final UserService userService;
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public AuthenticationProvider(final AuthConfig config, final UserService userService, final BCryptPasswordEncoder passwordEncoder) {
+    public BasicAuthenticationProvider(final AuthConfig config, final UserService userService, final BCryptPasswordEncoder passwordEncoder) {
         this.config = config;
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
