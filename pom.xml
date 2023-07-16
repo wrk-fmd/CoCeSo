@@ -21,7 +21,7 @@
         <hibernate.version>5.2.18.Final</hibernate.version>
         <!-- Hibernate 5.2 ships with a non-Java-11 compatible version of javassist.
              This can be removed if the originally shippped version is 3.23.1 or higher. -->
-        <javassist.version>3.28.0-GA</javassist.version>
+        <javassist.version>3.29.2-GA</javassist.version>
         <hibernate.validator.version>5.4.3.Final</hibernate.validator.version>
         <hibernate.persistence.version>1.0.2.Final</hibernate.persistence.version>
         <jaxb.api.version>2.3.1</jaxb.api.version>
@@ -30,8 +30,8 @@
 
         <itextpdf.version>5.5.13.3</itextpdf.version>
 
-        <jackson.version>2.14.2</jackson.version>
-        <jackson.databind.version>2.14.2</jackson.databind.version>
+        <jackson.version>2.15.2</jackson.version>
+        <jackson.databind.version>2.15.2</jackson.databind.version>
         <com.fatboyindustrial.gson.javatime.serialisers>1.1.1</com.fatboyindustrial.gson.javatime.serialisers>
         <geojson-jackson.version>1.14</geojson-jackson.version>
 
@@ -41,7 +41,7 @@
         <jstl.version>1.2</jstl.version>
         <servlet.version>3.1.0</servlet.version>
 
-        <spring.version>5.3.26</spring.version>
+        <spring.version>5.3.29</spring.version>
         <spring.data.commons.version>2.6.10</spring.data.commons.version>
         <spring.data.jpa.version>2.6.3</spring.data.jpa.version>
         <spring.security.version>5.8.2</spring.security.version>
