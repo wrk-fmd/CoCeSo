@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 public class TetraIssiNormalizerTest {
     private TetraIssiNormalizer sut;

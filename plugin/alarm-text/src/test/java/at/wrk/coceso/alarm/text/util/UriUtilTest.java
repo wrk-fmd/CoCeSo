@@ -5,7 +5,7 @@ import org.junit.Test;
 import java.net.URI;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 public class UriUtilTest {
     @Test

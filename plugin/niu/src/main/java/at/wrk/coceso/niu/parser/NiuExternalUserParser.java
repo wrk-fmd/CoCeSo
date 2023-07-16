@@ -3,6 +3,8 @@ package at.wrk.coceso.niu.parser;
 import at.wrk.coceso.importer.ImportException;
 import at.wrk.coceso.niu.data.ExternalUser;
 import at.wrk.coceso.niu.data.ExternalUserId;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -17,7 +19,6 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Component
 public class NiuExternalUserParser implements ExternalUserParser {
@@ -28,7 +29,7 @@ public class NiuExternalUserParser implements ExternalUserParser {
     private static final String LASTNAME = "Nachname";
     private static final String FIRSTNAME = "Vorname";
     private static final String PERSONNELID = "DNr.";
-    private static final Set<String> TELEPHONE_FIELDS = Set.of(
+    private static final ImmutableSet<String> TELEPHONE_FIELDS = ImmutableSet.of(
             "Telefon geschäftlich",
             "Telefon privat",
             "Telefon WRK",
@@ -55,10 +56,11 @@ public class NiuExternalUserParser implements ExternalUserParser {
             throw new ImportException("Could not parse users CSV file", e);
         }
 
-        return StreamSupport.stream(records.spliterator(), false)
+        return ImmutableList.copyOf(records)
+                .stream()
                 .map(NiuExternalUserParser::getExternalUserFromCsvRecord)
                 .filter(Objects::nonNull)
-                .collect(Collectors.toUnmodifiableList());
+                .collect(Collectors.toList());
     }
 
     private static ExternalUser getExternalUserFromCsvRecord(final CSVRecord record) throws ImportException {

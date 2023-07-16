@@ -5,6 +5,7 @@ import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.plugin.geobroker.contract.broker.GeoBrokerUnit;
 import at.wrk.coceso.plugin.geobroker.data.CachedUnit;
+import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +78,6 @@ public class ExternalUnitFactory implements GeoBrokerUnitFactory {
 
     private Map<Incident, TaskState> emptyMapWithWarning() {
         LOG.warn("Assigned incidents for unit are null.");
-        return Map.of();
+        return ImmutableMap.of();
     }
 }

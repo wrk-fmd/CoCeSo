@@ -1,5 +1,6 @@
 package at.wrk.coceso.alarm.text.sender.sms.data;
 
+import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -19,7 +20,7 @@ public class GammuSendTextMessageRequest implements SendTextMessageRequest {
 
     public GammuSendTextMessageRequest(final String authenticationToken, final List<String> targetPhoneNumbers, final String messageContent) {
         this.authenticationToken = authenticationToken;
-        this.targetPhoneNumbers = targetPhoneNumbers == null ? List.of(): List.copyOf(targetPhoneNumbers);
+        this.targetPhoneNumbers = targetPhoneNumbers == null ? ImmutableList.of(): ImmutableList.copyOf(targetPhoneNumbers);
         this.messageContent = messageContent;
     }
 

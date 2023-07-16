@@ -3,9 +3,8 @@ package at.wrk.coceso.form;
 import at.wrk.coceso.entity.Patient;
 import at.wrk.coceso.entity.enums.Ambulance;
 import at.wrk.coceso.entity.enums.Naca;
-import org.hibernate.validator.constraints.NotBlank;
-
 import java.time.LocalDate;
+import org.hibernate.validator.constraints.NotBlank;
 
 public class TransportForm extends PostprocessingForm {
 

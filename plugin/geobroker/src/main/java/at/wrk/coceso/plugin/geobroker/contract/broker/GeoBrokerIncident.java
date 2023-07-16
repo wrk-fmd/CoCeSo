@@ -1,5 +1,6 @@
 package at.wrk.coceso.plugin.geobroker.contract.broker;
 
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -35,7 +36,7 @@ public class GeoBrokerIncident implements Serializable {
         this.info = info;
         this.location = location;
         this.destination = destination;
-        this.assignedUnits = assignedUnits == null ? Map.of() : Map.copyOf(assignedUnits);
+        this.assignedUnits = assignedUnits == null ? ImmutableMap.of() : ImmutableMap.copyOf(assignedUnits);
     }
 
     public String getId() {

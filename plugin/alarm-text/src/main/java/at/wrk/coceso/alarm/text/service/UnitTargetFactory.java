@@ -3,6 +3,8 @@ package at.wrk.coceso.alarm.text.service;
 import at.wrk.coceso.alarm.text.service.normalizer.NumberNormalizer;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.User;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,12 +39,12 @@ public class UnitTargetFactory {
         this.numberNormalizers = numberNormalizers
                 .stream()
                 .collect(toMap(NumberNormalizer::getSupportedUriSchema, Function.identity()));
-        this.supportedUriSchemas = Set.copyOf(
+        this.supportedUriSchemas = ImmutableSet.copyOf(
                 this.numberNormalizers
                         .keySet()
                         .stream()
                         .map(x -> x + ":")
-                        .collect(Collectors.toUnmodifiableSet())
+                        .collect(toSet())
         );
     }
 
@@ -66,7 +68,7 @@ public class UnitTargetFactory {
             contacts.addAll(splitAniTargets);
         }
 
-        return List.copyOf(contacts);
+        return ImmutableList.copyOf(contacts);
     }
 
     private Stream<TypedTargetNumber> streamContacts(final Collection<String> unvalidatedTargets) {

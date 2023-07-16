@@ -1,6 +1,7 @@
 package at.wrk.coceso.data;
 
 import at.wrk.coceso.entity.enums.Authority;
+import com.google.common.collect.ImmutableSet;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
@@ -27,7 +28,7 @@ public class AuthenticatedUser implements UserDetails {
         this.displayName = displayName;
         this.encodedPassword = encodedPassword;
         this.isEnabled = isEnabled;
-        this.grantedAuthorities = Set.copyOf(grantedAuthorities);
+        this.grantedAuthorities = ImmutableSet.copyOf(grantedAuthorities);
     }
 
     public int getUserId() {

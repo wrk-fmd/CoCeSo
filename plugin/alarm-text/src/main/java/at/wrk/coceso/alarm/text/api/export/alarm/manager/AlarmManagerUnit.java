@@ -1,6 +1,7 @@
 package at.wrk.coceso.alarm.text.api.export.alarm.manager;
 
 import at.wrk.coceso.contract.ToStringStyle;
+import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.List;
@@ -25,8 +26,8 @@ public class AlarmManagerUnit {
         this.tetraContacts = copyListOrEmpty(tetraContacts);
     }
 
-    private static <T> List<T> copyListOrEmpty(final List<T> nullableList) {
-        return nullableList == null ? List.of() : List.copyOf(nullableList);
+    private static <T> ImmutableList<T> copyListOrEmpty(final List<T> nullableList) {
+        return nullableList == null ? ImmutableList.of() : ImmutableList.copyOf(nullableList);
     }
 
     public String getId() {

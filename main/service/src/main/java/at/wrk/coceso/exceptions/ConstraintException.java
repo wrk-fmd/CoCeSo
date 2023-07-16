@@ -1,9 +1,8 @@
 package at.wrk.coceso.exceptions;
 
 import at.wrk.coceso.entity.enums.Errors;
-
-import javax.validation.ConstraintViolation;
 import java.util.Set;
+import javax.validation.ConstraintViolation;
 
 public class ConstraintException extends ErrorsException {
 

@@ -5,6 +5,7 @@ import at.wrk.coceso.data.AuthenticatedUser;
 import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.enums.Authority;
 import at.wrk.coceso.service.UserService;
+import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +24,8 @@ import java.net.HttpURLConnection;
 import java.util.Base64;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toSet;
 
 @Component
 class BasicAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
@@ -42,10 +44,9 @@ class BasicAuthenticationProvider extends AbstractUserDetailsAuthenticationProvi
     }
 
     @Override
-    protected void additionalAuthenticationChecks(
-            final UserDetails userDetails,
-            final UsernamePasswordAuthenticationToken authenticationToken) throws AuthenticationException {
-        AuthenticatedUser user = (AuthenticatedUser) userDetails;
+    protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authenticationToken) throws AuthenticationException {
+      AuthenticatedUser user = (AuthenticatedUser) userDetails;
+
 
         String username = user.getUsername();
         String password = (String) authenticationToken.getCredentials();
@@ -106,9 +107,7 @@ class BasicAuthenticationProvider extends AbstractUserDetailsAuthenticationProvi
     }
 
     @Override
-    protected AuthenticatedUser retrieveUser(
-            final String username,
-            final UsernamePasswordAuthenticationToken userPasswordAuthenticationToken) throws AuthenticationException {
+    protected AuthenticatedUser retrieveUser(String username, UsernamePasswordAuthenticationToken userPasswordAuthenticationToken) throws AuthenticationException {
         User user = userService.getByUsername(username);
         if (user == null) {
             LOG.info("[failed] {}: User not found", username);
@@ -116,10 +115,10 @@ class BasicAuthenticationProvider extends AbstractUserDetailsAuthenticationProvi
         }
 
         Set<Authority> authorities = Optional.ofNullable(user.getInternalAuthorities())
-                .orElse(Set.of())
+                .orElse(ImmutableSet.of())
                 .stream()
                 .flatMap(authority -> authority.getAuthorities().stream())
-                .collect(Collectors.toUnmodifiableSet());
+                .collect(toSet());
         String displayName = user.getFirstname() + " " + user.getLastname();
         return new AuthenticatedUser(user.getId(), user.getUsername(), displayName, user.getPassword(), user.isAllowLogin(), authorities);
     }

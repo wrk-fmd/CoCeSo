@@ -1,12 +1,10 @@
 package at.wrk.coceso.entity.enums;
 
-import org.junit.Test;
-
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
-
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class AuthorityTest {
 

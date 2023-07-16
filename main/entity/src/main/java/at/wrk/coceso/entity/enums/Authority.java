@@ -1,5 +1,6 @@
 package at.wrk.coceso.entity.enums;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -19,7 +20,7 @@ public enum Authority implements GrantedAuthority {
     }
 
     Authority(Authority... children) {
-        this.authorities = resolveGrantedAuthorities(this, Set.of(children));
+        this.authorities = resolveGrantedAuthorities(this, ImmutableSet.copyOf(children));
     }
 
     public Set<Authority> getAuthorities() {
@@ -38,6 +39,6 @@ public enum Authority implements GrantedAuthority {
             resolvedAuthorities.addAll(child.getAuthorities());
         }
 
-        return Set.copyOf(resolvedAuthorities);
+        return ImmutableSet.copyOf(resolvedAuthorities);
     }
 }

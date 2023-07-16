@@ -7,6 +7,9 @@ import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.User;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.service.IncidentService;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -39,7 +42,7 @@ public class AlarmTextTargetFactoryTest {
         when(otherNumberNormalizer.getSupportedUriSchema()).thenReturn("other");
 
         // TODO: Split tests for unit target factory and alarm text target factory
-        List<NumberNormalizer> numberNormalizers = List.of(phoneNumberNormalizer, otherNumberNormalizer);
+        ImmutableList<NumberNormalizer> numberNormalizers = ImmutableList.of(phoneNumberNormalizer, otherNumberNormalizer);
         sut = new AlarmTextTargetFactory(incidentService, new UnitTargetFactory(numberNormalizers));
     }
 
@@ -47,14 +50,14 @@ public class AlarmTextTargetFactoryTest {
     public void getTargets_incidentHasCrewAssigned_returnPhoneNumbers() {
         int incidentId = 5;
 
-        Set<User> crew = Set.of(
+        Set<User> crew = ImmutableSet.of(
                 createMockedUser("contact1"),
                 createMockedUser("tel:contact2\ncontact3"));
         Unit unit = mock(Unit.class);
         when(unit.getCrew()).thenReturn(crew);
 
         Incident incident = mock(Incident.class);
-        when(incident.getUnits()).thenReturn(Map.of(unit, TaskState.ZBO));
+        when(incident.getUnits()).thenReturn(ImmutableMap.of(unit, TaskState.ZBO));
 
         when(incidentService.getById(incidentId)).thenReturn(incident);
 
@@ -71,14 +74,14 @@ public class AlarmTextTargetFactoryTest {
     public void getTargets_incidentHasOtherNumber_returnValidTargets() {
         int incidentId = 5;
 
-        Set<User> crew = Set.of(
+        Set<User> crew = ImmutableSet.of(
                 createMockedUser("other:contact1"),
                 createMockedUser("contact2\nother:contact3"));
         Unit unit = mock(Unit.class);
         when(unit.getCrew()).thenReturn(crew);
 
         Incident incident = mock(Incident.class);
-        when(incident.getUnits()).thenReturn(Map.of(unit, TaskState.ZBO));
+        when(incident.getUnits()).thenReturn(ImmutableMap.of(unit, TaskState.ZBO));
 
         when(incidentService.getById(incidentId)).thenReturn(incident);
 
@@ -96,13 +99,13 @@ public class AlarmTextTargetFactoryTest {
     public void getTargets_incidentHasUnitWithValidAni_returnValidTargets() {
         int incidentId = 5;
 
-        Set<User> crew = Set.of(createMockedUser("other:contact1"));
+        Set<User> crew = ImmutableSet.of(createMockedUser("other:contact1"));
         Unit unit = mock(Unit.class);
         when(unit.getCrew()).thenReturn(crew);
         when(unit.getAni()).thenReturn("contact2");
 
         Incident incident = mock(Incident.class);
-        when(incident.getUnits()).thenReturn(Map.of(unit, TaskState.ZBO));
+        when(incident.getUnits()).thenReturn(ImmutableMap.of(unit, TaskState.ZBO));
 
         when(incidentService.getById(incidentId)).thenReturn(incident);
 
@@ -119,18 +122,18 @@ public class AlarmTextTargetFactoryTest {
     public void getTargets_casusBooking_returnValidTransportTargets() {
         int incidentId = 5;
 
-        Set<User> crew1 = Set.of(createMockedUser("contact1"));
+        Set<User> crew1 = ImmutableSet.of(createMockedUser("contact1"));
         Unit unit1 = mock(Unit.class);
         when(unit1.getCrew()).thenReturn(crew1);
         when(unit1.isTransportVehicle()).thenReturn(true);
 
-        Set<User> crew2 = Set.of(createMockedUser("contact2"));
+        Set<User> crew2 = ImmutableSet.of(createMockedUser("contact2"));
         Unit unit2 = mock(Unit.class);
         when(unit2.getCrew()).thenReturn(crew2);
         when(unit2.isTransportVehicle()).thenReturn(false);
 
         Incident incident = mock(Incident.class);
-        when(incident.getUnits()).thenReturn(Map.of(unit1, TaskState.ZBO, unit2, TaskState.ZBO));
+        when(incident.getUnits()).thenReturn(ImmutableMap.of(unit1, TaskState.ZBO, unit2, TaskState.ZBO));
 
         when(incidentService.getById(incidentId)).thenReturn(incident);
 

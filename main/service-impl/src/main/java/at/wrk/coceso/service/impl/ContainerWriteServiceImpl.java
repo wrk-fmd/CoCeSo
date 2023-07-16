@@ -6,13 +6,12 @@ import at.wrk.coceso.entityevent.EntityEventFactory;
 import at.wrk.coceso.entityevent.EntityEventHandler;
 import at.wrk.coceso.entityevent.EntityEventListener;
 import at.wrk.coceso.service.ContainerService;
-import at.wrk.coceso.service.ContainerWriteService;
+import javax.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.PreDestroy;
+import at.wrk.coceso.service.ContainerWriteService;
 
 @Service
 @Transactional(propagation = Propagation.NOT_SUPPORTED)

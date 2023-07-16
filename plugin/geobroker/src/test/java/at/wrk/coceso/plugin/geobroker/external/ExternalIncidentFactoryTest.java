@@ -9,11 +9,10 @@ import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.entity.point.Point;
 import at.wrk.coceso.plugin.geobroker.data.CachedIncident;
 import at.wrk.geocode.LatLng;
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -130,7 +129,7 @@ public class ExternalIncidentFactoryTest {
     private Incident createIncident(final int concernId, final int incidentId, final Point bo) {
         Incident incident = new Incident(incidentId);
         incident.setConcern(new Concern(concernId));
-        incident.setUnitsSlim(Map.of(
+        incident.setUnitsSlim(ImmutableMap.of(
                 1, TaskState.ABO,
                 2, TaskState.ZAO
         ));

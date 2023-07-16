@@ -4,11 +4,10 @@ import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.Unit;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.plugin.geobroker.data.CachedUnit;
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
@@ -66,7 +65,7 @@ public class ExternalUnitFactoryTest {
 
         Unit unit = new Unit(unitId);
         unit.setConcern(new Concern(concernId));
-        unit.setIncidentsSlim(Map.of(3, TaskState.ZAO, 4, TaskState.ZBO));
+        unit.setIncidentsSlim(ImmutableMap.of(3, TaskState.ZAO, 4, TaskState.ZBO));
 
         when(incidentIdGenerator.generateExternalIncidentId(3, concernId)).thenReturn("extId-3");
         when(incidentIdGenerator.generateExternalIncidentId(4, concernId)).thenReturn("extId-4");

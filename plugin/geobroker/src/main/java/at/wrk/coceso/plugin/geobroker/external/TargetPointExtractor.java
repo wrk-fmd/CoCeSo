@@ -4,15 +4,15 @@ import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.plugin.geobroker.contract.broker.GeoBrokerPoint;
 import at.wrk.coceso.plugin.geobroker.data.CachedIncident;
+import com.google.common.collect.ImmutableSet;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import java.util.Set;
 
 @Component
 public class TargetPointExtractor {
 
-    private static final Set<IncidentType> RELOCATION_INCIDENT_TYPES = Set.of(IncidentType.ToHome, IncidentType.Relocation);
+    private static final ImmutableSet<IncidentType> RELOCATION_INCIDENT_TYPES = ImmutableSet.of(IncidentType.ToHome, IncidentType.Relocation);
 
     @Nullable
     public GeoBrokerPoint getTargetPoint(final CachedIncident incident, final TaskState taskState) {

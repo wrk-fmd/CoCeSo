@@ -26,6 +26,7 @@ import at.wrk.coceso.service.internal.TaskServiceInternal;
 import at.wrk.coceso.service.internal.UnitServiceInternal;
 import at.wrk.coceso.utils.AuthenticatedUserProvider;
 import at.wrk.coceso.utils.Initializer;
+import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,7 +78,7 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
   @Override
   public Unit getById(int id) {
     // See https://stackoverflow.com/a/53852146. 'findOne()' uses cached entities with outdated data.
-    return unitRepository.findByIdIn(List.of(id)).stream().findFirst().orElse(null);
+    return unitRepository.findByIdIn(ImmutableList.of(id)).stream().findFirst().orElse(null);
   }
 
   @Override
@@ -104,7 +105,7 @@ class UnitServiceImpl implements UnitServiceInternal, UnitSupplier {
   public List<Unit> getByConcernUser(final Concern concern, final int userId) {
     return Optional.ofNullable(userService.getById(userId))
             .map(user -> unitRepository.findByConcernUser(concern, user))
-            .orElse(List.of());
+            .orElse(ImmutableList.of());
   }
 
   @Override

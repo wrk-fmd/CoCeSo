@@ -3,7 +3,6 @@ package at.wrk.coceso.entityevent.impl;
 import at.wrk.coceso.entity.ConcernBoundEntity;
 import at.wrk.coceso.entityevent.EntityEventHandler;
 import at.wrk.coceso.entityevent.EntityEventListener;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;

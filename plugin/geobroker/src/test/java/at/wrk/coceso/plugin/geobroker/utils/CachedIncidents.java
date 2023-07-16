@@ -5,6 +5,7 @@ import at.wrk.coceso.entity.enums.IncidentType;
 import at.wrk.coceso.entity.enums.TaskState;
 import at.wrk.coceso.plugin.geobroker.contract.broker.GeoBrokerIncident;
 import at.wrk.coceso.plugin.geobroker.data.CachedIncident;
+import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
 
@@ -16,7 +17,7 @@ public final class CachedIncidents {
     }
 
     public static CachedIncident random() {
-        return random(Map.of(randomString(), TaskState.ZBO));
+        return random(ImmutableMap.of(randomString(), TaskState.ZBO));
     }
 
     public static CachedIncident random(final Map<String, TaskState> assignedExternalUnitIds) {

@@ -1,16 +1,15 @@
 package at.wrk.coceso.specification;
 
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.jpa.domain.Specification;
-
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.jpa.domain.Specification;
 
 public abstract class SearchSpecification<T> implements Specification<T> {
 

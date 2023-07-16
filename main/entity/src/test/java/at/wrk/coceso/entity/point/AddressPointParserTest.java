@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 public class AddressPointParserTest {
     @Test
