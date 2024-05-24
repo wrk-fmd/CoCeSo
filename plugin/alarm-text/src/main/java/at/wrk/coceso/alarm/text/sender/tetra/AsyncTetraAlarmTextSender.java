@@ -27,6 +27,7 @@ public class AsyncTetraAlarmTextSender implements AlarmTextSender {
     private final TetraSendAlarmTextCallback callback;
     private final URI gatewayUrl;
     private final String authenticationToken;
+    private final boolean requestConsumeReport;
 
     @Autowired
     public AsyncTetraAlarmTextSender(
@@ -39,6 +40,7 @@ public class AsyncTetraAlarmTextSender implements AlarmTextSender {
         this.callback = callback;
         this.gatewayUrl = buildSendUrl(alarmTextConfiguration.getTetraGatewayUri());
         this.authenticationToken = alarmTextConfiguration.getTetraAuthenticationToken();
+        this.requestConsumeReport = alarmTextConfiguration.isRequestConsumeReport();
     }
 
     private static URI buildSendUrl(final URI alarmTextGatewayUrl) {
@@ -67,9 +69,10 @@ public class AsyncTetraAlarmTextSender implements AlarmTextSender {
     }
 
     private void sendSds(final String alarmText, final String targetIssi) {
-        SendSdsRequest request = new SendSdsRequest(targetIssi, alarmText, OutgoingSdsType.INDIVIDUAL_ACK);
+        OutgoingSdsType sdsType = requestConsumeReport ? OutgoingSdsType.INDIVIDUAL_CONSUME : OutgoingSdsType.INDIVIDUAL_ACK;
+        SendSdsRequest request = new SendSdsRequest(targetIssi, alarmText, sdsType);
         HttpEntity<String> httpEntity = serializeRequest(request);
-        LOG.debug("Sending alarm text to target '{}'.", targetIssi);
+        LOG.debug("Sending alarm text to target '{}' in mode '{}'.", targetIssi, sdsType);
         ListenableFuture<ResponseEntity<String>> responseFuture = asyncRestTemplate.postForEntity(gatewayUrl, httpEntity, String.class);
         responseFuture.addCallback(callback);
     }

@@ -50,3 +50,6 @@ alarm.text.gateway.tetra.uri=
 
 # The authentication token against the TETRA gateway. If left empty, no authentication will be used.
 alarm.text.gateway.tetra.authentication.token=
+
+# Set this property to true in order to request consume reports on sending SDS messages.
+#alarm.text.gateway.tetra.request.consume.report=false

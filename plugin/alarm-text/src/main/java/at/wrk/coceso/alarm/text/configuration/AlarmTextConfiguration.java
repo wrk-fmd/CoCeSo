@@ -22,6 +22,7 @@ public class AlarmTextConfiguration {
     private final String validPrefix;
     private final String defaultCountryCode;
     private final String tetraAuthenticationToken;
+    private final boolean requestConsumeReport;
     private final String smsAuthenticationToken;
 
     public AlarmTextConfiguration(
@@ -32,13 +33,15 @@ public class AlarmTextConfiguration {
             @Value("${alarm.text.gateway.phone.number.default.country.code:}") final String defaultCountryCode,
             @Value("${alarm.text.gateway.authenticationToken:}") final String legacyAuthenticationToken,
             @Value("${alarm.text.gateway.sms.authentication.token:}") final String smsAuthenticationToken,
-            @Value("${alarm.text.gateway.tetra.authentication.token:}") final String tetraAuthenticationToken) {
+            @Value("${alarm.text.gateway.tetra.authentication.token:}") final String tetraAuthenticationToken,
+            @Value("${alarm.text.gateway.tetra.request.consume.report:false}") final boolean requestConsumeReport) {
         this.smsGatewayUri = parseHttpUriFromString(smsGatewayUriString);
         this.smsGatewayType = StringUtils.isNotBlank(smsGatewayType) ? smsGatewayType : DEFAULT_SMS_GATEWAY_TYPE;
         this.tetraGatewayUri = parseHttpUriFromString(tetraGatewayUriString);
         this.validPrefix = StringUtils.trimToNull(validPhonePrefix);
         this.defaultCountryCode = StringUtils.trimToNull(defaultCountryCode);
         this.tetraAuthenticationToken = tetraAuthenticationToken;
+        this.requestConsumeReport = requestConsumeReport;
         this.smsAuthenticationToken = Optional.ofNullable(StringUtils.trimToNull(smsAuthenticationToken))
                 .orElse(legacyAuthenticationToken);
     }
@@ -74,6 +77,10 @@ public class AlarmTextConfiguration {
     @Nullable
     public String getTetraAuthenticationToken() {
         return tetraAuthenticationToken;
+    }
+
+    public boolean isRequestConsumeReport() {
+        return requestConsumeReport;
     }
 
     private static URI parseHttpUriFromString(final String uriString) {
