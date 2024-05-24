@@ -410,17 +410,33 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.10</version>
             </plugin>
 
             <!-- For JUnit Tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
+                <version>3.2.5</version>
                 <configuration>
                     <parallel>classes</parallel>
                     <threadCount>4</threadCount>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>com.amashchenko.maven.plugin</groupId>
+                <artifactId>gitflow-maven-plugin</artifactId>
+                <version>1.21.0</version>
+                <configuration>
+                    <gitFlowConfig>
+                        <productionBranch>master</productionBranch>
+                        <developmentBranch>dev</developmentBranch>
+                        <featureBranchPrefix>feature/</featureBranchPrefix>
+                        <releaseBranchPrefix>release/</releaseBranchPrefix>
+                        <versionTagPrefix>v</versionTagPrefix>
+                    </gitFlowConfig>
+                    <postReleaseGoals/>
+                    <commitMessagePrefix>[RELEASE] </commitMessagePrefix>
                 </configuration>
             </plugin>
         </plugins>
