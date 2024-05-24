@@ -114,7 +114,7 @@ class PostprocessingServiceImpl implements PostprocessingServiceInternal {
     incident.setBlue(true);
 
     if (form.getAmbulance() != null) {
-      incident.setInfo(form.getAmbulance().name());
+      incident.setInfo(form.getAmbulance().toString());
     }
 
     incident.setPriority(form.isPriority());

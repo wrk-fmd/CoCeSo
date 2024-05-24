@@ -75,18 +75,11 @@ public class AlarmTextFactory {
     }
 
     private String buildAlarmText(final Incident incident, final AlarmTextType alarmTextType, final Locale locale) {
-        String template;
-        if (alarmTextType == AlarmTextType.INCIDENT_INFORMATION) {
-            if (incident.getType() == IncidentType.Relocation) {
-                template = loadTemplate(RELOCATION_INFORMATION_TEMPLATE_FILE, RELOCATION_INFORMATION_DEFAULT_TEMPLATE);
-            } else {
-                template = loadTemplate(INCIDENT_INFORMATION_TEMPLATE_FILE, INCIDENT_INFORMATION_DEFAULT_TEMPLATE);
-            }
-        } else {
-            template = loadTemplate(CASUSNUMBER_TEMPLATE_FILE, CASUSNUMBER_DEFAULT_TEMPLATE);
-        }
+        String template = loadTemplateForType(alarmTextType, incident.getType());
+        return replaceTemplatePlaceholders(incident, locale, template);
+    }
 
-
+    private String replaceTemplatePlaceholders(final Incident incident, final Locale locale, final String template) {
         String alarmText = template;
 
         alarmText = alarmText.replace("{incidentId}", String.valueOf(incident.getId()));
@@ -103,6 +96,20 @@ public class AlarmTextFactory {
         alarmText = alarmText.replace("{emergencyRoomType}", buildEmergencyRoomType(incident.getPatient()));
 
         return alarmText;
+    }
+
+    private String loadTemplateForType(final AlarmTextType alarmTextType, final IncidentType incidentType) {
+        String template;
+        if (alarmTextType == AlarmTextType.INCIDENT_INFORMATION) {
+            if (incidentType == IncidentType.Relocation) {
+                template = loadTemplate(RELOCATION_INFORMATION_TEMPLATE_FILE, RELOCATION_INFORMATION_DEFAULT_TEMPLATE);
+            } else {
+                template = loadTemplate(INCIDENT_INFORMATION_TEMPLATE_FILE, INCIDENT_INFORMATION_DEFAULT_TEMPLATE);
+            }
+        } else {
+            template = loadTemplate(CASUSNUMBER_TEMPLATE_FILE, CASUSNUMBER_DEFAULT_TEMPLATE);
+        }
+        return template;
     }
 
     private String buildEmergencyRoomType(final Patient patient) {

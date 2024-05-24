@@ -18,7 +18,7 @@ public class VcmJsonPoi extends GeoJsonPoi {
     private static final Logger LOG = LoggerFactory.getLogger(VcmJsonPoi.class);
 
     @Autowired
-    public VcmJsonPoi(ObjectMapper mapper) throws IOException {
+    public VcmJsonPoi(final ObjectMapper mapper) throws IOException {
       super(mapper, "classpath*:/vcm*.json", "VCM");
     }
 

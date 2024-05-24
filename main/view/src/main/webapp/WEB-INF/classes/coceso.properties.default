@@ -36,8 +36,8 @@ alarm.text.gateway.sms.type=gammu
 # The URI of the SMS gateway. For example 'https://sms-gw.local:8082/sms/send'
 alarm.text.gateway.uri=
 
-# The authentication token to authenticate agains the SMS gateway. For the type 'internal' it must contain a valid BASIC encoded authentication string.
-alarm.text.gateway.authenticationToken=
+# The authentication token to authenticate against the SMS gateway. For the type 'internal' it must contain a valid BASIC encoded authentication string.
+alarm.text.gateway.sms.authentication.token=
 
 # The prefix which shall be used to validate phone numbers
 alarm.text.gateway.phone.number.prefix=+43
@@ -47,3 +47,6 @@ alarm.text.gateway.phone.number.default.country.code=+43
 
 # The URI of the TETRA gateway. For example 'https://tetra-gw.local:8081/'
 alarm.text.gateway.tetra.uri=
+
+# The authentication token against the TETRA gateway. If left empty, no authentication will be used.
+alarm.text.gateway.tetra.authentication.token=

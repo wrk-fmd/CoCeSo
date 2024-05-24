@@ -1,5 +1,13 @@
 package at.wrk.coceso.entity.enums;
 
 public enum Ambulance {
-  KTWsitzend, KTWliegend, RTW, RTWmitNEF;
+  KTW_sitzend,
+  KTW_liegend,
+  RTW,
+  RTW_mit_NEF;
+
+  @Override
+  public String toString() {
+    return name().replace("_", " ");
+  }
 }

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Optional;
 
 @Component
 public class AlarmTextConfiguration {
@@ -20,7 +21,8 @@ public class AlarmTextConfiguration {
     private final URI tetraGatewayUri;
     private final String validPrefix;
     private final String defaultCountryCode;
-    private final String authenticationToken;
+    private final String tetraAuthenticationToken;
+    private final String smsAuthenticationToken;
 
     public AlarmTextConfiguration(
             @Value("${alarm.text.gateway.sms.uri:}") final String smsGatewayUriString,
@@ -28,13 +30,17 @@ public class AlarmTextConfiguration {
             @Value("${alarm.text.gateway.tetra.uri:}") final String tetraGatewayUriString,
             @Value("${alarm.text.gateway.phone.number.prefix:}") final String validPhonePrefix,
             @Value("${alarm.text.gateway.phone.number.default.country.code:}") final String defaultCountryCode,
-            @Value("${alarm.text.gateway.authenticationToken:}") final String authenticationToken) {
+            @Value("${alarm.text.gateway.authenticationToken:}") final String legacyAuthenticationToken,
+            @Value("${alarm.text.gateway.sms.authentication.token:}") final String smsAuthenticationToken,
+            @Value("${alarm.text.gateway.tetra.authentication.token:}") final String tetraAuthenticationToken) {
         this.smsGatewayUri = parseHttpUriFromString(smsGatewayUriString);
         this.smsGatewayType = StringUtils.isNotBlank(smsGatewayType) ? smsGatewayType : DEFAULT_SMS_GATEWAY_TYPE;
         this.tetraGatewayUri = parseHttpUriFromString(tetraGatewayUriString);
         this.validPrefix = StringUtils.trimToNull(validPhonePrefix);
         this.defaultCountryCode = StringUtils.trimToNull(defaultCountryCode);
-        this.authenticationToken = StringUtils.trimToNull(authenticationToken);
+        this.tetraAuthenticationToken = tetraAuthenticationToken;
+        this.smsAuthenticationToken = Optional.ofNullable(StringUtils.trimToNull(smsAuthenticationToken))
+                .orElse(legacyAuthenticationToken);
     }
 
     @Nullable
@@ -61,8 +67,13 @@ public class AlarmTextConfiguration {
     }
 
     @Nullable
-    public String getAuthenticationToken() {
-        return authenticationToken;
+    public String getSmsAuthenticationToken() {
+        return smsAuthenticationToken;
+    }
+
+    @Nullable
+    public String getTetraAuthenticationToken() {
+        return tetraAuthenticationToken;
     }
 
     private static URI parseHttpUriFromString(final String uriString) {
