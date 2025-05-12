@@ -6,37 +6,39 @@ import org.springframework.stereotype.Component;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Collection;
 
 @Component
 public class AuthConfig {
 
-  private final URL authUrl;
+    private final URL authUrl;
 
-  private final boolean useAuthUrl;
+    private final boolean useAuthUrl;
 
-  private final boolean firstUse;
+    private final boolean firstUse;
 
-  public static final int SUCCESS_CODE = 302;
+    public static final Collection<Integer> SUCCESS_CODES = Arrays.asList(200, 301, 302, 303, 307, 308);
 
-  public static final int FAILURE_CODE = 401;
+    @Autowired
+    public AuthConfig(
+            @Value("${auth.authUrl}") String authUrl,
+            @Value("${auth.useAuthUrl}") Boolean useAuthUrl,
+            @Value("${auth.firstUse}") Boolean firstUse) throws MalformedURLException {
+        this.authUrl = new URL(authUrl);
+        this.useAuthUrl = useAuthUrl != null && useAuthUrl;
+        this.firstUse = firstUse != null && firstUse;
+    }
 
-  @Autowired
-  public AuthConfig(@Value("${auth.authUrl}") String authUrl, @Value("${auth.useAuthUrl}") Boolean useAuthUrl,
-      @Value("${auth.firstUse}") Boolean firstUse) throws MalformedURLException {
-    this.authUrl = new URL(authUrl);
-    this.useAuthUrl = useAuthUrl != null && useAuthUrl;
-    this.firstUse = firstUse != null && firstUse;
-  }
+    public URL getAuthUrl() {
+        return authUrl;
+    }
 
-  public URL getAuthUrl() {
-    return authUrl;
-  }
+    public boolean useAuthUrl() {
+        return useAuthUrl;
+    }
 
-  public boolean useAuthUrl() {
-    return useAuthUrl;
-  }
-
-  public boolean isFirstUse() {
-    return firstUse;
-  }
+    public boolean isFirstUse() {
+        return firstUse;
+    }
 }

@@ -44,8 +44,9 @@ class BasicAuthenticationProvider extends AbstractUserDetailsAuthenticationProvi
     }
 
     @Override
-    protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authenticationToken) throws AuthenticationException {
-      AuthenticatedUser user = (AuthenticatedUser) userDetails;
+    protected void additionalAuthenticationChecks(UserDetails userDetails,
+            UsernamePasswordAuthenticationToken authenticationToken) throws AuthenticationException {
+        AuthenticatedUser user = (AuthenticatedUser) userDetails;
 
 
         String username = user.getUsername();
@@ -72,17 +73,11 @@ class BasicAuthenticationProvider extends AbstractUserDetailsAuthenticationProvi
                 int returnCode = connection.getResponseCode();
                 connection.disconnect();
 
-                switch (returnCode) {
-                    case AuthConfig.SUCCESS_CODE:
-                        LOG.info("[ OK ] {}: Online authentication", username);
-                        success = true;
-                        break;
-                    case AuthConfig.FAILURE_CODE:
-                        LOG.info("[failed] {}: Online authentication", username);
-                        break;
-                    default:
-                        LOG.warn("[failed] {}: Online authentication, unexpected error code {}", username, returnCode);
-                        break;
+                if (AuthConfig.SUCCESS_CODES.contains(returnCode)) {
+                    LOG.info("[ OK ] {}: Online authentication, success code '{}'", username, returnCode);
+                    success = true;
+                } else {
+                    LOG.info("[failed] {}: Online authentication, error code '{}'", username, returnCode);
                 }
             } catch (IOException e) {
                 LOG.warn("[failed] {}: Online authentication, failed with exception {}", username, e.getMessage());
@@ -107,7 +102,8 @@ class BasicAuthenticationProvider extends AbstractUserDetailsAuthenticationProvi
     }
 
     @Override
-    protected AuthenticatedUser retrieveUser(String username, UsernamePasswordAuthenticationToken userPasswordAuthenticationToken) throws AuthenticationException {
+    protected AuthenticatedUser retrieveUser(String username,
+            UsernamePasswordAuthenticationToken userPasswordAuthenticationToken) throws AuthenticationException {
         User user = userService.getByUsername(username);
         if (user == null) {
             LOG.info("[failed] {}: User not found", username);
