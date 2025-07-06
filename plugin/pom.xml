@@ -19,9 +19,7 @@
   <modules>
     <module>gmaps</module>
     <module>niu</module>
-    <module>vcm-poi</module>
     <module>vienna</module>
-    <module>wflwr-poi</module>
     <module>geobroker</module>
     <module>alarm-text</module>
     <module>radio</module>

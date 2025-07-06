@@ -59,36 +59,6 @@
                 </dependency>
             </dependencies>
         </profile>
-
-        <profile>
-            <id>vcm-pois</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>at.wrk.coceso-plugins</groupId>
-                    <artifactId>coceso-vcm-poi</artifactId>
-                    <version>${project.version}</version>
-                    <scope>runtime</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-
-        <profile>
-            <id>wflwr-pois</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>at.wrk.coceso-plugins</groupId>
-                    <artifactId>coceso-wflwr-poi</artifactId>
-                    <version>${project.version}</version>
-                    <scope>runtime</scope>
-                </dependency>
-            </dependencies>
-        </profile>
     </profiles>
 
     <dependencies>
