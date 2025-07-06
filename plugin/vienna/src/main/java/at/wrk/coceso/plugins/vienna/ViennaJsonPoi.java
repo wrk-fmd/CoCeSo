@@ -62,9 +62,11 @@ public class ViennaJsonPoi extends GeoJsonPoi {
     private static PoiResource getResource(Path dataPath, String file, String prefix) {
         Path filePath = dataPath.resolve(file + ".json");
         if (!Files.exists(filePath)) {
+            LOG.warn("Ignoring non-existing GeoJSON file {}", filePath);
             return null;
         }
 
+        LOG.info("Registering GeoJSON file {} under prefix '{}'", filePath, prefix);
         Resource resource = new FileSystemResourceLoader().getResource("file:" + filePath);
         return new PoiResource(resource, prefix);
     }
