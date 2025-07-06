@@ -32,7 +32,7 @@ public abstract class PreloadedAutocomplete<T> implements AutocompleteSupplier<T
     this.values = new TreeMap<>();
   }
 
-  boolean isInitialized() {
+  public boolean isInitialized() {
     return initialized;
   }
 
