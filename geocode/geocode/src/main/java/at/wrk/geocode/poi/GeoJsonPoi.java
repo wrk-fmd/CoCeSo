@@ -42,9 +42,9 @@ public abstract class GeoJsonPoi extends AbstractJsonPoi {
     /**
      * Read POI entries from the given resources, parse them using the provided object mapper and store them in-memory.
      */
-    public GeoJsonPoi(ObjectMapper mapper, PoiResource... sources) {
+    public GeoJsonPoi(ObjectMapper mapper, List<PoiResource> resources) {
         this.mapper = mapper;
-        this.resources = Arrays.asList(sources);
+        this.resources = resources;
     }
 
     @Override
