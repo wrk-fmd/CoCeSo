@@ -18,7 +18,7 @@ public class AuthConfig {
 
     private final boolean firstUse;
 
-    public static final Collection<Integer> SUCCESS_CODES = Arrays.asList(200, 301, 302, 303, 307, 308);
+    public static final Collection<Integer> SUCCESS_CODES = Arrays.asList(200, 302);
 
     @Autowired
     public AuthConfig(
