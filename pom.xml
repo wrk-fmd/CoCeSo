@@ -8,7 +8,7 @@
     <groupId>at.wrk.coceso</groupId>
     <artifactId>base</artifactId>
     <packaging>pom</packaging>
-    <version>2.8.2</version>
+    <version>2.8.3-SNAPSHOT</version>
     <name>Coceso Parent POM</name>
 
     <properties>
