@@ -31,8 +31,9 @@ public class MessageController {
     }
 
     @PostMapping
-    public void receiveMessage(@RequestBody IncomingMessageDto message, @RequestHeader("Authorization") String key) {
-        if (authToken != null && Objects.equals(authToken, key)) {
+    public void receiveMessage(@RequestBody final IncomingMessageDto message, @RequestHeader("Authorization") final String key) {
+        String authKey = key != null ? key.replaceFirst("Bearer ", "").trim() : null;
+        if (authToken != null && Objects.equals(authToken, authKey)) {
             radioService.receiveMessage(message);
         } else {
             LOG.debug("Mismatch of authentication token. Dropping radio message.");

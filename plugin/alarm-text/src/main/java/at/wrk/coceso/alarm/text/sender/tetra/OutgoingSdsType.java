@@ -15,6 +15,9 @@ public enum OutgoingSdsType {
     @SerializedName("ack")
     INDIVIDUAL_ACK,
 
+    @SerializedName("consume")
+    INDIVIDUAL_CONSUME,
+
     @SerializedName("no-ack")
     INDIVIDUAL_NO_ACK
 }

@@ -13,7 +13,7 @@ public class TetraSendAlarmTextCallback implements ListenableFutureCallback<Resp
     @Override
     public void onFailure(final Throwable throwable) {
         LOG.warn("Failed to send alarm text to TETRA gateway. Message: {}", throwable.getMessage());
-        LOG.debug("Underyling exception", throwable);
+        LOG.debug("Underlying exception", throwable);
     }
 
     @Override

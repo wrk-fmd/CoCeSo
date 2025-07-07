@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -47,7 +48,7 @@ public class GeoBrokerHeartbeatScheduler {
 
     @Scheduled(fixedDelay = DELAY_BETWEEN_HEARTBEATS)
     public void checkGeoBrokerInstance() {
-        LOG.debug("Checking instance ID of geobroker.");
+        LOG.debug("Checking instance ID of geobroker at '{}'.", privateApiUrl);
 
         Optional<StatusResponse> statusResponse = getStatusResponse();
 
@@ -59,7 +60,7 @@ public class GeoBrokerHeartbeatScheduler {
         if (receivedInstanceId != null) {
             if (!Objects.equals(lastReceivedInstanceId, receivedInstanceId)) {
                 LOG.info(
-                        "Instance of geobroker changed from '{}' to '{}'. Full update of units and incidents is sent.",
+                        "Instance ID of geobroker changed from '{}' to '{}'. Full update of units and incidents is sent.",
                         lastReceivedInstanceId,
                         receivedInstanceId);
 
@@ -91,7 +92,7 @@ public class GeoBrokerHeartbeatScheduler {
     private Optional<StatusResponse> handleStatusResponse(final ResponseEntity<String> responseEntity) {
         Optional<StatusResponse> statusResponse = Optional.empty();
         if (responseEntity.getStatusCode() != HttpStatus.OK) {
-            LOG.warn("Geobroker did not return return 200 OK on status query. Actual code: {}", responseEntity.getStatusCode());
+            LOG.warn("Geobroker did not return return 200 OK on status query. Actual code: {}.", responseEntity.getStatusCode());
         } else {
             try {
                 statusResponse = Optional.ofNullable(gson.fromJson(responseEntity.getBody(), StatusResponse.class));
@@ -107,8 +108,10 @@ public class GeoBrokerHeartbeatScheduler {
         ResponseEntity<String> responseEntity = null;
         try {
             responseEntity = restTemplate.getForEntity(url, String.class);
+        } catch (HttpStatusCodeException e) {
+            LOG.warn("Geobroker returned error status code: {}.", e.getStatusCode());
         } catch (RestClientException e) {
-            LOG.warn("Geobroker returned an error on checking status: " + e.getMessage());
+            LOG.warn("Geobroker returned an error on checking status: {}", e.getMessage());
             LOG.trace("Underlying exception", e);
         }
 

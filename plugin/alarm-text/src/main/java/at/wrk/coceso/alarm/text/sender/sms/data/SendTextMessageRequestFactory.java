@@ -32,7 +32,7 @@ public class SendTextMessageRequestFactory {
     public SendTextMessageRequestFactory(
             final AlarmTextConfiguration alarmTextConfiguration,
             final Gson gson) {
-        this.authenticationToken = alarmTextConfiguration.getAuthenticationToken();
+        this.authenticationToken = alarmTextConfiguration.getSmsAuthenticationToken();
         gatewayType = Optional.ofNullable(alarmTextConfiguration.getSmsGatewayType())
                 .map(TYPE_MAPPING::get)
                 .orElse(SmsGatewayType.GAMMU);
@@ -42,7 +42,7 @@ public class SendTextMessageRequestFactory {
     public Optional<HttpEntity<String>> createHttpEntityOfRequest(final String alarmText, final List<String> targets) {
         Optional<HttpEntity<String>> httpEntity = Optional.empty();
 
-        if (authenticationToken != null) {
+        if (authenticationToken != null || gatewayType == SmsGatewayType.GAMMU) {
             SendTextMessageRequest request = createRequest(alarmText, targets);
 
             String jsonRequest = gson.toJson(request);

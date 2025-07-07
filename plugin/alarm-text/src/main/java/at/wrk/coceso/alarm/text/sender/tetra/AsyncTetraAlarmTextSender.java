@@ -26,6 +26,8 @@ public class AsyncTetraAlarmTextSender implements AlarmTextSender {
     private final AsyncRestTemplate asyncRestTemplate;
     private final TetraSendAlarmTextCallback callback;
     private final URI gatewayUrl;
+    private final String authenticationToken;
+    private final boolean requestConsumeReport;
 
     @Autowired
     public AsyncTetraAlarmTextSender(
@@ -36,7 +38,9 @@ public class AsyncTetraAlarmTextSender implements AlarmTextSender {
         this.gson = gson;
         this.asyncRestTemplate = asyncRestTemplate;
         this.callback = callback;
-        this.gatewayUrl = buildSendUrl(alarmTextConfiguration.getTetraGatewayUrlString());
+        this.gatewayUrl = buildSendUrl(alarmTextConfiguration.getTetraGatewayUri());
+        this.authenticationToken = alarmTextConfiguration.getTetraAuthenticationToken();
+        this.requestConsumeReport = alarmTextConfiguration.isRequestConsumeReport();
     }
 
     private static URI buildSendUrl(final URI alarmTextGatewayUrl) {
@@ -53,7 +57,7 @@ public class AsyncTetraAlarmTextSender implements AlarmTextSender {
         SendAlarmTextResult result;
 
         if (gatewayUrl == null) {
-            LOG.debug("No TETRA gateway configured. Cannot send SDS to mobiles.");
+            LOG.debug("No TETRA gateway configured. Cannot send SDS to mobiles '{}'.", targets);
             result = SendAlarmTextResult.NO_GATEWAY_CONFIGURED;
         } else {
             result = SendAlarmTextResult.SUCCESS;
@@ -65,14 +69,23 @@ public class AsyncTetraAlarmTextSender implements AlarmTextSender {
     }
 
     private void sendSds(final String alarmText, final String targetIssi) {
-        SendSdsRequest request = new SendSdsRequest(targetIssi, alarmText, OutgoingSdsType.INDIVIDUAL_ACK);
+        OutgoingSdsType sdsType = requestConsumeReport ? OutgoingSdsType.INDIVIDUAL_CONSUME : OutgoingSdsType.INDIVIDUAL_ACK;
+        SendSdsRequest request = new SendSdsRequest(targetIssi, alarmText, sdsType);
         HttpEntity<String> httpEntity = serializeRequest(request);
+        LOG.debug("Sending alarm text to target '{}' in mode '{}'.", targetIssi, sdsType);
         ListenableFuture<ResponseEntity<String>> responseFuture = asyncRestTemplate.postForEntity(gatewayUrl, httpEntity, String.class);
         responseFuture.addCallback(callback);
     }
 
     private HttpEntity<String> serializeRequest(final SendSdsRequest request) {
         String jsonRequest = gson.toJson(request);
-        return HttpEntities.createHttpEntityForJsonString(jsonRequest);
+        HttpEntity<String> httpEntity;
+        if (authenticationToken != null) {
+            httpEntity = HttpEntities.createHttpEntityForJsonStringWithBearerTokenAuthentication(jsonRequest, authenticationToken);
+        } else {
+            httpEntity = HttpEntities.createHttpEntityForJsonString(jsonRequest);
+        }
+
+        return httpEntity;
     }
 }

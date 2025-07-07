@@ -28,24 +28,25 @@ import java.util.Set;
 import static java.util.stream.Collectors.toSet;
 
 @Component
-class AuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
+class BasicAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AuthenticationProvider.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BasicAuthenticationProvider.class);
 
     private final AuthConfig config;
     private final UserService userService;
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public AuthenticationProvider(final AuthConfig config, final UserService userService, final BCryptPasswordEncoder passwordEncoder) {
+    public BasicAuthenticationProvider(final AuthConfig config, final UserService userService, final BCryptPasswordEncoder passwordEncoder) {
         this.config = config;
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Override
-    protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authenticationToken) throws AuthenticationException {
-      AuthenticatedUser user = (AuthenticatedUser) userDetails;
+    protected void additionalAuthenticationChecks(UserDetails userDetails,
+            UsernamePasswordAuthenticationToken authenticationToken) throws AuthenticationException {
+        AuthenticatedUser user = (AuthenticatedUser) userDetails;
 
 
         String username = user.getUsername();
@@ -72,17 +73,11 @@ class AuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
                 int returnCode = connection.getResponseCode();
                 connection.disconnect();
 
-                switch (returnCode) {
-                    case AuthConfig.SUCCESS_CODE:
-                        LOG.info("[ OK ] {}: Online authentication", username);
-                        success = true;
-                        break;
-                    case AuthConfig.FAILURE_CODE:
-                        LOG.info("[failed] {}: Online authentication", username);
-                        break;
-                    default:
-                        LOG.warn("[failed] {}: Online authentication, unexpected error code {}", username, returnCode);
-                        break;
+                if (AuthConfig.SUCCESS_CODES.contains(returnCode)) {
+                    LOG.info("[ OK ] {}: Online authentication, success code '{}'", username, returnCode);
+                    success = true;
+                } else {
+                    LOG.info("[failed] {}: Online authentication, error code '{}'", username, returnCode);
                 }
             } catch (IOException e) {
                 LOG.warn("[failed] {}: Online authentication, failed with exception {}", username, e.getMessage());
@@ -107,7 +102,8 @@ class AuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
     }
 
     @Override
-    protected AuthenticatedUser retrieveUser(String username, UsernamePasswordAuthenticationToken userPasswordAuthenticationToken) throws AuthenticationException {
+    protected AuthenticatedUser retrieveUser(String username,
+            UsernamePasswordAuthenticationToken userPasswordAuthenticationToken) throws AuthenticationException {
         User user = userService.getByUsername(username);
         if (user == null) {
             LOG.info("[failed] {}: User not found", username);

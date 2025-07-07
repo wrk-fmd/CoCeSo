@@ -1,10 +1,6 @@
 package at.wrk.geocode.impl;
 
 import at.wrk.geocode.GeocodeConfig;
-
-import java.util.Properties;
-import javax.persistence.EntityManagerFactory;
-
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.hibernate.dialect.PostgreSQL9Dialect;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,6 +12,9 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
+
+import javax.persistence.EntityManagerFactory;
+import java.util.Properties;
 
 @Configuration
 @EnableJpaRepositories(value = "at.wrk.geocode", entityManagerFactoryRef = "geocodeEntityManagerFactory", transactionManagerRef = "geocodeTransactionManager")

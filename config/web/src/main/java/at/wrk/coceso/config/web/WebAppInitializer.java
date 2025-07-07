@@ -14,7 +14,7 @@ import javax.servlet.ServletRegistration;
 public class WebAppInitializer implements WebApplicationInitializer {
 
     @Override
-    public void onStartup(ServletContext context) throws ServletException {
+    public void onStartup(ServletContext context) {
         AnnotationConfigWebApplicationContext rootContext = new AnnotationConfigWebApplicationContext();
         rootContext.register(CocesoWebMvcConfigurer.class);
 

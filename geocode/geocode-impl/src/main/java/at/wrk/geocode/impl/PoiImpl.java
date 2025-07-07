@@ -1,6 +1,7 @@
-package at.wrk.geocode.poi;
+package at.wrk.geocode.impl;
 
 import at.wrk.geocode.LatLng;
+import at.wrk.geocode.poi.Poi;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
