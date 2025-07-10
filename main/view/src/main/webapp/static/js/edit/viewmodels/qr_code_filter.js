@@ -77,8 +77,9 @@ define(["jquery", "knockout", "utils/errorhandling", "utils/conf", "qrcode"],
 
       this.filteredUnits = ko.computed(function () {
         var urlPrefix = conf.get("publicGeobrokerUrl");
+        const calls = self.call()?.split(',').map(call => call.trim().toLowerCase()).filter(call => !!call);
         return $.map(self.loadedGeoBrokerUnits(), function (unit, indexOfUnit) {
-          if (unit.name.toLowerCase().indexOf(self.call().toLowerCase()) > -1) {
+          if (!calls?.length || calls.some(call => unit.name.toLowerCase().includes(call))) {
             return createExternalUnitModel(unit, urlPrefix);
           } else {
             return null;
