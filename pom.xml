@@ -72,6 +72,19 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <profiles>
+        <profile>
+            <id>tomcat10</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+
+            <properties>
+                <tomcat.version>10.1.43</tomcat.version>
+            </properties>
+        </profile>
+    </profiles>
+
     <modules>
         <module>config</module>
         <module>geocode</module>

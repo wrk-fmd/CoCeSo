@@ -19,6 +19,7 @@
     <modules>
         <module>config</module>
         <module>db</module>
+        <module>tomcat10</module>
         <module>web</module>
     </modules>
 </project>
