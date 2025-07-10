@@ -11,14 +11,16 @@ import org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.persistence.EntityManagerFactory;
 import java.util.Properties;
 
 @Configuration
+@EnableScheduling
 @EnableJpaRepositories(value = "at.wrk.geocode", entityManagerFactoryRef = "geocodeEntityManagerFactory", transactionManagerRef = "geocodeTransactionManager")
-class GeocodeJpaConfigurer {
+class GeocodeConfigurer {
 
     @Bean(name = "geocodeEntityManagerFactory")
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(@Qualifier("geocodeDataSource") DataSource dataSource) {
