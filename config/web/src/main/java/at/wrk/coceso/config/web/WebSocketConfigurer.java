@@ -9,6 +9,7 @@ import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.server.HandshakeHandler;
 
 import java.util.List;
 
@@ -19,9 +20,12 @@ class WebSocketConfigurer implements WebSocketMessageBrokerConfigurer {
   @Autowired
   private ObjectMapper objectMapper;
 
+  @Autowired(required = false)
+  private HandshakeHandler handshakeHandler;
+
   @Override
   public void registerStompEndpoints(StompEndpointRegistry registry) {
-    registry.addEndpoint("/data/socket");
+    registry.addEndpoint("/data/socket").setHandshakeHandler(handshakeHandler);
   }
 
   @Override
