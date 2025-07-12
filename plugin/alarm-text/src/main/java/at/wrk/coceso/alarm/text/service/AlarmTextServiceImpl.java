@@ -85,7 +85,7 @@ public class AlarmTextServiceImpl implements AlarmTextService {
             if (targetList.isEmpty()) {
                 resultMap.put(targetType, SendAlarmTextResult.NO_TARGETS_FOUND);
             } else {
-                LOG.debug("Sending alarm text {} for incident #{} to {} targets of type {}. Targets: {}", alarmType, incidentId, alarmTargets.size(), targetType, alarmTargets);
+                LOG.debug("Sending alarm text {} for incident #{} to {} targets of type {}. Targets: {}", alarmType, incidentId, targetList.size(), targetType, targetList);
                 AlarmTextSender sender = this.alarmTextSenders.get(targetType);
                 if (sender != null) {
                     SendAlarmTextResult result = sender.sendAlarmText(alarmText, targetList);
