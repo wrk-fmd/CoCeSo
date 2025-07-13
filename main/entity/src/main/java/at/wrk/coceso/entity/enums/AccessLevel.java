@@ -13,9 +13,9 @@ public enum AccessLevel {
 
   Client(false, UnitType.Portable, UnitType.Officer),
   PatadminRoot(Authority.MLS),
-  PatadminRegistration(null, new UnitType[]{UnitType.Triage}, null, new AccessLevel[]{PatadminRoot}),
+  PatadminRegistration(null, new UnitType[]{UnitType.Triage, UnitType.Treatment}, null, new AccessLevel[]{PatadminRoot}),
   PatadminSettings(PatadminRegistration),
-  PatadminPostprocessing(null, new UnitType[]{UnitType.Postprocessing}, null, new AccessLevel[]{PatadminRoot}),
+  PatadminPostprocessing(null, new UnitType[]{UnitType.Postprocessing, UnitType.Treatment}, null, new AccessLevel[]{PatadminRoot}),
   PatadminInfo(null, new UnitType[]{UnitType.Info}, null, new AccessLevel[]{PatadminRoot}),
   Patadmin(PatadminRegistration, PatadminPostprocessing, PatadminInfo, PatadminRoot),
   Edit(Authority.MLS),
