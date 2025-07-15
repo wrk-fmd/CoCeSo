@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
@@ -33,6 +34,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Transactional
@@ -62,18 +64,28 @@ class PatadminServiceImpl implements PatadminServiceInternal {
     }
 
     @Override
-    public boolean[] getAccessLevels(final Concern concern) {
-        return new boolean[]{
-                auth.hasPermission(concern, AccessLevel.PatadminSettings),
-                auth.hasPermission(concern, AccessLevel.PatadminRegistration),
-                auth.hasPermission(concern, AccessLevel.PatadminPostprocessing),
-                auth.hasPermission(concern, AccessLevel.PatadminInfo)
-        };
+    public Set<AccessLevel> getAccessLevels(final Concern concern) {
+        return Stream.of(
+            AccessLevel.PatadminSettings,
+            AccessLevel.PatadminRegistration,
+            AccessLevel.PatadminTreatment,
+            AccessLevel.PatadminPostprocessing,
+            AccessLevel.PatadminInfo
+        ).filter(
+            level -> auth.hasPermission(concern, level)
+        ).collect(Collectors.toSet());
     }
 
     @Override
     public void addAccessLevels(final ModelMap map, final Concern concern) {
         map.addAttribute("accessLevels", getAccessLevels(concern));
+    }
+
+    @Override
+    public List<Patient> getAll(final Concern concern) {
+        List<Patient> patients = patientRepository.findByConcern(concern, Sort.by(Sort.Direction.DESC, "id"));
+        dataAccessLogger.logPatientAccess(patients, concern);
+        return patients;
     }
 
     @Override
@@ -86,12 +98,12 @@ class PatadminServiceImpl implements PatadminServiceInternal {
     @Override
     public List<Patient> getPatientsByQuery(Concern concern, String query, boolean showDone) {
         query = query.trim();
-        if (query.length() < 1) {
+        if (query.isEmpty()) {
             return Collections.emptyList();
         }
 
         List<Patient> patients = patientRepository.findAll(new PatientSearchSpecification(query, concern, showDone));
-        dataAccessLogger.logPatientAccess(patients, concern);
+        dataAccessLogger.logPatientAccess(patients, concern, query);
         return patients;
     }
 

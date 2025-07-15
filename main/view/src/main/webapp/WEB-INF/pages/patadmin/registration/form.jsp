@@ -34,7 +34,7 @@
 </head>
 <body>
 <div class="container">
-    <%@include file="navbar.jsp" %>
+    <%@include file="../navbar.jsp" %>
 
     <%--@elvariable id="successfullyCreated" type="java.lang.Boolean"--%>
     <c:if test="${successfullyCreated}">

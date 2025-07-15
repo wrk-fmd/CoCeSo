@@ -19,26 +19,26 @@
 --%>
 <html>
   <head>
-    <t:head maintitle="patadmin" title="${empty search ? 'patadmin.postprocessing' : 'patadmin.searchresult'}" entry="navbar"/>
+    <t:head maintitle="patadmin" title="${empty search ? 'patadmin.'.concat(viewType) : 'patadmin.searchresult'}" entry="navbar"/>
   </head>
   <body>
     <div class="container">
-      <%@include file="navbar.jsp"%>
+      <%@include file="../navbar.jsp"%>
 
       <c:choose>
         <c:when test="${empty search}">
-          <h2><spring:message code="patadmin.intreatment"/></h2>
+          <h2><spring:message code="patients"/></h2>
         </c:when>
         <c:otherwise>
           <h2><spring:message code="patadmin.searchresult"/>: <em><c:out value="${search}"/></em></h2>
         </c:otherwise>
       </c:choose>
 
-      <c:url var="editUrl" value="/patadmin/postprocessing/edit/"/>
-      <c:url var="viewUrl" value="/patadmin/postprocessing/view/"/>
-      <c:url var="dischargeUrl" value="/patadmin/postprocessing/discharge/"/>
-      <c:url var="transportUrl" value="/patadmin/postprocessing/transport/"/>
-      <c:url var="transportedUrl" value="/patadmin/postprocessing/transported/"/>
+      <c:url var="editUrl" value="/patadmin/${viewType}/edit/"/>
+      <c:url var="viewUrl" value="/patadmin/${viewType}/view/"/>
+      <c:url var="dischargeUrl" value="/patadmin/${viewType}/discharge/"/>
+      <c:url var="transportUrl" value="/patadmin/${viewType}/transport/"/>
+      <c:url var="transportedUrl" value="/patadmin/${viewType}/transported/"/>
 
       <div class="table-responsive">
         <table class="table table-striped table-condensed table-full">

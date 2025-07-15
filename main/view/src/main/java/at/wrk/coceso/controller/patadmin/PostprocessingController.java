@@ -38,6 +38,16 @@ public class PostprocessingController {
   @Autowired
   private PostprocessingWriteService postprocessingWriteService;
 
+  @ModelAttribute("viewType")
+  public String viewType() {
+    return "postprocessing";
+  }
+
+  @ModelAttribute("showSearch")
+  public boolean showSearch() {
+    return true;
+  }
+
   @PreAuthorize("@auth.hasPermission(#concern, 'PatadminPostprocessing')")
   @Transactional
   @RequestMapping(value = "", method = RequestMethod.GET)

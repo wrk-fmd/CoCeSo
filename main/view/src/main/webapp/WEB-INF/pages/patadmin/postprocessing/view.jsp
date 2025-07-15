@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@taglib uri="coceso" prefix="t"%>
 <%--
@@ -23,24 +24,24 @@
   </head>
   <body>
     <div class="container">
-      <%@include file="navbar.jsp"%>
+      <%@include file="../navbar.jsp"%>
 
       <h2><spring:message code="patient"/>: <em><c:out value="${patient.fullName}"/></em></h2>
 
       <p>
-        <a href="<c:url value="/patadmin/postprocessing/edit/${patient.id}"/>" class="btn btn-default">
+        <a href="<c:url value="/patadmin/${viewType}/edit/${patient.id}"/>" class="btn btn-default">
           <spring:message code="patient.edit"/>
         </a>
         <c:if test="${not patient.done && not patient.transport}">
-          <a href="<c:url value="/patadmin/postprocessing/discharge/${patient.id}"/>" class="btn btn-default ">
+          <a href="<c:url value="/patadmin/${viewType}/discharge/${patient.id}"/>" class="btn btn-default ">
             <spring:message code="patient.discharge"/>
           </a>
-          <a href="<c:url value="/patadmin/postprocessing/transport/${patient.id}"/>" class="btn btn-default">
+          <a href="<c:url value="/patadmin/${viewType}/transport/${patient.id}"/>" class="btn btn-default">
             <spring:message code="patient.requesttransport"/>
           </a>
         </c:if>
         <c:if test="${not empty patient.group && patient.transport}">
-          <a href="<c:url value="/patadmin/postprocessing/transported/${patient.id}"/>" class="btn btn-default">
+          <a href="<c:url value="/patadmin/${viewType}/transported/${patient.id}"/>" class="btn btn-default">
             <spring:message code="patient.transported"/>
           </a>
         </c:if></p>
@@ -86,6 +87,14 @@
             </c:forEach>
           </dd>
         </c:if>
+        <c:if test="${not empty patient.transportInfo}">
+          <dt><spring:message code="patadmin.transportInfo"/></dt>
+          <dd class="clearfix">
+            <c:forEach items="${patient.transportInfo}" var="info">
+              <span class="pre"><c:out value="${info}"/></span>
+            </c:forEach>
+          </dd>
+        </c:if>
         <c:if test="${not empty patient.hospital}">
           <dt><spring:message code="patadmin.hospital"/></dt>
           <dd class="clearfix">
@@ -99,6 +108,40 @@
           <dd class="clearfix"><spring:message code="yes"/></dd>
         </c:if>
       </dl>
+
+      <h3><spring:message code="log"/></h3>
+      <table class="table table-striped table-hover">
+        <thead>
+        <tr>
+          <th><spring:message code="log.timestamp"/></th>
+          <th><spring:message code="incident"/></th>
+          <th><spring:message code="unit"/></th>
+          <th><spring:message code="task.state"/></th>
+        </tr>
+        </thead>
+        <tbody>
+        <c:forEach items="${logs}" var="log">
+          <tr>
+            <td><fmt:formatDate type="both" dateStyle="short" timeStyle="medium" value="${log.timestamp}"/></td>
+            <td>
+              <c:if test="${not empty log.incident}">
+                <t:inctitle incident="${log.incident}"/>
+              </c:if>
+            </td>
+            <td>
+              <c:if test="${not empty log.unit}">
+                <c:out value="${log.unit.call}"/>
+              </c:if>
+            </td>
+            <td>
+              <c:if test="${not empty log.state}">
+                <spring:message code="task.state.${fn:toLowerCase(log.state)}" text="${log.state}"/>
+              </c:if>
+            </td>
+          </tr>
+        </c:forEach>
+        </tbody>
+      </table>
     </div>
   </body>
 </html>

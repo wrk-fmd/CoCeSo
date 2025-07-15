@@ -25,10 +25,10 @@
   </head>
   <body>
     <div class="container">
-      <%@include file="navbar.jsp"%>
+      <%@include file="../navbar.jsp"%>
 
       <div class="clearfix">
-        <form:form method="post" servletRelativeAction="/patadmin/postprocessing/discharge" acceptCharset="utf-8">
+        <form:form method="post" servletRelativeAction="/patadmin/${viewType}/discharge" acceptCharset="utf-8">
           <form:hidden path="patient" data-bind="valueInit: patient"/>
           <h3 class="page-header"><spring:message code="patient.personal"/></h3>
           <div class="clearfix">
@@ -85,7 +85,7 @@
             </div>
           </div>
           <form:button class="btn btn-success"><spring:message code="patient.discharge"/></form:button>
-          <a class="btn btn-warning" href="<c:url value="/patadmin/postprocessing/view/${command.patient}"/>"><spring:message code="cancel"/></a>
+          <a class="btn btn-warning" href="<c:url value="/patadmin/${viewType}/view/${command.patient}"/>"><spring:message code="cancel"/></a>
         </form:form>
       </div>
     </div>

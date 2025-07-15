@@ -25,7 +25,7 @@
   </head>
   <body>
     <div class="container">
-      <%@include file="navbar.jsp"%>
+      <%@include file="../navbar.jsp"%>
 
       <div class="clearfix">
         <form:form method="post" servletRelativeAction="/patadmin/postprocessing/save" acceptCharset="utf-8">

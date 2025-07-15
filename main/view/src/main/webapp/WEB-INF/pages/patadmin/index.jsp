@@ -27,16 +27,19 @@
       <h2><spring:message code="patadmin"/>: <em><c:out value="${concern.name}"/></em></h2>
 
       <p>
-        <c:if test="${accessLevels[0]}">
+        <c:if test="${accessLevels.contains(AccessLevel.PatadminSettings)}">
           <a class="btn btn-success" href="<c:url value="/patadmin/settings"/>"><spring:message code="patadmin.settings"/></a>
         </c:if>
-        <c:if test="${accessLevels[1]}">
+        <c:if test="${accessLevels.contains(AccessLevel.PatadminRegistration)}">
           <a class="btn btn-success" href="<c:url value="/patadmin/registration"/>"><spring:message code="patadmin.registration"/></a>
         </c:if>
-        <c:if test="${accessLevels[2]}">
+        <c:if test="${accessLevels.contains(AccessLevel.PatadminTreatment)}">
+          <a class="btn btn-success" href="<c:url value="/patadmin/treatment"/>"><spring:message code="patadmin.treatment"/></a>
+        </c:if>
+        <c:if test="${accessLevels.contains(AccessLevel.PatadminPostprocessing)}">
           <a class="btn btn-success" href="<c:url value="/patadmin/postprocessing"/>"><spring:message code="patadmin.postprocessing"/></a>
         </c:if>
-        <c:if test="${accessLevels[3]}">
+        <c:if test="${accessLevels.contains(AccessLevel.PatadminInfo)}">
           <a class="btn btn-success" href="<c:url value="/patadmin/info"/>"><spring:message code="patadmin.info"/></a>
         </c:if>
       </p>

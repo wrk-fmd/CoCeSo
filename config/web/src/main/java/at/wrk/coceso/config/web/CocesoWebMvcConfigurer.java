@@ -30,10 +30,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.mvc.WebContentInterceptor;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import javax.annotation.PostConstruct;
 
 @Configuration
 @ComponentScan(basePackages = {"at.wrk.coceso", "at.wrk.geocode"})
@@ -47,6 +49,14 @@ class CocesoWebMvcConfigurer implements WebMvcConfigurer {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private RequestMappingHandlerAdapter requestMappingHandlerAdapter;
+
+    @PostConstruct
+    public void init() {
+        requestMappingHandlerAdapter.setIgnoreDefaultModelOnRedirect(true);
+    }
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {

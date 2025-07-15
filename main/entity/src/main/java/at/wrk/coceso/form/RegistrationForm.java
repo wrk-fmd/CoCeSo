@@ -2,6 +2,7 @@ package at.wrk.coceso.form;
 
 import at.wrk.coceso.entity.Patient;
 import at.wrk.coceso.entity.enums.Naca;
+import at.wrk.coceso.entity.enums.Sex;
 import java.time.LocalDate;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -15,6 +16,8 @@ public class RegistrationForm {
   private Naca naca;
   private String diagnosis;
   private String info;
+  private String insurance;
+  private Sex sex;
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
   private LocalDate birthday;
@@ -32,6 +35,8 @@ public class RegistrationForm {
     naca = p.getNaca();
     info = p.getInfo();
     diagnosis = p.getDiagnosis();
+    insurance = p.getInsurance();
+    sex = p.getSex();
   }
 
   public Integer getPatient() {
@@ -106,4 +111,19 @@ public class RegistrationForm {
     this.info = info;
   }
 
+  public String getInsurance() {
+    return insurance;
+  }
+
+  public void setInsurance(String insurance) {
+    this.insurance = insurance;
+  }
+
+  public Sex getSex() {
+    return sex;
+  }
+
+  public void setSex(Sex sex) {
+    this.sex = sex;
+  }
 }

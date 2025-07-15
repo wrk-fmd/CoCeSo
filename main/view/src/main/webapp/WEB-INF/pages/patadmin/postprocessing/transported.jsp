@@ -24,9 +24,9 @@
   </head>
   <body>
     <div class="container">
-      <%@include file="navbar.jsp"%>
+      <%@include file="../navbar.jsp"%>
 
-      <form method="post" action="<c:url value="/patadmin/postprocessing/transported"/>" accept-charset="utf-8">
+      <form method="post" action="<c:url value="/patadmin/${viewType}/transported"/>" accept-charset="utf-8">
         <input type="hidden" name="patient" value="${patient.id}"/>
         <h2><spring:message code="patient.transported.confirm"/></h2>
 
@@ -34,7 +34,7 @@
 
         <p>
           <button type="submit" class="btn btn-success"><spring:message code="patient.transported"/></button>
-          <a class="btn btn-warning" href="<c:url value="/patadmin/postprocessing/view/${patient.id}"/>"><spring:message code="cancel"/></a>
+          <a class="btn btn-warning" href="<c:url value="/patadmin/${viewType}/view/${patient.id}"/>"><spring:message code="cancel"/></a>
         </p>
       </form>
     </div>

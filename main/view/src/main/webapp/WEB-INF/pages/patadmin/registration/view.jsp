@@ -23,7 +23,7 @@
   <body>
     <div class="container">
       <c:set var="autofocus_add" value="autofocus"/>
-      <%@include file="navbar.jsp"%>
+      <%@include file="../navbar.jsp"%>
 
       <h2><spring:message code="patient"/> <span class="text-danger">#<c:out value="${patient.id}"/></span>: <em><c:out value="${patient.fullName}"/></em></h2>
 
