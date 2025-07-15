@@ -187,7 +187,7 @@ define([
             this.type(data.type);
           }
           if (typeof data.section !== "undefined") {
-            this.section(data.section);
+            this.section(data.section || "");
           }
           if (data.units) {
             var unit;
