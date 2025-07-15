@@ -57,7 +57,7 @@ public class EnumUserType implements UserType, ParameterizedType {
 
   @Override
   public int[] sqlTypes() {
-    return new int[]{Types.OTHER};
+    return new int[]{Types.VARCHAR};
   }
 
   @Override

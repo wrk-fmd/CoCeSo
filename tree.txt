@@ -1,0 +1,1486 @@
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] Coceso Parent POM                                                  [pom]
+[INFO] Coceso Config Base                                                 [pom]
+[INFO] Coceso Config                                                      [jar]
+[INFO] Coceso DB Config                                                   [jar]
+[INFO] Coceso Tomcat 10 Config                                            [jar]
+[INFO] Coceso Geocode Base                                                [pom]
+[INFO] Coceso Geocode                                                     [jar]
+[INFO] Coceso Main App                                                    [pom]
+[INFO] Coceso Entities                                                    [jar]
+[INFO] Coceso Services                                                    [jar]
+[INFO] Coceso Web Config                                                  [jar]
+[INFO] Coceso Geocode Implementation                                      [jar]
+[INFO] Coceso DB                                                          [jar]
+[INFO] Coceso Services Implementation                                     [jar]
+[INFO] Coceso Taglib                                                      [jar]
+[INFO] Coceso Plugins                                                     [pom]
+[INFO] Google Maps Plugin for Coceso                                      [jar]
+[INFO] NIU Plugin for Coceso                                              [jar]
+[INFO] Vienna Plugin for Coceso                                           [jar]
+[INFO] Coceso Webapp                                                      [war]
+[INFO] GeoBroker Plugin for CoCeSo                                        [jar]
+[INFO] Alarm Text Plugin for CoCeSo                                       [jar]
+[INFO] Radio Plugin for Coceso                                            [jar]
+[INFO] 
+[INFO] -------------------------< at.wrk.coceso:base >-------------------------
+[INFO] Building Coceso Parent POM 2.8.5-SNAPSHOT                         [1/23]
+[INFO]   from pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- dependency:3.7.0:tree (default-cli) @ base ---
+[INFO] at.wrk.coceso:base:pom:2.8.5-SNAPSHOT
+[INFO] +- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] +- org.apache.logging.log4j:log4j-core:jar:2.20.0:runtime
+[INFO] |  \- org.apache.logging.log4j:log4j-api:jar:2.20.0:runtime
+[INFO] +- org.apache.logging.log4j:log4j-slf4j-impl:jar:2.20.0:runtime
+[INFO] +- org.springframework:spring-beans:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-core:jar:5.3.36:compile
+[INFO] |     \- org.springframework:spring-jcl:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-context:jar:5.3.36:compile
+[INFO] |  +- org.springframework:spring-aop:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-expression:jar:5.3.36:compile
+[INFO] +- junit:junit:jar:4.13.2:test
+[INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  +- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |  +- org.junit.platform:junit-platform-commons:jar:1.8.2:test
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
+[INFO] |  \- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:test
+[INFO] +- org.mockito:mockito-core:jar:3.9.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.10.20:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.10.20:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.hamcrest:hamcrest-all:jar:1.3:test
+[INFO] +- org.springframework:spring-test:jar:5.3.36:test
+[INFO] +- com.github.npathai:hamcrest-optional:jar:2.0.0:test
+[INFO] \- org.awaitility:awaitility:jar:3.1.6:test
+[INFO]    \- org.hamcrest:hamcrest-library:jar:1.3:test
+[INFO] 
+[INFO] --------------< at.wrk.coceso-config:coceso-config-base >---------------
+[INFO] Building Coceso Config Base 2.8.5-SNAPSHOT                        [2/23]
+[INFO]   from config\pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- dependency:3.7.0:tree (default-cli) @ coceso-config-base ---
+[INFO] at.wrk.coceso-config:coceso-config-base:pom:2.8.5-SNAPSHOT
+[INFO] +- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] +- org.apache.logging.log4j:log4j-core:jar:2.20.0:runtime
+[INFO] |  \- org.apache.logging.log4j:log4j-api:jar:2.20.0:runtime
+[INFO] +- org.apache.logging.log4j:log4j-slf4j-impl:jar:2.20.0:runtime
+[INFO] +- org.springframework:spring-beans:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-core:jar:5.3.36:compile
+[INFO] |     \- org.springframework:spring-jcl:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-context:jar:5.3.36:compile
+[INFO] |  +- org.springframework:spring-aop:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-expression:jar:5.3.36:compile
+[INFO] +- junit:junit:jar:4.13.2:test
+[INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  +- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |  +- org.junit.platform:junit-platform-commons:jar:1.8.2:test
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
+[INFO] |  \- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:test
+[INFO] +- org.mockito:mockito-core:jar:3.9.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.10.20:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.10.20:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.hamcrest:hamcrest-all:jar:1.3:test
+[INFO] +- org.springframework:spring-test:jar:5.3.36:test
+[INFO] +- com.github.npathai:hamcrest-optional:jar:2.0.0:test
+[INFO] \- org.awaitility:awaitility:jar:3.1.6:test
+[INFO]    \- org.hamcrest:hamcrest-library:jar:1.3:test
+[INFO] 
+[INFO] -----------------< at.wrk.coceso-config:coceso-config >-----------------
+[INFO] Building Coceso Config 2.8.5-SNAPSHOT                             [3/23]
+[INFO]   from config\config\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- dependency:3.7.0:tree (default-cli) @ coceso-config ---
+[INFO] at.wrk.coceso-config:coceso-config:jar:2.8.5-SNAPSHOT
+[INFO] +- org.apache.commons:commons-lang3:jar:3.12.0:compile
+[INFO] +- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] +- org.apache.logging.log4j:log4j-core:jar:2.20.0:runtime
+[INFO] |  \- org.apache.logging.log4j:log4j-api:jar:2.20.0:runtime
+[INFO] +- org.apache.logging.log4j:log4j-slf4j-impl:jar:2.20.0:runtime
+[INFO] +- org.springframework:spring-beans:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-core:jar:5.3.36:compile
+[INFO] |     \- org.springframework:spring-jcl:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-context:jar:5.3.36:compile
+[INFO] |  +- org.springframework:spring-aop:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-expression:jar:5.3.36:compile
+[INFO] +- junit:junit:jar:4.13.2:test
+[INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  +- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |  +- org.junit.platform:junit-platform-commons:jar:1.8.2:test
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
+[INFO] |  \- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:test
+[INFO] +- org.mockito:mockito-core:jar:3.9.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.10.20:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.10.20:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.hamcrest:hamcrest-all:jar:1.3:test
+[INFO] +- org.springframework:spring-test:jar:5.3.36:test
+[INFO] +- com.github.npathai:hamcrest-optional:jar:2.0.0:test
+[INFO] \- org.awaitility:awaitility:jar:3.1.6:test
+[INFO]    \- org.hamcrest:hamcrest-library:jar:1.3:test
+[INFO] 
+[INFO] ---------------< at.wrk.coceso-config:coceso-config-db >----------------
+[INFO] Building Coceso DB Config 2.8.5-SNAPSHOT                          [4/23]
+[INFO]   from config\db\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- dependency:3.7.0:tree (default-cli) @ coceso-config-db ---
+[INFO] at.wrk.coceso-config:coceso-config-db:jar:2.8.5-SNAPSHOT
+[INFO] +- at.wrk.coceso-config:coceso-config:jar:2.8.5-SNAPSHOT:compile
+[INFO] |  \- org.apache.commons:commons-lang3:jar:3.12.0:compile
+[INFO] +- org.springframework:spring-orm:jar:5.3.36:compile
+[INFO] |  +- org.springframework:spring-core:jar:5.3.36:compile
+[INFO] |  |  \- org.springframework:spring-jcl:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-jdbc:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-tx:jar:5.3.36:compile
+[INFO] +- org.springframework.data:spring-data-jpa:jar:2.6.3:compile
+[INFO] |  +- org.springframework.data:spring-data-commons:jar:2.7.18:compile
+[INFO] |  \- org.springframework:spring-aop:jar:5.3.36:compile
+[INFO] +- org.hibernate:hibernate-core:jar:5.2.18.Final:compile
+[INFO] |  +- org.jboss.logging:jboss-logging:jar:3.3.1.Final:compile
+[INFO] |  +- org.javassist:javassist:jar:3.29.2-GA:compile
+[INFO] |  +- antlr:antlr:jar:2.7.7:compile
+[INFO] |  +- org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:jar:1.0.1.Final:compile
+[INFO] |  +- org.jboss:jandex:jar:2.0.3.Final:compile
+[INFO] |  +- com.fasterxml:classmate:jar:1.3.0:compile
+[INFO] |  +- org.dom4j:dom4j:jar:2.1.1:compile
+[INFO] |  \- org.hibernate.common:hibernate-commons-annotations:jar:5.0.1.Final:compile
+[INFO] +- org.hibernate.javax.persistence:hibernate-jpa-2.1-api:jar:1.0.2.Final:compile
+[INFO] +- org.hibernate:hibernate-entitymanager:jar:5.2.18.Final:runtime
+[INFO] |  \- net.bytebuddy:byte-buddy:jar:1.6.14:runtime
+[INFO] +- org.apache.tomcat:tomcat-jdbc:jar:8.5.87:provided
+[INFO] |  \- org.apache.tomcat:tomcat-juli:jar:8.5.87:provided
+[INFO] +- org.postgresql:postgresql:jar:42.7.3:compile
+[INFO] |  \- org.checkerframework:checker-qual:jar:3.42.0:runtime
+[INFO] +- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] +- org.apache.logging.log4j:log4j-core:jar:2.20.0:runtime
+[INFO] |  \- org.apache.logging.log4j:log4j-api:jar:2.20.0:runtime
+[INFO] +- org.apache.logging.log4j:log4j-slf4j-impl:jar:2.20.0:runtime
+[INFO] +- org.springframework:spring-beans:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-context:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-expression:jar:5.3.36:compile
+[INFO] +- junit:junit:jar:4.13.2:test
+[INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  +- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |  +- org.junit.platform:junit-platform-commons:jar:1.8.2:test
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
+[INFO] |  \- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:test
+[INFO] +- org.mockito:mockito-core:jar:3.9.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.10.20:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.hamcrest:hamcrest-all:jar:1.3:test
+[INFO] +- org.springframework:spring-test:jar:5.3.36:test
+[INFO] +- com.github.npathai:hamcrest-optional:jar:2.0.0:test
+[INFO] \- org.awaitility:awaitility:jar:3.1.6:test
+[INFO]    \- org.hamcrest:hamcrest-library:jar:1.3:test
+[INFO] 
+[INFO] ------------< at.wrk.coceso-config:coceso-config-tomcat10 >-------------
+[INFO] Building Coceso Tomcat 10 Config 2.8.5-SNAPSHOT                   [5/23]
+[INFO]   from config\tomcat10\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- dependency:3.7.0:tree (default-cli) @ coceso-config-tomcat10 ---
+[INFO] at.wrk.coceso-config:coceso-config-tomcat10:jar:2.8.5-SNAPSHOT
+[INFO] +- org.springframework:spring-websocket:jar:5.3.36:compile
+[INFO] |  +- org.springframework:spring-core:jar:5.3.36:compile
+[INFO] |  |  \- org.springframework:spring-jcl:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-web:jar:5.3.36:compile
+[INFO] +- org.apache.tomcat:tomcat-websocket:jar:9.0.107:provided
+[INFO] |  +- org.apache.tomcat:tomcat-servlet-api:jar:9.0.107:provided
+[INFO] |  +- org.apache.tomcat:tomcat-websocket-api:jar:9.0.107:provided
+[INFO] |  +- org.apache.tomcat:tomcat-juli:jar:9.0.107:provided
+[INFO] |  \- org.apache.tomcat:tomcat-util:jar:9.0.107:provided
+[INFO] +- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] +- org.apache.logging.log4j:log4j-core:jar:2.20.0:runtime
+[INFO] |  \- org.apache.logging.log4j:log4j-api:jar:2.20.0:runtime
+[INFO] +- org.apache.logging.log4j:log4j-slf4j-impl:jar:2.20.0:runtime
+[INFO] +- org.springframework:spring-beans:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-context:jar:5.3.36:compile
+[INFO] |  +- org.springframework:spring-aop:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-expression:jar:5.3.36:compile
+[INFO] +- junit:junit:jar:4.13.2:test
+[INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  +- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |  +- org.junit.platform:junit-platform-commons:jar:1.8.2:test
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
+[INFO] |  \- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:test
+[INFO] +- org.mockito:mockito-core:jar:3.9.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.10.20:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.10.20:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.hamcrest:hamcrest-all:jar:1.3:test
+[INFO] +- org.springframework:spring-test:jar:5.3.36:test
+[INFO] +- com.github.npathai:hamcrest-optional:jar:2.0.0:test
+[INFO] \- org.awaitility:awaitility:jar:3.1.6:test
+[INFO]    \- org.hamcrest:hamcrest-library:jar:1.3:test
+[INFO] 
+[INFO] --------------------< at.wrk.geocode:geocode-base >---------------------
+[INFO] Building Coceso Geocode Base 2.8.5-SNAPSHOT                       [6/23]
+[INFO]   from geocode\pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- dependency:3.7.0:tree (default-cli) @ geocode-base ---
+[INFO] at.wrk.geocode:geocode-base:pom:2.8.5-SNAPSHOT
+[INFO] +- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] +- org.apache.logging.log4j:log4j-core:jar:2.20.0:runtime
+[INFO] |  \- org.apache.logging.log4j:log4j-api:jar:2.20.0:runtime
+[INFO] +- org.apache.logging.log4j:log4j-slf4j-impl:jar:2.20.0:runtime
+[INFO] +- org.springframework:spring-beans:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-core:jar:5.3.36:compile
+[INFO] |     \- org.springframework:spring-jcl:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-context:jar:5.3.36:compile
+[INFO] |  +- org.springframework:spring-aop:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-expression:jar:5.3.36:compile
+[INFO] +- junit:junit:jar:4.13.2:test
+[INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  +- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |  +- org.junit.platform:junit-platform-commons:jar:1.8.2:test
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
+[INFO] |  \- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:test
+[INFO] +- org.mockito:mockito-core:jar:3.9.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.10.20:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.10.20:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.hamcrest:hamcrest-all:jar:1.3:test
+[INFO] +- org.springframework:spring-test:jar:5.3.36:test
+[INFO] +- com.github.npathai:hamcrest-optional:jar:2.0.0:test
+[INFO] \- org.awaitility:awaitility:jar:3.1.6:test
+[INFO]    \- org.hamcrest:hamcrest-library:jar:1.3:test
+[INFO] 
+[INFO] -----------------------< at.wrk.geocode:geocode >-----------------------
+[INFO] Building Coceso Geocode 2.8.5-SNAPSHOT                            [7/23]
+[INFO]   from geocode\geocode\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- dependency:3.7.0:tree (default-cli) @ geocode ---
+[INFO] at.wrk.geocode:geocode:jar:2.8.5-SNAPSHOT
+[INFO] +- com.fasterxml.jackson.core:jackson-databind:jar:2.17.1:compile
+[INFO] |  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.17.1:compile
+[INFO] |  \- com.fasterxml.jackson.core:jackson-core:jar:2.17.1:compile
+[INFO] +- de.grundid.opendatalab:geojson-jackson:jar:1.14:compile
+[INFO] +- org.apache.commons:commons-lang3:jar:3.12.0:compile
+[INFO] +- org.apache.commons:commons-text:jar:1.12.0:compile
+[INFO] +- org.apache.commons:commons-csv:jar:1.11.0:compile
+[INFO] |  +- commons-io:commons-io:jar:2.16.1:compile
+[INFO] |  \- commons-codec:commons-codec:jar:1.16.1:compile
+[INFO] +- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] +- org.apache.logging.log4j:log4j-core:jar:2.20.0:runtime
+[INFO] |  \- org.apache.logging.log4j:log4j-api:jar:2.20.0:runtime
+[INFO] +- org.apache.logging.log4j:log4j-slf4j-impl:jar:2.20.0:runtime
+[INFO] +- org.springframework:spring-beans:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-core:jar:5.3.36:compile
+[INFO] |     \- org.springframework:spring-jcl:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-context:jar:5.3.36:compile
+[INFO] |  +- org.springframework:spring-aop:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-expression:jar:5.3.36:compile
+[INFO] +- junit:junit:jar:4.13.2:test
+[INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  +- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |  +- org.junit.platform:junit-platform-commons:jar:1.8.2:test
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
+[INFO] |  \- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:test
+[INFO] +- org.mockito:mockito-core:jar:3.9.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.10.20:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.10.20:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.hamcrest:hamcrest-all:jar:1.3:test
+[INFO] +- org.springframework:spring-test:jar:5.3.36:test
+[INFO] +- com.github.npathai:hamcrest-optional:jar:2.0.0:test
+[INFO] \- org.awaitility:awaitility:jar:3.1.6:test
+[INFO]    \- org.hamcrest:hamcrest-library:jar:1.3:test
+[INFO] 
+[INFO] -------------------------< at.wrk.coceso:main >-------------------------
+[INFO] Building Coceso Main App 2.8.5-SNAPSHOT                           [8/23]
+[INFO]   from main\pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- dependency:3.7.0:tree (default-cli) @ main ---
+[INFO] at.wrk.coceso:main:pom:2.8.5-SNAPSHOT
+[INFO] +- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] +- org.apache.logging.log4j:log4j-core:jar:2.20.0:runtime
+[INFO] |  \- org.apache.logging.log4j:log4j-api:jar:2.20.0:runtime
+[INFO] +- org.apache.logging.log4j:log4j-slf4j-impl:jar:2.20.0:runtime
+[INFO] +- org.springframework:spring-beans:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-core:jar:5.3.36:compile
+[INFO] |     \- org.springframework:spring-jcl:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-context:jar:5.3.36:compile
+[INFO] |  +- org.springframework:spring-aop:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-expression:jar:5.3.36:compile
+[INFO] +- junit:junit:jar:4.13.2:test
+[INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  +- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |  +- org.junit.platform:junit-platform-commons:jar:1.8.2:test
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
+[INFO] |  \- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:test
+[INFO] +- org.mockito:mockito-core:jar:3.9.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.10.20:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.10.20:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.hamcrest:hamcrest-all:jar:1.3:test
+[INFO] +- org.springframework:spring-test:jar:5.3.36:test
+[INFO] +- com.github.npathai:hamcrest-optional:jar:2.0.0:test
+[INFO] \- org.awaitility:awaitility:jar:3.1.6:test
+[INFO]    \- org.hamcrest:hamcrest-library:jar:1.3:test
+[INFO] 
+[INFO] --------------------< at.wrk.coceso:coceso-entity >---------------------
+[INFO] Building Coceso Entities 2.8.5-SNAPSHOT                           [9/23]
+[INFO]   from main\entity\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- dependency:3.7.0:tree (default-cli) @ coceso-entity ---
+[INFO] at.wrk.coceso:coceso-entity:jar:2.8.5-SNAPSHOT
+[INFO] +- at.wrk.geocode:geocode:jar:2.8.5-SNAPSHOT:compile
+[INFO] |  +- de.grundid.opendatalab:geojson-jackson:jar:1.14:compile
+[INFO] |  +- org.apache.commons:commons-text:jar:1.12.0:compile
+[INFO] |  \- org.apache.commons:commons-csv:jar:1.11.0:compile
+[INFO] |     +- commons-io:commons-io:jar:2.16.1:compile
+[INFO] |     \- commons-codec:commons-codec:jar:1.16.1:compile
+[INFO] +- org.springframework.security:spring-security-core:jar:5.8.12:compile
+[INFO] |  +- org.springframework.security:spring-security-crypto:jar:5.8.12:compile
+[INFO] |  +- org.springframework:spring-aop:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-expression:jar:5.3.36:compile
+[INFO] +- org.springframework.data:spring-data-jpa:jar:2.6.3:compile
+[INFO] |  +- org.springframework.data:spring-data-commons:jar:2.7.18:compile
+[INFO] |  +- org.springframework:spring-orm:jar:5.3.36:compile
+[INFO] |  |  \- org.springframework:spring-jdbc:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-tx:jar:5.3.36:compile
+[INFO] +- com.fasterxml.jackson.core:jackson-core:jar:2.17.1:compile
+[INFO] +- com.fasterxml.jackson.core:jackson-annotations:jar:2.17.1:compile
+[INFO] +- com.fasterxml.jackson.core:jackson-databind:jar:2.17.1:compile
+[INFO] +- javax.validation:validation-api:jar:2.0.1.Final:compile
+[INFO] +- org.hibernate:hibernate-validator:jar:5.4.3.Final:compile
+[INFO] |  +- org.jboss.logging:jboss-logging:jar:3.3.0.Final:compile
+[INFO] |  \- com.fasterxml:classmate:jar:1.3.1:compile
+[INFO] +- org.hibernate:hibernate-core:jar:5.2.18.Final:compile
+[INFO] |  +- org.javassist:javassist:jar:3.29.2-GA:compile
+[INFO] |  +- antlr:antlr:jar:2.7.7:compile
+[INFO] |  +- org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:jar:1.0.1.Final:compile
+[INFO] |  +- org.jboss:jandex:jar:2.0.3.Final:compile
+[INFO] |  +- org.dom4j:dom4j:jar:2.1.1:compile
+[INFO] |  \- org.hibernate.common:hibernate-commons-annotations:jar:5.0.1.Final:compile
+[INFO] +- org.hibernate.javax.persistence:hibernate-jpa-2.1-api:jar:1.0.2.Final:compile
+[INFO] +- javax.xml.bind:jaxb-api:jar:2.3.1:compile
+[INFO] |  \- javax.activation:javax.activation-api:jar:1.2.0:compile
+[INFO] +- javax.annotation:javax.annotation-api:jar:1.3.2:compile
+[INFO] +- org.apache.commons:commons-lang3:jar:3.12.0:compile
+[INFO] +- com.google.guava:guava:jar:33.2.0-jre:compile
+[INFO] |  +- com.google.guava:failureaccess:jar:1.0.2:compile
+[INFO] |  +- com.google.guava:listenablefuture:jar:9999.0-empty-to-avoid-conflict-with-guava:compile
+[INFO] |  +- com.google.code.findbugs:jsr305:jar:3.0.2:compile
+[INFO] |  +- org.checkerframework:checker-qual:jar:3.42.0:compile
+[INFO] |  +- com.google.errorprone:error_prone_annotations:jar:2.26.1:compile
+[INFO] |  \- com.google.j2objc:j2objc-annotations:jar:3.0.0:compile
+[INFO] +- org.springframework:spring-core:jar:5.3.36:test
+[INFO] |  \- org.springframework:spring-jcl:jar:5.3.36:test
+[INFO] +- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] +- org.apache.logging.log4j:log4j-core:jar:2.20.0:runtime
+[INFO] |  \- org.apache.logging.log4j:log4j-api:jar:2.20.0:runtime
+[INFO] +- org.apache.logging.log4j:log4j-slf4j-impl:jar:2.20.0:runtime
+[INFO] +- org.springframework:spring-beans:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-context:jar:5.3.36:compile
+[INFO] +- junit:junit:jar:4.13.2:test
+[INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  +- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |  +- org.junit.platform:junit-platform-commons:jar:1.8.2:test
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
+[INFO] |  \- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:test
+[INFO] +- org.mockito:mockito-core:jar:3.9.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.10.20:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.10.20:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.hamcrest:hamcrest-all:jar:1.3:test
+[INFO] +- org.springframework:spring-test:jar:5.3.36:test
+[INFO] +- com.github.npathai:hamcrest-optional:jar:2.0.0:test
+[INFO] \- org.awaitility:awaitility:jar:3.1.6:test
+[INFO]    \- org.hamcrest:hamcrest-library:jar:1.3:test
+[INFO] 
+[INFO] --------------------< at.wrk.coceso:coceso-service >--------------------
+[INFO] Building Coceso Services 2.8.5-SNAPSHOT                          [10/23]
+[INFO]   from main\service\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- dependency:3.7.0:tree (default-cli) @ coceso-service ---
+[INFO] at.wrk.coceso:coceso-service:jar:2.8.5-SNAPSHOT
+[INFO] +- at.wrk.coceso:coceso-entity:jar:2.8.5-SNAPSHOT:compile
+[INFO] |  +- at.wrk.geocode:geocode:jar:2.8.5-SNAPSHOT:compile
+[INFO] |  |  +- de.grundid.opendatalab:geojson-jackson:jar:1.14:compile
+[INFO] |  |  +- org.apache.commons:commons-text:jar:1.12.0:compile
+[INFO] |  |  \- org.apache.commons:commons-csv:jar:1.11.0:compile
+[INFO] |  |     +- commons-io:commons-io:jar:2.16.1:compile
+[INFO] |  |     \- commons-codec:commons-codec:jar:1.16.1:compile
+[INFO] |  +- org.springframework.security:spring-security-core:jar:5.8.12:compile
+[INFO] |  |  \- org.springframework.security:spring-security-crypto:jar:5.8.12:compile
+[INFO] |  +- org.springframework.data:spring-data-jpa:jar:2.6.3:compile
+[INFO] |  |  \- org.springframework:spring-orm:jar:5.3.36:compile
+[INFO] |  |     \- org.springframework:spring-jdbc:jar:5.3.36:compile
+[INFO] |  +- com.fasterxml.jackson.core:jackson-core:jar:2.17.1:compile
+[INFO] |  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.17.1:compile
+[INFO] |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.17.1:compile
+[INFO] |  +- org.hibernate:hibernate-validator:jar:5.4.3.Final:compile
+[INFO] |  |  +- org.jboss.logging:jboss-logging:jar:3.3.0.Final:compile
+[INFO] |  |  \- com.fasterxml:classmate:jar:1.3.1:compile
+[INFO] |  +- org.hibernate:hibernate-core:jar:5.2.18.Final:compile
+[INFO] |  |  +- org.javassist:javassist:jar:3.29.2-GA:compile
+[INFO] |  |  +- antlr:antlr:jar:2.7.7:compile
+[INFO] |  |  +- org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:jar:1.0.1.Final:compile
+[INFO] |  |  +- org.jboss:jandex:jar:2.0.3.Final:compile
+[INFO] |  |  +- org.dom4j:dom4j:jar:2.1.1:compile
+[INFO] |  |  \- org.hibernate.common:hibernate-commons-annotations:jar:5.0.1.Final:compile
+[INFO] |  +- org.hibernate.javax.persistence:hibernate-jpa-2.1-api:jar:1.0.2.Final:compile
+[INFO] |  +- javax.xml.bind:jaxb-api:jar:2.3.1:compile
+[INFO] |  |  \- javax.activation:javax.activation-api:jar:1.2.0:compile
+[INFO] |  +- javax.annotation:javax.annotation-api:jar:1.3.2:compile
+[INFO] |  +- org.apache.commons:commons-lang3:jar:3.12.0:compile
+[INFO] |  \- com.google.guava:guava:jar:33.2.0-jre:compile
+[INFO] |     +- com.google.guava:failureaccess:jar:1.0.2:compile
+[INFO] |     +- com.google.guava:listenablefuture:jar:9999.0-empty-to-avoid-conflict-with-guava:compile
+[INFO] |     +- com.google.code.findbugs:jsr305:jar:3.0.2:compile
+[INFO] |     +- org.checkerframework:checker-qual:jar:3.42.0:compile
+[INFO] |     +- com.google.errorprone:error_prone_annotations:jar:2.26.1:compile
+[INFO] |     \- com.google.j2objc:j2objc-annotations:jar:3.0.0:compile
+[INFO] +- org.springframework:spring-web:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-core:jar:5.3.36:compile
+[INFO] |     \- org.springframework:spring-jcl:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-tx:jar:5.3.36:compile
+[INFO] +- org.springframework.data:spring-data-commons:jar:2.7.18:compile
+[INFO] +- javax.validation:validation-api:jar:2.0.1.Final:compile
+[INFO] +- javax.servlet:javax.servlet-api:jar:3.1.0:provided
+[INFO] +- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] +- org.apache.logging.log4j:log4j-core:jar:2.20.0:runtime
+[INFO] |  \- org.apache.logging.log4j:log4j-api:jar:2.20.0:runtime
+[INFO] +- org.apache.logging.log4j:log4j-slf4j-impl:jar:2.20.0:runtime
+[INFO] +- org.springframework:spring-beans:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-context:jar:5.3.36:compile
+[INFO] |  +- org.springframework:spring-aop:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-expression:jar:5.3.36:compile
+[INFO] +- junit:junit:jar:4.13.2:test
+[INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  +- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |  +- org.junit.platform:junit-platform-commons:jar:1.8.2:test
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
+[INFO] |  \- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:test
+[INFO] +- org.mockito:mockito-core:jar:3.9.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.10.20:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.10.20:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.hamcrest:hamcrest-all:jar:1.3:test
+[INFO] +- org.springframework:spring-test:jar:5.3.36:test
+[INFO] +- com.github.npathai:hamcrest-optional:jar:2.0.0:test
+[INFO] \- org.awaitility:awaitility:jar:3.1.6:test
+[INFO]    \- org.hamcrest:hamcrest-library:jar:1.3:test
+[INFO] 
+[INFO] ---------------< at.wrk.coceso-config:coceso-config-web >---------------
+[INFO] Building Coceso Web Config 2.8.5-SNAPSHOT                        [11/23]
+[INFO]   from config\web\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- dependency:3.7.0:tree (default-cli) @ coceso-config-web ---
+[INFO] at.wrk.coceso-config:coceso-config-web:jar:2.8.5-SNAPSHOT
+[INFO] +- at.wrk.coceso:coceso-entity:jar:2.8.5-SNAPSHOT:compile
+[INFO] |  +- at.wrk.geocode:geocode:jar:2.8.5-SNAPSHOT:compile
+[INFO] |  |  +- de.grundid.opendatalab:geojson-jackson:jar:1.14:compile
+[INFO] |  |  +- org.apache.commons:commons-text:jar:1.12.0:compile
+[INFO] |  |  \- org.apache.commons:commons-csv:jar:1.11.0:compile
+[INFO] |  |     \- commons-io:commons-io:jar:2.16.1:compile
+[INFO] |  +- org.springframework.data:spring-data-jpa:jar:2.6.3:compile
+[INFO] |  |  \- org.springframework:spring-orm:jar:5.3.36:compile
+[INFO] |  |     \- org.springframework:spring-jdbc:jar:5.3.36:compile
+[INFO] |  +- com.fasterxml.jackson.core:jackson-core:jar:2.17.1:compile
+[INFO] |  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.17.1:compile
+[INFO] |  +- javax.validation:validation-api:jar:2.0.1.Final:compile
+[INFO] |  +- org.hibernate:hibernate-validator:jar:5.4.3.Final:compile
+[INFO] |  |  +- org.jboss.logging:jboss-logging:jar:3.3.0.Final:compile
+[INFO] |  |  \- com.fasterxml:classmate:jar:1.3.1:compile
+[INFO] |  +- org.hibernate:hibernate-core:jar:5.2.18.Final:compile
+[INFO] |  |  +- org.javassist:javassist:jar:3.29.2-GA:compile
+[INFO] |  |  +- antlr:antlr:jar:2.7.7:compile
+[INFO] |  |  +- org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:jar:1.0.1.Final:compile
+[INFO] |  |  +- org.jboss:jandex:jar:2.0.3.Final:compile
+[INFO] |  |  +- org.dom4j:dom4j:jar:2.1.1:compile
+[INFO] |  |  \- org.hibernate.common:hibernate-commons-annotations:jar:5.0.1.Final:compile
+[INFO] |  +- org.hibernate.javax.persistence:hibernate-jpa-2.1-api:jar:1.0.2.Final:compile
+[INFO] |  +- javax.xml.bind:jaxb-api:jar:2.3.1:compile
+[INFO] |  |  \- javax.activation:javax.activation-api:jar:1.2.0:compile
+[INFO] |  +- javax.annotation:javax.annotation-api:jar:1.3.2:compile
+[INFO] |  +- org.apache.commons:commons-lang3:jar:3.12.0:compile
+[INFO] |  \- com.google.guava:guava:jar:33.2.0-jre:compile
+[INFO] |     +- com.google.guava:failureaccess:jar:1.0.2:compile
+[INFO] |     +- com.google.guava:listenablefuture:jar:9999.0-empty-to-avoid-conflict-with-guava:compile
+[INFO] |     +- com.google.code.findbugs:jsr305:jar:3.0.2:compile
+[INFO] |     +- org.checkerframework:checker-qual:jar:3.42.0:compile
+[INFO] |     +- com.google.errorprone:error_prone_annotations:jar:2.26.1:compile
+[INFO] |     \- com.google.j2objc:j2objc-annotations:jar:3.0.0:compile
+[INFO] +- at.wrk.coceso:coceso-service:jar:2.8.5-SNAPSHOT:compile
+[INFO] |  \- org.springframework:spring-tx:jar:5.3.36:compile
+[INFO] +- at.wrk.coceso-config:coceso-config:jar:2.8.5-SNAPSHOT:compile
+[INFO] +- org.springframework:spring-core:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-jcl:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-web:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-webmvc:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-expression:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-websocket:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-messaging:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-aspects:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-aop:jar:5.3.36:runtime
+[INFO] +- org.springframework:spring-instrument:jar:5.3.36:runtime
+[INFO] +- org.springframework.security:spring-security-core:jar:5.8.12:compile
+[INFO] |  \- org.springframework.security:spring-security-crypto:jar:5.8.12:compile
+[INFO] +- org.springframework.security:spring-security-web:jar:5.8.12:compile
+[INFO] +- org.springframework.security:spring-security-config:jar:5.8.12:compile
+[INFO] +- org.springframework.data:spring-data-commons:jar:2.7.18:compile
+[INFO] +- com.fasterxml.jackson.core:jackson-databind:jar:2.17.1:compile
+[INFO] +- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:jar:2.17.1:compile
+[INFO] +- com.fatboyindustrial.gson-javatime-serialisers:gson-javatime-serialisers:jar:1.1.1:compile
+[INFO] |  \- com.google.code.gson:gson:jar:2.3.1:compile
+[INFO] +- org.apache.httpcomponents:httpasyncclient:jar:4.1.4:compile
+[INFO] |  +- org.apache.httpcomponents:httpcore:jar:4.4.10:compile
+[INFO] |  +- org.apache.httpcomponents:httpcore-nio:jar:4.4.10:compile
+[INFO] |  +- org.apache.httpcomponents:httpclient:jar:4.5.13:compile
+[INFO] |  |  \- commons-codec:commons-codec:jar:1.11:compile
+[INFO] |  \- commons-logging:commons-logging:jar:1.2:compile
+[INFO] +- javax.servlet:javax.servlet-api:jar:3.1.0:provided
+[INFO] +- org.aspectj:aspectjrt:jar:1.9.1:runtime
+[INFO] +- org.aspectj:aspectjweaver:jar:1.9.1:runtime
+[INFO] +- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] +- org.apache.logging.log4j:log4j-core:jar:2.20.0:runtime
+[INFO] |  \- org.apache.logging.log4j:log4j-api:jar:2.20.0:runtime
+[INFO] +- org.apache.logging.log4j:log4j-slf4j-impl:jar:2.20.0:runtime
+[INFO] +- org.springframework:spring-beans:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-context:jar:5.3.36:compile
+[INFO] +- junit:junit:jar:4.13.2:test
+[INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  +- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |  +- org.junit.platform:junit-platform-commons:jar:1.8.2:test
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
+[INFO] |  \- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:test
+[INFO] +- org.mockito:mockito-core:jar:3.9.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.10.20:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.10.20:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.hamcrest:hamcrest-all:jar:1.3:test
+[INFO] +- org.springframework:spring-test:jar:5.3.36:test
+[INFO] +- com.github.npathai:hamcrest-optional:jar:2.0.0:test
+[INFO] \- org.awaitility:awaitility:jar:3.1.6:test
+[INFO]    \- org.hamcrest:hamcrest-library:jar:1.3:test
+[INFO] 
+[INFO] --------------------< at.wrk.geocode:geocode-impl >---------------------
+[INFO] Building Coceso Geocode Implementation 2.8.5-SNAPSHOT            [12/23]
+[INFO]   from geocode\geocode-impl\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- dependency:3.7.0:tree (default-cli) @ geocode-impl ---
+[INFO] at.wrk.geocode:geocode-impl:jar:2.8.5-SNAPSHOT
+[INFO] +- at.wrk.geocode:geocode:jar:2.8.5-SNAPSHOT:compile
+[INFO] |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.17.1:compile
+[INFO] |  |  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.17.1:compile
+[INFO] |  |  \- com.fasterxml.jackson.core:jackson-core:jar:2.17.1:compile
+[INFO] |  +- de.grundid.opendatalab:geojson-jackson:jar:1.14:compile
+[INFO] |  +- org.apache.commons:commons-lang3:jar:3.12.0:compile
+[INFO] |  +- org.apache.commons:commons-text:jar:1.12.0:compile
+[INFO] |  \- org.apache.commons:commons-csv:jar:1.11.0:compile
+[INFO] |     +- commons-io:commons-io:jar:2.16.1:compile
+[INFO] |     \- commons-codec:commons-codec:jar:1.16.1:compile
+[INFO] +- org.hibernate:hibernate-core:jar:5.2.18.Final:compile
+[INFO] |  +- org.jboss.logging:jboss-logging:jar:3.3.1.Final:compile
+[INFO] |  +- org.javassist:javassist:jar:3.29.2-GA:compile
+[INFO] |  +- antlr:antlr:jar:2.7.7:compile
+[INFO] |  +- org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:jar:1.0.1.Final:compile
+[INFO] |  +- org.jboss:jandex:jar:2.0.3.Final:compile
+[INFO] |  +- com.fasterxml:classmate:jar:1.3.0:compile
+[INFO] |  +- org.dom4j:dom4j:jar:2.1.1:compile
+[INFO] |  \- org.hibernate.common:hibernate-commons-annotations:jar:5.0.1.Final:compile
+[INFO] +- org.hibernate.javax.persistence:hibernate-jpa-2.1-api:jar:1.0.2.Final:compile
+[INFO] +- org.hibernate:hibernate-entitymanager:jar:5.2.18.Final:runtime
+[INFO] |  \- net.bytebuddy:byte-buddy:jar:1.6.14:runtime
+[INFO] +- org.apache.tomcat:tomcat-jdbc:jar:8.5.87:provided
+[INFO] |  \- org.apache.tomcat:tomcat-juli:jar:8.5.87:provided
+[INFO] +- org.postgresql:postgresql:jar:42.7.3:compile
+[INFO] |  \- org.checkerframework:checker-qual:jar:3.42.0:runtime
+[INFO] +- org.springframework.data:spring-data-commons:jar:2.7.18:compile
+[INFO] |  \- org.springframework:spring-core:jar:5.3.36:compile
+[INFO] |     \- org.springframework:spring-jcl:jar:5.3.36:compile
+[INFO] +- org.springframework.data:spring-data-jpa:jar:2.6.3:compile
+[INFO] |  +- org.springframework:spring-orm:jar:5.3.36:compile
+[INFO] |  |  \- org.springframework:spring-jdbc:jar:5.3.36:compile
+[INFO] |  +- org.springframework:spring-aop:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-tx:jar:5.3.36:compile
+[INFO] +- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] +- org.apache.logging.log4j:log4j-core:jar:2.20.0:runtime
+[INFO] |  \- org.apache.logging.log4j:log4j-api:jar:2.20.0:runtime
+[INFO] +- org.apache.logging.log4j:log4j-slf4j-impl:jar:2.20.0:runtime
+[INFO] +- org.springframework:spring-beans:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-context:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-expression:jar:5.3.36:compile
+[INFO] +- junit:junit:jar:4.13.2:test
+[INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  +- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |  +- org.junit.platform:junit-platform-commons:jar:1.8.2:test
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
+[INFO] |  \- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:test
+[INFO] +- org.mockito:mockito-core:jar:3.9.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.10.20:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.hamcrest:hamcrest-all:jar:1.3:test
+[INFO] +- org.springframework:spring-test:jar:5.3.36:test
+[INFO] +- com.github.npathai:hamcrest-optional:jar:2.0.0:test
+[INFO] \- org.awaitility:awaitility:jar:3.1.6:test
+[INFO]    \- org.hamcrest:hamcrest-library:jar:1.3:test
+[INFO] 
+[INFO] ----------------------< at.wrk.coceso:coceso-db >-----------------------
+[INFO] Building Coceso DB 2.8.5-SNAPSHOT                                [13/23]
+[INFO]   from main\db\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- dependency:3.7.0:tree (default-cli) @ coceso-db ---
+[INFO] at.wrk.coceso:coceso-db:jar:2.8.5-SNAPSHOT
+[INFO] +- at.wrk.coceso:coceso-entity:jar:2.8.5-SNAPSHOT:compile
+[INFO] |  +- at.wrk.geocode:geocode:jar:2.8.5-SNAPSHOT:compile
+[INFO] |  |  +- de.grundid.opendatalab:geojson-jackson:jar:1.14:compile
+[INFO] |  |  +- org.apache.commons:commons-text:jar:1.12.0:compile
+[INFO] |  |  \- org.apache.commons:commons-csv:jar:1.11.0:compile
+[INFO] |  |     +- commons-io:commons-io:jar:2.16.1:compile
+[INFO] |  |     \- commons-codec:commons-codec:jar:1.16.1:compile
+[INFO] |  +- org.springframework.security:spring-security-core:jar:5.8.12:compile
+[INFO] |  |  \- org.springframework.security:spring-security-crypto:jar:5.8.12:compile
+[INFO] |  +- com.fasterxml.jackson.core:jackson-core:jar:2.17.1:compile
+[INFO] |  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.17.1:compile
+[INFO] |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.17.1:compile
+[INFO] |  +- javax.validation:validation-api:jar:2.0.1.Final:compile
+[INFO] |  +- org.hibernate:hibernate-validator:jar:5.4.3.Final:compile
+[INFO] |  |  +- org.jboss.logging:jboss-logging:jar:3.3.0.Final:compile
+[INFO] |  |  \- com.fasterxml:classmate:jar:1.3.1:compile
+[INFO] |  +- org.hibernate:hibernate-core:jar:5.2.18.Final:compile
+[INFO] |  |  +- org.javassist:javassist:jar:3.29.2-GA:compile
+[INFO] |  |  +- antlr:antlr:jar:2.7.7:compile
+[INFO] |  |  +- org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:jar:1.0.1.Final:compile
+[INFO] |  |  +- org.jboss:jandex:jar:2.0.3.Final:compile
+[INFO] |  |  +- org.dom4j:dom4j:jar:2.1.1:compile
+[INFO] |  |  \- org.hibernate.common:hibernate-commons-annotations:jar:5.0.1.Final:compile
+[INFO] |  +- org.hibernate.javax.persistence:hibernate-jpa-2.1-api:jar:1.0.2.Final:compile
+[INFO] |  +- javax.xml.bind:jaxb-api:jar:2.3.1:compile
+[INFO] |  |  \- javax.activation:javax.activation-api:jar:1.2.0:compile
+[INFO] |  +- javax.annotation:javax.annotation-api:jar:1.3.2:compile
+[INFO] |  +- org.apache.commons:commons-lang3:jar:3.12.0:compile
+[INFO] |  \- com.google.guava:guava:jar:33.2.0-jre:compile
+[INFO] |     +- com.google.guava:failureaccess:jar:1.0.2:compile
+[INFO] |     +- com.google.guava:listenablefuture:jar:9999.0-empty-to-avoid-conflict-with-guava:compile
+[INFO] |     +- com.google.code.findbugs:jsr305:jar:3.0.2:compile
+[INFO] |     +- org.checkerframework:checker-qual:jar:3.42.0:compile
+[INFO] |     +- com.google.errorprone:error_prone_annotations:jar:2.26.1:compile
+[INFO] |     \- com.google.j2objc:j2objc-annotations:jar:3.0.0:compile
+[INFO] +- org.springframework:spring-tx:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-core:jar:5.3.36:compile
+[INFO] |     \- org.springframework:spring-jcl:jar:5.3.36:compile
+[INFO] +- org.springframework.data:spring-data-commons:jar:2.7.18:compile
+[INFO] +- org.springframework.data:spring-data-jpa:jar:2.6.3:compile
+[INFO] |  +- org.springframework:spring-orm:jar:5.3.36:compile
+[INFO] |  |  \- org.springframework:spring-jdbc:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-aop:jar:5.3.36:compile
+[INFO] +- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] +- org.apache.logging.log4j:log4j-core:jar:2.20.0:runtime
+[INFO] |  \- org.apache.logging.log4j:log4j-api:jar:2.20.0:runtime
+[INFO] +- org.apache.logging.log4j:log4j-slf4j-impl:jar:2.20.0:runtime
+[INFO] +- org.springframework:spring-beans:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-context:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-expression:jar:5.3.36:compile
+[INFO] +- junit:junit:jar:4.13.2:test
+[INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  +- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |  +- org.junit.platform:junit-platform-commons:jar:1.8.2:test
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
+[INFO] |  \- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:test
+[INFO] +- org.mockito:mockito-core:jar:3.9.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.10.20:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.10.20:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.hamcrest:hamcrest-all:jar:1.3:test
+[INFO] +- org.springframework:spring-test:jar:5.3.36:test
+[INFO] +- com.github.npathai:hamcrest-optional:jar:2.0.0:test
+[INFO] \- org.awaitility:awaitility:jar:3.1.6:test
+[INFO]    \- org.hamcrest:hamcrest-library:jar:1.3:test
+[INFO] 
+[INFO] -----------------< at.wrk.coceso:coceso-service-impl >------------------
+[INFO] Building Coceso Services Implementation 2.8.5-SNAPSHOT           [14/23]
+[INFO]   from main\service-impl\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- dependency:3.7.0:tree (default-cli) @ coceso-service-impl ---
+[INFO] at.wrk.coceso:coceso-service-impl:jar:2.8.5-SNAPSHOT
+[INFO] +- at.wrk.coceso:coceso-service:jar:2.8.5-SNAPSHOT:compile
+[INFO] +- at.wrk.coceso:coceso-db:jar:2.8.5-SNAPSHOT:compile
+[INFO] +- at.wrk.coceso:coceso-entity:jar:2.8.5-SNAPSHOT:compile
+[INFO] |  +- com.fasterxml.jackson.core:jackson-core:jar:2.17.1:compile
+[INFO] |  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.17.1:compile
+[INFO] |  +- org.hibernate:hibernate-validator:jar:5.4.3.Final:compile
+[INFO] |  |  +- org.jboss.logging:jboss-logging:jar:3.3.0.Final:compile
+[INFO] |  |  \- com.fasterxml:classmate:jar:1.3.1:compile
+[INFO] |  +- org.hibernate:hibernate-core:jar:5.2.18.Final:compile
+[INFO] |  |  +- org.javassist:javassist:jar:3.29.2-GA:compile
+[INFO] |  |  +- antlr:antlr:jar:2.7.7:compile
+[INFO] |  |  +- org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:jar:1.0.1.Final:compile
+[INFO] |  |  +- org.jboss:jandex:jar:2.0.3.Final:compile
+[INFO] |  |  +- org.dom4j:dom4j:jar:2.1.1:compile
+[INFO] |  |  \- org.hibernate.common:hibernate-commons-annotations:jar:5.0.1.Final:compile
+[INFO] |  +- javax.xml.bind:jaxb-api:jar:2.3.1:compile
+[INFO] |  |  \- javax.activation:javax.activation-api:jar:1.2.0:compile
+[INFO] |  +- javax.annotation:javax.annotation-api:jar:1.3.2:compile
+[INFO] |  \- com.google.guava:guava:jar:33.2.0-jre:compile
+[INFO] |     +- com.google.guava:failureaccess:jar:1.0.2:compile
+[INFO] |     +- com.google.guava:listenablefuture:jar:9999.0-empty-to-avoid-conflict-with-guava:compile
+[INFO] |     +- com.google.code.findbugs:jsr305:jar:3.0.2:compile
+[INFO] |     +- org.checkerframework:checker-qual:jar:3.42.0:compile
+[INFO] |     +- com.google.errorprone:error_prone_annotations:jar:2.26.1:compile
+[INFO] |     \- com.google.j2objc:j2objc-annotations:jar:3.0.0:compile
+[INFO] +- at.wrk.coceso-config:coceso-config:jar:2.8.5-SNAPSHOT:compile
+[INFO] +- at.wrk.geocode:geocode:jar:2.8.5-SNAPSHOT:compile
+[INFO] |  +- de.grundid.opendatalab:geojson-jackson:jar:1.14:compile
+[INFO] |  \- org.apache.commons:commons-text:jar:1.12.0:compile
+[INFO] +- org.springframework:spring-core:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-jcl:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-web:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-messaging:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-tx:jar:5.3.36:compile
+[INFO] +- org.springframework.security:spring-security-core:jar:5.8.12:compile
+[INFO] |  +- org.springframework.security:spring-security-crypto:jar:5.8.12:compile
+[INFO] |  +- org.springframework:spring-aop:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-expression:jar:5.3.36:compile
+[INFO] +- org.springframework.security:spring-security-web:jar:5.8.12:compile
+[INFO] +- org.springframework.data:spring-data-commons:jar:2.7.18:compile
+[INFO] +- org.springframework.data:spring-data-jpa:jar:2.6.3:compile
+[INFO] |  \- org.springframework:spring-orm:jar:5.3.36:compile
+[INFO] |     \- org.springframework:spring-jdbc:jar:5.3.36:compile
+[INFO] +- org.apache.commons:commons-lang3:jar:3.12.0:compile
+[INFO] +- org.hibernate.javax.persistence:hibernate-jpa-2.1-api:jar:1.0.2.Final:compile
+[INFO] +- com.fasterxml.jackson.core:jackson-databind:jar:2.17.1:compile
+[INFO] +- javax.validation:validation-api:jar:2.0.1.Final:compile
+[INFO] +- javax.servlet:javax.servlet-api:jar:3.1.0:provided
+[INFO] +- org.apache.commons:commons-csv:jar:1.11.0:compile
+[INFO] |  +- commons-io:commons-io:jar:2.16.1:compile
+[INFO] |  \- commons-codec:commons-codec:jar:1.16.1:compile
+[INFO] +- com.itextpdf:itextpdf:jar:5.5.13.3:compile
+[INFO] +- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] +- org.apache.logging.log4j:log4j-core:jar:2.20.0:runtime
+[INFO] |  \- org.apache.logging.log4j:log4j-api:jar:2.20.0:runtime
+[INFO] +- org.apache.logging.log4j:log4j-slf4j-impl:jar:2.20.0:runtime
+[INFO] +- org.springframework:spring-beans:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-context:jar:5.3.36:compile
+[INFO] +- junit:junit:jar:4.13.2:test
+[INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  +- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |  +- org.junit.platform:junit-platform-commons:jar:1.8.2:test
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
+[INFO] |  \- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:test
+[INFO] +- org.mockito:mockito-core:jar:3.9.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.10.20:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.10.20:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.hamcrest:hamcrest-all:jar:1.3:test
+[INFO] +- org.springframework:spring-test:jar:5.3.36:test
+[INFO] +- com.github.npathai:hamcrest-optional:jar:2.0.0:test
+[INFO] \- org.awaitility:awaitility:jar:3.1.6:test
+[INFO]    \- org.hamcrest:hamcrest-library:jar:1.3:test
+[INFO] 
+[INFO] --------------------< at.wrk.coceso:coceso-taglib >---------------------
+[INFO] Building Coceso Taglib 2.8.5-SNAPSHOT                            [15/23]
+[INFO]   from main\taglib\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- dependency:3.7.0:tree (default-cli) @ coceso-taglib ---
+[INFO] at.wrk.coceso:coceso-taglib:jar:2.8.5-SNAPSHOT
+[INFO] +- javax.servlet:jstl:jar:1.2:runtime
+[INFO] +- javax.servlet:jsp-api:jar:2.0:provided
+[INFO] |  \- javax.servlet:servlet-api:jar:2.4:provided
+[INFO] +- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] +- org.apache.logging.log4j:log4j-core:jar:2.20.0:runtime
+[INFO] |  \- org.apache.logging.log4j:log4j-api:jar:2.20.0:runtime
+[INFO] +- org.apache.logging.log4j:log4j-slf4j-impl:jar:2.20.0:runtime
+[INFO] +- org.springframework:spring-beans:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-core:jar:5.3.36:compile
+[INFO] |     \- org.springframework:spring-jcl:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-context:jar:5.3.36:compile
+[INFO] |  +- org.springframework:spring-aop:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-expression:jar:5.3.36:compile
+[INFO] +- junit:junit:jar:4.13.2:test
+[INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  +- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |  +- org.junit.platform:junit-platform-commons:jar:1.8.2:test
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
+[INFO] |  \- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:test
+[INFO] +- org.mockito:mockito-core:jar:3.9.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.10.20:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.10.20:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.hamcrest:hamcrest-all:jar:1.3:test
+[INFO] +- org.springframework:spring-test:jar:5.3.36:test
+[INFO] +- com.github.npathai:hamcrest-optional:jar:2.0.0:test
+[INFO] \- org.awaitility:awaitility:jar:3.1.6:test
+[INFO]    \- org.hamcrest:hamcrest-library:jar:1.3:test
+[INFO] 
+[INFO] -------------< at.wrk.coceso-plugins:coceso-plugins-base >--------------
+[INFO] Building Coceso Plugins 2.8.5-SNAPSHOT                           [16/23]
+[INFO]   from plugin\pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- dependency:3.7.0:tree (default-cli) @ coceso-plugins-base ---
+[INFO] at.wrk.coceso-plugins:coceso-plugins-base:pom:2.8.5-SNAPSHOT
+[INFO] +- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] +- org.apache.logging.log4j:log4j-core:jar:2.20.0:runtime
+[INFO] |  \- org.apache.logging.log4j:log4j-api:jar:2.20.0:runtime
+[INFO] +- org.apache.logging.log4j:log4j-slf4j-impl:jar:2.20.0:runtime
+[INFO] +- org.springframework:spring-beans:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-core:jar:5.3.36:compile
+[INFO] |     \- org.springframework:spring-jcl:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-context:jar:5.3.36:compile
+[INFO] |  +- org.springframework:spring-aop:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-expression:jar:5.3.36:compile
+[INFO] +- junit:junit:jar:4.13.2:test
+[INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  +- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |  +- org.junit.platform:junit-platform-commons:jar:1.8.2:test
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
+[INFO] |  \- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:test
+[INFO] +- org.mockito:mockito-core:jar:3.9.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.10.20:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.10.20:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.hamcrest:hamcrest-all:jar:1.3:test
+[INFO] +- org.springframework:spring-test:jar:5.3.36:test
+[INFO] +- com.github.npathai:hamcrest-optional:jar:2.0.0:test
+[INFO] \- org.awaitility:awaitility:jar:3.1.6:test
+[INFO]    \- org.hamcrest:hamcrest-library:jar:1.3:test
+[INFO] 
+[INFO] -----------------< at.wrk.coceso-plugins:coceso-gmaps >-----------------
+[INFO] Building Google Maps Plugin for Coceso 2.8.5-SNAPSHOT            [17/23]
+[INFO]   from plugin\gmaps\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- dependency:3.7.0:tree (default-cli) @ coceso-gmaps ---
+[INFO] at.wrk.coceso-plugins:coceso-gmaps:jar:2.8.5-SNAPSHOT
+[INFO] +- at.wrk.geocode:geocode:jar:2.8.5-SNAPSHOT:compile
+[INFO] |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.17.1:compile
+[INFO] |  |  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.17.1:compile
+[INFO] |  |  \- com.fasterxml.jackson.core:jackson-core:jar:2.17.1:compile
+[INFO] |  +- de.grundid.opendatalab:geojson-jackson:jar:1.14:compile
+[INFO] |  +- org.apache.commons:commons-text:jar:1.12.0:compile
+[INFO] |  \- org.apache.commons:commons-csv:jar:1.11.0:compile
+[INFO] |     +- commons-io:commons-io:jar:2.16.1:compile
+[INFO] |     \- commons-codec:commons-codec:jar:1.16.1:compile
+[INFO] +- org.springframework:spring-core:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-jcl:jar:5.3.36:compile
+[INFO] +- com.google.maps:google-maps-services:jar:0.9.3:compile
+[INFO] |  +- com.squareup.okhttp3:okhttp:jar:3.14.0:compile
+[INFO] |  |  \- com.squareup.okio:okio:jar:1.17.2:compile
+[INFO] |  \- com.google.code.gson:gson:jar:2.8.5:compile
+[INFO] +- org.apache.commons:commons-lang3:jar:3.12.0:compile
+[INFO] +- javax.annotation:javax.annotation-api:jar:1.3.2:compile
+[INFO] +- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] +- org.apache.logging.log4j:log4j-core:jar:2.20.0:runtime
+[INFO] |  \- org.apache.logging.log4j:log4j-api:jar:2.20.0:runtime
+[INFO] +- org.apache.logging.log4j:log4j-slf4j-impl:jar:2.20.0:runtime
+[INFO] +- org.springframework:spring-beans:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-context:jar:5.3.36:compile
+[INFO] |  +- org.springframework:spring-aop:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-expression:jar:5.3.36:compile
+[INFO] +- junit:junit:jar:4.13.2:test
+[INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  +- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |  +- org.junit.platform:junit-platform-commons:jar:1.8.2:test
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
+[INFO] |  \- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:test
+[INFO] +- org.mockito:mockito-core:jar:3.9.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.10.20:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.10.20:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.hamcrest:hamcrest-all:jar:1.3:test
+[INFO] +- org.springframework:spring-test:jar:5.3.36:test
+[INFO] +- com.github.npathai:hamcrest-optional:jar:2.0.0:test
+[INFO] \- org.awaitility:awaitility:jar:3.1.6:test
+[INFO]    \- org.hamcrest:hamcrest-library:jar:1.3:test
+[INFO] 
+[INFO] ------------------< at.wrk.coceso-plugins:coceso-niu >------------------
+[INFO] Building NIU Plugin for Coceso 2.8.5-SNAPSHOT                    [18/23]
+[INFO]   from plugin\niu\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- dependency:3.7.0:tree (default-cli) @ coceso-niu ---
+[INFO] at.wrk.coceso-plugins:coceso-niu:jar:2.8.5-SNAPSHOT
+[INFO] +- at.wrk.coceso:coceso-entity:jar:2.8.5-SNAPSHOT:compile
+[INFO] |  +- at.wrk.geocode:geocode:jar:2.8.5-SNAPSHOT:compile
+[INFO] |  |  +- de.grundid.opendatalab:geojson-jackson:jar:1.14:compile
+[INFO] |  |  \- org.apache.commons:commons-text:jar:1.12.0:compile
+[INFO] |  +- org.springframework.security:spring-security-core:jar:5.8.12:compile
+[INFO] |  |  \- org.springframework.security:spring-security-crypto:jar:5.8.12:compile
+[INFO] |  +- org.springframework.data:spring-data-jpa:jar:2.6.3:compile
+[INFO] |  |  \- org.springframework:spring-orm:jar:5.3.36:compile
+[INFO] |  |     \- org.springframework:spring-jdbc:jar:5.3.36:compile
+[INFO] |  +- com.fasterxml.jackson.core:jackson-core:jar:2.17.1:compile
+[INFO] |  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.17.1:compile
+[INFO] |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.17.1:compile
+[INFO] |  +- javax.validation:validation-api:jar:2.0.1.Final:compile
+[INFO] |  +- org.hibernate:hibernate-validator:jar:5.4.3.Final:compile
+[INFO] |  |  +- org.jboss.logging:jboss-logging:jar:3.3.0.Final:compile
+[INFO] |  |  \- com.fasterxml:classmate:jar:1.3.1:compile
+[INFO] |  +- org.hibernate:hibernate-core:jar:5.2.18.Final:compile
+[INFO] |  |  +- org.javassist:javassist:jar:3.29.2-GA:compile
+[INFO] |  |  +- antlr:antlr:jar:2.7.7:compile
+[INFO] |  |  +- org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:jar:1.0.1.Final:compile
+[INFO] |  |  +- org.jboss:jandex:jar:2.0.3.Final:compile
+[INFO] |  |  +- org.dom4j:dom4j:jar:2.1.1:compile
+[INFO] |  |  \- org.hibernate.common:hibernate-commons-annotations:jar:5.0.1.Final:compile
+[INFO] |  +- org.hibernate.javax.persistence:hibernate-jpa-2.1-api:jar:1.0.2.Final:compile
+[INFO] |  +- javax.xml.bind:jaxb-api:jar:2.3.1:compile
+[INFO] |  |  \- javax.activation:javax.activation-api:jar:1.2.0:compile
+[INFO] |  +- javax.annotation:javax.annotation-api:jar:1.3.2:compile
+[INFO] |  \- org.apache.commons:commons-lang3:jar:3.12.0:compile
+[INFO] +- at.wrk.coceso:coceso-service:jar:2.8.5-SNAPSHOT:compile
+[INFO] |  +- org.springframework:spring-web:jar:5.3.36:compile
+[INFO] |  +- org.springframework:spring-tx:jar:5.3.36:compile
+[INFO] |  \- org.springframework.data:spring-data-commons:jar:2.7.18:compile
+[INFO] +- com.google.guava:guava:jar:33.2.0-jre:compile
+[INFO] |  +- com.google.guava:failureaccess:jar:1.0.2:compile
+[INFO] |  +- com.google.guava:listenablefuture:jar:9999.0-empty-to-avoid-conflict-with-guava:compile
+[INFO] |  +- org.checkerframework:checker-qual:jar:3.42.0:compile
+[INFO] |  +- com.google.errorprone:error_prone_annotations:jar:2.26.1:compile
+[INFO] |  \- com.google.j2objc:j2objc-annotations:jar:3.0.0:compile
+[INFO] +- org.apache.commons:commons-csv:jar:1.11.0:compile
+[INFO] |  +- commons-io:commons-io:jar:2.16.1:compile
+[INFO] |  \- commons-codec:commons-codec:jar:1.16.1:compile
+[INFO] +- com.google.code.findbugs:jsr305:jar:3.0.2:compile
+[INFO] +- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] +- org.apache.logging.log4j:log4j-core:jar:2.20.0:runtime
+[INFO] |  \- org.apache.logging.log4j:log4j-api:jar:2.20.0:runtime
+[INFO] +- org.apache.logging.log4j:log4j-slf4j-impl:jar:2.20.0:runtime
+[INFO] +- org.springframework:spring-beans:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-core:jar:5.3.36:compile
+[INFO] |     \- org.springframework:spring-jcl:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-context:jar:5.3.36:compile
+[INFO] |  +- org.springframework:spring-aop:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-expression:jar:5.3.36:compile
+[INFO] +- junit:junit:jar:4.13.2:test
+[INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  +- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |  +- org.junit.platform:junit-platform-commons:jar:1.8.2:test
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
+[INFO] |  \- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:test
+[INFO] +- org.mockito:mockito-core:jar:3.9.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.10.20:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.10.20:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.hamcrest:hamcrest-all:jar:1.3:test
+[INFO] +- org.springframework:spring-test:jar:5.3.36:test
+[INFO] +- com.github.npathai:hamcrest-optional:jar:2.0.0:test
+[INFO] \- org.awaitility:awaitility:jar:3.1.6:test
+[INFO]    \- org.hamcrest:hamcrest-library:jar:1.3:test
+[INFO] 
+[INFO] ----------------< at.wrk.coceso-plugins:coceso-vienna >-----------------
+[INFO] Building Vienna Plugin for Coceso 2.8.5-SNAPSHOT                 [19/23]
+[INFO]   from plugin\vienna\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- dependency:3.7.0:tree (default-cli) @ coceso-vienna ---
+[INFO] at.wrk.coceso-plugins:coceso-vienna:jar:2.8.5-SNAPSHOT
+[INFO] +- at.wrk.geocode:geocode:jar:2.8.5-SNAPSHOT:compile
+[INFO] |  +- de.grundid.opendatalab:geojson-jackson:jar:1.14:compile
+[INFO] |  \- org.apache.commons:commons-text:jar:1.12.0:compile
+[INFO] +- org.springframework:spring-core:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-jcl:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-web:jar:5.3.36:compile
+[INFO] +- com.fasterxml.jackson.core:jackson-databind:jar:2.17.1:compile
+[INFO] |  \- com.fasterxml.jackson.core:jackson-core:jar:2.17.1:compile
+[INFO] +- com.fasterxml.jackson.core:jackson-annotations:jar:2.17.1:compile
+[INFO] +- org.apache.commons:commons-lang3:jar:3.12.0:compile
+[INFO] +- org.apache.commons:commons-csv:jar:1.11.0:compile
+[INFO] |  +- commons-io:commons-io:jar:2.16.1:compile
+[INFO] |  \- commons-codec:commons-codec:jar:1.16.1:compile
+[INFO] +- com.google.guava:guava:jar:33.2.0-jre:compile
+[INFO] |  +- com.google.guava:failureaccess:jar:1.0.2:compile
+[INFO] |  +- com.google.guava:listenablefuture:jar:9999.0-empty-to-avoid-conflict-with-guava:compile
+[INFO] |  +- com.google.code.findbugs:jsr305:jar:3.0.2:compile
+[INFO] |  +- org.checkerframework:checker-qual:jar:3.42.0:compile
+[INFO] |  +- com.google.errorprone:error_prone_annotations:jar:2.26.1:compile
+[INFO] |  \- com.google.j2objc:j2objc-annotations:jar:3.0.0:compile
+[INFO] +- org.apache.httpcomponents:httpclient:jar:4.5.13:compile
+[INFO] |  +- org.apache.httpcomponents:httpcore:jar:4.4.13:compile
+[INFO] |  \- commons-logging:commons-logging:jar:1.2:compile
+[INFO] +- javax.annotation:javax.annotation-api:jar:1.3.2:compile
+[INFO] +- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] +- org.apache.logging.log4j:log4j-core:jar:2.20.0:runtime
+[INFO] |  \- org.apache.logging.log4j:log4j-api:jar:2.20.0:runtime
+[INFO] +- org.apache.logging.log4j:log4j-slf4j-impl:jar:2.20.0:runtime
+[INFO] +- org.springframework:spring-beans:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-context:jar:5.3.36:compile
+[INFO] |  +- org.springframework:spring-aop:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-expression:jar:5.3.36:compile
+[INFO] +- junit:junit:jar:4.13.2:test
+[INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  +- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |  +- org.junit.platform:junit-platform-commons:jar:1.8.2:test
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
+[INFO] |  \- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:test
+[INFO] +- org.mockito:mockito-core:jar:3.9.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.10.20:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.10.20:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.hamcrest:hamcrest-all:jar:1.3:test
+[INFO] +- org.springframework:spring-test:jar:5.3.36:test
+[INFO] +- com.github.npathai:hamcrest-optional:jar:2.0.0:test
+[INFO] \- org.awaitility:awaitility:jar:3.1.6:test
+[INFO]    \- org.hamcrest:hamcrest-library:jar:1.3:test
+[INFO] 
+[INFO] ---------------------< at.wrk.coceso:coceso-view >----------------------
+[INFO] Building Coceso Webapp 2.8.5-SNAPSHOT                            [20/23]
+[INFO]   from main\view\pom.xml
+[INFO] --------------------------------[ war ]---------------------------------
+[INFO] 
+[INFO] --- dependency:3.7.0:tree (default-cli) @ coceso-view ---
+[INFO] at.wrk.coceso:coceso-view:war:2.8.5-SNAPSHOT
+[INFO] +- at.wrk.coceso:coceso-entity:jar:2.8.5-SNAPSHOT:compile
+[INFO] |  +- at.wrk.geocode:geocode:jar:2.8.5-SNAPSHOT:compile
+[INFO] |  |  +- de.grundid.opendatalab:geojson-jackson:jar:1.14:compile
+[INFO] |  |  \- org.apache.commons:commons-text:jar:1.12.0:compile
+[INFO] |  +- org.springframework.data:spring-data-jpa:jar:2.6.3:compile
+[INFO] |  +- com.fasterxml.jackson.core:jackson-core:jar:2.17.1:compile
+[INFO] |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.17.1:compile
+[INFO] |  +- org.hibernate:hibernate-validator:jar:5.4.3.Final:compile
+[INFO] |  |  +- org.jboss.logging:jboss-logging:jar:3.3.0.Final:compile
+[INFO] |  |  \- com.fasterxml:classmate:jar:1.3.1:compile
+[INFO] |  +- org.hibernate:hibernate-core:jar:5.2.18.Final:compile
+[INFO] |  |  +- org.javassist:javassist:jar:3.29.2-GA:compile
+[INFO] |  |  +- antlr:antlr:jar:2.7.7:compile
+[INFO] |  |  +- org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:jar:1.0.1.Final:compile
+[INFO] |  |  +- org.jboss:jandex:jar:2.0.3.Final:compile
+[INFO] |  |  +- org.dom4j:dom4j:jar:2.1.1:compile
+[INFO] |  |  \- org.hibernate.common:hibernate-commons-annotations:jar:5.0.1.Final:compile
+[INFO] |  +- org.hibernate.javax.persistence:hibernate-jpa-2.1-api:jar:1.0.2.Final:compile
+[INFO] |  +- javax.xml.bind:jaxb-api:jar:2.3.1:compile
+[INFO] |  |  \- javax.activation:javax.activation-api:jar:1.2.0:compile
+[INFO] |  +- javax.annotation:javax.annotation-api:jar:1.3.2:compile
+[INFO] |  \- org.apache.commons:commons-lang3:jar:3.12.0:compile
+[INFO] +- at.wrk.coceso:coceso-service:jar:2.8.5-SNAPSHOT:compile
+[INFO] +- at.wrk.coceso:coceso-service-impl:jar:2.8.5-SNAPSHOT:runtime
+[INFO] |  +- at.wrk.coceso:coceso-db:jar:2.8.5-SNAPSHOT:runtime
+[INFO] |  +- at.wrk.coceso-config:coceso-config:jar:2.8.5-SNAPSHOT:runtime
+[INFO] |  +- org.springframework:spring-messaging:jar:5.3.36:runtime
+[INFO] |  \- org.apache.commons:commons-csv:jar:1.11.0:compile
+[INFO] |     +- commons-io:commons-io:jar:2.16.1:compile
+[INFO] |     \- commons-codec:commons-codec:jar:1.16.1:compile
+[INFO] +- at.wrk.coceso:coceso-taglib:jar:2.8.5-SNAPSHOT:runtime
+[INFO] +- at.wrk.geocode:geocode-impl:jar:2.8.5-SNAPSHOT:runtime
+[INFO] |  +- org.hibernate:hibernate-entitymanager:jar:5.2.18.Final:runtime
+[INFO] |  \- org.postgresql:postgresql:jar:42.7.3:runtime
+[INFO] +- at.wrk.coceso-config:coceso-config-web:jar:2.8.5-SNAPSHOT:runtime
+[INFO] |  +- org.springframework:spring-websocket:jar:5.3.36:runtime
+[INFO] |  +- org.springframework:spring-aspects:jar:5.3.36:runtime
+[INFO] |  +- org.springframework:spring-aop:jar:5.3.36:compile
+[INFO] |  +- org.springframework:spring-instrument:jar:5.3.36:runtime
+[INFO] |  +- org.springframework.security:spring-security-config:jar:5.8.12:runtime
+[INFO] |  +- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:jar:2.17.1:runtime
+[INFO] |  +- com.fatboyindustrial.gson-javatime-serialisers:gson-javatime-serialisers:jar:1.1.1:runtime
+[INFO] |  |  \- com.google.code.gson:gson:jar:2.3.1:runtime
+[INFO] |  +- org.apache.httpcomponents:httpasyncclient:jar:4.1.4:runtime
+[INFO] |  |  +- org.apache.httpcomponents:httpcore:jar:4.4.10:runtime
+[INFO] |  |  +- org.apache.httpcomponents:httpcore-nio:jar:4.4.10:runtime
+[INFO] |  |  \- commons-logging:commons-logging:jar:1.2:runtime
+[INFO] |  +- org.aspectj:aspectjrt:jar:1.9.1:runtime
+[INFO] |  \- org.aspectj:aspectjweaver:jar:1.9.1:runtime
+[INFO] +- at.wrk.coceso-config:coceso-config-db:jar:2.8.5-SNAPSHOT:runtime
+[INFO] |  \- org.springframework:spring-orm:jar:5.3.36:compile
+[INFO] |     \- org.springframework:spring-jdbc:jar:5.3.36:compile
+[INFO] +- at.wrk.coceso-plugins:coceso-gmaps:jar:2.8.5-SNAPSHOT:runtime
+[INFO] |  \- com.google.maps:google-maps-services:jar:0.9.3:runtime
+[INFO] |     \- com.squareup.okhttp3:okhttp:jar:3.14.0:runtime
+[INFO] |        \- com.squareup.okio:okio:jar:1.17.2:runtime
+[INFO] +- at.wrk.coceso-plugins:coceso-niu:jar:2.8.5-SNAPSHOT:runtime
+[INFO] |  \- com.google.code.findbugs:jsr305:jar:3.0.2:compile
+[INFO] +- at.wrk.coceso-plugins:coceso-vienna:jar:2.8.5-SNAPSHOT:runtime
+[INFO] |  \- org.apache.httpcomponents:httpclient:jar:4.5.13:runtime
+[INFO] +- org.springframework:spring-core:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-jcl:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-web:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-webmvc:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-expression:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-tx:jar:5.3.36:compile
+[INFO] +- com.sun.activation:javax.activation:jar:1.2.0:runtime
+[INFO] +- org.springframework.security:spring-security-core:jar:5.8.12:compile
+[INFO] |  \- org.springframework.security:spring-security-crypto:jar:5.8.12:compile
+[INFO] +- org.springframework.security:spring-security-taglibs:jar:5.8.12:runtime
+[INFO] |  \- org.springframework.security:spring-security-acl:jar:5.8.12:runtime
+[INFO] +- org.springframework.security:spring-security-web:jar:5.8.12:compile
+[INFO] +- org.springframework.data:spring-data-commons:jar:2.7.18:compile
+[INFO] +- com.fasterxml.jackson.core:jackson-annotations:jar:2.17.1:compile
+[INFO] +- com.itextpdf:itextpdf:jar:5.5.13.3:compile
+[INFO] +- javax.servlet:javax.servlet-api:jar:3.1.0:provided
+[INFO] +- javax.servlet:jsp-api:jar:2.0:provided
+[INFO] |  \- javax.servlet:servlet-api:jar:2.4:provided
+[INFO] +- javax.servlet:jstl:jar:1.2:runtime
+[INFO] +- javax.validation:validation-api:jar:2.0.1.Final:compile
+[INFO] +- com.google.guava:guava:jar:33.2.0-jre:compile
+[INFO] |  +- com.google.guava:failureaccess:jar:1.0.2:compile
+[INFO] |  +- com.google.guava:listenablefuture:jar:9999.0-empty-to-avoid-conflict-with-guava:compile
+[INFO] |  +- org.checkerframework:checker-qual:jar:3.42.0:compile
+[INFO] |  +- com.google.errorprone:error_prone_annotations:jar:2.26.1:compile
+[INFO] |  \- com.google.j2objc:j2objc-annotations:jar:3.0.0:compile
+[INFO] +- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] +- org.apache.logging.log4j:log4j-core:jar:2.20.0:runtime
+[INFO] |  \- org.apache.logging.log4j:log4j-api:jar:2.20.0:runtime
+[INFO] +- org.apache.logging.log4j:log4j-slf4j-impl:jar:2.20.0:runtime
+[INFO] +- org.springframework:spring-beans:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-context:jar:5.3.36:compile
+[INFO] +- junit:junit:jar:4.13.2:test
+[INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  +- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |  +- org.junit.platform:junit-platform-commons:jar:1.8.2:test
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
+[INFO] |  \- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:test
+[INFO] +- org.mockito:mockito-core:jar:3.9.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.10.20:runtime
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.10.20:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.hamcrest:hamcrest-all:jar:1.3:test
+[INFO] +- org.springframework:spring-test:jar:5.3.36:test
+[INFO] +- com.github.npathai:hamcrest-optional:jar:2.0.0:test
+[INFO] \- org.awaitility:awaitility:jar:3.1.6:test
+[INFO]    \- org.hamcrest:hamcrest-library:jar:1.3:test
+[INFO] 
+[INFO] ---------------< at.wrk.coceso-plugins:coceso-geobroker >---------------
+[INFO] Building GeoBroker Plugin for CoCeSo 2.8.5-SNAPSHOT              [21/23]
+[INFO]   from plugin\geobroker\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- dependency:3.7.0:tree (default-cli) @ coceso-geobroker ---
+[INFO] at.wrk.coceso-plugins:coceso-geobroker:jar:2.8.5-SNAPSHOT
+[INFO] +- at.wrk.coceso:coceso-entity:jar:2.8.5-SNAPSHOT:compile
+[INFO] |  +- at.wrk.geocode:geocode:jar:2.8.5-SNAPSHOT:compile
+[INFO] |  |  +- de.grundid.opendatalab:geojson-jackson:jar:1.14:compile
+[INFO] |  |  +- org.apache.commons:commons-text:jar:1.12.0:compile
+[INFO] |  |  \- org.apache.commons:commons-csv:jar:1.11.0:compile
+[INFO] |  |     +- commons-io:commons-io:jar:2.16.1:compile
+[INFO] |  |     \- commons-codec:commons-codec:jar:1.16.1:compile
+[INFO] |  +- org.springframework.security:spring-security-core:jar:5.8.12:compile
+[INFO] |  |  \- org.springframework.security:spring-security-crypto:jar:5.8.12:compile
+[INFO] |  +- org.springframework.data:spring-data-jpa:jar:2.6.3:compile
+[INFO] |  |  \- org.springframework:spring-orm:jar:5.3.36:compile
+[INFO] |  |     \- org.springframework:spring-jdbc:jar:5.3.36:compile
+[INFO] |  +- com.fasterxml.jackson.core:jackson-core:jar:2.17.1:compile
+[INFO] |  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.17.1:compile
+[INFO] |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.17.1:compile
+[INFO] |  +- javax.validation:validation-api:jar:2.0.1.Final:compile
+[INFO] |  +- org.hibernate:hibernate-validator:jar:5.4.3.Final:compile
+[INFO] |  |  +- org.jboss.logging:jboss-logging:jar:3.3.0.Final:compile
+[INFO] |  |  \- com.fasterxml:classmate:jar:1.3.1:compile
+[INFO] |  +- org.hibernate:hibernate-core:jar:5.2.18.Final:compile
+[INFO] |  |  +- org.javassist:javassist:jar:3.29.2-GA:compile
+[INFO] |  |  +- antlr:antlr:jar:2.7.7:compile
+[INFO] |  |  +- org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:jar:1.0.1.Final:compile
+[INFO] |  |  +- org.jboss:jandex:jar:2.0.3.Final:compile
+[INFO] |  |  +- org.dom4j:dom4j:jar:2.1.1:compile
+[INFO] |  |  \- org.hibernate.common:hibernate-commons-annotations:jar:5.0.1.Final:compile
+[INFO] |  +- org.hibernate.javax.persistence:hibernate-jpa-2.1-api:jar:1.0.2.Final:compile
+[INFO] |  +- javax.xml.bind:jaxb-api:jar:2.3.1:compile
+[INFO] |  |  \- javax.activation:javax.activation-api:jar:1.2.0:compile
+[INFO] |  +- javax.annotation:javax.annotation-api:jar:1.3.2:compile
+[INFO] |  \- org.apache.commons:commons-lang3:jar:3.12.0:compile
+[INFO] +- at.wrk.coceso:coceso-service:jar:2.8.5-SNAPSHOT:compile
+[INFO] |  +- org.springframework:spring-web:jar:5.3.36:compile
+[INFO] |  +- org.springframework:spring-tx:jar:5.3.36:compile
+[INFO] |  \- org.springframework.data:spring-data-commons:jar:2.7.18:compile
+[INFO] +- at.wrk.coceso:coceso-db:jar:2.8.5-SNAPSHOT:compile
+[INFO] +- com.google.guava:guava:jar:33.2.0-jre:compile
+[INFO] |  +- com.google.guava:failureaccess:jar:1.0.2:compile
+[INFO] |  +- com.google.guava:listenablefuture:jar:9999.0-empty-to-avoid-conflict-with-guava:compile
+[INFO] |  +- org.checkerframework:checker-qual:jar:3.42.0:compile
+[INFO] |  +- com.google.errorprone:error_prone_annotations:jar:2.26.1:compile
+[INFO] |  \- com.google.j2objc:j2objc-annotations:jar:3.0.0:compile
+[INFO] +- com.google.code.findbugs:jsr305:jar:3.0.2:compile
+[INFO] +- com.fatboyindustrial.gson-javatime-serialisers:gson-javatime-serialisers:jar:1.1.1:compile
+[INFO] |  \- com.google.code.gson:gson:jar:2.3.1:compile
+[INFO] +- org.springframework:spring-core:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-jcl:jar:5.3.36:compile
+[INFO] +- pl.pragmatists:JUnitParams:jar:1.1.1:test
+[INFO] +- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] +- org.apache.logging.log4j:log4j-core:jar:2.20.0:runtime
+[INFO] |  \- org.apache.logging.log4j:log4j-api:jar:2.20.0:runtime
+[INFO] +- org.apache.logging.log4j:log4j-slf4j-impl:jar:2.20.0:runtime
+[INFO] +- org.springframework:spring-beans:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-context:jar:5.3.36:compile
+[INFO] |  +- org.springframework:spring-aop:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-expression:jar:5.3.36:compile
+[INFO] +- junit:junit:jar:4.13.2:test
+[INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  +- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |  +- org.junit.platform:junit-platform-commons:jar:1.8.2:test
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
+[INFO] |  \- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:test
+[INFO] +- org.mockito:mockito-core:jar:3.9.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.10.20:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.10.20:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.hamcrest:hamcrest-all:jar:1.3:test
+[INFO] +- org.springframework:spring-test:jar:5.3.36:test
+[INFO] +- com.github.npathai:hamcrest-optional:jar:2.0.0:test
+[INFO] \- org.awaitility:awaitility:jar:3.1.6:test
+[INFO]    \- org.hamcrest:hamcrest-library:jar:1.3:test
+[INFO] 
+[INFO] ------------------< at.wrk.coceso-plugins:alarm-text >------------------
+[INFO] Building Alarm Text Plugin for CoCeSo 2.8.5-SNAPSHOT             [22/23]
+[INFO]   from plugin\alarm-text\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- dependency:3.7.0:tree (default-cli) @ alarm-text ---
+[INFO] at.wrk.coceso-plugins:alarm-text:jar:2.8.5-SNAPSHOT
+[INFO] +- at.wrk.coceso:coceso-service:jar:2.8.5-SNAPSHOT:compile
+[INFO] |  +- at.wrk.coceso:coceso-entity:jar:2.8.5-SNAPSHOT:compile
+[INFO] |  |  +- at.wrk.geocode:geocode:jar:2.8.5-SNAPSHOT:compile
+[INFO] |  |  |  +- de.grundid.opendatalab:geojson-jackson:jar:1.14:compile
+[INFO] |  |  |  +- org.apache.commons:commons-text:jar:1.12.0:compile
+[INFO] |  |  |  \- org.apache.commons:commons-csv:jar:1.11.0:compile
+[INFO] |  |  +- com.fasterxml.jackson.core:jackson-core:jar:2.17.1:compile
+[INFO] |  |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.17.1:compile
+[INFO] |  |  +- org.hibernate:hibernate-validator:jar:5.4.3.Final:compile
+[INFO] |  |  |  +- org.jboss.logging:jboss-logging:jar:3.3.0.Final:compile
+[INFO] |  |  |  \- com.fasterxml:classmate:jar:1.3.1:compile
+[INFO] |  |  +- org.hibernate:hibernate-core:jar:5.2.18.Final:compile
+[INFO] |  |  |  +- org.javassist:javassist:jar:3.29.2-GA:compile
+[INFO] |  |  |  +- antlr:antlr:jar:2.7.7:compile
+[INFO] |  |  |  +- org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:jar:1.0.1.Final:compile
+[INFO] |  |  |  +- org.jboss:jandex:jar:2.0.3.Final:compile
+[INFO] |  |  |  +- org.dom4j:dom4j:jar:2.1.1:compile
+[INFO] |  |  |  \- org.hibernate.common:hibernate-commons-annotations:jar:5.0.1.Final:compile
+[INFO] |  |  +- org.hibernate.javax.persistence:hibernate-jpa-2.1-api:jar:1.0.2.Final:compile
+[INFO] |  |  +- javax.xml.bind:jaxb-api:jar:2.3.1:compile
+[INFO] |  |  |  \- javax.activation:javax.activation-api:jar:1.2.0:compile
+[INFO] |  |  +- javax.annotation:javax.annotation-api:jar:1.3.2:compile
+[INFO] |  |  \- org.apache.commons:commons-lang3:jar:3.12.0:compile
+[INFO] |  +- org.springframework:spring-tx:jar:5.3.36:compile
+[INFO] |  +- org.springframework.data:spring-data-commons:jar:2.7.18:compile
+[INFO] |  \- javax.validation:validation-api:jar:2.0.1.Final:compile
+[INFO] +- at.wrk.coceso:coceso-db:jar:2.8.5-SNAPSHOT:compile
+[INFO] |  \- org.springframework.data:spring-data-jpa:jar:2.6.3:compile
+[INFO] |     \- org.springframework:spring-orm:jar:5.3.36:compile
+[INFO] |        \- org.springframework:spring-jdbc:jar:5.3.36:compile
+[INFO] +- com.google.guava:guava:jar:33.2.0-jre:compile
+[INFO] |  +- com.google.guava:failureaccess:jar:1.0.2:compile
+[INFO] |  +- com.google.guava:listenablefuture:jar:9999.0-empty-to-avoid-conflict-with-guava:compile
+[INFO] |  +- org.checkerframework:checker-qual:jar:3.42.0:compile
+[INFO] |  +- com.google.errorprone:error_prone_annotations:jar:2.26.1:compile
+[INFO] |  \- com.google.j2objc:j2objc-annotations:jar:3.0.0:compile
+[INFO] +- com.google.code.findbugs:jsr305:jar:3.0.2:compile
+[INFO] +- commons-io:commons-io:jar:2.16.1:compile
+[INFO] +- com.fatboyindustrial.gson-javatime-serialisers:gson-javatime-serialisers:jar:1.1.1:compile
+[INFO] |  \- com.google.code.gson:gson:jar:2.3.1:compile
+[INFO] +- org.springframework:spring-core:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-jcl:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-web:jar:5.3.36:compile
+[INFO] +- org.springframework.security:spring-security-core:jar:5.8.12:compile
+[INFO] |  +- org.springframework.security:spring-security-crypto:jar:5.8.12:compile
+[INFO] |  +- org.springframework:spring-aop:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-expression:jar:5.3.36:compile
+[INFO] +- com.fasterxml.jackson.core:jackson-annotations:jar:2.17.1:compile
+[INFO] +- org.apache.httpcomponents:httpclient:jar:4.5.13:compile
+[INFO] |  +- org.apache.httpcomponents:httpcore:jar:4.4.13:compile
+[INFO] |  +- commons-logging:commons-logging:jar:1.2:compile
+[INFO] |  \- commons-codec:commons-codec:jar:1.11:compile
+[INFO] +- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] +- org.apache.logging.log4j:log4j-core:jar:2.20.0:runtime
+[INFO] |  \- org.apache.logging.log4j:log4j-api:jar:2.20.0:runtime
+[INFO] +- org.apache.logging.log4j:log4j-slf4j-impl:jar:2.20.0:runtime
+[INFO] +- org.springframework:spring-beans:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-context:jar:5.3.36:compile
+[INFO] +- junit:junit:jar:4.13.2:test
+[INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  +- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |  +- org.junit.platform:junit-platform-commons:jar:1.8.2:test
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
+[INFO] |  \- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:test
+[INFO] +- org.mockito:mockito-core:jar:3.9.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.10.20:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.10.20:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.hamcrest:hamcrest-all:jar:1.3:test
+[INFO] +- org.springframework:spring-test:jar:5.3.36:test
+[INFO] +- com.github.npathai:hamcrest-optional:jar:2.0.0:test
+[INFO] \- org.awaitility:awaitility:jar:3.1.6:test
+[INFO]    \- org.hamcrest:hamcrest-library:jar:1.3:test
+[INFO] 
+[INFO] -----------------< at.wrk.coceso-plugins:coceso-radio >-----------------
+[INFO] Building Radio Plugin for Coceso 2.8.5-SNAPSHOT                  [23/23]
+[INFO]   from plugin\radio\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- dependency:3.7.0:tree (default-cli) @ coceso-radio ---
+[INFO] at.wrk.coceso-plugins:coceso-radio:jar:2.8.5-SNAPSHOT
+[INFO] +- at.wrk.coceso:coceso-entity:jar:2.8.5-SNAPSHOT:compile
+[INFO] |  +- at.wrk.geocode:geocode:jar:2.8.5-SNAPSHOT:compile
+[INFO] |  |  +- de.grundid.opendatalab:geojson-jackson:jar:1.14:compile
+[INFO] |  |  +- org.apache.commons:commons-text:jar:1.12.0:compile
+[INFO] |  |  \- org.apache.commons:commons-csv:jar:1.11.0:compile
+[INFO] |  |     +- commons-io:commons-io:jar:2.16.1:compile
+[INFO] |  |     \- commons-codec:commons-codec:jar:1.16.1:compile
+[INFO] |  +- com.fasterxml.jackson.core:jackson-core:jar:2.17.1:compile
+[INFO] |  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.17.1:compile
+[INFO] |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.17.1:compile
+[INFO] |  +- javax.xml.bind:jaxb-api:jar:2.3.1:compile
+[INFO] |  |  \- javax.activation:javax.activation-api:jar:1.2.0:compile
+[INFO] |  +- javax.annotation:javax.annotation-api:jar:1.3.2:compile
+[INFO] |  \- com.google.guava:guava:jar:33.2.0-jre:compile
+[INFO] |     +- com.google.guava:failureaccess:jar:1.0.2:compile
+[INFO] |     +- com.google.guava:listenablefuture:jar:9999.0-empty-to-avoid-conflict-with-guava:compile
+[INFO] |     +- com.google.code.findbugs:jsr305:jar:3.0.2:compile
+[INFO] |     +- org.checkerframework:checker-qual:jar:3.42.0:compile
+[INFO] |     +- com.google.errorprone:error_prone_annotations:jar:2.26.1:compile
+[INFO] |     \- com.google.j2objc:j2objc-annotations:jar:3.0.0:compile
+[INFO] +- at.wrk.coceso:coceso-service:jar:2.8.5-SNAPSHOT:compile
+[INFO] |  +- org.springframework:spring-tx:jar:5.3.36:compile
+[INFO] |  \- org.springframework.data:spring-data-commons:jar:2.7.18:compile
+[INFO] +- org.springframework:spring-core:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-jcl:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-web:jar:5.3.36:compile
+[INFO] +- org.springframework.data:spring-data-jpa:jar:2.6.3:compile
+[INFO] |  +- org.springframework:spring-orm:jar:5.3.36:compile
+[INFO] |  |  \- org.springframework:spring-jdbc:jar:5.3.36:compile
+[INFO] |  \- org.springframework:spring-aop:jar:5.3.36:compile
+[INFO] +- org.springframework.security:spring-security-core:jar:5.8.12:compile
+[INFO] |  +- org.springframework.security:spring-security-crypto:jar:5.8.12:compile
+[INFO] |  \- org.springframework:spring-expression:jar:5.3.36:compile
+[INFO] +- javax.validation:validation-api:jar:2.0.1.Final:compile
+[INFO] +- org.hibernate:hibernate-validator:jar:5.4.3.Final:compile
+[INFO] |  +- org.jboss.logging:jboss-logging:jar:3.3.0.Final:compile
+[INFO] |  \- com.fasterxml:classmate:jar:1.3.1:compile
+[INFO] +- org.hibernate:hibernate-core:jar:5.2.18.Final:compile
+[INFO] |  +- org.javassist:javassist:jar:3.29.2-GA:compile
+[INFO] |  +- antlr:antlr:jar:2.7.7:compile
+[INFO] |  +- org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:jar:1.0.1.Final:compile
+[INFO] |  +- org.jboss:jandex:jar:2.0.3.Final:compile
+[INFO] |  +- org.dom4j:dom4j:jar:2.1.1:compile
+[INFO] |  \- org.hibernate.common:hibernate-commons-annotations:jar:5.0.1.Final:compile
+[INFO] +- org.hibernate.javax.persistence:hibernate-jpa-2.1-api:jar:1.0.2.Final:compile
+[INFO] +- org.apache.commons:commons-lang3:jar:3.12.0:compile
+[INFO] +- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] +- org.apache.logging.log4j:log4j-core:jar:2.20.0:runtime
+[INFO] |  \- org.apache.logging.log4j:log4j-api:jar:2.20.0:runtime
+[INFO] +- org.apache.logging.log4j:log4j-slf4j-impl:jar:2.20.0:runtime
+[INFO] +- org.springframework:spring-beans:jar:5.3.36:compile
+[INFO] +- org.springframework:spring-context:jar:5.3.36:compile
+[INFO] +- junit:junit:jar:4.13.2:test
+[INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  +- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |  +- org.junit.platform:junit-platform-commons:jar:1.8.2:test
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
+[INFO] |  \- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:test
+[INFO] +- org.mockito:mockito-core:jar:3.9.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.10.20:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.10.20:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.hamcrest:hamcrest-all:jar:1.3:test
+[INFO] +- org.springframework:spring-test:jar:5.3.36:test
+[INFO] +- com.github.npathai:hamcrest-optional:jar:2.0.0:test
+[INFO] \- org.awaitility:awaitility:jar:3.1.6:test
+[INFO]    \- org.hamcrest:hamcrest-library:jar:1.3:test
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for Coceso Parent POM 2.8.5-SNAPSHOT:
+[INFO] 
+[INFO] Coceso Parent POM .................................. SUCCESS [  0.735 s]
+[INFO] Coceso Config Base ................................. SUCCESS [  0.018 s]
+[INFO] Coceso Config ...................................... SUCCESS [  0.003 s]
+[INFO] Coceso DB Config ................................... SUCCESS [  0.065 s]
+[INFO] Coceso Tomcat 10 Config ............................ SUCCESS [  0.012 s]
+[INFO] Coceso Geocode Base ................................ SUCCESS [  0.000 s]
+[INFO] Coceso Geocode ..................................... SUCCESS [  0.020 s]
+[INFO] Coceso Main App .................................... SUCCESS [  0.000 s]
+[INFO] Coceso Entities .................................... SUCCESS [  0.027 s]
+[INFO] Coceso Services .................................... SUCCESS [  0.000 s]
+[INFO] Coceso Web Config .................................. SUCCESS [  0.032 s]
+[INFO] Coceso Geocode Implementation ...................... SUCCESS [  0.000 s]
+[INFO] Coceso DB .......................................... SUCCESS [  0.000 s]
+[INFO] Coceso Services Implementation ..................... SUCCESS [  0.016 s]
+[INFO] Coceso Taglib ...................................... SUCCESS [  0.000 s]
+[INFO] Coceso Plugins ..................................... SUCCESS [  0.000 s]
+[INFO] Google Maps Plugin for Coceso ...................... SUCCESS [  0.015 s]
+[INFO] NIU Plugin for Coceso .............................. SUCCESS [  0.000 s]
+[INFO] Vienna Plugin for Coceso ........................... SUCCESS [  0.000 s]
+[INFO] Coceso Webapp ...................................... SUCCESS [  0.016 s]
+[INFO] GeoBroker Plugin for CoCeSo ........................ SUCCESS [  0.007 s]
+[INFO] Alarm Text Plugin for CoCeSo ....................... SUCCESS [  0.009 s]
+[INFO] Radio Plugin for Coceso ............................ SUCCESS [  0.000 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  1.193 s
+[INFO] Finished at: 2025-07-15T20:08:38+02:00
+[INFO] ------------------------------------------------------------------------
