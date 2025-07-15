@@ -39,3 +39,6 @@ bower_components
 
 # except this file
 !.gitignore
+
+# ignore vscode files
+/.vscode/
