@@ -49,7 +49,7 @@ public class GeoJsonPoi extends PreloadedAutocomplete<Poi> implements PoiSupplie
     private final Path geojsonPath;
 
     @Autowired
-    public GeoJsonPoi(ObjectMapper mapper, @Value("${geojson.path}") Path geojsonPath) {
+    public GeoJsonPoi(ObjectMapper mapper, @Value("${geojson.path:#{null}}") Path geojsonPath) {
         this.mapper = mapper;
         this.geojsonPath = geojsonPath;
     }

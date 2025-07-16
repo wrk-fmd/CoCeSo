@@ -1,3 +1,3 @@
-FROM tomcat:8.5-jre11-openjdk-bullseye
+FROM tomcat:9-jre11
 
 COPY target/coceso.war /usr/local/tomcat/webapps/

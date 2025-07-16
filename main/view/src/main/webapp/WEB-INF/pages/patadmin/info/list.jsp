@@ -23,7 +23,7 @@
   </head>
   <body>
     <div class="container">
-      <%@include file="navbar.jsp"%>
+      <%@include file="../navbar.jsp"%>
 
       <c:choose>
         <c:when test="${empty search}">

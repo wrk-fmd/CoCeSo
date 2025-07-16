@@ -80,8 +80,12 @@ class RegistrationServiceImpl implements RegistrationServiceInternal {
 
     @Override
     public Patient getActivePatient(int patientId) {
+        return getPatient(patientId, false);
+    }
+
+    private Patient getPatient(int patientId, boolean allowDone) {
         Patient patient = patientService.getById(patientId);
-        if (patient.isDone()) {
+        if (!allowDone && patient.isDone()) {
             throw new ErrorsException(Errors.PatientDone);
         }
         return patient;
@@ -161,8 +165,8 @@ class RegistrationServiceImpl implements RegistrationServiceInternal {
     }
 
     @Override
-    public Patient update(final RegistrationForm form, final Concern concern, final NotifyList notify) {
-        Patient old = form.getPatient() == null ? null : getActivePatient(form.getPatient());
+    public Patient update(final RegistrationForm form, final Concern concern, boolean allowDone, final NotifyList notify) {
+        Patient old = form.getPatient() == null ? null : getPatient(form.getPatient(), allowDone);
 
         Patient patient = prepare(form, old);
         patient = patientService.update(patient, concern, notify);
@@ -171,7 +175,7 @@ class RegistrationServiceImpl implements RegistrationServiceInternal {
             patient.getIncidents().size();
         }
 
-        if (form.getGroup() != null && (patient.getGroup() == null
+        if (!patient.isDone() && form.getGroup() != null && (patient.getGroup() == null
                 || patient.getGroup().stream().noneMatch(g -> g.getId().equals(form.getGroup())))) {
             incidentService.endTreatments(patient, notify);
             incidentService.createTreatment(patient, patadminService.getGroup(form.getGroup()), notify);
@@ -205,7 +209,9 @@ class RegistrationServiceImpl implements RegistrationServiceInternal {
         patient.setLastname(form.getLastname());
         patient.setFirstname(form.getFirstname());
         patient.setExternalId(form.getExternalId());
+        patient.setInsurance(form.getInsurance());
         patient.setBirthday(form.getBirthday());
+        patient.setSex(form.getSex());
         patient.setNaca(form.getNaca());
         patient.setDiagnosis(form.getDiagnosis());
         patient.setInfo(form.getInfo());

@@ -1,6 +1,7 @@
 package at.wrk.coceso.controller.patadmin;
 
 import at.wrk.coceso.entity.Concern;
+import at.wrk.coceso.entity.enums.AccessLevel;
 import at.wrk.coceso.form.GroupIcon;
 import at.wrk.coceso.form.GroupsForm;
 import at.wrk.coceso.service.patadmin.PatadminService;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Controller
@@ -40,16 +42,19 @@ public class PatadminController {
   @PreAuthorize("@auth.hasPermission(#concern, 'Patadmin')")
   @RequestMapping(value = "", method = RequestMethod.GET)
   public String showIndex(final ModelMap map, @ActiveConcern final Concern concern) {
-    boolean[] accessLevels = patadminService.getAccessLevels(concern);
+    Set<AccessLevel> accessLevels = patadminService.getAccessLevels(concern);
 
-    if (!accessLevels[0]) {
-      if (accessLevels[1] && !accessLevels[2] && !accessLevels[3]) {
+    if (accessLevels.size() == 1) {
+      if (accessLevels.contains(AccessLevel.PatadminRegistration)) {
         return "redirect:/patadmin/registration";
       }
-      if (!accessLevels[1] && accessLevels[2] && !accessLevels[3]) {
+      if (accessLevels.contains(AccessLevel.PatadminTreatment)) {
+        return "redirect:/patadmin/treatment";
+      }
+      if (accessLevels.contains(AccessLevel.PatadminPostprocessing)) {
         return "redirect:/patadmin/postprocessing";
       }
-      if (!accessLevels[1] && !accessLevels[2] && accessLevels[3]) {
+      if (accessLevels.contains(AccessLevel.PatadminInfo)) {
         return "redirect:/patadmin/info";
       }
     }
@@ -69,6 +74,7 @@ public class PatadminController {
       LOG.error("Error loading group image files", ex);
     }
 
+    map.addAttribute("viewType", "settings");
     patadminService.addAccessLevels(map, concern);
     GroupsForm form = new GroupsForm(patadminService.getGroups(concern));
     return new ModelAndView("patadmin/settings", "form", form);

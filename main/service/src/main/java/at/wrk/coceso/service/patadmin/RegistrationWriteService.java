@@ -13,6 +13,6 @@ public interface RegistrationWriteService {
 
   Patient takeover(int incidentId);
 
-  Patient update(RegistrationForm form, Concern concern);
+  Patient update(RegistrationForm form, Concern concern, boolean allowDone);
 
 }

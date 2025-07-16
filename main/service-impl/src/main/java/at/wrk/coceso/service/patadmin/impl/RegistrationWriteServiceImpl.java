@@ -30,7 +30,7 @@ class RegistrationWriteServiceImpl implements RegistrationWriteService {
     }
 
     @Override
-    public Patient update(final RegistrationForm form, final Concern concern) {
-        return notifyListExecutor.execute(n -> registrationService.update(form, concern, n));
+    public Patient update(final RegistrationForm form, final Concern concern, final boolean allowDone) {
+        return notifyListExecutor.execute(n -> registrationService.update(form, concern, allowDone, n));
     }
 }
