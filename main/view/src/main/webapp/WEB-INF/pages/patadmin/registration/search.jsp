@@ -23,7 +23,7 @@
   </head>
   <body>
     <div class="container">
-      <%@include file="navbar.jsp"%>
+      <%@include file="../navbar.jsp"%>
 
       <h2><spring:message code="patadmin.searchresult"/>: <em><c:out value="${search}"/></em></h2>
 

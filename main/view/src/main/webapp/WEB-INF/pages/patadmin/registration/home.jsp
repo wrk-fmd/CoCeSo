@@ -32,7 +32,7 @@
   </head>
   <body>
     <div class="container">
-      <%@include file="navbar.jsp"%>
+      <%@include file="../navbar.jsp"%>
 
       <h2><spring:message code="patadmin.registration"/></h2>
       <p>

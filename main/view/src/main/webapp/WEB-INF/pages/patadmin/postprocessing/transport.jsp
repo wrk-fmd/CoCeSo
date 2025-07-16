@@ -25,9 +25,9 @@
   </head>
   <body>
     <div class="container">
-      <%@include file="navbar.jsp"%>
+      <%@include file="../navbar.jsp"%>
 
-      <form:form method="post" servletRelativeAction="/patadmin/postprocessing/transport" acceptCharset="utf-8">
+      <form:form method="post" servletRelativeAction="/patadmin/${viewType}/transport" acceptCharset="utf-8">
         <form:hidden path="patient" data-bind="valueInit: patient"/>
         <div class="clearfix">
           <div class="form-group col-md-3">
@@ -50,10 +50,10 @@
           </div>
           <div class="form-group col-md-2">
             <form:label path="birthday"><spring:message code="patient.birthday"/></form:label>
-            <form:input type="date" path="birthday" cssClass="form-control" data-bind="valueInit: birthday" required="required"/>
+            <form:input type="date" path="birthday" cssClass="form-control" data-bind="valueInit: birthday"/>
           </div>
           <div class="form-group col-md-3 col-md-offset-1">
-            <label><spring:message code="patient.sex"/></label>
+            <label><spring:message code="patient.sex"/>*</label>
               <div class="form-control-static">
               <c:forEach items="<%= at.wrk.coceso.entity.enums.Sex.values()%>" var="sex">
                 <spring:message code="patient.sex.long.${fn:toLowerCase(sex)}" var="label"/>
@@ -66,8 +66,8 @@
         <h3 class="page-header"><spring:message code="patient.treatment"/></h3>
         <div class="clearfix">
           <div class="form-group col-md-3">
-            <form:label path="diagnosis"><spring:message code="patient.diagnosis"/></form:label>
-            <form:textarea path="diagnosis" cssClass="form-control" data-bind="valueInit: diagnosis"/>
+            <form:label path="diagnosis"><spring:message code="patient.diagnosis"/>*</form:label>
+            <form:textarea path="diagnosis" cssClass="form-control" data-bind="valueInit: diagnosis" required="required"/>
           </div>
           <div class="form-group col-md-3 col-md-offset-1">
             <form:label path="info"><spring:message code="patient.info"/></form:label>
@@ -86,13 +86,13 @@
         <h3 class="page-header"><spring:message code="patient.transport"/></h3>
         <div class="clearfix">
           <div class="form-group col-md-3">
-            <form:label path="ertype"><spring:message code="patient.ertype"/></form:label>
+            <form:label path="ertype"><spring:message code="patient.ertype"/>*</form:label>
             <form:input path="ertype" cssClass="form-control" maxlength="40" required="required" data-bind="ertype: true"/>
           </div>
           <div class="form-group col-md-2 col-md-offset-1">
             <spring:message code="patient.ambulance.choose" var="ambulance"/>
-            <form:label path="ambulance"><spring:message code="patient.ambulance"/></form:label>
-            <form:select path="ambulance" cssClass="form-control" data-bind="valueInit: ambulance">
+            <form:label path="ambulance"><spring:message code="patient.ambulance"/>*</form:label>
+            <form:select path="ambulance" cssClass="form-control" data-bind="valueInit: ambulance" required="required">
               <form:option value="" label="${ambulance}..."/>
               <c:forEach items="<%= at.wrk.coceso.entity.enums.Ambulance.values()%>" var="ambulance">
                 <form:option value="${ambulance}"/>
@@ -106,7 +106,7 @@
         </div>
 
         <form:button class="btn btn-success"><spring:message code="patient.requesttransport"/></form:button>
-        <a class="btn btn-warning" href="<c:url value="/patadmin/postprocessing/view/${command.patient}"/>"><spring:message code="cancel"/></a>
+        <a class="btn btn-warning" href="<c:url value="/patadmin/${viewType}/view/${command.patient}"/>"><spring:message code="cancel"/></a>
       </form:form>
     </div>
   </body>

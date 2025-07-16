@@ -24,7 +24,7 @@
   </head>
   <body>
     <div class="container">
-      <%@include file="navbar.jsp"%>
+      <%@include file="../navbar.jsp"%>
 
       <h2><spring:message code="patient"/>: <em><c:out value="${patient.fullName}"/></em></h2>
 

@@ -14,6 +14,6 @@ public interface RegistrationServiceInternal extends RegistrationService {
 
   Patient takeover(int incidentId, NotifyList notify);
 
-  Patient update(RegistrationForm form, Concern concern, NotifyList notify);
+  Patient update(RegistrationForm form, Concern concern, boolean allowDone, NotifyList notify);
 
 }

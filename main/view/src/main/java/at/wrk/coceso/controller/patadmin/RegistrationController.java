@@ -53,6 +53,16 @@ public class RegistrationController {
         this.registrationWriteService = registrationWriteService;
     }
 
+    @ModelAttribute("viewType")
+    public String viewType() {
+        return "registration";
+    }
+
+    @ModelAttribute("showSearch")
+    public boolean showSearch() {
+        return true;
+    }
+
     @PreAuthorize("@auth.hasPermission(#concern, 'PatadminRegistration')")
     @Transactional
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -144,8 +154,13 @@ public class RegistrationController {
     public String save(
             @ModelAttribute final RegistrationForm form,
             @ActiveConcern final Concern concern) {
+<<<<<<< HEAD
         Patient patient = registrationWriteService.update(form, concern);
         return "redirect:/patadmin/registration";
+=======
+        Patient patient = registrationWriteService.update(form, concern, false);
+        return "redirect:/patadmin/registration/add?successfullyCreated=true";
+>>>>>>> upstream/dev
     }
 
     @PreAuthorize("@auth.hasPermission(#concern, 'PatadminRegistration')")
