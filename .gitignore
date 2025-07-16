@@ -20,6 +20,7 @@ build.xml
 .idea
 
 # ignore database configuration
+coceso.properties
 ports.properties
 
 # ignore generated .class files
