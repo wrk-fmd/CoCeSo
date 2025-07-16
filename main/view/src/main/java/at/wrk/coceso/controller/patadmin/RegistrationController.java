@@ -158,10 +158,8 @@ public class RegistrationController {
         Patient patient = registrationWriteService.update(form, concern, false);
         
         if ("saveBatch".equals(action)) {
-            LOG.info("BATCH SAVE called via parameter - redirecting to add form");
             return "redirect:/patadmin/registration/add?successfullyCreated=true";
         } else {
-            LOG.info("NORMAL SAVE called - redirecting to main page");
             return "redirect:/patadmin/registration/";
         }
     }
