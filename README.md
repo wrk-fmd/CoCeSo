@@ -10,8 +10,8 @@ The interface language is German or English (with your contribution any other la
 
 * Server
   * Java JRE: at least version 1.8 required. OpenJDK 11 is tested and recommended.
-  * Tomcat (version 8 required)
-  * PostgreSQL DB (9.1 and newer tested)
+  * Tomcat (version 9 or 10)
+  * PostgreSQL DB (from 9.1 up to 13 is currently supported, newer versions need custom configuration)
   * Maven
 * Client
   * Web Browser (full features only in Mozilla Firefox and Google Chrome tested)
