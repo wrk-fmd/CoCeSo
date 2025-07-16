@@ -52,7 +52,7 @@
         <slf4j.version>1.7.36</slf4j.version>
 
         <tomcat.version>8.5.87</tomcat.version>
-        <postgresql.version>42.7.3</postgresql.version>
+        <postgresql.version>9.1-901-1.jdbc4</postgresql.version>
 
         <jsr.305.version>3.0.2</jsr.305.version>
         <validation.version>2.0.1.Final</validation.version>
@@ -228,9 +228,9 @@
             <!-- PERSISTENCE -->
 
             <dependency>
-                <groupId>org.postgresql</groupId>
+                <groupId>postgresql</groupId>
                 <artifactId>postgresql</artifactId>
-                <version>42.7.3</version>
+                <version>${postgresql.version}</version>
             </dependency>
 
             <dependency>
