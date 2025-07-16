@@ -153,14 +153,17 @@ public class RegistrationController {
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public String save(
             @ModelAttribute final RegistrationForm form,
-            @ActiveConcern final Concern concern) {
-<<<<<<< HEAD
-        Patient patient = registrationWriteService.update(form, concern);
-        return "redirect:/patadmin/registration";
-=======
+            @ActiveConcern final Concern concern,
+            @RequestParam(value = "action", required = false) final String action) {
         Patient patient = registrationWriteService.update(form, concern, false);
-        return "redirect:/patadmin/registration/add?successfullyCreated=true";
->>>>>>> upstream/dev
+        
+        if ("saveBatch".equals(action)) {
+            LOG.info("BATCH SAVE called via parameter - redirecting to add form");
+            return "redirect:/patadmin/registration/add?successfullyCreated=true";
+        } else {
+            LOG.info("NORMAL SAVE called - redirecting to main page");
+            return "redirect:/patadmin/registration/";
+        }
     }
 
     @PreAuthorize("@auth.hasPermission(#concern, 'PatadminRegistration')")
