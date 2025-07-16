@@ -154,13 +154,8 @@ public class RegistrationController {
     public String save(
             @ModelAttribute final RegistrationForm form,
             @ActiveConcern final Concern concern) {
-<<<<<<< HEAD
-        Patient patient = registrationWriteService.update(form, concern);
-        return "redirect:/patadmin/registration";
-=======
         Patient patient = registrationWriteService.update(form, concern, false);
-        return "redirect:/patadmin/registration/add?successfullyCreated=true";
->>>>>>> upstream/dev
+        return "redirect:/patadmin/registration/?successfullyCreated=true";
     }
 
     @PreAuthorize("@auth.hasPermission(#concern, 'PatadminRegistration')")
