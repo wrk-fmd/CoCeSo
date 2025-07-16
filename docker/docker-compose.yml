@@ -1,0 +1,19 @@
+name: coceso
+
+services:
+  coceso-db:
+    build: ../main/resources/sql
+    environment:
+      # Must be fixed because the default db name is the same as the user
+      POSTGRES_USER: coceso
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+  coceso-app:
+    build: ..
+    ports:
+      - "8080:8080"
+    environment:
+      db.username: coceso
+      db.password: ${POSTGRES_PASSWORD}
+      geocode.db.username: coceso
+      geocode.db.password: ${POSTGRES_PASSWORD}
