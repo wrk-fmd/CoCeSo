@@ -5,14 +5,8 @@ import at.wrk.coceso.entity.helper.JsonViews;
 import at.wrk.geocode.LatLng;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
 
-@Configurable
 public class UnitPoint implements Point {
-
-  @Autowired
-  private UnitSupplier unitSupplier;
 
   private boolean filled = false;
 
@@ -53,14 +47,12 @@ public class UnitPoint implements Point {
   @JsonView(JsonViews.PointMinimal.class)
   @Override
   public String getInfo() {
-    fill();
     return StringUtils.isBlank(additional) ? call : call + "\n" + additional;
   }
 
   @JsonView(JsonViews.PointMinimal.class)
   @Override
   public LatLng getCoordinates() {
-    fill();
     return coordinates;
   }
 
@@ -73,7 +65,7 @@ public class UnitPoint implements Point {
       // Never try to fill more than once
       filled = true;
 
-      Unit unit = unitSupplier.getById(id);
+      Unit unit = PointDataResolver.getUnitById(id);
       if (unit != null && unit.getType().isTreatment()) {
         call = unit.getCall();
 

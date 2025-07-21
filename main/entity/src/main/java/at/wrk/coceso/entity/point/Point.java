@@ -5,7 +5,6 @@ import at.wrk.coceso.entity.Unit;
 import at.wrk.geocode.LatLng;
 import at.wrk.geocode.autocomplete.AutocompleteKeyParser;
 import at.wrk.geocode.poi.Poi;
-import at.wrk.geocode.poi.PoiSupplier;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -92,7 +91,7 @@ public interface Point extends Serializable {
      *
      * @return Null if info is blank, a Point instance otherwise
      */
-    static Point create(final String rawInfoString, final Concern concern, final PoiSupplier poiSupplier, final UnitSupplier unitSupplier) {
+    static Point create(final String rawInfoString, final Concern concern, boolean withTreatment) {
         String info = StringUtils.trimToNull(rawInfoString);
 
         if (info == null) {
@@ -112,15 +111,15 @@ public interface Point extends Serializable {
             }
         }
 
-        if (unitSupplier != null && concern != null) {
+        if (withTreatment && concern != null) {
             String call = parts[0];
-            Unit group = unitSupplier.getTreatmentByCall(call, concern);
+            Unit group = PointDataResolver.getTreatmentByCall(call, concern);
             if (group != null) {
                 return new UnitPoint(group, parts.length >= 2 ? StringUtils.trimToNull(parts[1]) : null);
             }
         }
 
-        Poi poi = poiSupplier.getPoi(AutocompleteKeyParser.formatAutocompleteKey(info));
+        Poi poi = PointDataResolver.getPoi(AutocompleteKeyParser.formatAutocompleteKey(info));
         return poi == null ? AddressPointParser.parseFromString(info) : new PoiPoint(poi, info);
     }
 

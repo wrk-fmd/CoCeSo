@@ -10,8 +10,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableLoadTimeWeaving;
-import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.CacheControl;
@@ -40,8 +38,6 @@ import javax.annotation.PostConstruct;
 @Configuration
 @ComponentScan(basePackages = {"at.wrk.coceso", "at.wrk.geocode"})
 @EnableWebMvc
-@EnableSpringConfigured
-@EnableLoadTimeWeaving
 class CocesoWebMvcConfigurer implements WebMvcConfigurer {
 
     @Autowired

@@ -9,7 +9,6 @@ import at.wrk.coceso.entity.helper.Changes;
 import at.wrk.coceso.entity.point.Point;
 import at.wrk.coceso.exceptions.ErrorsException;
 import at.wrk.coceso.service.UserService;
-import at.wrk.geocode.poi.PoiSupplier;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -17,7 +16,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -43,11 +41,6 @@ public class UnitImporter {
   private static final String CREW = "Crew";
 
   private static final char DELIMITER = ',';
-
-  // TODO Using @Qualifier here feels kinda like hardcoding, maybe define that somewhere else
-  @Autowired
-  @Qualifier("ChainedPoi")
-  private PoiSupplier poiSupplier;
 
   @Autowired
   private UserService userService;
@@ -127,7 +120,7 @@ public class UnitImporter {
 
       if (record.isSet(HOME) && (isNew || Point.isEmpty(unit.getHome()))) {
         String parsedHomePoint = record.get(HOME);
-        Point home = Point.create(parsedHomePoint, null, poiSupplier, null);
+        Point home = Point.create(parsedHomePoint, null, false);
         unit.setHome(home);
         changes.put("home", null, home);
       }
