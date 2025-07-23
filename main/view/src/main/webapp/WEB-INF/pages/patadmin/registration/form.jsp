@@ -104,7 +104,10 @@
                         <form:textarea path="info" cssClass="form-control" data-bind="valueInit: info"/>
                     </div>
                 </div>
-                <form:button class="btn btn-success"><spring:message code="patient.save"/></form:button>
+                <div class="form-actions">
+                    <form:button class="btn btn-primary" name="addNew" value="false"><spring:message code="patient.save"/></form:button>
+                    <form:button class="btn btn-success" name="addNew" value="true"><spring:message code="patient.save.and.new"/></form:button>
+                </div>
             </form:form>
         </div>
 

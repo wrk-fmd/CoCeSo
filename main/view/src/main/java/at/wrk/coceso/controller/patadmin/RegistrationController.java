@@ -153,9 +153,15 @@ public class RegistrationController {
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public String save(
             @ModelAttribute final RegistrationForm form,
+            @RequestParam(value = "addNew", defaultValue = "false") final boolean addNew,
             @ActiveConcern final Concern concern) {
         Patient patient = registrationWriteService.update(form, concern, false);
-        return "redirect:/patadmin/registration/add?successfullyCreated=true";
+        
+        if (addNew) {
+            return "redirect:/patadmin/registration/add?successfullyCreated=true";
+        } else {
+            return "redirect:/patadmin/registration";
+        }
     }
 
     @PreAuthorize("@auth.hasPermission(#concern, 'PatadminRegistration')")
