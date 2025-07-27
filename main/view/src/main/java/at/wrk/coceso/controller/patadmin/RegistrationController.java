@@ -66,7 +66,10 @@ public class RegistrationController {
     @PreAuthorize("@auth.hasPermission(#concern, 'PatadminRegistration')")
     @Transactional
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public String showHome(final ModelMap map, @ActiveConcern final Concern concern) {
+    public String showHome(
+            final ModelMap map, 
+            @ActiveConcern final Concern concern,
+            @RequestParam(value = "new", required = false) final Integer newPatientId) {
         patadminService.addAccessLevels(map, concern);
 
         List<Incident> incoming = registrationService.getIncoming(concern);
@@ -76,6 +79,11 @@ public class RegistrationController {
 
         map.addAttribute("treatmentCount", registrationService.getTreatmentCount(concern));
         map.addAttribute("transportCount", registrationService.getTransportCount(concern));
+        
+        // Pass the new patient ID to the view for highlighting
+        if (newPatientId != null) {
+            map.addAttribute("newPatientId", newPatientId);
+        }
 
         return "patadmin/registration/home";
     }
@@ -145,7 +153,7 @@ public class RegistrationController {
     @RequestMapping(value = "/takeover/{id}", method = RequestMethod.GET)
     public String showTakeover(@PathVariable final int id) {
         Patient patient = registrationWriteService.takeover(id);
-        return String.format("redirect:/patadmin/registration/edit/%d", patient.getId());
+        return String.format("redirect:/patadmin/registration?new=%d", patient.getId());
     }
 
     @PreAuthorize("@auth.hasPermission(#concern, 'PatadminRegistration')")
@@ -160,7 +168,7 @@ public class RegistrationController {
         if (addNew) {
             return "redirect:/patadmin/registration/add?successfullyCreated=true";
         } else {
-            return "redirect:/patadmin/registration";
+            return String.format("redirect:/patadmin/registration?new=%d", patient.getId());
         }
     }
 
