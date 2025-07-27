@@ -153,7 +153,7 @@ public class RegistrationController {
     @RequestMapping(value = "/takeover/{id}", method = RequestMethod.GET)
     public String showTakeover(@PathVariable final int id) {
         Patient patient = registrationWriteService.takeover(id);
-        return String.format("redirect:/patadmin/registration?new=%d", patient.getId());
+        return String.format("redirect:/patadmin/registration/edit/%d", patient.getId());
     }
 
     @PreAuthorize("@auth.hasPermission(#concern, 'PatadminRegistration')")
