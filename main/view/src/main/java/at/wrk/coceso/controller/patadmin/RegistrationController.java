@@ -67,9 +67,9 @@ public class RegistrationController {
     @Transactional
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String showHome(
-            final ModelMap map, 
+            final ModelMap map,
             @ActiveConcern final Concern concern,
-            @RequestParam(value = "new", required = false) final Integer newPatientId) {
+            @RequestParam(value = "newPatientId", required = false) final Integer newPatientId) {
         patadminService.addAccessLevels(map, concern);
 
         List<Incident> incoming = registrationService.getIncoming(concern);
@@ -79,7 +79,7 @@ public class RegistrationController {
 
         map.addAttribute("treatmentCount", registrationService.getTreatmentCount(concern));
         map.addAttribute("transportCount", registrationService.getTransportCount(concern));
-        
+
         // Pass the new patient ID to the view for highlighting
         if (newPatientId != null) {
             map.addAttribute("newPatientId", newPatientId);
@@ -164,11 +164,15 @@ public class RegistrationController {
             @RequestParam(value = "addNew", defaultValue = "false") final boolean addNew,
             @ActiveConcern final Concern concern) {
         Patient patient = registrationWriteService.update(form, concern, false);
-        
+
+        Integer addedPatientId = patient.getId();
         if (addNew) {
-            return "redirect:/patadmin/registration/add?successfullyCreated=true";
+            return "redirect:/patadmin/registration/add?"
+                    + "successfullyCreated=true"
+                    + (addedPatientId != null ? "&addedPatientId=" + addedPatientId : "");
         } else {
-            return String.format("redirect:/patadmin/registration?new=%d", patient.getId());
+            return "redirect:/patadmin/registration"
+                    + (addedPatientId != null ? "?newPatientId=" + patient.getId() : "");
         }
     }
 
