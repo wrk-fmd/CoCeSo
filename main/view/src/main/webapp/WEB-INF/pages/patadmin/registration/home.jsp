@@ -59,7 +59,7 @@
 
       <h3><spring:message code="patadmin.intreatment"/></h3>
       <c:if test="${not empty treatment}">
-        <p:patients patients="${treatment}"/>
+        <p:patients patients="${treatment}" newPatientId="${newPatientId}"/>
       </c:if>
       <c:if test="${empty treatment}">
         <p>
