@@ -65,7 +65,7 @@ define(["knockout", "data/save", "data/store/incidents", "data/store/units",
        */
       this.unit_id = (unit && !isNaN(unit)) ? unit : null;
 
-      this.stateChangedAt = ko.observable(lastStateChangedAt).extend({timeinterval: true});
+      this.stateChangedAt = ko.observable(lastStateChangedAt).extend({timeinterval: true, timeformat: true});
 
       /**
        * Get the associated incident

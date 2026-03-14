@@ -142,6 +142,12 @@
                     <span class="glyphicon glyphicon-tasks"></span> <spring:message code="main.unit.free"/>
                   </a>
                 </li>
+                <li>
+                  <a href="#" title="<spring:message code="main.unit.status_changes"/>"
+                     data-bind="click: function() {openStatusChanges()}">
+                    <span class="glyphicon glyphicon-tasks"></span> <spring:message code="main.unit.status_changes"/>
+                  </a>
+                </li>
               </ul>
             </li>
             <%-- INCIDENTS --%>

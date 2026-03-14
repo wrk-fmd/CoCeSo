@@ -129,6 +129,22 @@ define(["jquery", "knockout", "data/store/incidents", "data/store/units", "data/
         }
       },
       /**
+       * Open a list of status changes
+       *
+       * @param {Object} [options] Viewmodel options
+       * @param {String} [position]
+       */
+      openStatusChanges: function(options, position) {
+        clientLogger.debugLog("#userInput Opening window 'unit status changes'.");
+        taskbar.winman("addWindow", {
+          src: conf.get("contentBase") + "status_changes",
+          pos: position || "left+30% top+10%",
+          model: "main/viewmodels/status_changes",
+          options: options || {},
+          save: true
+        });
+      },
+      /**
        * Open Add-Log Window
        *
        * @param {Object} [data] Additional log data

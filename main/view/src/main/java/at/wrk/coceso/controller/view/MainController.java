@@ -57,6 +57,11 @@ public class MainController {
         return "main_content/unit_detail";
     }
 
+    @RequestMapping(value = "status_changes", method = RequestMethod.GET)
+    public String statusChanges() {
+        return "main_content/status_changes";
+    }
+
     @RequestMapping(value = "incident", method = RequestMethod.GET)
     public String incident() {
         return "main_content/incident";
