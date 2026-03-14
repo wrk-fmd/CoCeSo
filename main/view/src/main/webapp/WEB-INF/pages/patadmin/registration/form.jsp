@@ -57,7 +57,7 @@
                 <div class="clearfix">
                     <div class="form-group col-md-6">
                         <form:label path="lastname"><spring:message code="patient.lastname"/></form:label>
-                        <form:input path="lastname" cssClass="form-control nosubmit"
+                        <form:input path="lastname" cssClass="form-control nosubmit autofocus"
                                     data-bind="valueInit: lastname, ${empty command.patient ? 'patient: {key: \\\'lastname\\\', callback: callback}' : ''}"/>
                     </div>
                     <div class="form-group col-md-6">
@@ -67,7 +67,7 @@
                     </div>
                     <div class="form-group col-md-6">
                         <form:label path="externalId"><spring:message code="patient.externalId"/></form:label>
-                        <form:input path="externalId" cssClass="form-control autofocus"
+                        <form:input path="externalId" cssClass="form-control"
                                     data-bind="valueInit: externalId, ${empty command.patient ? 'patient: {key: \\\'externalId\\\', callback: callback}' : ''}"/>
                     </div>
                     <div class="form-group col-md-6 hidden">
@@ -104,7 +104,10 @@
                         <form:textarea path="info" cssClass="form-control" data-bind="valueInit: info"/>
                     </div>
                 </div>
-                <form:button class="btn btn-success"><spring:message code="patient.save"/></form:button>
+                <div class="form-actions">
+                    <form:button class="btn btn-primary" name="addNew" value="false"><spring:message code="patient.save"/></form:button>
+                    <form:button class="btn btn-success" name="addNew" value="true"><spring:message code="patient.save.and.new"/></form:button>
+                </div>
             </form:form>
         </div>
 

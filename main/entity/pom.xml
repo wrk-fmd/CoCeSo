@@ -94,6 +94,11 @@
             <artifactId>guava</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+        </dependency>
+
         <!-- Test dependency on commons-logging
         including it via spring-core to stay compatible with webapp -->
         <dependency>
