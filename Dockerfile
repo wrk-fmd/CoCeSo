@@ -8,7 +8,7 @@ RUN cp \
     main/view/src/main/webapp/WEB-INF/classes/coceso.properties
 RUN mvn -P tomcat10,-radio clean package
 
-ADD https://dlcdn.apache.org/tomcat/jakartaee-migration/v1.0.9/binaries/jakartaee-migration-1.0.9-shaded.jar migration.jar
+ADD https://dlcdn.apache.org/tomcat/jakartaee-migration/v1.0.10/binaries/jakartaee-migration-1.0.10-shaded.jar migration.jar
 RUN java -jar migration.jar /usr/src/mymaven/main/view/target/coceso.war /usr/src/mymaven/main/view/target/coceso-migrated.war
 
 
