@@ -447,6 +447,17 @@ define(["knockout", "./point", "./task", "./unit", "../navigation", "data/save",
       }, this);
 
       /**
+       * Return an icon if the incident is prioritized
+       *
+       * @function
+       * @type ko.pureComputed
+       * @returns {String}
+       */
+      this.priorityIcon = ko.pureComputed(function() {
+        return this.priority() ? "<span class='priority-icon glyphicon glyphicon-circle-arrow-up'></span>" : "";
+      }, this);
+
+      /**
        * Return the type as localized string
        *
        * @function
