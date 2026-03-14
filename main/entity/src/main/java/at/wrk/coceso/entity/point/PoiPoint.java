@@ -1,7 +1,6 @@
 package at.wrk.coceso.entity.point;
 
 import at.wrk.coceso.entity.helper.JsonViews;
-import at.wrk.geocode.Geocoder;
 import at.wrk.geocode.LatLng;
 import at.wrk.geocode.address.ImmutableAddress;
 import at.wrk.geocode.poi.Poi;
@@ -9,27 +8,14 @@ import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.Objects;
 
 /**
  * A Point representing a POI
  */
-@Configurable
 class PoiPoint implements Poi, Point {
   private static final Logger LOG = LoggerFactory.getLogger(PoiPoint.class);
-
-  // TODO Using @Qualifier here feels kinda like hardcoding, maybe define that somewhere else
-  @Autowired
-  @Qualifier("ChainedGeocoder")
-  private Geocoder<ImmutableAddress> addressGeocoder;
-
-  @Autowired
-  @Qualifier("ChainedPoi")
-  private Geocoder<Poi> poiGeocoder;
 
   private boolean filled = false;
 
@@ -96,11 +82,11 @@ class PoiPoint implements Poi, Point {
       filled = true;
       LOG.debug("POI point is not yet resolved. POI geocoder is called.");
 
-      coordinates = poiGeocoder.geocode(this);
+      coordinates = PointDataResolver.geocodePoi(this);
       if (coordinates == null) {
         // No coordinates in POI entry, use normal address
         ImmutableAddress immutableAddress = ImmutableAddress.createFromAddress(AddressPointParser.parseFromString(getInfo()));
-        coordinates = addressGeocoder.geocode(immutableAddress);
+        coordinates = PointDataResolver.geocodeAddress(immutableAddress);
       }
     }
   }

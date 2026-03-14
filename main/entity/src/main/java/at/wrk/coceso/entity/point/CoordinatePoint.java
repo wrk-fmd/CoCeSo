@@ -1,7 +1,6 @@
 package at.wrk.coceso.entity.point;
 
 import at.wrk.coceso.entity.helper.JsonViews;
-import at.wrk.geocode.Geocoder;
 import at.wrk.geocode.LatLng;
 import at.wrk.geocode.ReverseResult;
 import at.wrk.geocode.address.ImmutableAddress;
@@ -10,27 +9,14 @@ import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.Objects;
 
 /**
  * A Point representing geographic coordinates
  */
-@Configurable
 public class CoordinatePoint implements Point {
   private static final Logger LOG = LoggerFactory.getLogger(CoordinatePoint.class);
-
-  // TODO Using @Qualifier here feels kinda like hardcoding, maybe define that somewhere else
-  @Autowired
-  @Qualifier("ChainedGeocoder")
-  private Geocoder<ImmutableAddress> addressGeocoder;
-
-  @Autowired
-  @Qualifier("ChainedPoi")
-  private Geocoder<Poi> poiGeocoder;
 
   private boolean filled = false;
 
@@ -68,13 +54,13 @@ public class CoordinatePoint implements Point {
       filled = true;
       LOG.debug("Coordinate point was not resolved yet. POI and Adress geocoders are called.");
 
-      ReverseResult<Poi> poi = poiGeocoder.reverse(coordinates);
+      ReverseResult<Poi> poi = PointDataResolver.reverseToPoi(coordinates);
       if (poi != null && poi.dist <= 20) {
         info = poi.result.getText();
         return;
       }
 
-      ReverseResult<ImmutableAddress> address = addressGeocoder.reverse(coordinates);
+      ReverseResult<ImmutableAddress> address = PointDataResolver.reverseToAddress(coordinates);
       if (poi != null) {
         info = address == null || address.dist >= poi.dist ? poi.result.getText() : address.result.getInfo();
       } else if (address != null) {

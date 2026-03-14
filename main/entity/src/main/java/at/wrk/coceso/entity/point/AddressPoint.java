@@ -1,7 +1,6 @@
 package at.wrk.coceso.entity.point;
 
 import at.wrk.coceso.entity.helper.JsonViews;
-import at.wrk.geocode.Geocoder;
 import at.wrk.geocode.LatLng;
 import at.wrk.geocode.address.Address;
 import at.wrk.geocode.address.AddressNumber;
@@ -10,23 +9,14 @@ import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.Objects;
 
 /**
  * A Point representing an address
  */
-@Configurable
 class AddressPoint implements Point, Address {
     private static final Logger LOG = LoggerFactory.getLogger(AddressPoint.class);
-
-    // TODO Using @Qualifier here feels kinda like hardcoding, maybe define that somewhere else
-    @Autowired
-    @Qualifier("ChainedGeocoder")
-    private Geocoder<ImmutableAddress> addressGeocoder;
 
     private final String title;
     private final String street;
@@ -62,7 +52,6 @@ class AddressPoint implements Point, Address {
         city = other.city;
         additional = other.additional;
         coordinates = other.coordinates;
-        addressGeocoder = other.addressGeocoder;
     }
 
     public AddressPoint(
@@ -163,7 +152,7 @@ class AddressPoint implements Point, Address {
             LOG.debug("Address point was not resolved yet. Address geocoder is called for: {}", this);
 
             ImmutableAddress addressToSearch = ImmutableAddress.createFromAddress(this);
-            coordinates = addressGeocoder.geocode(addressToSearch);
+            coordinates = PointDataResolver.geocodeAddress(addressToSearch);
         }
     }
 
