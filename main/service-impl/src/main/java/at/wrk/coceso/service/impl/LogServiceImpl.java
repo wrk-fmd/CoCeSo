@@ -47,6 +47,9 @@ class LogServiceImpl implements LogService {
     @Autowired
     private LogRepository logRepository;
 
+    @Autowired(required = false)
+    private LogWebSocketPublisher logWebSocketPublisher;
+
     private final AuthenticatedUserProvider authenticatedUserProvider;
 
     @Autowired
@@ -56,17 +59,17 @@ class LogServiceImpl implements LogService {
 
     @Override
     public void logAuto(final LogEntryType type, final Concern concern, final Changes changes) {
-        logRepository.saveAndFlush(new LogEntry(getUser(), type, type.name(), concern, null, null, null, null, changes));
+        saveAndPublish(new LogEntry(getUser(), type, type.name(), concern, null, null, null, null, changes));
     }
 
     @Override
     public void logAuto(final LogEntryType type, final Concern concern, final Unit unit, final Incident incident, final Changes changes) {
-        logRepository.saveAndFlush(new LogEntry(getUser(), type, type.name(), concern, unit, incident, null, null, changes));
+        saveAndPublish(new LogEntry(getUser(), type, type.name(), concern, unit, incident, null, null, changes));
     }
 
     @Override
     public void logAuto(final LogEntryType type, final Concern concern, final Unit unit, final Incident incident, final TaskState state) {
-        logRepository.saveAndFlush(new LogEntry(getUser(), type, type.name(), concern, unit, incident, null, state, null));
+        saveAndPublish(new LogEntry(getUser(), type, type.name(), concern, unit, incident, null, state, null));
     }
 
     @Override
@@ -76,22 +79,22 @@ class LogServiceImpl implements LogService {
             final Incident incident,
             final TaskState state,
             final Changes changes) {
-        logRepository.saveAndFlush(new LogEntry(getUser(), type, type.name(), concern, unit, incident, null, state, changes));
+        saveAndPublish(new LogEntry(getUser(), type, type.name(), concern, unit, incident, null, state, changes));
     }
 
     @Override
     public void logAuto(final LogEntryType type, final Concern concern, final Patient patient, final Changes changes) {
-        logRepository.saveAndFlush(new LogEntry(getUser(), type, type.name(), concern, null, null, patient, null, changes));
+        saveAndPublish(new LogEntry(getUser(), type, type.name(), concern, null, null, patient, null, changes));
     }
 
     @Override
     public void logAuto(final LogEntryType type, final Concern concern, final Incident incident, final Patient patient) {
-        logRepository.saveAndFlush(new LogEntry(getUser(), type, type.name(), concern, null, incident, patient, null, null));
+        saveAndPublish(new LogEntry(getUser(), type, type.name(), concern, null, incident, patient, null, null));
     }
 
     @Override
     public void logCustom(final String text, final Concern concern, final Unit unit, final Incident incident) {
-        logRepository.saveAndFlush(new LogEntry(getUser(), LogEntryType.CUSTOM, text, concern, unit, incident, null, null, null));
+        saveAndPublish(new LogEntry(getUser(), LogEntryType.CUSTOM, text, concern, unit, incident, null, null, null));
     }
 
     @Override
@@ -164,6 +167,18 @@ class LogServiceImpl implements LogService {
     @Override
     public void updateForRemoval(final Unit unit) {
         logRepository.updateForRemoval(unit);
+    }
+
+    private LogEntry saveAndPublish(final LogEntry entry) {
+        LogEntry saved = logRepository.saveAndFlush(entry);
+        try {
+            if (logWebSocketPublisher != null && saved != null) {
+                logWebSocketPublisher.publish(saved.getConcern(), saved);
+            }
+        } catch (Exception e) {
+            LOG.warn("Failed to publish log entry via websocket", e);
+        }
+        return saved;
     }
 
 
