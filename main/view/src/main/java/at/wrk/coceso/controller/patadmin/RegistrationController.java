@@ -66,7 +66,10 @@ public class RegistrationController {
     @PreAuthorize("@auth.hasPermission(#concern, 'PatadminRegistration')")
     @Transactional
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public String showHome(final ModelMap map, @ActiveConcern final Concern concern) {
+    public String showHome(
+            final ModelMap map,
+            @ActiveConcern final Concern concern,
+            @RequestParam(value = "newPatientId", required = false) final Integer newPatientId) {
         patadminService.addAccessLevels(map, concern);
 
         List<Incident> incoming = registrationService.getIncoming(concern);
@@ -76,6 +79,11 @@ public class RegistrationController {
 
         map.addAttribute("treatmentCount", registrationService.getTreatmentCount(concern));
         map.addAttribute("transportCount", registrationService.getTransportCount(concern));
+
+        // Pass the new patient ID to the view for highlighting
+        if (newPatientId != null) {
+            map.addAttribute("newPatientId", newPatientId);
+        }
 
         return "patadmin/registration/home";
     }
@@ -153,9 +161,19 @@ public class RegistrationController {
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public String save(
             @ModelAttribute final RegistrationForm form,
+            @RequestParam(value = "addNew", defaultValue = "false") final boolean addNew,
             @ActiveConcern final Concern concern) {
         Patient patient = registrationWriteService.update(form, concern, false);
-        return "redirect:/patadmin/registration/add?successfullyCreated=true";
+
+        Integer addedPatientId = patient.getId();
+        if (addNew) {
+            return "redirect:/patadmin/registration/add?"
+                    + "successfullyCreated=true"
+                    + (addedPatientId != null ? "&addedPatientId=" + addedPatientId : "");
+        } else {
+            return "redirect:/patadmin/registration"
+                    + (addedPatientId != null ? "?newPatientId=" + patient.getId() : "");
+        }
     }
 
     @PreAuthorize("@auth.hasPermission(#concern, 'PatadminRegistration')")

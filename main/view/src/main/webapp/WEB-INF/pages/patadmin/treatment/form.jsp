@@ -39,7 +39,7 @@
       <div class="clearfix">
         <div class="form-group col-md-3">
           <form:label path="lastname"><spring:message code="patient.lastname"/></form:label>
-          <form:input path="lastname" cssClass="form-control" data-bind="valueInit: lastname"/>
+          <form:input path="lastname" cssClass="form-control autofocus" data-bind="valueInit: lastname"/>
         </div>
         <div class="form-group col-md-3 col-md-offset-1">
           <form:label path="firstname"><spring:message code="patient.firstname"/></form:label>

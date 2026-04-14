@@ -140,6 +140,7 @@
   <ul data-bind="foreach: filtered, accordion: {active: false, collapsible: true, heightStyle: 'content'}, accordionRefresh: filtered">
     <li data-bind="droppable: {drop: assignUnitList, tolerance: 'pointer'}">
       <h3 class="clearfix" data-bind="css: {incident_open: isHighlighted, incident_priority: priority}">
+        <span data-bind="html: priorityIcon"></span>
         <span class="incident_type_text" data-bind="text: typeChar, css: {incident_blue: blue}"></span>
         <span class="incident_timer" data-bind="visible: !isDone(), css: timerCss"><span data-bind="text: timer"></span>'</span>
 

@@ -3,31 +3,18 @@ package at.wrk.coceso.entity.point;
 import at.wrk.coceso.entity.Concern;
 import at.wrk.coceso.entity.helper.JsonViews;
 import at.wrk.geocode.LatLng;
-import at.wrk.geocode.poi.PoiSupplier;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.Objects;
 
 /**
  * A dummy for unresolved point data that should not actually be stored anywhere, but resolved by using #create()
  */
-@Configurable
 public class DummyPoint implements Point {
   private static final Logger LOG = LoggerFactory.getLogger(DummyPoint.class);
-
-  // TODO Using @Qualifier here feels kinda like hardcoding, maybe define that somewhere else
-  @Autowired
-  @Qualifier("ChainedPoi")
-  private PoiSupplier poiSupplier;
-
-  @Autowired
-  private UnitSupplier unitSupplier;
 
   private final String info;
 
@@ -67,7 +54,7 @@ public class DummyPoint implements Point {
 
   @Override
   public Point create(Concern concern) {
-    return isEmpty() ? null : Point.create(info, concern, poiSupplier, unitSupplier);
+    return isEmpty() ? null : Point.create(info, concern, true);
   }
 
   @Override

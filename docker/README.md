@@ -13,6 +13,14 @@ let's use docker compose.
 * Client
   * Web Browser (full features only in Mozilla Firefox and Google Chrome tested)
 
+
+## Build the project using docker compose
+
+Run `docker compose up -d` in this directory.
+CoCeSo is then available at http://localhost:8080/coceso.
+
+# Deprecated steps
+
 ## Build the project using a maven container
 
 NOTE: The result differs from the pristine build in two ways.

@@ -64,6 +64,8 @@ define([
       this.info = ko.observable("");
       this.state = ko.observable(constants.Unit.state.ad);
 
+      this.latestState = ko.observable(null);
+
       /**
        * Method to set data
        *
@@ -71,6 +73,8 @@ define([
        * @returns {void}
        */
       this.setData = function(data) {
+        var latestState = null;
+
         self.home.setData(data.home);
         self.position.setData(data.position);
         if (data.incidents) {
@@ -90,7 +94,12 @@ define([
               task.stateChangedAt(stateChangedAt);
             } else {
               //Create new Task model
-              self.incidents.push(new Task(taskState, incidentId, self.id, stateChangedAt));
+              task = new Task(taskState, incidentId, self.id, stateChangedAt);
+              self.incidents.push(task);
+            }
+
+            if (!latestState || latestState.stateChangedAt() < stateChangedAt) {
+              latestState = task;
             }
           });
 
@@ -105,6 +114,12 @@ define([
         self.state(data.state || constants.Unit.state.ad);
 
         self.ani = data.ani;
+
+        if (latestState) {
+          self.latestState(latestState);
+        } else if (self.latestState() && !self.latestState().isDetached()) {
+          self.latestState(new Task(constants.TaskState.detached, self.latestState().incident_id, self.id, Date.now()));
+        }
       };
 
       //Set data

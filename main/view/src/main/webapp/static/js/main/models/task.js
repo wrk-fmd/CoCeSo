@@ -65,7 +65,7 @@ define(["knockout", "data/save", "data/store/incidents", "data/store/units",
        */
       this.unit_id = (unit && !isNaN(unit)) ? unit : null;
 
-      this.stateChangedAt = ko.observable(lastStateChangedAt).extend({timeinterval: true});
+      this.stateChangedAt = ko.observable(lastStateChangedAt).extend({timeinterval: true, timeformat: true});
 
       /**
        * Get the associated incident
@@ -180,7 +180,7 @@ define(["knockout", "data/save", "data/store/incidents", "data/store/units",
           return this.localizedTaskState();
         }
         if (i.isTask() || i.isTransport() || i.isRelocation() || i.isToHome()) {
-          return i.typeChar() + ": " + this.localizedTaskState() + " (" + this.stateChangedAt.interval() + "')";
+          return i.priorityIcon() + i.typeChar() + ": " + this.localizedTaskState() + " (" + this.stateChangedAt.interval() + "')";
         }
 
         if (i.isStandby() || i.isHoldPosition()) {

@@ -1,6 +1,7 @@
 <%@tag body-content="empty" trimDirectiveWhitespaces="true"%>
 <%@attribute name="patients" required="true" rtexprvalue="true" type="java.util.List<at.wrk.coceso.entity.Patient>"%>
 <%@attribute name="hideGroup" required="false" rtexprvalue="true" type="Boolean"%>
+<%@attribute name="newPatientId" required="false" rtexprvalue="true" type="Integer"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%--
@@ -35,7 +36,7 @@
       <th></th>
     </tr>
     <c:forEach items="${patients}" var="patient">
-      <tr>
+      <tr ${newPatientId != null && newPatientId == patient.id ? 'class="success newly-added-patient"' : ''}>
         <td><c:out value="${patient.id}"/></td>
         <td><c:out value="${patient.externalId}"/></td>
         <td><c:out value="${patient.lastname}"/></td>

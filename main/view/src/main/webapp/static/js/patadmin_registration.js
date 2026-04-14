@@ -1,6 +1,6 @@
 /**
  * CoCeSo
- * Client JS - patadmin_form
+ * Client JS - patadmin_registration
  * Copyright (c) WRK\Coceso-Team
  *
  * Licensed under the GNU General Public License, version 3 (GPL-3.0)
@@ -25,6 +25,22 @@ require(["config"], function() {
 
       ko.applyBindings(store, $("#treatment_groups")[0]);
       $(".autofocus").first().focus();
+      
+      // Handle patient highlighting for newly added patients
+      $(document).ready(function() {
+        var $newlyAddedPatient = $(".newly-added-patient");
+        if ($newlyAddedPatient.length > 0) {
+          // Scroll to the highlighted patient
+          $('html, body').animate({
+            scrollTop: $newlyAddedPatient.offset().top - 100
+          }, 800);
+          
+          // Remove highlight after 4 seconds (2s animation + 2s display)
+          setTimeout(function() {
+            $newlyAddedPatient.removeClass("newly-added-patient");
+          }, 4000);
+        }
+      });
     }
   );
 });

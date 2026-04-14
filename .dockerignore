@@ -1,0 +1,6 @@
+.github/
+.idea/
+.vscode/
+doc/
+docker/
+target/

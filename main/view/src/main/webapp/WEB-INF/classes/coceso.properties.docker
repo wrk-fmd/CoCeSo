@@ -1,8 +1,6 @@
 # DB config
 db.driver=org.postgresql.Driver
 db.url=jdbc:postgresql://coceso-db:5432/coceso
-db.username=coceso
-db.password=password
 
 # Authentication config
 auth.authUrl=http://example.com
@@ -21,8 +19,6 @@ js.plugins={}
 # Geocode DB config
 geocode.db.driver=org.postgresql.Driver
 geocode.db.url=jdbc:postgresql://coceso-db:5432/coceso
-geocode.db.username=coceso
-geocode.db.password=password
 
 # Google Maps ApiKey
 geocode.gmaps.apikey=

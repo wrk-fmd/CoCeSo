@@ -183,7 +183,9 @@ public class AuthorizationProvider {
         return level.allowConcernWide() &&
                 unitService.getByConcernUser(concern, user.getUserId())
                         .stream()
-                        .anyMatch(u -> level.isGrantedFor(u.getType(), false));
+                        .map(Unit::getType)
+                        .distinct()
+                        .anyMatch(t -> level.isGrantedFor(t, false));
     }
 
     private boolean checkLocalAccess(final AuthenticatedUser user, final Unit unit, final AccessLevel level) {
