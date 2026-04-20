@@ -15,7 +15,8 @@
  * @license GPL-3.0 ( http://opensource.org/licenses/GPL-3.0 )
  */
 --%>
-<div class="navbar navbar-default" role="navigation">
+<c:url var="dataBase" value="/data/"/>
+<div id="patadmin-navbar" class="navbar navbar-default" role="navigation" data-viewtype="${viewType}" data-jsonbase="${dataBase}">
   <div class="navbar-header">
     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
       <span class="sr-only">Toggle navigation</span>
@@ -79,3 +80,13 @@
     </c:if>
   </div>
 </div>
+
+<script type="text/javascript">
+  // Ensure the shared navbar live-reload logic runs also on pages whose JS entry
+  // is not 'navbar' (e.g. patadmin_registration, patadmin_treatment).
+  if (typeof require !== "undefined") {
+    require(["config"], function() {
+      require(["navbar"]);
+    });
+  }
+</script>

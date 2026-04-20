@@ -39,6 +39,13 @@
   </c:otherwise>
 </c:choose>
 
+<script type="text/javascript">
+  window.CocesoConf = window.CocesoConf || {};
+  if (!window.CocesoConf.jsonBase) {
+    window.CocesoConf.jsonBase = "<c:url value='/data/'/>";
+  }
+</script>
+
 <c:if test="${not empty entry}">
   <script type="text/javascript"
           data-main="<c:url value="/static/js${suffix}/${entry}"/>"
