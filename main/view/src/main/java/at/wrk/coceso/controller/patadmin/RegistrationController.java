@@ -105,8 +105,12 @@ public class RegistrationController {
                 .map(Incident::getPatient)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+
         addIncidentsWithIncomingPatientsAndNotYetTreatedToMap(map, incoming, patientsInTreatment);
-        map.addAttribute("treatment", Initializer.init(patientsInTreatment, Patient::getId));
+
+        //robuster Fix
+        map.addAttribute("treatment", Initializer.initGroups(patientsInTreatment));
+
         return "patadmin/registration/group";
     }
 
