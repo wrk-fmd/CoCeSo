@@ -298,6 +298,19 @@ public class Patient implements Serializable, ConcernBoundEntity {
   }
 
   @JsonIgnore
+  public Set<String> getCasusNr() {
+    if (incidents == null) {
+      return null;
+    }
+
+    return incidents.stream()
+        .filter(i -> i.getType() == IncidentType.Transport)
+        .map(Incident::getCasusNr)
+        .filter(StringUtils::isNotBlank)
+        .collect(Collectors.toSet());
+  }
+
+  @JsonIgnore
   public Set<String> getTransportInfo() {
     if (incidents == null) {
       return null;

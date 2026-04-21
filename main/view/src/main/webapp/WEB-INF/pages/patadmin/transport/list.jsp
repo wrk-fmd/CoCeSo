@@ -22,6 +22,7 @@
             <th><spring:message code="patient.firstname"/></th>
             <th><spring:message code="patadmin.group"/></th>
             <th><spring:message code="patient.ambulance"/></th>
+            <th><spring:message code="incident.casus.short"/></th>
             <th><spring:message code="patadmin.transport.unit"/></th>
             <th><spring:message code="patadmin.transport.unitstate"/></th>
             <th><spring:message code="patadmin.hospital"/></th>
@@ -43,6 +44,13 @@
                 <c:if test="${not empty patient.transportInfo}">
                   <c:forEach items="${patient.transportInfo}" var="info">
                     <c:out value="${info}"/>
+                  </c:forEach>
+                </c:if>
+              </td>
+              <td>
+                <c:if test="${not empty patient.casusNr}">
+                  <c:forEach items="${patient.casusNr}" var="nr">
+                    <c:out value="${nr}"/>
                   </c:forEach>
                 </c:if>
               </td>
