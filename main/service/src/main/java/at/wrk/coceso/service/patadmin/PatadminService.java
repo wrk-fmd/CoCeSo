@@ -23,6 +23,8 @@ public interface PatadminService {
 
     List<Patient> getAllInTreatment(Concern concern);
 
+    List<Patient> getAllInTransport(Concern concern);
+
     List<Patient> getPatientsByQuery(Concern concern, String query, boolean showDone);
 
     List<Unit> getGroups(Concern concern);

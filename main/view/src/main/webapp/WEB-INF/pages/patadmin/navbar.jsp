@@ -42,6 +42,11 @@
           <a href="<c:url value="/patadmin/postprocessing"/>"><spring:message code="patadmin.postprocessing"/></a>
         </li>
       </c:if>
+      <c:if test="${accessLevels.contains(AccessLevel.PatadminTransport)}">
+        <li class="${viewType eq 'transport' ? 'active' : ''}">
+          <a href="<c:url value="/patadmin/transport"/>"><spring:message code="patient.transport"/></a>
+        </li>
+      </c:if>
       <c:if test="${accessLevels.contains(AccessLevel.PatadminInfo)}">
         <li class="${viewType eq 'info' ? 'active' : ''}">
           <a href="<c:url value="/patadmin/info"/>"><spring:message code="patadmin.info"/></a>
