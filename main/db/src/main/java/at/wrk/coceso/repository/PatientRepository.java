@@ -29,4 +29,7 @@ public interface PatientRepository extends JpaRepository<Patient, Integer> {
   @Query("SELECT p FROM Patient p JOIN p.incidents i WHERE i.state <> 'Done' AND i.type = 'Treatment' AND p.concern = :concern ORDER BY p.id DESC")
   List<Patient> findInTreatment(@Param("concern") Concern concern);
 
+  @Query("SELECT p FROM Patient p JOIN p.incidents i WHERE i.state <> 'Done' AND i.type = 'Transport' AND p.concern = :concern ORDER BY p.id DESC")
+  List<Patient> findInTransport(@Param("concern") Concern concern);
+
 }

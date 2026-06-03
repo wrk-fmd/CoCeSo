@@ -28,6 +28,7 @@
       <c:choose>
         <c:when test="${empty search}">
           <h2><spring:message code="patients"/></h2>
+          <p><spring:message code="patadmin.counts" arguments="${treatmentCount},${transportCount}"/></p>
         </c:when>
         <c:otherwise>
           <h2><spring:message code="patadmin.searchresult"/>: <em><c:out value="${search}"/></em></h2>

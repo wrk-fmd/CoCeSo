@@ -2,11 +2,10 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@taglib uri="coceso" prefix="t"%>
-<%@taglib uri="patadmin" prefix="p"%>
 <%--
 /**
  * CoCeSo
- * Patadmin HTML registration home
+ * Patadmin HTML treatment home
  * Copyright (c) WRK\Coceso-Team
  *
  * Licensed under the GNU General Public License, version 3 (GPL-3.0)
@@ -19,31 +18,44 @@
 --%>
 <html>
   <head>
+    <script type="text/javascript">
+      var CocesoConf = {
+        jsonBase: "<c:url value="/data/"/>",
+        imageBase: "<c:url value="/static/imgs/"/>",
+        langBase: "<c:url value="/static/i18n/"/>",
+        language: "<spring:message code="this.languageCode"/>",
+        treatmentViewUrl: "<c:url value="/patadmin/treatment/view/"/>",
+        treatmentEditUrl: "<c:url value="/patadmin/treatment/edit/"/>",
+        dischargeUrl: "<c:url value="/patadmin/treatment/discharge/"/>",
+        transportUrl: "<c:url value="/patadmin/treatment/transport/"/>",
+        transportedUrl: "<c:url value="/patadmin/treatment/transported/"/>",
+        savedPatientId: ${savedPatientId != null ? savedPatientId : 'null'},
+        treatmentCount: ${treatmentCount},
+        transportCount: ${transportCount},
+        countsMsg: "<spring:message code='patadmin.counts' arguments='|0|,|1|'/>"
+      };
+    </script>
     <t:head maintitle="patadmin" title="patadmin.treatment" entry="patadmin_treatment"/>
   </head>
   <body>
     <div class="container">
       <%@include file="../navbar.jsp"%>
 
-      <c:url var="editUrl" value="/patadmin/treatment/edit/"/>
-      <c:url var="viewUrl" value="/patadmin/treatment/view/"/>
-      <c:url var="dischargeUrl" value="/patadmin/treatment/discharge/"/>
-      <c:url var="transportUrl" value="/patadmin/treatment/transport/"/>
-      <c:url var="transportedUrl" value="/patadmin/treatment/transported/"/>
-
-      <c:if test="${savedPatientId != null}">
-        <div class="alert alert-success alert-dismissable">
-          <p>
-            <spring:message code="patient.saved.success"/>
-          </p>
-          <p>
-            ID: <strong>#${savedPatientId}</strong>
-          </p>
-        </div>
-      </c:if>
+      <div id="save-alert" data-bind="visible: showSavedAlert" class="alert alert-success alert-dismissable"
+           style="${savedPatientId != null ? '' : 'display:none'}">
+        <button type="button" class="close" data-bind="click: function(){ showSavedAlert(false); }">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <p>
+          <spring:message code="patient.saved.success"/>
+        </p>
+        <p>
+          ID: <strong data-bind="text: '#' + savedPatientId"></strong>
+        </p>
+      </div>
 
       <h2><spring:message code="patadmin.treatment"/></h2>
-      <p>
+      <p id="patadmin-counts">
         <spring:message code="patadmin.counts" arguments="${treatmentCount},${transportCount}"/>
       </p>
       <p>
@@ -53,64 +65,54 @@
       </p>
 
       <h3><spring:message code="patadmin.intreatment"/></h3>
-      <c:if test="${not empty patients}">
-        <div class="table-responsive">
-          <table class="table table-striped table-condensed table-full">
-            <tr>
-              <th><spring:message code="patient.id"/></th>
-              <th><spring:message code="patient.externalId"/></th>
-              <th><spring:message code="patient.lastname"/></th>
-              <th><spring:message code="patient.firstname"/></th>
-              <th><spring:message code="patadmin.group"/></th>
-              <th></th>
-            </tr>
-            <c:forEach items="${patients}" var="patient">
-              <tr>
-                <td><c:out value="${patient.id}"/></td>
-                <td><c:out value="${patient.externalId}"/></td>
-                <td><c:out value="${patient.lastname}"/></td>
-                <td><c:out value="${patient.firstname}"/></td>
-                <td>
-                  <c:if test="${not empty patient.group}">
-                    <c:forEach items="${patient.group}" var="group">
-                      <c:out value="${group.call}"/>
-                    </c:forEach>
-                  </c:if>
-                </td>
-                <td>
-                  <a href="${viewUrl}${patient.id}" class="btn btn-default btn-xs">
-                    <spring:message code="patient.details"/>
-                  </a>
-                  <a href="${editUrl}${patient.id}" class="btn btn-default btn-xs">
-                    <spring:message code="patient.edit"/>
-                  </a>
-                  <c:if test="${not patient.transport}">
-                    <a href="${dischargeUrl}${patient.id}" class="btn btn-default btn-xs">
-                      <spring:message code="patient.discharge"/>
-                    </a>
-                    <a href="${transportUrl}${patient.id}" class="btn btn-default btn-xs">
-                      <spring:message code="patient.requesttransport"/>
-                    </a>
-                  </c:if>
-                  <c:if test="${not empty patient.group && patient.transport}">
-                    <a href="${transportedUrl}${patient.id}" class="btn btn-default btn-xs">
-                      <spring:message code="patient.transported"/>
-                    </a>
-                  </c:if>
-                </td>
-              </tr>
-            </c:forEach>
-          </table>
-        </div>
-      </c:if>
-      <c:if test="${empty patients}">
-        <p>
+      <div id="treatment-list">
+        <p data-bind="visible: treatmentPatients().length === 0">
           <spring:message code="patadmin.intreatment.no.patients"/>
         </p>
-      </c:if>
+        <div class="table-responsive" data-bind="visible: treatmentPatients().length > 0">
+          <table class="table table-striped table-condensed table-full">
+            <thead>
+              <tr>
+                <th><spring:message code="patient.id"/></th>
+                <th><spring:message code="patient.externalId"/></th>
+                <th><spring:message code="patient.lastname"/></th>
+                <th><spring:message code="patient.firstname"/></th>
+                <th><spring:message code="patadmin.group"/></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody data-bind="foreach: treatmentPatients">
+              <tr>
+                <td data-bind="text: patient.id"></td>
+                <td data-bind="text: patient.externalId"></td>
+                <td data-bind="text: patient.lastname()"></td>
+                <td data-bind="text: patient.firstname()"></td>
+                <td data-bind="text: groupName"></td>
+                <td>
+                  <a data-bind="attr: {href: $root.treatmentViewUrl + patient.id}" class="btn btn-default btn-xs">
+                    <spring:message code="patient.details"/>
+                  </a>
+                  <a data-bind="attr: {href: $root.treatmentEditUrl + patient.id}" class="btn btn-default btn-xs">
+                    <spring:message code="patient.edit"/>
+                  </a>
+                  <a data-bind="visible: !$root.hasHospitalTransport(patient.id), attr: {href: $root.dischargeUrl + patient.id}" class="btn btn-default btn-xs">
+                    <spring:message code="patient.discharge"/>
+                  </a>
+                  <a data-bind="visible: !$root.hasHospitalTransport(patient.id), attr: {href: $root.transportUrl + patient.id}" class="btn btn-default btn-xs">
+                    <spring:message code="patient.requesttransport"/>
+                  </a>
+                  <a data-bind="visible: $root.hasHospitalTransport(patient.id) && !!groupName, attr: {href: $root.transportedUrl + patient.id}" class="btn btn-default btn-xs">
+                    <spring:message code="patient.transported"/>
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
       <p>
-        <a href="<c:url value="/patadmin/treatment/list"/>" class="btn btn-default autofocus">
+        <a href="<c:url value="/patadmin/treatment/list"/>" class="btn btn-default">
           <spring:message code="patadmin.showAll"/>
         </a>
       </p>

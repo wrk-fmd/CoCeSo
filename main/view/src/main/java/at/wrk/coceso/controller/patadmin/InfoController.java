@@ -6,6 +6,7 @@ import at.wrk.coceso.service.LogService;
 import at.wrk.coceso.service.PatientService;
 import at.wrk.coceso.service.patadmin.InfoService;
 import at.wrk.coceso.service.patadmin.PatadminService;
+import at.wrk.coceso.service.patadmin.RegistrationService;
 import at.wrk.coceso.utils.ActiveConcern;
 import at.wrk.coceso.utils.Initializer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,9 @@ public class InfoController {
   @Autowired
   private InfoService infoService;
 
+  @Autowired
+  private RegistrationService registrationService;
+
   @ModelAttribute("viewType")
   public String viewType() {
     return "info";
@@ -60,6 +64,8 @@ public class InfoController {
           @ActiveConcern final Concern concern) {
     Page<Patient> patients = Initializer.initGroups(infoService.getAll(concern, pageable));
     map.addAttribute("patients", patients);
+    map.addAttribute("treatmentCount", registrationService.getTreatmentCount(concern));
+    map.addAttribute("transportCount", registrationService.getTransportCount(concern));
     patadminService.addAccessLevels(map, concern);
     return "patadmin/info/list";
   }

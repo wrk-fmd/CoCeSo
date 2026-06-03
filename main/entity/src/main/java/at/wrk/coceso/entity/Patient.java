@@ -22,8 +22,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
+import at.wrk.coceso.entity.enums.TaskState;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -295,6 +298,19 @@ public class Patient implements Serializable, ConcernBoundEntity {
   }
 
   @JsonIgnore
+  public Set<String> getCasusNr() {
+    if (incidents == null) {
+      return null;
+    }
+
+    return incidents.stream()
+        .filter(i -> i.getType() == IncidentType.Transport)
+        .map(Incident::getCasusNr)
+        .filter(StringUtils::isNotBlank)
+        .collect(Collectors.toSet());
+  }
+
+  @JsonIgnore
   public Set<String> getTransportInfo() {
     if (incidents == null) {
       return null;
@@ -305,6 +321,19 @@ public class Patient implements Serializable, ConcernBoundEntity {
         .map(Incident::getInfo)
         .filter(StringUtils::isNotBlank)
         .collect(Collectors.toSet());
+  }
+
+  @JsonIgnore
+  public Map<Unit, TaskState> getTransportUnits() {
+    if (incidents == null) {
+      return Collections.emptyMap();
+    }
+
+    return incidents.stream()
+        .filter(i -> i.getType() == IncidentType.Transport) //Only return transport incidents
+        .filter(i -> !i.getState().isDone())                //Only active transports are needed for the transport coordinator
+        .flatMap(i -> i.getUnits().entrySet().stream())
+        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
   }
 
   @JsonIgnore

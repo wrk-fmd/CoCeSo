@@ -69,7 +69,6 @@ public class TreatmentController {
     @Transactional
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String showHome(final ModelMap map, @ActiveConcern final Concern concern, @RequestParam(required = false) Integer saved) {
-        map.addAttribute("patients", Initializer.initGroups(patadminService.getAllInTreatment(concern)));
         map.addAttribute("treatmentCount", registrationService.getTreatmentCount(concern));
         map.addAttribute("transportCount", registrationService.getTransportCount(concern));
         map.addAttribute("savedPatientId", saved);

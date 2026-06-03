@@ -72,15 +72,9 @@ public class RegistrationController {
             @RequestParam(value = "newPatientId", required = false) final Integer newPatientId) {
         patadminService.addAccessLevels(map, concern);
 
-        List<Incident> incoming = registrationService.getIncoming(concern);
-        List<Patient> patientsInAllTreatments = patadminService.getAllInTreatment(concern);
-        addIncidentsWithIncomingPatientsAndNotYetTreatedToMap(map, incoming, patientsInAllTreatments);
-        map.addAttribute("treatment", Initializer.initGroups(patientsInAllTreatments));
-
         map.addAttribute("treatmentCount", registrationService.getTreatmentCount(concern));
         map.addAttribute("transportCount", registrationService.getTransportCount(concern));
 
-        // Pass the new patient ID to the view for highlighting
         if (newPatientId != null) {
             map.addAttribute("newPatientId", newPatientId);
         }

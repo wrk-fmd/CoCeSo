@@ -70,6 +70,7 @@ class PatadminServiceImpl implements PatadminServiceInternal {
             AccessLevel.PatadminRegistration,
             AccessLevel.PatadminTreatment,
             AccessLevel.PatadminPostprocessing,
+            AccessLevel.PatadminTransport,
             AccessLevel.PatadminInfo
         ).filter(
             level -> auth.hasPermission(concern, level)
@@ -91,6 +92,13 @@ class PatadminServiceImpl implements PatadminServiceInternal {
     @Override
     public List<Patient> getAllInTreatment(final Concern concern) {
         List<Patient> patients = patientRepository.findInTreatment(concern);
+        dataAccessLogger.logPatientAccess(patients, concern);
+        return patients;
+    }
+
+    @Override
+    public List<Patient> getAllInTransport(final Concern concern) {
+        List<Patient> patients = patientRepository.findInTransport(concern);
         dataAccessLogger.logPatientAccess(patients, concern);
         return patients;
     }

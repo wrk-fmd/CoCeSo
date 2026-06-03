@@ -8,6 +8,7 @@ import at.wrk.coceso.service.PatientService;
 import at.wrk.coceso.service.patadmin.PatadminService;
 import at.wrk.coceso.service.patadmin.PostprocessingService;
 import at.wrk.coceso.service.patadmin.PostprocessingWriteService;
+import at.wrk.coceso.service.patadmin.RegistrationService;
 import at.wrk.coceso.utils.ActiveConcern;
 import at.wrk.coceso.utils.Initializer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,9 @@ public class PostprocessingController {
   @Autowired
   private PostprocessingWriteService postprocessingWriteService;
 
+  @Autowired
+  private RegistrationService registrationService;
+
   @ModelAttribute("viewType")
   public String viewType() {
     return "postprocessing";
@@ -55,6 +59,8 @@ public class PostprocessingController {
           final ModelMap map,
           @ActiveConcern final Concern concern) {
     map.addAttribute("patients", Initializer.initGroups(patadminService.getAllInTreatment(concern)));
+    map.addAttribute("treatmentCount", registrationService.getTreatmentCount(concern));
+    map.addAttribute("transportCount", registrationService.getTransportCount(concern));
     patadminService.addAccessLevels(map, concern);
     return "patadmin/postprocessing/list";
   }
